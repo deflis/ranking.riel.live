@@ -39,7 +39,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "firebase deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -58,6 +59,7 @@
   },
   "proxy": "http://localhost:5000",
   "devDependencies": {
+    "firebase-tools": "^7.13.0",
     "narou": "^0.2.2"
   }
 }
