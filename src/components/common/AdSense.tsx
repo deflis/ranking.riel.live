@@ -1,9 +1,13 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect } from "react";
 
 export const AdSense = () => {
-    useLayoutEffect(() => {
+  useEffect(() => {
+    try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    });
+    } catch (e) {
+      console.error(e);
+    }
+  });
   return (
     <ins
       className="adsbygoogle"
@@ -12,7 +16,6 @@ export const AdSense = () => {
       data-ad-layout-key="-fb+5w+4e-db+86"
       data-ad-client="ca-pub-6809573064811153"
       data-ad-slot="3138091970"
-      data-adtest="on"
     ></ins>
   );
 };

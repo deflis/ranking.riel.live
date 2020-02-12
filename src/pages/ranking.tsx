@@ -67,11 +67,11 @@ const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter }> = ({
     </div>
   ));
 
-  chunk(rankingItems, 4).reduce(
+  const itemsWithAds = chunk(rankingItems, 10).reduce(
     (x, y) => (
       <>
         {x}
-        <div className="is-full">
+        <div className="column is-full">
           <AdSense></AdSense>
         </div>
         {y}
@@ -83,18 +83,24 @@ const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter }> = ({
   return (
     <>
       <div className="columns is-desktop is-multiline">
-        <div className="is-full">
-          <AdSense></AdSense>
+        {itemsWithAds}
+        <div className="column is-full">
+          <Waypoint onEnter={() => setMax(x => x + 10)}>
+            {max < items.length ? (
+              <progress className="progress is-primary" max="100">
+                loading
+              </progress>
+            ) : null}
+          </Waypoint>
+          {max < items.length ? (
+            <button className="button" onClick={() => setMax(x => x + 10)}>
+              続きを見る
+            </button>
+          ) : null}
         </div>
-        {rankingItems}
       </div>
-      <Waypoint onEnter={() => setMax(x => x + 10)}>
-        {max < items.length ? (
-          <button className="button" onClick={() => setMax(x => x + 10)}>
-            続きを見る
-          </button>
-        ) : null}
-      </Waypoint>
+
+      <AdSense></AdSense>
     </>
   );
 };
