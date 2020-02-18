@@ -12,10 +12,10 @@ function chunk<T extends any[]>(arr: T, size: number): T[][] {
   );
 }
 
-export const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter }> = ({
-  ranking,
-  filter
-}) => {
+export const RankingRender: React.FC<{
+  ranking: RankingResult[];
+  filter: Filter;
+}> = ({ ranking, filter }) => {
   useEffect(() => {
     setMax(10);
   }, [filter]);
@@ -33,40 +33,29 @@ export const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter 
     </div>
   ));
 
-  const itemsWithAds = chunk(rankingItems, 10).reduce(
-    (x, y) => (
-      <>
-        {x}
-        <div className="column is-full">
-          <AdSense></AdSense>
-        </div>
-        {y}
-      </>
-    ),
-    <></>
-  );
-
   return (
-    <>
-      <div className="columns is-desktop is-multiline">
-        {rankingItems}
-        <div className="column is-full">
-          <Waypoint onEnter={() => setMax(x => x + 10)}>
-            {max < items.length ? (
-              <progress className="progress is-primary" max="100">
-                loading
-              </progress>
-            ) : null}
-          </Waypoint>
-          {max < items.length ? (
-            <button className="button" onClick={() => setMax(x => x + 10)}>
-              続きを見る
-            </button>
-          ) : null}
-        </div>
+    <div className="columns is-desktop is-multiline">
+      <div className="column is-full">
+        <AdSense></AdSense>
       </div>
-
-      <AdSense></AdSense>
-    </>
+      {rankingItems}
+      <div className="column is-full">
+        <Waypoint onEnter={() => setMax(x => x + 10)}>
+          {max < items.length ? (
+            <progress className="progress is-primary" max="100">
+              loading
+            </progress>
+          ) : null}
+        </Waypoint>
+        {max < items.length ? (
+          <button className="button" onClick={() => setMax(x => x + 10)}>
+            続きを見る
+          </button>
+        ) : null}
+      </div>
+      <div className="column is-full">
+        <AdSense></AdSense>
+      </div>
+    </div>
   );
 };
