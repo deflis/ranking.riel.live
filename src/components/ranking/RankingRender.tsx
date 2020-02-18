@@ -49,7 +49,7 @@ export const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter 
   return (
     <>
       <div className="columns is-desktop is-multiline">
-        {itemsWithAds}
+        {rankingItems}
         <div className="column is-full">
           <Waypoint onEnter={() => setMax(x => x + 10)}>
             {max < items.length ? (
