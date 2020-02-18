@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { RankingResult } from "narou";
 import ky from "ky";
-import RankingItem from "../components/ranking/RankingItem";
-import "bulma";
 import { formatISO, setDay, startOfMonth, addDays, getDay } from "date-fns/esm";
 import { addHours } from "date-fns/esm";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent, Filter } from "../components/ranking/Filter";
-import { Waypoint } from "react-waypoint";
-import AdSense from "../components/common/AdSense";
+import { useParams } from "react-router-dom";
+import { parseISO } from "date-fns";
+import { RankingRender } from "../components/ranking/RankingRender";
+
+export type RankingParams = {
+  date?: string;
+  type?: string;
+};
 
 declare global {
   interface Window {
@@ -39,78 +43,21 @@ function formatDate(date: Date, type: RankingType): string {
   }
 }
 
-function chunk<T extends any[]>(arr: T, size: number): T[][] {
-  return arr.reduce(
-    (newarr, _, i) => (i % size ? newarr : [...newarr, arr.slice(i, i + size)]),
-    [] as T[][]
-  );
-}
-
-const RankingRender: React.FC<{ ranking: RankingResult[]; filter: Filter }> = ({
-  ranking,
-  filter
-}) => {
-  useEffect(() => {
-    setMax(10);
-  }, [filter]);
-  const [items, setItems] = useState<RankingResult[]>([]);
-
-  useEffect(() => {
-    setItems(filter.execute(ranking));
-  }, [ranking, filter]);
-
-  const [max, setMax] = useState(10);
-
-  const rankingItems = items.slice(0, max).map(item => (
-    <div className="column is-half-desktop" key={item.ncode}>
-      <RankingItem item={item} />
-    </div>
-  ));
-
-  const itemsWithAds = chunk(rankingItems, 10).reduce(
-    (x, y) => (
-      <>
-        {x}
-        <div className="column is-full">
-          <AdSense></AdSense>
-        </div>
-        {y}
-      </>
-    ),
-    <></>
-  );
-
-  return (
-    <>
-      <div className="columns is-desktop is-multiline">
-        {itemsWithAds}
-        <div className="column is-full">
-          <Waypoint onEnter={() => setMax(x => x + 10)}>
-            {max < items.length ? (
-              <progress className="progress is-primary" max="100">
-                loading
-              </progress>
-            ) : null}
-          </Waypoint>
-          {max < items.length ? (
-            <button className="button" onClick={() => setMax(x => x + 10)}>
-              続きを見る
-            </button>
-          ) : null}
-        </div>
-      </div>
-
-      <AdSense></AdSense>
-    </>
-  );
-};
-
 const Ranking: React.FC = () => {
-  const [type, setType] = useState(RankingType.Daily);
-  const [date, setDate] = useState(addHours(new Date(), -12));
+  const { date: _date, type: _type } = useParams<RankingParams>();
+
+  const [type, setType] = useState((_type as RankingType) ?? RankingType.Daily);
+  const [date, setDate] = useState(
+    _date ? parseISO(_date) : addHours(new Date(), -12)
+  );
   const [ranking, setRanking] = useState<RankingResult[]>([]);
   const [filter, setFilter] = useState(new Filter());
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (_type) setType(_type as RankingType);
+    if (_date) setDate(parseISO(_date));
+  }, [_date, _type]);
 
   useEffect(() => {
     (async () => {
@@ -147,6 +94,7 @@ const Ranking: React.FC = () => {
           <div className="field-body">
             <div className="select">
               <select
+                value={type}
                 onChange={e => {
                   setType(e.target.value as RankingType);
                 }}
