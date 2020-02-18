@@ -16,9 +16,9 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
   const toggleShowStory = useCallback(() => {
     setShowStory(!isShowStory);
   }, [isShowStory]);
-  const detail = `https://ncode.syosetu.com/novelview/infotop/ncode/${item.ncode}/`;
+  const detail = `https://ncode.syosetu.com/novelview/infotop/ncode/${item.ncode.toLowerCase()}/`;
   const user = `https://mypage.syosetu.com/${item.userid}/`;
-  const link = `https://ncode.syosetu.com/${item.ncode}/`;
+  const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
   const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
   const keywords = item.keyword
     .split(/\s/g)
