@@ -3,16 +3,14 @@ import { RankingResult } from "narou";
 import ky from "ky";
 import { formatISO, setDay, startOfMonth, addDays, getDay } from "date-fns/esm";
 import { addHours } from "date-fns/esm";
-import ReactDatePicker, { registerLocale } from "react-datepicker";
+import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent, Filter } from "../components/ranking/Filter";
 import { useParams, useHistory } from "react-router-dom";
 import { parseISO } from "date-fns";
 import { RankingRender } from "../components/ranking/RankingRender";
-import ja from "date-fns/locale/ja";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-registerLocale("ja", ja);
 
 export type RankingParams = {
   date?: string;
@@ -128,7 +126,6 @@ const Ranking: React.FC = () => {
             <div className="field has-addons">
               <div className="control has-icons-left">
                 <ReactDatePicker
-                  locale="ja"
                   className="input"
                   dateFormat="yyyy/MM/dd"
                   minDate={new Date(2013, 5, 1)}
