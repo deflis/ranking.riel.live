@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { RankingResult } from "narou";
 import ky from "ky";
 import { formatISO, setDay, startOfMonth, addDays, getDay } from "date-fns/esm";
@@ -6,7 +6,7 @@ import { addHours } from "date-fns/esm";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent, Filter } from "../components/ranking/Filter";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { parseISO } from "date-fns";
 import { RankingRender } from "../components/ranking/RankingRender";
 
@@ -44,30 +44,67 @@ function formatDate(date: Date, type: RankingType): string {
 }
 
 const Ranking: React.FC = () => {
+  const history = useHistory();
   const { date: _date, type: _type } = useParams<RankingParams>();
 
-  const [type, setType] = useState((_type as RankingType) ?? RankingType.Daily);
-  const [date, setDate] = useState(
-    _date ? parseISO(_date) : addHours(new Date(), -12)
-  );
   const [ranking, setRanking] = useState<RankingResult[]>([]);
   const [filter, setFilter] = useState(new Filter());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (_type) setType(_type as RankingType);
-    if (_date) setDate(parseISO(_date));
+    const type = (_type as RankingType) ?? RankingType.Daily;
+    const date = _date ? parseISO(_date) : addHours(new Date(), -12);
+    let didCancel = false;
+    setLoading(true);
+    setRanking([]);
+    (async () => {
+      const result = await ky(`/api/${type}/${formatDate(date, type)}`);
+      if (!didCancel) {
+        setRanking(await result.json());
+        setLoading(false);
+      }
+    })();
+    return () => {
+      didCancel = true;
+    };
   }, [_date, _type]);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setRanking([]);
-      const result = await ky(`/api/${type}/${formatDate(date, type)}`);
-      setRanking(await result.json());
-      setLoading(false);
-    })();
-  }, [date, type]);
+  const onTypeChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const date = _date ? parseISO(_date) : addHours(new Date(), -12);
+      const type = e.target.value as RankingType;
+      if (type === RankingType.Daily) {
+        if (
+          formatDate(date, type) !== formatDate(addHours(new Date(), -12), type)
+        ) {
+          history.push(`/ranking/${type}`);
+        } else {
+          history.push(`/`);
+        }
+      } else {
+        history.push(`/ranking/${type}/${formatDate(date, type)}`);
+      }
+    },
+    [_date, history]
+  );
+
+  const onDateChange = useCallback(
+    (date: Date | null) => {
+      const type = (_type as RankingType) ?? RankingType.Daily;
+      if (date && type === RankingType.Daily) {
+        if (
+          formatDate(date, type) !== formatDate(addHours(new Date(), -12), type)
+        ) {
+          history.push(`/ranking/${type}/${formatDate(date, type)}  `);
+        } else {
+          history.push(`/`);
+        }
+      } else if (date) {
+        history.push(`/ranking/${type}/${formatDate(date, type)}`);
+      }
+    },
+    [_type, history]
+  );
 
   return (
     <>
@@ -83,8 +120,8 @@ const Ranking: React.FC = () => {
                 dateFormat="yyyy/MM/dd"
                 minDate={new Date(2013, 5, 1)}
                 maxDate={new Date()}
-                selected={date}
-                onChange={d => setDate(d ?? date)}
+                selected={_date ? parseISO(_date) : addHours(new Date(), -12)}
+                onChange={onDateChange}
               />
             </div>
           </div>
@@ -93,12 +130,7 @@ const Ranking: React.FC = () => {
           </div>
           <div className="field-body">
             <div className="select">
-              <select
-                value={type}
-                onChange={e => {
-                  setType(e.target.value as RankingType);
-                }}
-              >
+              <select value={_type ?? RankingType.Daily} onChange={onTypeChange}>
                 <option value={RankingType.Daily}>日間</option>
                 <option value={RankingType.Weekly}>週間</option>
                 <option value={RankingType.Monthly}>月間</option>

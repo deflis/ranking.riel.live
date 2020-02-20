@@ -5,6 +5,7 @@ import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import Ranking from "./pages/ranking";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 const App: React.FC = () => {
   return (
@@ -12,14 +13,10 @@ const App: React.FC = () => {
       <div className="App">
         <Header></Header>
         <Switch>
-          <Route path="/" exact>
-            <Ranking></Ranking>
-          </Route>
-          <Route path="/ranking/:type" exact>
-            <Ranking></Ranking>
-          </Route>
-          <Route path="/ranking/:type/:date" exact>
-            <Ranking></Ranking>
+          <Route path={["/", "/ranking/:type", "/ranking/:type/:date"]} exact>
+            <ErrorBoundary>
+              <Ranking></Ranking>
+            </ErrorBoundary>
           </Route>
         </Switch>
         <Footer></Footer>

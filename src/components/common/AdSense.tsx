@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-export const AdSense = () => {
+export const AdSense = React.memo(() => {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -18,6 +18,6 @@ export const AdSense = () => {
       data-ad-slot="3138091970"
     ></ins>
   );
-};
+});
 
 export default AdSense;

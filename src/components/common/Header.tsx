@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrophy } from '@fortawesome/free-solid-svg-icons'
 
 export const Header: React.FC = () => (
   <nav className="navbar">
     <div className="navbar-brand">
       <Link className="navbar-item" to="/">
-        なろうランキング
+        <FontAwesomeIcon icon={faTrophy} />なろうランキング
       </Link>
     </div>
 
