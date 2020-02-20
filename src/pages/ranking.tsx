@@ -3,12 +3,16 @@ import { RankingResult } from "narou";
 import ky from "ky";
 import { formatISO, setDay, startOfMonth, addDays, getDay } from "date-fns/esm";
 import { addHours } from "date-fns/esm";
-import ReactDatePicker from "react-datepicker";
+import ReactDatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent, Filter } from "../components/ranking/Filter";
 import { useParams, useHistory } from "react-router-dom";
 import { parseISO } from "date-fns";
 import { RankingRender } from "../components/ranking/RankingRender";
+import ja from "date-fns/locale/ja";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+registerLocale("ja", ja);
 
 export type RankingParams = {
   date?: string;
@@ -29,17 +33,19 @@ enum RankingType {
 }
 
 function formatDate(date: Date, type: RankingType): string {
+  return formatISO(convertDate(date, type), { representation: "date" });
+}
+
+function convertDate(date: Date, type: RankingType): Date {
   switch (type) {
     case RankingType.Daily:
-      return formatISO(date, { representation: "date" });
+      return date;
     case RankingType.Weekly:
-      return formatISO(addDays(setDay(date, 2), getDay(date) < 2 ? -7 : 0), {
-        representation: "date"
-      });
+      return addDays(setDay(date, 2), getDay(date) < 2 ? -7 : 0);
     case RankingType.Monthly:
-      return formatISO(startOfMonth(date), { representation: "date" });
+      return startOfMonth(date);
     case RankingType.Quarter:
-      return formatISO(startOfMonth(date), { representation: "date" });
+      return startOfMonth(date);
   }
 }
 
@@ -48,7 +54,7 @@ const Ranking: React.FC = () => {
   const { date: _date, type: _type } = useParams<RankingParams>();
 
   const [ranking, setRanking] = useState<RankingResult[]>([]);
-  const [filter, setFilter] = useState(new Filter());
+  const [filter, setFilter] = useState(Filter.init());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -105,6 +111,11 @@ const Ranking: React.FC = () => {
     },
     [_type, history]
   );
+  const type = (_type as RankingType) ?? RankingType.Daily;
+  const date = convertDate(
+    _date ? parseISO(_date) : addHours(new Date(), -12),
+    type
+  );
 
   return (
     <>
@@ -114,32 +125,47 @@ const Ranking: React.FC = () => {
             <label className="label">日付</label>
           </div>
           <div className="field-body">
-            <div className="control">
-              <ReactDatePicker
-                className="input"
-                dateFormat="yyyy/MM/dd"
-                minDate={new Date(2013, 5, 1)}
-                maxDate={new Date()}
-                selected={_date ? parseISO(_date) : addHours(new Date(), -12)}
-                onChange={onDateChange}
-              />
+            <div className="field has-addons">
+              <div className="control has-icons-left">
+                <ReactDatePicker
+                  locale="ja"
+                  className="input"
+                  dateFormat="yyyy/MM/dd"
+                  minDate={new Date(2013, 5, 1)}
+                  maxDate={new Date()}
+                  selected={date}
+                  onChange={onDateChange}
+                />
+                <span className="icon is-small is-left">
+                  <FontAwesomeIcon icon={faCalendar} />
+                </span>
+              </div>
+              <p className="control">
+                <button className="button is-info" onClick={() => onDateChange(null)}>
+                  リセット
+                </button>
+              </p>
             </div>
           </div>
           <div className="field-label">
             <label className="label">種類</label>
           </div>
           <div className="field-body">
-            <div className="select">
-              <select value={_type ?? RankingType.Daily} onChange={onTypeChange}>
-                <option value={RankingType.Daily}>日間</option>
-                <option value={RankingType.Weekly}>週間</option>
-                <option value={RankingType.Monthly}>月間</option>
-                <option value={RankingType.Quarter}>四半期</option>
-              </select>
+            <div className="field has-addons">
+              <div className="select">
+                <select value={type} onChange={onTypeChange}>
+                  <option value={RankingType.Daily}>日間</option>
+                  <option value={RankingType.Weekly}>週間</option>
+                  <option value={RankingType.Monthly}>月間</option>
+                  <option value={RankingType.Quarter}>四半期</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
         <FilterComponent onChange={setFilter} />
+
+
         {loading ? (
           <progress className="progress is-primary" max="100">
             loading

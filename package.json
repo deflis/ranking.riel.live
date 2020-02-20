@@ -36,6 +36,7 @@
     "react-scripts": "3.3.1",
     "react-waypoint": "^9.0.2",
     "redux": "^4.0.5",
+    "store": "^2.0.12",
     "typescript": "^3.7.5",
     "unescape": "^1.0.1"
   },
@@ -65,6 +66,7 @@
   },
   "proxy": "http://localhost:5000",
   "devDependencies": {
+    "@types/store": "^2.0.2",
     "firebase-admin": "^8.9.2",
     "firebase-tools": "^7.13.0",
     "narou": "^0.2.2",
