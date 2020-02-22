@@ -2,13 +2,36 @@ import React from "react";
 import { NarouSearchResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
-import { parse, formatDistance } from "date-fns";
+import { parse, formatDistance, format } from "date-fns";
 import { ja } from "date-fns/locale";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
 const formatOptions = { locale: ja };
 const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
+
+function formatRelative(date: string): string {
+  return formatDistance(parse(date, narouDateFormat, baseDate), baseDate, {
+    locale: ja
+  });
+}
+function formatDate(date: string): string {
+  return format(
+    parse(date, narouDateFormat, baseDate),
+    "yyyy年MM月dd日 hh:mm:ss",
+    formatOptions
+  );
+}
+function round(number: number, precision: number): number {
+  const shift = function (number: number, precision: number, reverseShift: boolean) {
+    if (reverseShift) {
+      precision = -precision;
+    }  
+    const numArray = ("" + number).split("e");
+    return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+  };
+  return shift(Math.round(shift(number, precision, false)), precision, true);
+}
 
 const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
   const detail = `https://ncode.syosetu.com/novelview/infotop/ncode/${item.ncode.toLowerCase()}/`;
@@ -106,7 +129,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
                       : ""
                   }`}
                 >
-                  全{item.general_all_no}話
+                  全{item.general_all_no.toLocaleString()}話
                 </span>
               )}
             </div>
@@ -145,84 +168,207 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           </div>
           <div className="control">
             <span className="tag">
-              {Math.round(item.length / item.general_all_no)}文字/話
+              {Math.round(item.length / item.general_all_no).toLocaleString()}
+              文字/話
             </span>
           </div>
         </div>
-        <div>
+        <div className="content">
           <article className="message">
             <div className="message-header">
               <p>あらすじ</p>
             </div>
             <div className="message-body">
-              <p>{story}</p>{" "}
+              <p>{story}</p>
             </div>
           </article>
-          <p>{keywords}</p>
-          <table className="table is-bordered is-fullwidth">
-            <tbody>
-              <tr>
-                <th>作者</th>
-                <td>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">作者</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
                   <a href={user} target="_blank" rel="noopener noreferrer">
                     {entities.decode(item.writer)}
                   </a>
-                </td>
-              </tr>
-              <tr>
-                <th>ジャンル</th>
-                <td>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">ジャンル</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
                   <a href={ranking} target="_blank" rel="noopener noreferrer">
                     {Genre.get(item.genre)}
                   </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">キーワード</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">{keywords}</p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">掲載日</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {formatDate(item.general_firstup)} （
+                  {formatRelative(item.general_firstup)}前）
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">最新部分掲載日</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {formatDate(item.general_lastup)} （
+                  {formatRelative(item.general_lastup)}前）
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">感想</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {item.impression_cnt.toLocaleString()}件
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">レビュー</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {item.review_cnt.toLocaleString()}件
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">ブックマーク登録</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {item.fav_novel_cnt.toLocaleString()}件
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">総合評価</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {item.all_point.toLocaleString()}pt /{" "}
+                  {item.all_hyoka_cnt.toLocaleString()}人 = 平均
+                  {round(
+                    item.all_point / item.all_hyoka_cnt,
+                    2
+                  ).toLocaleString()}
+                  pt
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">文字数</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {item.length.toLocaleString()}文字 / 全
+                  {item.general_all_no.toLocaleString()}話 ={" "}
+                  {Math.round(
+                    item.length / item.general_all_no
+                  ).toLocaleString()}
+                  文字/話
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              <label className="label">更新日時</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <p className="control is-expanded">
+                  {formatDate((item.novelupdated_at as any) as string)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="content">
-          <p>掲載日 {item.general_firstup}</p>
-          <p>最新部分掲載日 {item.general_lastup}</p>
-          <p>感想 {item.impression_cnt}件</p>
-          <p>レビュー {item.review_cnt}件</p>
-          <p>ブックマーク登録 {item.fav_novel_cnt}件</p>
-          <p>総合評価 {item.all_point}pt</p>
-          <p>文字数 {item.length}文字</p>
-          <p>更新日時: {item.novelupdated_at}</p>
+          <h3 className="subtitle">獲得ポイント</h3>
+          <table className="table">
+            <thead>
+              <th>総合評価ポイント</th>
+              <th>日間</th>
+              <th>週間</th>
+              <th>月間</th>
+              <th>四半期</th>
+              <th>年間</th>
+            </thead>
+            <tr>
+              <td>{item.global_point.toLocaleString()}</td>
+              <td>{item.daily_point.toLocaleString()}</td>
+              <td>{item.weekly_point.toLocaleString()}</td>
+              <td>{item.monthly_point.toLocaleString()}</td>
+              <td>{item.quarter_point.toLocaleString()}</td>
+              <td>{item.yearly_point.toLocaleString()}</td>
+            </tr>
+          </table>
           <p>
-            掲載開始:{" "}
-            {formatDistance(
-              parse(item.general_firstup, narouDateFormat, new Date()),
-              baseDate,
-              formatOptions
-            )}
-            前 / 最終更新:{" "}
-            {formatDistance(
-              parse(item.general_lastup, narouDateFormat, new Date()),
-              baseDate,
-              formatOptions
-            )}
-            前
+            <a
+              className="button"
+              href={detail}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              小説情報
+            </a>{" "}
+            <a
+              className="button"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              読む
+            </a>
           </p>
         </div>
-        <p>
-          <a
-            className="button"
-            href={detail}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            小説情報
-          </a>{" "}
-          <a
-            className="button"
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            読む
-          </a>
-        </p>
       </div>
     </div>
   );
