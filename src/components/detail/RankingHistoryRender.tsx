@@ -25,6 +25,7 @@ import {
   Brush
 } from "recharts";
 import { Link } from "react-router-dom";
+import { ja } from 'date-fns/locale';
 
 function* rangeDate(start: Date, end: Date, type: RankingType) {
   if (!start) return;
@@ -69,7 +70,7 @@ const RankingHistoryCharts: React.FC<{
         }
     )
     .map(({ date, rank, pt }) => ({
-      date: format(date, "yyyy年MM月dd日"),
+      date: format(date, "yyyy年MM月dd日(E)", {locale:ja}),
       順位: rank,
       ポイント: pt
     }));
@@ -120,11 +121,11 @@ const RankingHistoryCharts: React.FC<{
                     representation: "date"
                   })}`}
                 >
-                  {format(date, "yyyy年MM月dd日")}
+                  {format(date, "yyyy年MM月dd日(E)", {locale:ja})}
                 </Link>
               </td>
-              <td>{rank}</td>
-              <td>{pt}</td>
+              <td>{rank}位</td>
+              <td>{pt}pt</td>
             </tr>
           ))}
         </table>
