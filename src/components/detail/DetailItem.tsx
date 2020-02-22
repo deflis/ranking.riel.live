@@ -23,12 +23,20 @@ function formatDate(date: string): string {
   );
 }
 function round(number: number, precision: number): number {
-  const shift = function (number: number, precision: number, reverseShift: boolean) {
+  const shift = function(
+    number: number,
+    precision: number,
+    reverseShift: boolean
+  ) {
     if (reverseShift) {
       precision = -precision;
-    }  
+    }
     const numArray = ("" + number).split("e");
-    return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+    return +(
+      numArray[0] +
+      "e" +
+      (numArray[1] ? +numArray[1] + precision : precision)
+    );
   };
   return shift(Math.round(shift(number, precision, false)), precision, true);
 }
@@ -173,159 +181,163 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
             </span>
           </div>
         </div>
-        <div className="content">
-          <article className="message">
-            <div className="message-header">
-              <p>あらすじ</p>
-            </div>
-            <div className="message-body">
-              <p>{story}</p>
-            </div>
-          </article>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">作者</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  <a href={user} target="_blank" rel="noopener noreferrer">
-                    {entities.decode(item.writer)}
-                  </a>
-                </p>
+        <div className="columns">
+          <div className="column is-three-fifths-desktop">
+            <article className="message">
+              <div className="message-header">
+                <p>あらすじ</p>
+              </div>
+              <div className="message-body">
+                <p>{story}</p>
+              </div>
+            </article>
+          </div>
+          <div className="column">
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">作者</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    <a href={user} target="_blank" rel="noopener noreferrer">
+                      {entities.decode(item.writer)}
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">ジャンル</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  <a href={ranking} target="_blank" rel="noopener noreferrer">
-                    {Genre.get(item.genre)}
-                  </a>
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">ジャンル</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    <a href={ranking} target="_blank" rel="noopener noreferrer">
+                      {Genre.get(item.genre)}
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">キーワード</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">{keywords}</p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">キーワード</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">{keywords}</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">掲載日</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {formatDate(item.general_firstup)} （
-                  {formatRelative(item.general_firstup)}前）
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">掲載日</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {formatDate(item.general_firstup)} （
+                    {formatRelative(item.general_firstup)}前）
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">最新部分掲載日</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {formatDate(item.general_lastup)} （
-                  {formatRelative(item.general_lastup)}前）
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">最新部分掲載日</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {formatDate(item.general_lastup)} （
+                    {formatRelative(item.general_lastup)}前）
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">感想</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {item.impression_cnt.toLocaleString()}件
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">感想</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {item.impression_cnt.toLocaleString()}件
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">レビュー</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {item.review_cnt.toLocaleString()}件
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">レビュー</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {item.review_cnt.toLocaleString()}件
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">ブックマーク登録</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {item.fav_novel_cnt.toLocaleString()}件
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">ブックマーク登録</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {item.fav_novel_cnt.toLocaleString()}件
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">総合評価</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {item.all_point.toLocaleString()}pt /{" "}
-                  {item.all_hyoka_cnt.toLocaleString()}人 = 平均
-                  {round(
-                    item.all_point / item.all_hyoka_cnt,
-                    2
-                  ).toLocaleString()}
-                  pt
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">総合評価</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {item.all_point.toLocaleString()}pt /{" "}
+                    {item.all_hyoka_cnt.toLocaleString()}人 = 平均
+                    {round(
+                      item.all_point / item.all_hyoka_cnt,
+                      2
+                    ).toLocaleString()}
+                    pt
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">文字数</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {item.length.toLocaleString()}文字 / 全
-                  {item.general_all_no.toLocaleString()}話 ={" "}
-                  {Math.round(
-                    item.length / item.general_all_no
-                  ).toLocaleString()}
-                  文字/話
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">文字数</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {item.length.toLocaleString()}文字 / 全
+                    {item.general_all_no.toLocaleString()}話 ={" "}
+                    {Math.round(
+                      item.length / item.general_all_no
+                    ).toLocaleString()}
+                    文字/話
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="field is-horizontal">
-            <div className="field-label">
-              <label className="label">更新日時</label>
-            </div>
-            <div className="field-body">
-              <div className="field">
-                <p className="control is-expanded">
-                  {formatDate((item.novelupdated_at as any) as string)}
-                </p>
+            <div className="field is-horizontal">
+              <div className="field-label">
+                <label className="label">更新日時</label>
+              </div>
+              <div className="field-body">
+                <div className="field">
+                  <p className="control is-expanded">
+                    {formatDate((item.novelupdated_at as any) as string)}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

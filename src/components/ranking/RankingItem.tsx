@@ -45,7 +45,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
               item.pt > 5000 ? "is-danger" : item.pt > 1000 ? "is-success" : ""
             } is-light`}
           >
-            {item.pt}pt
+            {item.pt.toLocaleString()}pt
           </span>
           {isBefore(
             parse(item.general_firstup, narouDateFormat, new Date()),
@@ -97,7 +97,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
                       : ""
                   }`}
                 >
-                  全{item.general_all_no}話
+                  全{item.general_all_no.toLocaleString()}話
                 </span>
               )}
             </div>
@@ -114,7 +114,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
           </div>
           <div className="control">
             <span className="tag">
-              {Math.round(item.length / item.general_all_no)}文字/話
+              {Math.round(item.length / item.general_all_no).toLocaleString()}文字/話
             </span>
           </div>
         </div>
@@ -170,10 +170,8 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
           </p>
           <p className="card-footer-item">
             <Link
-              className=""
+              className="button"
               to={`/detail/${item.ncode.toLowerCase()}`}
-              target="_blank"
-              rel="noopener noreferrer"
             >
               小説情報
             </Link>

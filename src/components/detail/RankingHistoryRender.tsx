@@ -125,7 +125,7 @@ const RankingHistoryCharts: React.FC<{
                 </Link>
               </td>
               <td>{rank}位</td>
-              <td>{pt}pt</td>
+              <td>{pt.toLocaleString()}pt</td>
             </tr>
           ))}
         </table>
