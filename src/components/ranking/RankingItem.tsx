@@ -5,6 +5,7 @@ import Genre from "../../enum/Genre";
 import { parse, formatDistance, isBefore, addDays, isAfter } from "date-fns";
 import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns/esm";
+import { Link } from "react-router-dom";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -16,7 +17,6 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
   const toggleShowStory = useCallback(() => {
     setShowStory(!isShowStory);
   }, [isShowStory]);
-  const detail = `https://ncode.syosetu.com/novelview/infotop/ncode/${item.ncode.toLowerCase()}/`;
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
   const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
@@ -169,14 +169,14 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
             </span>
           </p>
           <p className="card-footer-item">
-            <a
+            <Link
               className=""
-              href={detail}
+              to={`/detail/${item.ncode.toLowerCase()}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               小説情報
-            </a>
+            </Link>
           </p>
           <p className="card-footer-item">
             <a

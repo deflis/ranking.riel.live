@@ -130,7 +130,7 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
     onChange(newFilter);
   };
   const setFirstUpdate = (firstUpdate: Date | null) => {
-    const newFilter = filter.setFirstUpdate(firstUpdate);
+    const newFilter = filter.setFirstUpdate(firstUpdate ?? undefined);
     setFilter(newFilter);
     onChange(newFilter);
   };
@@ -315,7 +315,7 @@ export class Filter {
     genres: number[],
     maxNo: number,
     minNo: number,
-    firstUpdate: Date | null,
+    firstUpdate: Date | undefined,
     enableTanpen: boolean,
     enableRensai: boolean,
     enableKanketsu: boolean
@@ -332,7 +332,7 @@ export class Filter {
     const genre: number[] = store.get("genres", initGenre);
     const maxNo: number = store.get("maxNo", 0);
     const minNo: number = store.get("minNo", 0);
-    const firstUpdate: Date | null = store.get("firstUpdate", null);
+    const firstUpdate: Date | undefined = store.get("firstUpdate", undefined);
     const enableTanpen: boolean = store.get("enableTanpen", true);
     const enableRensai: boolean = store.get("enableRensai", true);
     const enableKanketsu: boolean = store.get("enableKanketsu", true);
@@ -372,7 +372,7 @@ export class Filter {
   private _genres: number[];
   private _maxNo: number;
   private _minNo: number;
-  private _firstUpdate: Date | null;
+  private _firstUpdate: Date | undefined;
   private _enableTanpen: boolean;
   private _enableRensai: boolean;
   private _enableKanketsu: boolean;
@@ -425,7 +425,7 @@ export class Filter {
   get firstUpdate() {
     return this._firstUpdate;
   }
-  setFirstUpdate(firstUpdate: Date | null) {
+  setFirstUpdate(firstUpdate: Date | undefined) {
     store.set("firstUpdate", firstUpdate);
     return new Filter(
       this.genres,

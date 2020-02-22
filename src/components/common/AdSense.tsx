@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
 
+declare global {
+  interface Window {
+    adsbygoogle: Array<any>;
+  }
+}
+
 export const AdSense = React.memo(() => {
   useEffect(() => {
     try {

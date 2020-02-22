@@ -17,12 +17,6 @@ export type RankingParams = {
   type?: string;
 };
 
-declare global {
-  interface Window {
-    adsbygoogle: Array<any>;
-  }
-}
-
 enum RankingType {
   Daily = "d",
   Weekly = "w",
@@ -62,7 +56,7 @@ const Ranking: React.FC = () => {
     setLoading(true);
     setRanking([]);
     (async () => {
-      const result = await ky(`/api/${type}/${formatDate(date, type)}`);
+      const result = await ky(`/api/ranking/${type}/${formatDate(date, type)}`);
       if (!didCancel) {
         setRanking(await result.json());
         setLoading(false);
@@ -116,63 +110,63 @@ const Ranking: React.FC = () => {
   );
 
   return (
-    <>
-      <div className="container">
-        <div className="field is-horizontal">
-          <div className="field-label">
-            <label className="label">日付</label>
-          </div>
-          <div className="field-body">
-            <div className="field has-addons">
-              <div className="control has-icons-left">
-                <ReactDatePicker
-                  className="input"
-                  dateFormat="yyyy/MM/dd"
-                  minDate={new Date(2013, 5, 1)}
-                  maxDate={new Date()}
-                  selected={date}
-                  onChange={onDateChange}
-                />
-                <span className="icon is-small is-left">
-                  <FontAwesomeIcon icon={faCalendar} />
-                </span>
-              </div>
-              <p className="control">
-                <button className="button is-info" onClick={() => onDateChange(null)}>
-                  リセット
-                </button>
-              </p>
+    <div className="container">
+      <div className="field is-horizontal">
+        <div className="field-label">
+          <label className="label">日付</label>
+        </div>
+        <div className="field-body">
+          <div className="field has-addons">
+            <div className="control has-icons-left">
+              <ReactDatePicker
+                className="input"
+                dateFormat="yyyy/MM/dd"
+                minDate={new Date(2013, 5, 1)}
+                maxDate={new Date()}
+                selected={date}
+                onChange={onDateChange}
+              />
+              <span className="icon is-small is-left">
+                <FontAwesomeIcon icon={faCalendar} />
+              </span>
             </div>
+            <p className="control">
+              <button
+                className="button is-info"
+                onClick={() => onDateChange(null)}
+              >
+                リセット
+              </button>
+            </p>
           </div>
-          <div className="field-label">
-            <label className="label">種類</label>
-          </div>
-          <div className="field-body">
-            <div className="field has-addons">
-              <div className="select">
-                <select value={type} onChange={onTypeChange}>
-                  <option value={RankingType.Daily}>日間</option>
-                  <option value={RankingType.Weekly}>週間</option>
-                  <option value={RankingType.Monthly}>月間</option>
-                  <option value={RankingType.Quarter}>四半期</option>
-                </select>
-              </div>
+        </div>
+        <div className="field-label">
+          <label className="label">種類</label>
+        </div>
+        <div className="field-body">
+          <div className="field has-addons">
+            <div className="select">
+              <select value={type} onChange={onTypeChange}>
+                <option value={RankingType.Daily}>日間</option>
+                <option value={RankingType.Weekly}>週間</option>
+                <option value={RankingType.Monthly}>月間</option>
+                <option value={RankingType.Quarter}>四半期</option>
+              </select>
             </div>
           </div>
         </div>
-        <FilterComponent onChange={setFilter} />
-
-
-        {loading ? (
-          <progress className="progress is-primary" max="100">
-            loading
-          </progress>
-        ) : (
-          <></>
-        )}
-        <RankingRender ranking={ranking} filter={filter} />
       </div>
-    </>
+      <FilterComponent onChange={setFilter} />
+
+      {loading ? (
+        <progress className="progress is-primary" max="100">
+          loading
+        </progress>
+      ) : (
+        <></>
+      )}
+      <RankingRender ranking={ranking} filter={filter} />
+    </div>
   );
 };
 
