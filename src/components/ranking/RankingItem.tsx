@@ -62,7 +62,9 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
                   ? ""
                   : "is-light"
               }`}
-            >New!</span>
+            >
+              New!
+            </span>
           )}
         </p>
       </header>
@@ -114,7 +116,8 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
           </div>
           <div className="control">
             <span className="tag">
-              {Math.round(item.length / item.general_all_no).toLocaleString()}文字/話
+              {Math.round(item.length / item.general_all_no).toLocaleString()}
+              文字/話
             </span>
           </div>
         </div>
@@ -169,12 +172,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
             </span>
           </p>
           <p className="card-footer-item">
-            <Link
-              className="button"
-              to={`/detail/${item.ncode.toLowerCase()}`}
-            >
-              小説情報
-            </Link>
+            <Link to={`/detail/${item.ncode.toLowerCase()}`}>小説情報</Link>
           </p>
           <p className="card-footer-item">
             <a
