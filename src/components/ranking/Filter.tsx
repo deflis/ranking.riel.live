@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import Genre from "../../enum/Genre";
 import { RankingResult } from "narou";
 import ReactDatePicker from "react-datepicker";
-import { isBefore, parse } from "date-fns";
+import { isBefore, parse, parseISO, formatISO, isValid } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import store from "store";
@@ -43,13 +43,13 @@ const StoryCount: React.FC<{
       <>
         <div className="field has-addons">
           <div className="control">
-              <label className="button checkbox">
-                <input
-                  type="checkbox"
-                  checked={enabled}
-                  onChange={() => toggle()}
-                />
-              </label>
+            <label className="button checkbox">
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={() => toggle()}
+              />
+            </label>
           </div>
           <div className="control">
             <span className="button is-static">{children}</span>
@@ -60,7 +60,7 @@ const StoryCount: React.FC<{
               type="text"
               value={value}
               onChange={e => {
-                setValue(e.target.value)
+                setValue(e.target.value);
                 const x = parseInt(e.target.value);
                 if (x > 0) update(x);
               }}
@@ -332,15 +332,16 @@ export class Filter {
     const genre: number[] = store.get("genres", initGenre);
     const maxNo: number = store.get("maxNo", 0);
     const minNo: number = store.get("minNo", 0);
-    const firstUpdate: Date | undefined = store.get("firstUpdate", undefined);
+    const firstUpdate: string | undefined = store.get("firstUpdate", undefined);
     const enableTanpen: boolean = store.get("enableTanpen", true);
     const enableRensai: boolean = store.get("enableRensai", true);
     const enableKanketsu: boolean = store.get("enableKanketsu", true);
+    const _firstUpdate = firstUpdate ? parseISO(firstUpdate) : undefined,
     return new Filter(
       genre,
       maxNo,
       minNo,
-      firstUpdate,
+      isValid(_firstUpdate) ? _firstUpdate : undefined,
       enableTanpen,
       enableRensai,
       enableKanketsu
@@ -426,7 +427,7 @@ export class Filter {
     return this._firstUpdate;
   }
   setFirstUpdate(firstUpdate: Date | undefined) {
-    store.set("firstUpdate", firstUpdate);
+    store.set("firstUpdate", firstUpdate ? formatISO(firstUpdate) : undefined);
     return new Filter(
       this.genres,
       this.maxNo,
