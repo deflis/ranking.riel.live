@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { RankingResult } from "narou";
 import RankingItem from "./RankingItem";
-import { Filter } from "./Filter";
+import { FilterInterface, DummyFilter } from "../../interface/Filter";
 import { Waypoint } from "react-waypoint";
 import AdSense from "../common/AdSense";
 
 const InsideRender: React.FC<{
   ranking: RankingResult[];
-  filter: Filter;
+  filter: FilterInterface;
 }> = React.memo(({ ranking, filter }) => {
   const [max, setMax] = useState(10);
   const [items, setItems] = useState<RankingResult[]>([]);
@@ -46,19 +46,17 @@ const InsideRender: React.FC<{
 
 export const RankingRender: React.FC<{
   ranking: RankingResult[];
-  filter: Filter;
-}> = React.memo(
-  ({ ranking, filter }) => {
-    return (
-      <div className="columns is-desktop is-multiline">
-        <div className="column is-full">
-          <AdSense></AdSense>
-        </div>
-        <InsideRender ranking={ranking} filter={filter} />
-        <div className="column is-full">
-          <AdSense></AdSense>
-        </div>
+  filter?: FilterInterface;
+}> = React.memo(({ ranking, filter }) => {
+  return (
+    <div className="columns is-desktop is-multiline">
+      <div className="column is-full">
+        <AdSense></AdSense>
       </div>
-    );
-  }
-);
+      <InsideRender ranking={ranking} filter={filter ?? new DummyFilter()} />
+      <div className="column is-full">
+        <AdSense></AdSense>
+      </div>
+    </div>
+  );
+});

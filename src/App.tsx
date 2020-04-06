@@ -7,6 +7,7 @@ import Ranking from "./pages/ranking";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import Detail from "./pages/detail";
+import CustomRanking from './pages/custom';
 
 const App: React.FC = () => {
   return (
@@ -20,6 +21,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/detail/:ncode" exact>
               <Detail />
+            </Route>
+            <Route path="/custom/:type" exact>
+              <CustomRanking />
             </Route>
           </Switch>
         </ErrorBoundary>

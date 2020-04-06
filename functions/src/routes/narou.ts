@@ -33,7 +33,10 @@ router.get("/detail/:ncode", async (req, res) => {
     const searchResultAsync = search()
       .ncode(ncode)
       .execute();
-    const historyAsync = rankingHistory(ncode);
+    const historyAsync = rankingHistory(ncode).catch(e => {
+      console.error(e);
+      return [];
+    });
     const [searchResult, history] = await Promise.all([
       searchResultAsync,
       historyAsync
@@ -47,12 +50,16 @@ router.get("/detail/:ncode", async (req, res) => {
       RankingType.Monthly,
       RankingType.Quarterly
     ]) {
-      ranking[type] = history
-        .filter(x => x.type === type)
-        .map(({ date, ...other }) => ({
-          date: formatISO(date, { representation: "date" }),
-          ...other
-        }));
+      if (Array.isArray(history)) {
+        ranking[type] = history
+          .filter(x => x.type === type)
+          .map(({ date, ...other }) => ({
+            date: formatISO(date, { representation: "date" }),
+            ...other
+          }));
+      } else {
+        ranking[type] = [];
+      }
     }
 
     res.set("Cache-Control", "public, max-age=300, s-maxage=600");
