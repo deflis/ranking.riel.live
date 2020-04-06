@@ -4,6 +4,7 @@ import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
 import { parse, formatDistance, format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { Link } from 'react-router-dom';
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -52,13 +53,13 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
   const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
   const keywords = item.keyword
     .split(/\s/g)
-    .map(word => (
-      <a
+    .map(keyword => (
+      <Link
         className="tag"
-        href={`https://yomou.syosetu.com/search.php?word=${word}`}
+        to={`/custom?keyword=${keyword}`}
       >
-        {word}
-      </a>
+        {keyword}
+      </Link>
     ))
     .reduce((previus, current) => (
       <>

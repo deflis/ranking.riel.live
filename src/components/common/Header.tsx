@@ -43,6 +43,9 @@ export const Header: React.FC = () => {
           <Link className="navbar-item" to="/ranking/m">
             月間
           </Link>
+          <Link className="navbar-item" to="/custom">
+            カスタムランキング
+          </Link>
         </div>
         <div className="navbar-end">
           <div className="navvar-item field has-addons">

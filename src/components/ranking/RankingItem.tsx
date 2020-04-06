@@ -22,13 +22,13 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
   const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
   const keywords = item.keyword
     .split(/\s/g)
-    .map(word => (
-      <a
+    .map(keyword => (
+      <Link
         className="tag"
-        href={`https://yomou.syosetu.com/search.php?word=${word}`}
+        to={`/custom?keyword=${keyword}`}
       >
-        {word}
-      </a>
+        {keyword}
+      </Link>
     ))
     .reduce((previus, current) => (
       <>

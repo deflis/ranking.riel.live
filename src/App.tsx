@@ -22,6 +22,9 @@ const App: React.FC = () => {
             <Route path="/detail/:ncode" exact>
               <Detail />
             </Route>
+            <Route path="/custom" exact>
+              <CustomRanking />
+            </Route>
             <Route path="/custom/:type" exact>
               <CustomRanking />
             </Route>

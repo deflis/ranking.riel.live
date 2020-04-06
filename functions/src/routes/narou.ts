@@ -5,7 +5,8 @@ import {
   RankingType,
   search,
   Order,
-  RankingResult
+  RankingResult,
+  Genre
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
 
@@ -70,10 +71,15 @@ router.get("/detail/:ncode", async (req, res) => {
   }
 });
 
+interface CustomQueryParams {
+  keyword: string
+  genres: string
+}
+
 router.get("/custom/:order", async (req, res) => {
   try {
     const order = req.params.order as Order;
-    const { keyword, biggenre, genre } = req.query;
+    const { keyword, genres } = req.query as CustomQueryParams;
 
     const searchBuilder = search();
     searchBuilder.order(order).limit(500);
@@ -81,10 +87,8 @@ router.get("/custom/:order", async (req, res) => {
     if (keyword) {
       searchBuilder.word(keyword).byKeyword(true);
     }
-    if (biggenre) {
-      searchBuilder.bigGenre(biggenre);
-    }
-    if (genre) {
+    if (genres) {
+      const genre: Genre[] = genres.split(',') as any
       searchBuilder.genre(genre);
     }
 

@@ -150,7 +150,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
       <div className="tabs is-toggle is-fullwidth">
         <ul>
           <li className={type === RankingType.Daily ? "is-active" : ""}>
-            <a
+            <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
               onClick={e => {
                 e.preventDefault();
@@ -161,7 +161,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
             </a>
           </li>
           <li className={type === RankingType.Weekly ? "is-active" : ""}>
-            <a
+            <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
               onClick={e => {
                 e.preventDefault();
@@ -172,7 +172,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
             </a>
           </li>
           <li className={type === RankingType.Monthly ? "is-active" : ""}>
-            <a
+            <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
               onClick={e => {
                 e.preventDefault();
@@ -183,7 +183,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
             </a>
           </li>
           <li className={type === RankingType.Quarterly ? "is-active" : ""}>
-            <a
+            <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
               onClick={e => {
                 e.preventDefault();
