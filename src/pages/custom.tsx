@@ -4,13 +4,13 @@ import ky from "ky";
 import { useParams, useHistory } from "react-router-dom";
 import { RankingRender } from "../components/ranking/RankingRender";
 import { useQuery } from "../util/useQuery";
-import { useMemo } from 'react';
-import Genre from '../enum/Genre';
+import { useMemo } from "react";
+import Genre from "../enum/Genre";
 import {
   CustomRankingForm,
-  CustomRankingFormEvent,
-  RankingType,
+  CustomRankingFormEvent
 } from "../components/custom/CustomRankingForm";
+import { RankingType, RankingTypeName } from "../interface/RankingType";
 
 export type CustomRankingParams = {
   type?: RankingType;
@@ -48,12 +48,16 @@ function createParams(
   return searchParams;
 }
 
-function conventGenres(rawGenres: string = '') {
-  return rawGenres.split(",").map(x => Number(x)).filter(x => Genre.has(x));
+function conventGenres(rawGenres: string = "") {
+  return rawGenres
+    .split(",")
+    .map(x => Number(x))
+    .filter(x => Genre.has(x));
 }
 
 const CustomRanking: React.FC = () => {
-  const { type } = useParams<CustomRankingParams>();
+  const params = useParams<CustomRankingParams>();
+  const type = (params.type ?? RankingType.Daily) as RankingType;
   const { keyword, genres: rawGenres } = useQuery<CustomRankingQueryParams>();
   const genres = useMemo(() => conventGenres(rawGenres), [rawGenres]);
 
@@ -63,16 +67,21 @@ const CustomRanking: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = `なろうランキングビューワ - ${
+      keyword ? `${keyword}の` : "カスタム"
+    }${RankingTypeName.get(type)}ランキング`;
+  }, [type, keyword]);
+
+  useEffect(() => {
     let didCancel = false;
     setLoading(true);
     setRanking([]);
     (async () => {
       try {
         console.log("api request");
-        const result = await ky(
-          `/api/custom/${convertOrder(type as RankingType)}/`,
-          { searchParams: createParams(keyword, genres) }
-        );
+        const result = await ky(`/api/custom/${convertOrder(type)}/`, {
+          searchParams: createParams(keyword, genres)
+        });
         if (!didCancel) {
           setRanking(await result.json());
           setLoading(false);
@@ -91,17 +100,15 @@ const CustomRanking: React.FC = () => {
     ({ keyword, genres, rankingType }) => {
       history.push(`/custom/${rankingType}?${createParams(keyword, genres)}`);
     },
-    [type, history]
+    [history]
   );
 
   return (
     <div className="container">
-      <form>
-      </form>
       <CustomRankingForm
         keyword={keyword}
         genres={genres}
-        rankingType={(type ?? RankingType.Daily) as RankingType}
+        rankingType={type}
         onSearch={handleSearch}
       />
       {loading ? (

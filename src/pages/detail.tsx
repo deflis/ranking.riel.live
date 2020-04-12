@@ -25,6 +25,15 @@ const Detail: React.FC = () => {
   const [result, setResult] = useState<Result | null>();
 
   useEffect(() => {
+    if (result) {
+      document.title = `なろうランキングビューワ - ${result.detail.title}`
+    } else {
+      document.title = "なろうランキングビューワ"
+    }
+  }, [result]);
+  
+
+  useEffect(() => {
     let didCancel = false;
     setResult(null);
     (async () => {

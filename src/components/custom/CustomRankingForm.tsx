@@ -1,25 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Genre from "../../enum/Genre";
+import { RankingType, RankingTypeName } from "../../interface/RankingType";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
-
-export enum RankingType {
-  Daily = "d",
-  Weekly = "w",
-  Monthly = "m",
-  Quarter = "q",
-  Yearly = "y",
-  All = "a"
-}
-
-const RankingTypeName = new Map([
-  [RankingType.Daily, "日間"],
-  [RankingType.Weekly, "週間"],
-  [RankingType.Monthly, "月間"],
-  [RankingType.Quarter, "四半期"],
-  [RankingType.Yearly, "年間"],
-  [RankingType.All, "全期間"]
-]);
+import { TwitterShare } from "../common/TwitterShare";
 
 export interface CustomRankingFormEvent {
   keyword?: string;
@@ -48,6 +32,13 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = params => {
         <nav className="navbar">
           <div className="container">
             <div className="navbar-end">
+              <TwitterShare
+                title={`${
+                  params.keyword ? `${params.keyword}の` : "カスタム"
+                }${RankingTypeName.get(params.rankingType)}ランキング`}
+              >
+                ランキングを共有
+              </TwitterShare>{" "}
               <button className="button" onClick={toggleShow}>
                 <FontAwesomeIcon icon={faCog} />
                 編集

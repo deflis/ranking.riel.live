@@ -4,7 +4,8 @@ import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
 import { parse, formatDistance, format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { TwitterShare } from "../common/TwitterShare";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -54,10 +55,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
   const keywords = item.keyword
     .split(/\s/g)
     .map(keyword => (
-      <Link
-        className="tag"
-        to={`/custom?keyword=${keyword}`}
-      >
+      <Link className="tag" to={`/custom?keyword=${keyword}`}>
         {keyword}
       </Link>
     ))
@@ -67,11 +65,11 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
       </>
     ));
   const story = item.story.split(/\n/).reduce(
-    (x, y) => (
+    (previus, current) => (
       <>
-        {x}
+        {previus}
         <br />
-        {y}
+        {current}
       </>
     ),
     <></>
@@ -379,7 +377,8 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
               rel="noopener noreferrer"
             >
               読む
-            </a>
+            </a>{" "}
+            <TwitterShare title={`${item.title}のランキング履歴`}>ランキング履歴を共有</TwitterShare>
           </p>
         </div>
       </div>

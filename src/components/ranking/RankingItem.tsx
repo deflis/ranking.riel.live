@@ -23,10 +23,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
   const keywords = item.keyword
     .split(/\s/g)
     .map(keyword => (
-      <Link
-        className="tag"
-        to={`/custom?keyword=${keyword}`}
-      >
+      <Link className="tag" to={`/custom?keyword=${keyword}`}>
         {keyword}
       </Link>
     ))
@@ -123,14 +120,14 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
         </div>
         <div className="content">
           <p>
-            <a
+            <Link
               className="title is-5"
-              href={link}
+              to={`/detail/${item.ncode.toLowerCase()}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               {entities.decode(item.title)}
-            </a>
+            </Link>
           </p>
           <p>
             作者:{" "}

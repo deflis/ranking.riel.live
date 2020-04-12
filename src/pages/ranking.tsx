@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { RankingResult } from "narou";
 import ky from "ky";
-import { formatISO, setDay, startOfMonth, addDays, getDay } from "date-fns/esm";
-import { addHours } from "date-fns/esm";
+import {
+  format,
+  formatISO,
+  setDay,
+  startOfMonth,
+  addDays,
+  getDay,
+  addHours
+} from "date-fns/esm";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent } from "../components/ranking/Filter";
@@ -12,18 +19,13 @@ import { parseISO } from "date-fns";
 import { RankingRender } from "../components/ranking/RankingRender";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { RankingType, RankingTypeName } from "../interface/RankingType";
+import { TwitterShare } from "../components/common/TwitterShare";
 
 export type RankingParams = {
   date?: string;
   type?: string;
 };
-
-enum RankingType {
-  Daily = "d",
-  Weekly = "w",
-  Monthly = "m",
-  Quarter = "q"
-}
 
 function formatDate(date: Date, type: RankingType): string {
   return formatISO(convertDate(date, type), { representation: "date" });
@@ -32,6 +34,7 @@ function formatDate(date: Date, type: RankingType): string {
 function convertDate(date: Date, type: RankingType): Date {
   switch (type) {
     case RankingType.Daily:
+    default:
       return date;
     case RankingType.Weekly:
       return addDays(setDay(date, 2), getDay(date) < 2 ? -7 : 0);
@@ -49,7 +52,6 @@ const Ranking: React.FC = () => {
   const [ranking, setRanking] = useState<RankingResult[]>([]);
   const [filter, setFilter] = useState(Filter.init());
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const type = (_type as RankingType) ?? RankingType.Daily;
     const date = _date ? parseISO(_date) : addHours(new Date(), -12);
@@ -104,11 +106,18 @@ const Ranking: React.FC = () => {
     },
     [_type, history]
   );
+
   const type = (_type as RankingType) ?? RankingType.Daily;
   const date = convertDate(
     _date ? parseISO(_date) : addHours(new Date(), -12),
     type
   );
+
+  useEffect(() => {
+    document.title = `なろうランキングビューワ - ${
+      _date ? format(date, "yyyy/MM/dd") : "最新"
+    }の${RankingTypeName.get(type)}ランキング`;
+  }, [_date, date, type]);
 
   return (
     <div className="container">
@@ -155,6 +164,15 @@ const Ranking: React.FC = () => {
               </select>
             </div>
           </div>
+        </div>
+        <div className="field-body">
+          <TwitterShare
+            title={`${
+              _date ? format(date, "yyyy/MM/dd") : "最新"
+            }の${RankingTypeName.get(type)}ランキング`}
+          >
+            ランキングを共有
+          </TwitterShare>
         </div>
       </div>
       <FilterComponent onChange={setFilter} />
