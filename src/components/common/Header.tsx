@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { faTrophy, faHammer } from "@fortawesome/free-solid-svg-icons";
 
-const validateRegexp = /[nN][0-9]{4}[a-zA-Z]{2}/
+const validateRegexp = /[nN][0-9]{4}[a-zA-Z]{2}/;
 
 function validate(ncode: string): boolean {
-  return validateRegexp.test(ncode)
+  return validateRegexp.test(ncode);
 }
 
 export const Header: React.FC = () => {
@@ -50,10 +50,22 @@ export const Header: React.FC = () => {
         <div className="navbar-end">
           <div className="navvar-item field has-addons">
             <div className="control">
-              <input className="input" type="text" placeholder="Nコード" onChange={e => setNcode(e.target.value)} />
+              <input
+                className="input"
+                type="text"
+                placeholder="Nコード"
+                onChange={e => setNcode(e.target.value)}
+              />
             </div>
             <div className="control">
-              <button className="button" disabled={!validate(ncode)} onClick={detail}>詳細を取得</button>
+              <button
+                className="button"
+                disabled={!validate(ncode)}
+                onClick={detail}
+              >
+                <FontAwesomeIcon icon={faHammer} />
+                詳細を取得
+              </button>
             </div>
           </div>
         </div>

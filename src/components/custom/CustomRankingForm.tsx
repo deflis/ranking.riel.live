@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Genre from "../../enum/Genre";
-import CustomRanking from "../../pages/custom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCog, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export enum RankingType {
   Daily = "d",
@@ -41,15 +42,38 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = params => {
   const [show, setShow] = useState(false);
   const toggleShow = useCallback(() => setShow(!show), [show]);
 
-  if (show) {
-    return <EnableCustomRankingForm {...params} toggleShow={toggleShow} />;
-  } else {
-    return <DisableCustomRankingForm {...params} toggleShow={toggleShow} />;
-  }
+  return (
+    <section className="hero">
+      <div className="hero-head">
+        <nav className="navbar">
+          <div className="container">
+            <div className="navbar-end">
+              <button className="button" onClick={toggleShow}>
+                <FontAwesomeIcon icon={faCog} />
+                編集
+              </button>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div className="hero-body">
+        <div className="container">
+          {show ? (
+            <EnableCustomRankingForm {...params} toggleShow={toggleShow} />
+          ) : (
+            <DisableCustomRankingForm {...params} />
+          )}
+        </div>
+      </div>
+    </section>
+  );
 };
 
-const DisableCustomRankingForm: React.FC<CustomRankingFormParams &
-  InnterParams> = ({ keyword, genres, rankingType, onSearch, toggleShow }) => {
+const DisableCustomRankingForm: React.FC<CustomRankingFormParams> = ({
+  keyword,
+  genres,
+  rankingType
+}) => {
   const genre =
     genres.length > 0
       ? genres
@@ -65,30 +89,11 @@ const DisableCustomRankingForm: React.FC<CustomRankingFormParams &
       : "ジャンル設定なし";
   return (
     <>
-      <section className="hero">
-        <div className="hero-body">
-          <div className="container">
-            <h1 className="title">
-              {keyword ? `${keyword}の` : "カスタム"}
-              {RankingTypeName.get(rankingType)}ランキング
-            </h1>
-            <h2 className="subtitle">{genre}</h2>
-          </div>
-        </div>
-        <div className="hero-foot">
-          <nav className="navbar">
-            <div className="container">
-              <div className="navbar-menu">
-                <div className="navbar-start">
-                  <button className="button" onClick={toggleShow}>
-                    編集
-                  </button>
-                </div>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </section>
+      <h1 className="title">
+        {keyword ? `${keyword}の` : "カスタム"}
+        {RankingTypeName.get(rankingType)}ランキング
+      </h1>
+      <h2 className="subtitle">{genre}</h2>
     </>
   );
 };
@@ -220,13 +225,18 @@ const EnableCustomRankingForm: React.FC<CustomRankingFormParams &
       <div className="field is-horizontal">
         <div className="field-label"></div>
         <div className="field-body">
-          <div className="control">
-            <input type="submit" className="button is-primary" value="検索" />
-          </div>
-          <div className="control">
-            <button className="button" onClick={toggleShow}>
-              閉じる
-            </button>
+          <div className="field is-grouped">
+            <div className="control">
+              <button type="submit" className="button is-primary">
+                <FontAwesomeIcon icon={faSearch} /> 検索
+              </button>
+            </div>
+            <div className="control">
+              <button className="button" onClick={toggleShow}>
+                <FontAwesomeIcon icon={faTimes} />
+                閉じる
+              </button>
+            </div>
           </div>
         </div>
       </div>
