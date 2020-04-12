@@ -4,13 +4,12 @@ import ky from "ky";
 import { useParams, useHistory } from "react-router-dom";
 import { RankingRender } from "../components/ranking/RankingRender";
 import { useQuery } from "../util/useQuery";
-import { FilterComponent } from "../components/ranking/Filter";
-import { Filter } from "../interface/Filter";
 import { useMemo } from 'react';
 import Genre from '../enum/Genre';
 import {
   CustomRankingForm,
   CustomRankingFormEvent,
+  RankingType,
 } from "../components/custom/CustomRankingForm";
 
 export type CustomRankingParams = {
@@ -21,19 +20,10 @@ export type CustomRankingQueryParams = {
   keyword: string;
   genres: string;
 };
-
-enum RankingType {
-  Daily = "d",
-  Weekly = "w",
-  Monthly = "m",
-  Quarter = "q",
-  Yearly = "y",
-  All = "a",
-}
-
 function convertOrder(type?: RankingType): Order {
   switch (type) {
     case RankingType.Daily:
+    default:
       return Order.DailyPoint;
     case RankingType.Weekly:
       return Order.WeeklyPoint;
@@ -44,7 +34,6 @@ function convertOrder(type?: RankingType): Order {
     case RankingType.Yearly:
       return Order.YearlyPoint;
     case RankingType.All:
-    default:
       return Order.HyokaDesc;
   }
 }
@@ -69,7 +58,6 @@ const CustomRanking: React.FC = () => {
   const genres = useMemo(() => conventGenres(rawGenres), [rawGenres]);
 
   const history = useHistory();
-  const [filter, setFilter] = useState(Filter.init());
 
   const [ranking, setRanking] = useState<RankingResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,6 +79,7 @@ const CustomRanking: React.FC = () => {
         }
       } catch (e) {
         console.error(e);
+        setLoading(false);
       }
     })();
     return () => {
@@ -98,50 +87,23 @@ const CustomRanking: React.FC = () => {
     };
   }, [type, keyword, genres]);
 
-  const handleChangeType = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const _type = e.target.value;
-      if (type !== _type) {
-        history.push(`/custom/${_type}?${createParams(keyword, genres)}`);
-      }
-    },
-    [type, keyword, genres, history]
-  );
   const handleSearch = useCallback<(e: CustomRankingFormEvent) => void>(
-    ({ keyword, genres }) => {
-      history.push(`/custom/${type ?? RankingType.All}?${createParams(keyword, genres)}`);
+    ({ keyword, genres, rankingType }) => {
+      history.push(`/custom/${rankingType}?${createParams(keyword, genres)}`);
     },
     [type, history]
   );
+
   return (
     <div className="container">
       <form>
-        <div className="field is-horizontal">
-          <div className="field-label">
-            <label className="label">種類</label>
-          </div>
-          <div className="field-body">
-            <div className="field has-addons">
-              <div className="select">
-                <select value={type ?? RankingType.All} onChange={handleChangeType}>
-                  <option value={RankingType.Daily}>日間</option>
-                  <option value={RankingType.Weekly}>週間</option>
-                  <option value={RankingType.Monthly}>月間</option>
-                  <option value={RankingType.Quarter}>四半期</option>
-                  <option value={RankingType.Yearly}>年間</option>
-                  <option value={RankingType.All}>全期間</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
       </form>
       <CustomRankingForm
         keyword={keyword}
         genres={genres}
+        rankingType={(type ?? RankingType.Daily) as RankingType}
         onSearch={handleSearch}
       />
-      <FilterComponent onChange={setFilter} />
       {loading ? (
         <progress className="progress is-primary" max="100">
           loading
@@ -149,7 +111,7 @@ const CustomRanking: React.FC = () => {
       ) : ranking.length === 0 ? (
         <>データがありません</>
       ) : (
-        <RankingRender ranking={ranking} filter={filter} />
+        <RankingRender ranking={ranking} />
       )}
     </div>
   );
