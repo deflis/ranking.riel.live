@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import Genre from "../enum/Genre";
 import {
   CustomRankingForm,
-  CustomRankingFormEvent
+  CustomRankingFormEvent,
 } from "../components/custom/CustomRankingForm";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
 
@@ -51,8 +51,8 @@ function createParams(
 function conventGenres(rawGenres: string = "") {
   return rawGenres
     .split(",")
-    .map(x => Number(x))
-    .filter(x => Genre.has(x));
+    .map((x) => Number(x))
+    .filter((x) => Genre.has(x));
 }
 
 const CustomRanking: React.FC = () => {
@@ -67,9 +67,9 @@ const CustomRanking: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = `なろうランキングビューワ - ${
+    document.title = `${
       keyword ? `${keyword}の` : "カスタム"
-    }${RankingTypeName.get(type)}ランキング`;
+    }${RankingTypeName.get(type)}ランキング - なろうランキングビューワ`;
   }, [type, keyword]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const CustomRanking: React.FC = () => {
       try {
         console.log("api request");
         const result = await ky(`/api/custom/${convertOrder(type)}/`, {
-          searchParams: createParams(keyword, genres)
+          searchParams: createParams(keyword, genres),
         });
         if (!didCancel) {
           setRanking(await result.json());

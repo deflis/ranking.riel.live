@@ -131,3 +131,5 @@ temp/
 
 ## production
 /lib
+
+/views/index.ejs

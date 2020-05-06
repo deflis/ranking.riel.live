@@ -8,7 +8,7 @@ import {
   startOfMonth,
   addDays,
   getDay,
-  addHours
+  addHours,
 } from "date-fns/esm";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -114,9 +114,9 @@ const Ranking: React.FC = () => {
   );
 
   useEffect(() => {
-    document.title = `なろうランキングビューワ - ${
+    document.title = `${
       _date ? format(date, "yyyy/MM/dd") : "最新"
-    }の${RankingTypeName.get(type)}ランキング`;
+    }の${RankingTypeName.get(type)}ランキング - なろうランキングビューワ`;
   }, [_date, date, type]);
 
   return (

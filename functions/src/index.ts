@@ -1,9 +1,11 @@
 import * as functions from "firebase-functions";
 import * as express from "express";
-import narouRoute from "./routes/narou";
+import apiRoute from "./routes/api";
+import detailRoute from "./routes/detail";
 
 const app = express();
-
-app.use("/api", narouRoute);
+app.set("view engine", "ejs");
+app.use("/api", apiRoute);
+app.use("/detail", detailRoute);
 
 export const api = functions.https.onRequest(app);

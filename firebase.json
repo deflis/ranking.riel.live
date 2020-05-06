@@ -1,6 +1,7 @@
 {
   "functions": {
     "predeploy": [
+      "npm run build",
       "npm --prefix \"$RESOURCE_DIR\" run build"
     ]
   },
@@ -19,8 +20,11 @@
         "source": "/api/**", "function": "api"
       },
       {
+        "source": "/detail/*", "function": "api"
+      },
+      {
         "source": "**",
-        "destination": "/index.html"
+        "destination": "/default.html"
       }
     ]  
   }

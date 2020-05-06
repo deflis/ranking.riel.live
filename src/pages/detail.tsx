@@ -26,12 +26,11 @@ const Detail: React.FC = () => {
 
   useEffect(() => {
     if (result) {
-      document.title = `なろうランキングビューワ - ${result.detail.title}`
+      document.title = `${result.detail.title} - なろうランキングビューワ`;
     } else {
-      document.title = "なろうランキングビューワ"
+      document.title = "なろうランキングビューワ";
     }
   }, [result]);
-  
 
   useEffect(() => {
     let didCancel = false;

@@ -39,6 +39,7 @@
     "react-waypoint": "^9.0.2",
     "recharts": "^2.0.0-beta.1",
     "redux": "^4.0.5",
+    "rimraf": "^3.0.2",
     "store": "^2.0.12",
     "typescript": "^3.8.3",
     "unescape": "^1.0.1"
@@ -47,7 +48,7 @@
     "start": "npm-run-all -p start:*",
     "start:react": "react-scripts start",
     "start:firebase": "firebase serve --only functions,hosting",
-    "build": "react-scripts build",
+    "build": "rimraf functions/views/index.ejs && react-scripts build && node build-views.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy"
