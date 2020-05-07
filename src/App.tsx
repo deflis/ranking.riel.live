@@ -14,6 +14,7 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 import Detail from "./pages/detail";
 import CustomRanking from "./pages/custom";
 import ReactGA from "react-ga";
+import About from './pages/about';
 
 const withTracker: (WrappedComponent: React.FC) => React.FC = (
   WrappedComponent
@@ -63,6 +64,11 @@ const App: React.FC = () => {
               path="/custom/:type"
               exact
               component={withTracker(CustomRanking)}
+            />
+            <Route
+              path="/about"
+              exact
+              component={withTracker(About)}
             />
           </Switch>
         </ErrorBoundary>
