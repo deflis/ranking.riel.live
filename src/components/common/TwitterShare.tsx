@@ -5,19 +5,19 @@ import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 export const TwitterShare: React.FC<{ title?: string }> = ({
   title: titleOriginal,
-  children
+  children,
 }) => {
   const [title, setTitle] = useState(
-    titleOriginal ?? document.title.replace("なろうランキングビューワ - ", "")
+    titleOriginal ?? document.title.replace(" - なろうランキングビューワ", "")
   );
 
   useEffect(() => {
     if (titleOriginal) {
       setTitle(titleOriginal);
     } else {
-      setTitle(document.title.replace("なろうランキングビューワ - ", ""));
+      setTitle(document.title.replace(" - なろうランキングビューワ", ""));
     }
-  }, [ titleOriginal]);
+  }, [titleOriginal]);
 
   return (
     <TwitterShareButton
