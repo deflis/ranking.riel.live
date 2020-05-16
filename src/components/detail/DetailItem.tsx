@@ -6,6 +6,8 @@ import { parse, formatDistance, format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Link } from "react-router-dom";
 import { TwitterShare } from "../common/TwitterShare";
+import { OutboundLink } from "react-ga";
+import AdSense from "../common/AdSense";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -14,7 +16,7 @@ const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 function formatRelative(date: string): string {
   return formatDistance(parse(date, narouDateFormat, baseDate), baseDate, {
-    locale: ja
+    locale: ja,
   });
 }
 function formatDate(date: string): string {
@@ -51,10 +53,9 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
   const linkLast = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/${
     item.general_all_no
   }/`;
-  const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
   const keywords = item.keyword
     .split(/\s/g)
-    .map(keyword => (
+    .map((keyword) => (
       <Link className="tag" to={`/custom?keyword=${keyword}`}>
         {keyword}
       </Link>
@@ -64,46 +65,46 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
         {previus} {current}
       </>
     ));
-  const story = item.story.split(/\n/).reduce(
+  const story = (item.story.split(/\n/) as Array<React.ReactNode>).reduce(
     (previus, current) => (
       <>
         {previus}
         <br />
         {current}
       </>
-    ),
-    <></>
+    )
   );
 
   return (
     <div className="content">
       <p>
-        <a
+        <OutboundLink
           className="tag"
-          href={link}
+          eventLabel="DetailItem-NCode"
+          to={link}
           target="_blank"
           rel="noopener noreferrer"
         >
           {item.ncode}
-        </a>{" "}
-        <a
-          className="tag"
-          href={ranking}
+        </OutboundLink>{" "}
+        <Link
+          to={`/custom?genres=${item.genre}`}
           target="_blank"
           rel="noopener noreferrer"
         >
           {Genre.get(item.genre)}
-        </a>
+        </Link>
       </p>
       <h1>
-        <a
+        <OutboundLink
           className="title"
-          href={link}
+          eventLabel="DetailItem-title"
+          to={link}
           target="_blank"
           rel="noopener noreferrer"
         >
           {entities.decode(item.title)}
-        </a>
+        </OutboundLink>
       </h1>
       <div>
         <div className="field is-grouped is-grouped-multiline">
@@ -143,33 +144,33 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           </div>
           <div className="control">
             {item.novel_type === 2 ? (
-              <a
-                className=""
-                href={link}
+              <OutboundLink
+                eventLabel="DetailItem-read"
+                to={link}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 読む
-              </a>
+              </OutboundLink>
             ) : (
               <>
-                <a
-                  className=""
-                  href={linkFirst}
+                <OutboundLink
+                  eventLabel="DetailItem-readFirst"
+                  to={linkFirst}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   第1話を読む
-                </a>{" "}
+                </OutboundLink>{" "}
                 |{" "}
-                <a
-                  className=""
-                  href={linkLast}
+                <OutboundLink
+                  eventLabel="DetailItem-reaLast"
+                  to={linkLast}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   最新話を読む
-                </a>
+                </OutboundLink>
               </>
             )}
           </div>
@@ -199,9 +200,14 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
               <div className="field-body">
                 <div className="field">
                   <p className="control is-expanded">
-                    <a href={user} target="_blank" rel="noopener noreferrer">
+                    <OutboundLink
+                      eventLabel="DetailItem-UserPage"
+                      to={user}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {entities.decode(item.writer)}
-                    </a>
+                    </OutboundLink>
                   </p>
                 </div>
               </div>
@@ -213,9 +219,13 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
               <div className="field-body">
                 <div className="field">
                   <p className="control is-expanded">
-                    <a href={ranking} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      to={`/custom?genres=${item.genre}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {Genre.get(item.genre)}
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
@@ -339,47 +349,62 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
                 </div>
               </div>
             </div>
+            <AdSense></AdSense>
           </div>
+        </div>
+        <div className="content">
+          <AdSense></AdSense>
         </div>
         <div className="content">
           <h3 className="subtitle">獲得ポイント</h3>
           <table className="table">
             <thead>
+              <tr>
               <th>総合評価ポイント</th>
               <th>日間</th>
               <th>週間</th>
               <th>月間</th>
               <th>四半期</th>
               <th>年間</th>
+              </tr>
             </thead>
-            <tr>
-              <td>{item.global_point.toLocaleString()}</td>
-              <td>{item.daily_point.toLocaleString()}</td>
-              <td>{item.weekly_point.toLocaleString()}</td>
-              <td>{item.monthly_point.toLocaleString()}</td>
-              <td>{item.quarter_point.toLocaleString()}</td>
-              <td>{item.yearly_point.toLocaleString()}</td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>{item.global_point.toLocaleString()}</td>
+                <td>{item.daily_point.toLocaleString()}</td>
+                <td>{item.weekly_point.toLocaleString()}</td>
+                <td>{item.monthly_point.toLocaleString()}</td>
+                <td>{item.quarter_point.toLocaleString()}</td>
+                <td>{item.yearly_point.toLocaleString()}</td>
+              </tr>
+            </tbody>
           </table>
           <p>
-            <a
+            <OutboundLink
+              eventLabel="DetailItem-detauil"
               className="button"
-              href={detail}
+              to={detail}
               target="_blank"
               rel="noopener noreferrer"
             >
               小説情報
-            </a>{" "}
-            <a
+            </OutboundLink>{" "}
+            <OutboundLink
+              eventLabel="DetailItem-readButton"
+              to={link}
               className="button"
-              href={link}
               target="_blank"
               rel="noopener noreferrer"
             >
               読む
-            </a>{" "}
-            <TwitterShare title={`${item.title}のランキング履歴`}>ランキング履歴を共有</TwitterShare>
+            </OutboundLink>{" "}
+            <TwitterShare title={`${item.title}のランキング履歴`}>
+              ランキング履歴を共有
+            </TwitterShare>
           </p>
+        </div>
+        <div className="content">
+          <AdSense></AdSense>
         </div>
       </div>
     </div>

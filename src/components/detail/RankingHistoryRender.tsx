@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import {
   RankingHistories,
-  RankingHistoryItem
+  RankingHistoryItem,
 } from "../../interface/RankingHistory";
 import { RankingType } from "narou";
 import store from "store";
@@ -12,7 +12,7 @@ import {
   isEqual,
   formatISO,
   addMonths,
-  isAfter
+  isAfter,
 } from "date-fns/esm";
 import {
   LineChart,
@@ -22,10 +22,10 @@ import {
   YAxis,
   ResponsiveContainer,
   Tooltip,
-  Brush
+  Brush,
 } from "recharts";
 import { Link } from "react-router-dom";
-import { ja } from 'date-fns/locale';
+import { ja } from "date-fns/locale";
 
 function* rangeDate(start: Date, end: Date, type: RankingType) {
   if (!start) return;
@@ -55,24 +55,24 @@ const RankingHistoryCharts: React.FC<{
 }> = ({ ranking, type }) => {
   const parsedRanking = ranking.map(({ date, ...other }) => ({
     date: parseISO(date),
-    ...other
+    ...other,
   }));
   const date = parsedRanking.map(({ date }) => date);
   const minDate = date[0];
   const maxDate = date[date.length - 1];
   const data = Array.from(rangeDate(minDate, maxDate, type))
     .map(
-      date =>
-        parsedRanking.find(item => isEqual(item.date, date)) ?? {
+      (date) =>
+        parsedRanking.find((item) => isEqual(item.date, date)) ?? {
           date,
           rank: null,
-          pt: null
+          pt: null,
         }
     )
     .map(({ date, rank, pt }) => ({
-      date: format(date, "yyyy年MM月dd日(E)", {locale:ja}),
+      date: format(date, "yyyy年MM月dd日(E)", { locale: ja }),
       順位: rank,
-      ポイント: pt
+      ポイント: pt,
     }));
   return (
     <div className="columns">
@@ -109,25 +109,29 @@ const RankingHistoryCharts: React.FC<{
       <div className="column">
         <table className="table is-fullwidth">
           <thead>
-            <th>日付</th>
-            <th>順位</th>
-            <th>ポイント</th>
-          </thead>
-          {parsedRanking.map(({ date, rank, pt }) => (
             <tr>
-              <td>
-                <Link
-                  to={`/ranking/${type}/${formatISO(date, {
-                    representation: "date"
-                  })}`}
-                >
-                  {format(date, "yyyy年MM月dd日(E)", {locale:ja})}
-                </Link>
-              </td>
-              <td>{rank}位</td>
-              <td>{pt.toLocaleString()}pt</td>
+              <th>日付</th>
+              <th>順位</th>
+              <th>ポイント</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {parsedRanking.map(({ date, rank, pt }) => (
+              <tr key={date.toString()}>
+                <td>
+                  <Link
+                    to={`/ranking/${type}/${formatISO(date, {
+                      representation: "date",
+                    })}`}
+                  >
+                    {format(date, "yyyy年MM月dd日(E)", { locale: ja })}
+                  </Link>
+                </td>
+                <td>{rank}位</td>
+                <td>{pt.toLocaleString()}pt</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>
@@ -135,7 +139,7 @@ const RankingHistoryCharts: React.FC<{
 };
 
 export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
-  ranking
+  ranking,
 }) => {
   const [type, setType_] = useState<RankingType>(
     store.get("HistoryRankingType", RankingType.Daily)
@@ -152,7 +156,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
           <li className={type === RankingType.Daily ? "is-active" : ""}>
             <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setType(RankingType.Daily);
               }}
@@ -163,7 +167,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
           <li className={type === RankingType.Weekly ? "is-active" : ""}>
             <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setType(RankingType.Weekly);
               }}
@@ -174,7 +178,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
           <li className={type === RankingType.Monthly ? "is-active" : ""}>
             <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setType(RankingType.Monthly);
               }}
@@ -185,7 +189,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
           <li className={type === RankingType.Quarterly ? "is-active" : ""}>
             <a // eslint-disable-line jsx-a11y/anchor-is-valid
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setType(RankingType.Quarterly);
               }}

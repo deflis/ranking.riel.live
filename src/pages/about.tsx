@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
+import { OutboundLink } from 'react-ga';
 
 const About: React.FC = () => (
   <>
@@ -10,7 +11,7 @@ const About: React.FC = () => (
       <section>
         <p>
           本サービス「なろうランキングビューワ」は
-          <a href="https://twitter.com/narou_riel">なろう系VTuberリイエル</a>
+          <OutboundLink eventLabel="About" to="https://twitter.com/narou_riel">なろう系VTuberリイエル</OutboundLink>
           が運営しております。
           （本サービスは小説家になろうとは直接的には無関係であり、本サービスは株式会社ヒナプロジェクトが提供するものではありません。）
         </p>
@@ -44,7 +45,7 @@ const About: React.FC = () => (
       <section>
         <p>
           データの取得には
-          <a href="https://dev.syosetu.com/">なろうデベロッパーAPI</a>
+          <OutboundLink eventLabel="About" to="https://dev.syosetu.com/">なろうデベロッパーAPI</OutboundLink>
           を利用しております。
           表示を高速化するために最大で10分のキャッシュをしているため、データが遅れている可能性があります。ご注意ください。
         </p>

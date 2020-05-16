@@ -6,6 +6,7 @@ import { parse, formatDistance, isBefore, addDays, isAfter } from "date-fns";
 import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns/esm";
 import { Link } from "react-router-dom";
+import { OutboundLink } from "react-ga";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -19,10 +20,9 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
   }, [isShowStory]);
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
-  const ranking = `https://yomou.syosetu.com/rank/genrelist/type/daily_${item.genre}/`;
   const keywords = item.keyword
     .split(/\s/g)
-    .map(keyword => (
+    .map((keyword) => (
       <Link className="tag" to={`/custom?keyword=${keyword}`}>
         {keyword}
       </Link>
@@ -102,14 +102,13 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
             </div>
           </div>
           <div className="control">
-            <a
-              className="tag"
-              href={ranking}
+            <Link
+              to={`/custom?genres=${item.genre}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               {Genre.get(item.genre)}
-            </a>
+            </Link>
           </div>
           <div className="control">
             <span className="tag">
@@ -131,9 +130,14 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
           </p>
           <p>
             作者:{" "}
-            <a href={user} target="_blank" rel="noopener noreferrer">
+            <OutboundLink
+              eventLabel="RankingItem-User"
+              to={user}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {entities.decode(item.writer)}
-            </a>
+            </OutboundLink>
           </p>
           <p>更新日時: {item.novelupdated_at}</p>
           <p>
@@ -172,14 +176,15 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
             <Link to={`/detail/${item.ncode.toLowerCase()}`}>小説情報</Link>
           </p>
           <p className="card-footer-item">
-            <a
+            <OutboundLink
               className="button"
-              href={link}
+              eventLabel="RankingItem-read"
+              to={link}
               target="_blank"
               rel="noopener noreferrer"
             >
               読む
-            </a>
+            </OutboundLink>
           </p>
         </div>
       </div>
