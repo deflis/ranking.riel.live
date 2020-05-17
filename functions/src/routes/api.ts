@@ -6,7 +6,7 @@ import {
   search,
   Order,
   RankingResult,
-  Genre
+  Genre,
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
 
@@ -34,37 +34,37 @@ router.get("/detail/:ncode", async (req, res) => {
     const searchResultAsync = search()
       .ncode(ncode)
       .execute();
-    const historyAsync = rankingHistory(ncode).catch(e => {
+    const historyAsync = rankingHistory(ncode).catch((e) => {
       console.error(e);
       return [];
     });
     const [searchResult, history] = await Promise.all([
       searchResultAsync,
-      historyAsync
+      historyAsync,
     ]);
     const detail = searchResult.values[0];
 
-    const ranking = Object.create(null);
+    const rankingData = Object.create(null);
     for (const type of [
       RankingType.Daily,
       RankingType.Weekly,
       RankingType.Monthly,
-      RankingType.Quarterly
+      RankingType.Quarterly,
     ]) {
       if (Array.isArray(history)) {
-        ranking[type] = history
-          .filter(x => x.type === type)
+        rankingData[type] = history
+          .filter((x) => x.type === type)
           .map(({ date, ...other }) => ({
             date: formatISO(date, { representation: "date" }),
-            ...other
+            ...other,
           }));
       } else {
-        ranking[type] = [];
+        rankingData[type] = [];
       }
     }
 
     res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    res.json({ detail, ranking });
+    res.json({ detail, ranking: rankingData });
   } catch (e) {
     console.error(e);
     res.status(500).json(e);
@@ -72,8 +72,8 @@ router.get("/detail/:ncode", async (req, res) => {
 });
 
 interface CustomQueryParams {
-  keyword: string
-  genres: string
+  keyword: string;
+  genres: string;
 }
 
 router.get("/custom/:order", async (req, res) => {
@@ -88,30 +88,32 @@ router.get("/custom/:order", async (req, res) => {
       searchBuilder.word(keyword).byKeyword(true);
     }
     if (genres) {
-      const genre: Genre[] = genres.split(',') as any
+      const genre: Genre[] = genres.split(",") as any;
       searchBuilder.genre(genre);
     }
 
     const searchResult = await searchBuilder.execute();
 
-    const ranking: RankingResult[] = searchResult.values.map((value, index) => {
-      let pt = value.global_point;
-      if (order === Order.DailyPoint) {
-        pt = value.daily_point;
-      } else if (order === Order.WeeklyPoint) {
-        pt = value.weekly_point;
-      } else if (order === Order.MonthlyPoint) {
-        pt = value.monthly_point;
-      } else if (order === Order.QuarterPoint) {
-        pt = value.quarter_point;
-      } else if (order === Order.YearlyPoint) {
-        pt = value.yearly_point;
+    const rankingData: RankingResult[] = searchResult.values.map(
+      (value, index) => {
+        let pt = value.global_point;
+        if (order === Order.DailyPoint) {
+          pt = value.daily_point;
+        } else if (order === Order.WeeklyPoint) {
+          pt = value.weekly_point;
+        } else if (order === Order.MonthlyPoint) {
+          pt = value.monthly_point;
+        } else if (order === Order.QuarterPoint) {
+          pt = value.quarter_point;
+        } else if (order === Order.YearlyPoint) {
+          pt = value.yearly_point;
+        }
+        return { ...value, rank: index + 1, pt };
       }
-      return { ...value, rank: index + 1, pt };
-    });
+    );
 
     res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    res.json(ranking);
+    res.json(rankingData);
   } catch (e) {
     console.error(e);
     res.status(500).json(e);
