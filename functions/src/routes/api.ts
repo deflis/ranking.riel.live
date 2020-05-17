@@ -9,6 +9,7 @@ import {
   Genre,
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
+import { NovelType } from "narou/dist/params";
 
 const router = Router();
 
@@ -74,12 +75,13 @@ router.get("/detail/:ncode", async (req, res) => {
 interface CustomQueryParams {
   keyword: string;
   genres: string;
+  type: NovelType;
 }
 
 router.get("/custom/:order", async (req, res) => {
   try {
     const order = req.params.order as Order;
-    const { keyword, genres } = req.query as CustomQueryParams;
+    const { keyword, genres, type } = req.query as CustomQueryParams;
 
     const searchBuilder = search();
     searchBuilder.order(order).limit(500);
@@ -90,6 +92,9 @@ router.get("/custom/:order", async (req, res) => {
     if (genres) {
       const genre: Genre[] = genres.split(",") as any;
       searchBuilder.genre(genre);
+    }
+    if (type) {
+      searchBuilder.type(type);
     }
 
     const searchResult = await searchBuilder.execute();
