@@ -7,8 +7,10 @@ import {
   Order,
   RankingResult,
   Genre,
+  NarouSearchResult,
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
+import SearchBuilder from "narou/dist/search-builder";
 import { NovelType } from "narou/dist/params";
 
 const router = Router();
@@ -78,6 +80,23 @@ interface CustomQueryParams {
   type: NovelType;
 }
 
+async function searchWithFilter(
+  searchBuilder: SearchBuilder,
+  filter: (r: NarouSearchResult) => boolean
+): Promise<NarouSearchResult[]> {
+  let page = 0;
+  let result: NarouSearchResult[] = [];
+  do {
+    const response = await searchBuilder.page(page, 500).execute();
+    result = result.concat(response.values.filter(filter));
+    page++;
+    if (response.allcount < page * 500) {
+      break;
+    }
+  } while (result.length < 300 && page < 10);
+  return result;
+}
+
 router.get("/custom/:order", async (req, res) => {
   try {
     const order = req.params.order as Order;
@@ -97,25 +116,23 @@ router.get("/custom/:order", async (req, res) => {
       searchBuilder.type(type);
     }
 
-    const searchResult = await searchBuilder.execute();
+    const searchResult = await searchWithFilter(searchBuilder, (value) => true);
 
-    const rankingData: RankingResult[] = searchResult.values.map(
-      (value, index) => {
-        let pt = value.global_point;
-        if (order === Order.DailyPoint) {
-          pt = value.daily_point;
-        } else if (order === Order.WeeklyPoint) {
-          pt = value.weekly_point;
-        } else if (order === Order.MonthlyPoint) {
-          pt = value.monthly_point;
-        } else if (order === Order.QuarterPoint) {
-          pt = value.quarter_point;
-        } else if (order === Order.YearlyPoint) {
-          pt = value.yearly_point;
-        }
-        return { ...value, rank: index + 1, pt };
+    const rankingData: RankingResult[] = searchResult.map((value, index) => {
+      let pt = value.global_point;
+      if (order === Order.DailyPoint) {
+        pt = value.daily_point;
+      } else if (order === Order.WeeklyPoint) {
+        pt = value.weekly_point;
+      } else if (order === Order.MonthlyPoint) {
+        pt = value.monthly_point;
+      } else if (order === Order.QuarterPoint) {
+        pt = value.quarter_point;
+      } else if (order === Order.YearlyPoint) {
+        pt = value.yearly_point;
       }
-    );
+      return { ...value, rank: index + 1, pt };
+    });
 
     res.set("Cache-Control", "public, max-age=300, s-maxage=600");
     res.json(rankingData);
