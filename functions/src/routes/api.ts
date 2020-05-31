@@ -45,7 +45,7 @@ router.get("/detail/:ncode", async (req, res) => {
       searchResultAsync,
       historyAsync,
     ]);
-    const detail = searchResult.values[0];
+    const detail = searchResult.values?.[0];
 
     const rankingData = Object.create(null);
     for (const type of [
@@ -67,7 +67,11 @@ router.get("/detail/:ncode", async (req, res) => {
     }
 
     res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    res.json({ detail, ranking: rankingData });
+    if (detail) {
+      res.json({ detail, ranking: rankingData });
+    } else {
+      res.status(404).json({});
+    }
   } catch (e) {
     console.error(e);
     res.status(500).json(e);

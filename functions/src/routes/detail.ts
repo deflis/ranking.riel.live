@@ -19,7 +19,7 @@ router.get("/:ncode", async (req, res) => {
     res.render("index.ejs", { title });
   } catch (e) {
     console.error(e);
-    res.render("index.ejs");
+    res.render("index.ejs", { title: "" });
   }
 });
 

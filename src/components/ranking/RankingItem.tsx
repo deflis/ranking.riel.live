@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import { RankingResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
@@ -7,6 +7,7 @@ import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns/esm";
 import { Link } from "react-router-dom";
 import { OutboundLink } from "react-ga";
+import { useToggle } from "react-use";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -14,10 +15,7 @@ const formatOptions = { locale: ja };
 const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
-  const [isShowStory, setShowStory] = useState(false);
-  const toggleShowStory = useCallback(() => {
-    setShowStory(!isShowStory);
-  }, [isShowStory]);
+  const [isShowStory, toggleShowStory] = useToggle(false);
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
   const keywords = item.keyword

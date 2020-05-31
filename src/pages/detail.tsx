@@ -5,6 +5,7 @@ import { NarouSearchResult } from "narou";
 import DetailItem from "../components/detail/DetailItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
+import { useToggle } from "react-use";
 
 type Result = {
   detail: NarouSearchResult;
@@ -22,7 +23,8 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 
 const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
-  const [result, setResult] = useState<Result | null>();
+  const [result, setResult] = useState<Result>();
+  const [error, toggleError] = useToggle(false);
 
   useEffect(() => {
     if (result) {
@@ -34,11 +36,21 @@ const Detail: React.FC = () => {
 
   useEffect(() => {
     let didCancel = false;
-    setResult(null);
+    setResult(undefined);
+    toggleError(false);
     (async () => {
-      const result = await ky(`/api/detail/${ncode}`);
-      if (!didCancel) {
-        setResult(await result.json());
+      try {
+        const result = await ky(`/api/detail/${ncode}`);
+        const json: string | Result = await result.json();
+        if (!didCancel) {
+          if (json instanceof Object && json?.detail) {
+            setResult(json);
+          } else {
+            toggleError(true);
+          }
+        }
+      } catch (e) {
+        toggleError(true);
       }
     })();
     return () => {
@@ -51,6 +63,12 @@ const Detail: React.FC = () => {
         <progress className="progress is-primary" max="100">
           loading
         </progress>
+      </div>
+    );
+  } else if (error) {
+    return (
+      <div className="container">
+        情報が見つかりません。この小説は削除された可能性があります。
       </div>
     );
   } else {

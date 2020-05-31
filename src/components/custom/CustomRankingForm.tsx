@@ -4,6 +4,7 @@ import { RankingType, RankingTypeName } from "../../interface/RankingType";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { TwitterShare } from "../common/TwitterShare";
+import { useToggle } from "react-use";
 
 export interface CustomRankingFormEvent {
   keyword?: string;
@@ -23,8 +24,7 @@ interface InnterParams {
 }
 
 export const CustomRankingForm: React.FC<CustomRankingFormParams> = params => {
-  const [show, setShow] = useState(false);
-  const toggleShow = useCallback(() => setShow(!show), [show]);
+  const [show, toggleShow] = useToggle(false);
 
   return (
     <section className="hero">
