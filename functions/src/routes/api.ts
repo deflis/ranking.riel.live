@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import {
   ranking,
   rankingHistory,
@@ -15,74 +15,93 @@ import { NovelType } from "narou/dist/params";
 
 const router = Router();
 
-router.get("/ranking/:type/:date", async (req, res) => {
-  try {
-    const date = parseISO(req.params.date);
-    const rankingData = await ranking()
-      .date(date)
-      .type(req.params.type as RankingType)
-      .executeWithFields();
+type RankingParams = {
+  date: string;
+  type: RankingType;
+};
 
-    res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    res.json(rankingData);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json(e);
-  }
-});
+router.get(
+  "/ranking/:type/:date",
+  async (req: Request<RankingParams>, res: Response<RankingResult[]>) => {
+    try {
+      const date = parseISO(req.params.date);
+      const rankingData = await ranking()
+        .date(date)
+        .type(req.params.type)
+        .executeWithFields();
 
-router.get("/detail/:ncode", async (req, res) => {
-  try {
-    const ncode = req.params.ncode;
-    const searchResultAsync = search()
-      .ncode(ncode)
-      .execute();
-    const historyAsync = rankingHistory(ncode).catch((e) => {
+      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
+      res.json(rankingData);
+    } catch (e) {
       console.error(e);
-      return [];
-    });
-    const [searchResult, history] = await Promise.all([
-      searchResultAsync,
-      historyAsync,
-    ]);
-    const detail = searchResult.values?.[0];
-
-    const rankingData = Object.create(null);
-    for (const type of [
-      RankingType.Daily,
-      RankingType.Weekly,
-      RankingType.Monthly,
-      RankingType.Quarterly,
-    ]) {
-      if (Array.isArray(history)) {
-        rankingData[type] = history
-          .filter((x) => x.type === type)
-          .map(({ date, ...other }) => ({
-            date: formatISO(date, { representation: "date" }),
-            ...other,
-          }));
-      } else {
-        rankingData[type] = [];
-      }
+      res.status(500).json(e);
     }
-
-    res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    if (detail) {
-      res.json({ detail, ranking: rankingData });
-    } else {
-      res.status(404).json({});
-    }
-  } catch (e) {
-    console.error(e);
-    res.status(500).json(e);
   }
-});
+);
 
-interface CustomQueryParams {
-  keyword: string;
-  genres: string;
-  type: NovelType;
-}
+type DetailParams = {
+  ncode: string;
+};
+
+type DetailResponse = {
+  detail: NarouSearchResult;
+  ranking: {
+    [type: string]: {
+      date: string;
+      type: RankingType;
+      pt: number;
+      rank: number;
+    };
+  };
+};
+
+router.get(
+  "/detail/:ncode",
+  async (req: Request<DetailParams>, res: Response<DetailResponse>) => {
+    try {
+      const ncode = req.params.ncode;
+      const searchResultAsync = search().ncode(ncode).execute();
+      const historyAsync = rankingHistory(ncode).catch((e) => {
+        console.error(e);
+        return [];
+      });
+      const [searchResult, history] = await Promise.all([
+        searchResultAsync,
+        historyAsync,
+      ]);
+      const detail = searchResult.values?.[0];
+
+      const rankingData = Object.create(null);
+      for (const type of [
+        RankingType.Daily,
+        RankingType.Weekly,
+        RankingType.Monthly,
+        RankingType.Quarterly,
+      ]) {
+        if (Array.isArray(history)) {
+          rankingData[type] = history
+            .filter((x) => x.type === type)
+            .map(({ date, ...other }) => ({
+              date: formatISO(date, { representation: "date" }),
+              ...other,
+            }));
+        } else {
+          rankingData[type] = [];
+        }
+      }
+
+      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
+      if (detail) {
+        res.json({ detail, ranking: rankingData });
+      } else {
+        res.status(404).json();
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(500).json(e);
+    }
+  }
+);
 
 async function searchWithFilter(
   searchBuilder: SearchBuilder,
@@ -101,49 +120,64 @@ async function searchWithFilter(
   return result;
 }
 
-router.get("/custom/:order", async (req, res) => {
-  try {
-    const order = req.params.order as Order;
-    const { keyword, genres, type } = req.query as CustomQueryParams;
+type CustomParams = {
+  order: Order;
+};
+type CustomQueryParams = {
+  keyword: string;
+  genres: string;
+  type: NovelType;
+};
 
-    const searchBuilder = search();
-    searchBuilder.order(order).limit(500);
+router.get(
+  "/custom/:order",
+  async (req: Request<CustomParams, any, any, CustomQueryParams>, res: Response<RankingResult[]>) => {
+    try {
+      const order = req.params.order;
+      const { keyword, genres, type } = req.query;
 
-    if (keyword) {
-      searchBuilder.word(keyword).byKeyword(true);
-    }
-    if (genres) {
-      const genre: Genre[] = genres.split(",") as any;
-      searchBuilder.genre(genre);
-    }
-    if (type) {
-      searchBuilder.type(type);
-    }
+      const searchBuilder = search();
+      searchBuilder.order(order).limit(500);
 
-    const searchResult = await searchWithFilter(searchBuilder, (value) => true);
-
-    const rankingData: RankingResult[] = searchResult.map((value, index) => {
-      let pt = value.global_point;
-      if (order === Order.DailyPoint) {
-        pt = value.daily_point;
-      } else if (order === Order.WeeklyPoint) {
-        pt = value.weekly_point;
-      } else if (order === Order.MonthlyPoint) {
-        pt = value.monthly_point;
-      } else if (order === Order.QuarterPoint) {
-        pt = value.quarter_point;
-      } else if (order === Order.YearlyPoint) {
-        pt = value.yearly_point;
+      if (keyword) {
+        searchBuilder.word(keyword).byKeyword(true);
       }
-      return { ...value, rank: index + 1, pt };
-    });
+      if (genres) {
+        const genre: Genre[] = genres.split(",") as any;
+        searchBuilder.genre(genre);
+      }
+      if (type) {
+        searchBuilder.type(type);
+      }
 
-    res.set("Cache-Control", "public, max-age=300, s-maxage=600");
-    res.json(rankingData);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json(e);
+      const searchResult = await searchWithFilter(
+        searchBuilder,
+        (value) => true
+      );
+
+      const rankingData: RankingResult[] = searchResult.map((value, index) => {
+        let pt = value.global_point;
+        if (order === Order.DailyPoint) {
+          pt = value.daily_point;
+        } else if (order === Order.WeeklyPoint) {
+          pt = value.weekly_point;
+        } else if (order === Order.MonthlyPoint) {
+          pt = value.monthly_point;
+        } else if (order === Order.QuarterPoint) {
+          pt = value.quarter_point;
+        } else if (order === Order.YearlyPoint) {
+          pt = value.yearly_point;
+        }
+        return { ...value, rank: index + 1, pt };
+      });
+
+      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
+      res.json(rankingData);
+    } catch (e) {
+      console.error(e);
+      res.status(500).json(e);
+    }
   }
-});
+);
 
 export default router;
