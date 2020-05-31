@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { RankingResult, Order } from "narou";
 import ky from "ky";
 import { useParams, useHistory } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
   CustomRankingFormEvent,
 } from "../components/custom/CustomRankingForm";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
+import { useAsync } from "react-use";
 
 export type CustomRankingParams = {
   type?: RankingType;
@@ -63,38 +64,20 @@ const CustomRanking: React.FC = () => {
 
   const history = useHistory();
 
-  const [ranking, setRanking] = useState<RankingResult[]>([]);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     document.title = `${
       keyword ? `${keyword}の` : "カスタム"
     }${RankingTypeName.get(type)}ランキング - なろうランキングビューワ`;
   }, [type, keyword]);
 
-  useEffect(() => {
-    let didCancel = false;
-    setLoading(true);
-    setRanking([]);
-    (async () => {
-      try {
-        console.log("api request");
-        const result = await ky(`/api/custom/${convertOrder(type)}/`, {
-          searchParams: createParams(keyword, genres),
-        });
-        if (!didCancel) {
-          setRanking(await result.json());
-          setLoading(false);
-        }
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
-      }
-    })();
-    return () => {
-      didCancel = true;
-    };
+  const { value, loading } = useAsync(async () => {
+    const result = await ky(`/api/custom/${convertOrder(type)}/`, {
+      searchParams: createParams(keyword, genres),
+    });
+    return (await result.json()) as RankingResult[];
   }, [type, keyword, genres]);
+
+  const ranking = value ?? [];
 
   const handleSearch = useCallback<(e: CustomRankingFormEvent) => void>(
     ({ keyword, genres, rankingType }) => {

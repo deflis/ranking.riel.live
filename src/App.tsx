@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import "bulma";
 import "react-datepicker/dist/react-datepicker.css";
-import { Header } from "./components/common/Header";
-import { Footer } from "./components/common/Footer";
-import Ranking from "./pages/ranking";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   useHistory,
 } from "react-router-dom";
+import ReactGA from "react-ga";
 import ErrorBoundary from "./components/common/ErrorBoundary";
+import { Header } from "./components/common/Header";
+import { Footer } from "./components/common/Footer";
+import Ranking from "./pages/ranking";
 import Detail from "./pages/detail";
 import CustomRanking from "./pages/custom";
-import ReactGA from "react-ga";
 import About from './pages/about';
 
 const withTracker: (WrappedComponent: React.FC) => React.FC = (

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import ky from "ky";
 import { useParams } from "react-router-dom";
 import { NarouSearchResult } from "narou";
 import DetailItem from "../components/detail/DetailItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
+import { useAsync } from "react-use";
 
 type Result = {
   detail: NarouSearchResult;
@@ -22,47 +23,26 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 
 const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
-  const [result, setResult] = useState<Result>();
-  const [error, setError] = useState(false);
+
+  const { value, loading, error } = useAsync(async () => {
+    const result = await ky(`/api/detail/${ncode}`);
+    const json: Result = await result.json();
+    if (json?.detail) {
+      return json;
+    } else {
+      throw json;
+    }
+  }, [ncode]);
 
   useEffect(() => {
-    if (result) {
-      document.title = `${result.detail.title} - なろうランキングビューワ`;
+    if (value) {
+      document.title = `${value.detail.title} - なろうランキングビューワ`;
     } else {
       document.title = "なろうランキングビューワ";
     }
-  }, [result]);
+  }, [value]);
 
-  useEffect(() => {
-    let didCancel = false;
-    setResult(undefined);
-    setError(false);
-    (async () => {
-      try {
-        const result = await ky(`/api/detail/${ncode}`);
-        const json: Result = await result.json();
-        if (!didCancel) {
-          if (json?.detail) {
-            setResult(json);
-          } else {
-            setError(true);
-          }
-        }
-      } catch (e) {
-        setError(true);
-      }
-    })();
-    return () => {
-      didCancel = true;
-    };
-  }, [ncode]);
-  if (error) {
-    return (
-      <div className="container">
-        情報が見つかりません。この小説は削除された可能性があります。
-      </div>
-    );
-  } else if (!result) {
+  if (loading) {
     return (
       <div className="container">
         <progress className="progress is-primary" max="100">
@@ -70,12 +50,17 @@ const Detail: React.FC = () => {
         </progress>
       </div>
     );
-  } else {
+  } else if (value && !error) {
     return (
       <div className="container">
-        <DetailRenderer {...result} />
+        <DetailRenderer {...value} />
       </div>
     );
   }
+  return (
+    <div className="container">
+      情報が見つかりません。この小説は削除された可能性があります。
+    </div>
+  );
 };
 export default Detail;

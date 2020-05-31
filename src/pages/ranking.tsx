@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
 import { TwitterShare } from "../components/common/TwitterShare";
+import { useAsync } from "react-use";
 
 export type RankingParams = {
   date?: string;
@@ -49,26 +50,14 @@ const Ranking: React.FC = () => {
   const history = useHistory();
   const { date: _date, type: _type } = useParams<RankingParams>();
 
-  const [ranking, setRanking] = useState<RankingResult[]>([]);
   const [filter, setFilter] = useState(Filter.init());
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
+  const { value, loading } = useAsync(async () => {
     const type = (_type as RankingType) ?? RankingType.Daily;
     const date = _date ? parseISO(_date) : addHours(new Date(), -12);
-    let didCancel = false;
-    setLoading(true);
-    setRanking([]);
-    (async () => {
-      const result = await ky(`/api/ranking/${type}/${formatDate(date, type)}`);
-      if (!didCancel) {
-        setRanking(await result.json());
-        setLoading(false);
-      }
-    })();
-    return () => {
-      didCancel = true;
-    };
+    const result = await ky(`/api/ranking/${type}/${formatDate(date, type)}`);
+    return (await result.json()) as RankingResult[];
   }, [_date, _type]);
+  const ranking = value ?? [];
 
   const onTypeChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -182,9 +171,8 @@ const Ranking: React.FC = () => {
           loading
         </progress>
       ) : (
-        <></>
+        <RankingRender ranking={ranking} filter={filter} />
       )}
-      <RankingRender ranking={ranking} filter={filter} />
     </div>
   );
 };
