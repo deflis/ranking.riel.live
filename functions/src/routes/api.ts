@@ -15,22 +15,27 @@ import { NovelType } from "narou/dist/params";
 
 const router = Router();
 
+router.use((_, res, next) => {
+  res.set("Cache-Control", "public, max-age=300, s-maxage=600");
+  next();
+});
+
 type RankingParams = {
   date: string;
   type: RankingType;
 };
 
+type RankingResponse = RankingResult[];
+
 router.get(
   "/ranking/:type/:date",
-  async (req: Request<RankingParams>, res: Response<RankingResult[]>) => {
+  async (req: Request<RankingParams>, res: Response<RankingResponse>) => {
     try {
       const date = parseISO(req.params.date);
       const rankingData = await ranking()
         .date(date)
         .type(req.params.type)
         .executeWithFields();
-
-      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
       res.json(rankingData);
     } catch (e) {
       console.error(e);
@@ -90,7 +95,6 @@ router.get(
         }
       }
 
-      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
       if (detail) {
         res.json({ detail, ranking: rankingData });
       } else {
@@ -131,7 +135,7 @@ type CustomQueryParams = {
 
 router.get(
   "/custom/:order",
-  async (req: Request<CustomParams, any, any, CustomQueryParams>, res: Response<RankingResult[]>) => {
+  async (req: Request<CustomParams, any, any, CustomQueryParams>, res: Response<RankingResponse>) => {
     try {
       const order = req.params.order;
       const { keyword, genres, type } = req.query;
@@ -171,7 +175,6 @@ router.get(
         return { ...value, rank: index + 1, pt };
       });
 
-      res.set("Cache-Control", "public, max-age=300, s-maxage=600");
       res.json(rankingData);
     } catch (e) {
       console.error(e);
