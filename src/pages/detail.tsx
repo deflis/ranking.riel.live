@@ -41,9 +41,9 @@ const Detail: React.FC = () => {
     (async () => {
       try {
         const result = await ky(`/api/detail/${ncode}`);
-        const json: string | Result = await result.json();
+        const json: Result = await result.json();
         if (!didCancel) {
-          if (json instanceof Object && json?.detail) {
+          if (json?.detail) {
             setResult(json);
           } else {
             toggleError(true);
@@ -57,18 +57,18 @@ const Detail: React.FC = () => {
       didCancel = true;
     };
   }, [ncode]);
-  if (!result) {
+  if (error) {
+    return (
+      <div className="container">
+        情報が見つかりません。この小説は削除された可能性があります。
+      </div>
+    );
+  } else if (!result) {
     return (
       <div className="container">
         <progress className="progress is-primary" max="100">
           loading
         </progress>
-      </div>
-    );
-  } else if (error) {
-    return (
-      <div className="container">
-        情報が見つかりません。この小説は削除された可能性があります。
       </div>
     );
   } else {
