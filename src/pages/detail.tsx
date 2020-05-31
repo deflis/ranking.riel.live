@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ky from "ky";
 import { useParams } from "react-router-dom";
 import { NarouSearchResult } from "narou";
 import DetailItem from "../components/detail/DetailItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
-import { useAsync } from "react-use";
+import { useAsync, useTitle } from "react-use";
 
 type Result = {
   detail: NarouSearchResult;
@@ -34,13 +34,11 @@ const Detail: React.FC = () => {
     }
   }, [ncode]);
 
-  useEffect(() => {
-    if (value) {
-      document.title = `${value.detail.title} - なろうランキングビューワ`;
-    } else {
-      document.title = "なろうランキングビューワ";
-    }
-  }, [value]);
+  useTitle(
+    value
+      ? `${value.detail.title} - なろうランキングビューワ`
+      : "なろうランキングビューワ"
+  );
 
   if (loading) {
     return (

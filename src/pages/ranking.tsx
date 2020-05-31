@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { RankingResult } from "narou";
 import ky from "ky";
 import {
@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
 import { TwitterShare } from "../components/common/TwitterShare";
-import { useAsync } from "react-use";
+import { useAsync, useTitle } from "react-use";
 
 export type RankingParams = {
   date?: string;
@@ -61,18 +61,15 @@ const Ranking: React.FC = () => {
 
   const onTypeChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const date = _date ? parseISO(_date) : addHours(new Date(), -12);
+      const defaultDate = addHours(new Date(), -12);
+      const date = _date ? parseISO(_date) : defaultDate;
       const type = e.target.value as RankingType;
-      if (type === RankingType.Daily) {
-        if (
-          formatDate(date, type) !== formatDate(addHours(new Date(), -12), type)
-        ) {
-          history.push(`/ranking/${type}`);
-        } else {
-          history.push(`/`);
-        }
-      } else {
+      if (formatDate(date, type) !== formatDate(defaultDate, type)) {
         history.push(`/ranking/${type}/${formatDate(date, type)}`);
+      } else if (type === RankingType.Daily) {
+        history.push(`/`);
+      } else {
+        history.push(`/ranking/${type}`);
       }
     },
     [_date, history]
@@ -80,21 +77,20 @@ const Ranking: React.FC = () => {
 
   const onDateChange = useCallback(
     (date: Date | null) => {
+      const defaultDate = addHours(new Date(), -12);
       const type = (_type as RankingType) ?? RankingType.Daily;
-      if (date && type === RankingType.Daily) {
-        if (
-          formatDate(date, type) !== formatDate(addHours(new Date(), -12), type)
-        ) {
-          history.push(`/ranking/${type}/${formatDate(date, type)}  `);
-        } else {
-          history.push(`/`);
-        }
-      } else if (date) {
+      if (date && formatDate(date, type) !== formatDate(defaultDate, type)) {
         history.push(`/ranking/${type}/${formatDate(date, type)}`);
+      } else if (type === RankingType.Daily) {
+        history.push(`/`);
+      } else {
+        history.push(`/ranking/${type}`);
       }
     },
     [_type, history]
   );
+
+  const clearDate = useCallback(() => onDateChange(null), [onDateChange]);
 
   const type = (_type as RankingType) ?? RankingType.Daily;
   const date = convertDate(
@@ -102,11 +98,11 @@ const Ranking: React.FC = () => {
     type
   );
 
-  useEffect(() => {
-    document.title = `${
-      _date ? format(date, "yyyy/MM/dd") : "最新"
-    }の${RankingTypeName.get(type)}ランキング - なろうランキングビューワ`;
-  }, [_date, date, type]);
+  useTitle(
+    `${_date ? format(date, "yyyy/MM/dd") : "最新"}の${RankingTypeName.get(
+      type
+    )}ランキング - なろうランキングビューワ`
+  );
 
   return (
     <div className="container">
@@ -130,10 +126,7 @@ const Ranking: React.FC = () => {
               </span>
             </div>
             <p className="control">
-              <button
-                className="button is-info"
-                onClick={() => onDateChange(null)}
-              >
+              <button className="button is-info" onClick={clearDate}>
                 リセット
               </button>
             </p>

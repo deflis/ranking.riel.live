@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import { RankingResult, Order } from "narou";
 import ky from "ky";
 import { useParams, useHistory } from "react-router-dom";
@@ -11,7 +11,7 @@ import {
   CustomRankingFormEvent,
 } from "../components/custom/CustomRankingForm";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
-import { useAsync } from "react-use";
+import { useAsync, useTitle } from "react-use";
 
 export type CustomRankingParams = {
   type?: RankingType;
@@ -64,11 +64,11 @@ const CustomRanking: React.FC = () => {
 
   const history = useHistory();
 
-  useEffect(() => {
-    document.title = `${
-      keyword ? `${keyword}の` : "カスタム"
-    }${RankingTypeName.get(type)}ランキング - なろうランキングビューワ`;
-  }, [type, keyword]);
+  useTitle(
+    `${keyword ? `${keyword}の` : "カスタム"}${RankingTypeName.get(
+      type
+    )}ランキング - なろうランキングビューワ`
+  );
 
   const { value, loading } = useAsync(async () => {
     const result = await ky(`/api/custom/${convertOrder(type)}/`, {
