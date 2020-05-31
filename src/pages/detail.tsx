@@ -5,7 +5,6 @@ import { NarouSearchResult } from "narou";
 import DetailItem from "../components/detail/DetailItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
-import { useToggle } from "react-use";
 
 type Result = {
   detail: NarouSearchResult;
@@ -24,7 +23,7 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
   const [result, setResult] = useState<Result>();
-  const [error, toggleError] = useToggle(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (result) {
@@ -37,7 +36,7 @@ const Detail: React.FC = () => {
   useEffect(() => {
     let didCancel = false;
     setResult(undefined);
-    toggleError(false);
+    setError(false);
     (async () => {
       try {
         const result = await ky(`/api/detail/${ncode}`);
@@ -46,11 +45,11 @@ const Detail: React.FC = () => {
           if (json?.detail) {
             setResult(json);
           } else {
-            toggleError(true);
+            setError(true);
           }
         }
       } catch (e) {
-        toggleError(true);
+        setError(true);
       }
     })();
     return () => {
