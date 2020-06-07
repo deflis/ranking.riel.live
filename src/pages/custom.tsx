@@ -87,23 +87,15 @@ const CustomRanking: React.FC = () => {
   );
 
   return (
-    <div className="container">
+    <>
       <CustomRankingForm
         keyword={keyword}
         genres={genres}
         rankingType={type}
         onSearch={handleSearch}
       />
-      {loading ? (
-        <progress className="progress is-primary" max="100">
-          loading
-        </progress>
-      ) : ranking.length === 0 ? (
-        <>データがありません</>
-      ) : (
-        <RankingRender ranking={ranking} />
-      )}
-    </div>
+      <RankingRender ranking={ranking} loading={loading} />
+    </>
   );
 };
 

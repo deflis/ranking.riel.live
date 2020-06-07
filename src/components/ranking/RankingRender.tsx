@@ -4,6 +4,8 @@ import RankingItem from "./RankingItem";
 import { FilterInterface, DummyFilter } from "../../interface/Filter";
 import { Waypoint } from "react-waypoint";
 import AdSense from "../common/AdSense";
+import { Grid, LinearProgress } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 
 const InsideRender: React.FC<{
   ranking: RankingResult[];
@@ -19,26 +21,24 @@ const InsideRender: React.FC<{
     setItems(filter.execute(ranking));
   }, [filter, ranking]);
 
-  const rankingItems = items.slice(0, max).map(item => (
-    <div className="column is-half-desktop" key={item.ncode}>
+  const rankingItems = items.slice(0, max).map((item) => (
+    <Grid item sm={6} key={item.ncode}>
       <RankingItem item={item} />
-    </div>
+    </Grid>
   ));
 
   return (
     <>
       {rankingItems}
       {max < items.length ? (
-        <div className="column is-full">
-          <Waypoint onEnter={() => setMax(x => x + 10)}>
-            <progress className="progress is-primary" max="100">
-              loading
-            </progress>
+        <Grid item xs={12}>
+          <Waypoint onEnter={() => setMax((x) => x + 10)}>
+            <LinearProgress />
           </Waypoint>
-          <button className="button" onClick={() => setMax(x => x + 10)}>
+          <button className="button" onClick={() => setMax((x) => x + 10)}>
             続きを見る
           </button>
-        </div>
+        </Grid>
       ) : null}
     </>
   );
@@ -47,16 +47,25 @@ const InsideRender: React.FC<{
 export const RankingRender: React.FC<{
   ranking: RankingResult[];
   filter?: FilterInterface;
-}> = React.memo(({ ranking, filter }) => {
+  loading?: boolean;
+}> = React.memo(({ ranking, filter, loading = false }) => {
   return (
-    <div className="columns is-desktop is-multiline">
-      <div className="column is-full">
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
         <AdSense></AdSense>
-      </div>
-      <InsideRender ranking={ranking} filter={filter ?? new DummyFilter()} />
-      <div className="column is-full">
+      </Grid>
+      <Grid item xs={12}>
+        {loading && <LinearProgress />}
+        {!loading && ranking.length === 0 && (
+          <Alert severity="info">データがありません</Alert>
+        )}
+      </Grid>
+      {!loading && (
+        <InsideRender ranking={ranking} filter={filter ?? new DummyFilter()} />
+      )}
+      <Grid item xs={12}>
         <AdSense></AdSense>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 });

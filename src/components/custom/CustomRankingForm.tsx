@@ -1,10 +1,49 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import Genre from "../../enum/Genre";
 import { RankingType, RankingTypeName } from "../../interface/RankingType";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { TwitterShare } from "../common/TwitterShare";
-import { useToggle } from "react-use";
+import { useToggle, useUpdateEffect } from "react-use";
+import {
+  Typography,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  FormControl,
+  FormLabel,
+  TextField,
+  Select,
+  MenuItem,
+  FormHelperText,
+  InputLabel,
+  Paper,
+  makeStyles,
+  createStyles,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    bar: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginBottom: theme.spacing(1),
+      "& > *:not(:last-child)": {
+        marginRight: theme.spacing(1),
+      },
+    },
+    form: {
+      padding: theme.spacing(2),
+      "& > form > *": {
+        marginBottom: theme.spacing(1),
+      },
+      "& > form > *:not(:last-child)": {
+        marginRight: theme.spacing(1),
+      },
+    },
+  })
+);
 
 export interface CustomRankingFormEvent {
   keyword?: string;
@@ -23,52 +62,44 @@ interface InnterParams {
   toggleShow: () => void;
 }
 
-export const CustomRankingForm: React.FC<CustomRankingFormParams> = params => {
+export const CustomRankingForm: React.FC<CustomRankingFormParams> = (
+  params
+) => {
+  const styles = useStyles();
   const [show, toggleShow] = useToggle(false);
 
   return (
-    <section className="hero">
-      <div className="hero-head">
-        <nav className="navbar">
-          <div className="container">
-            <div className="navbar-end">
-              <TwitterShare
-                title={`${
-                  params.keyword ? `${params.keyword}の` : "カスタム"
-                }${RankingTypeName.get(params.rankingType)}ランキング`}
-              >
-                ランキングを共有
-              </TwitterShare>{" "}
-              <button className="button" onClick={toggleShow}>
-                <FontAwesomeIcon icon={faCog} />
-                編集
-              </button>
-            </div>
-          </div>
-        </nav>
+    <>
+      <div className={styles.bar}>
+        <TwitterShare
+          title={`${
+            params.keyword ? `${params.keyword}の` : "カスタム"
+          }${RankingTypeName.get(params.rankingType)}ランキング`}
+        >
+          ランキングを共有
+        </TwitterShare>{" "}
+        <Button onClick={toggleShow} variant="contained" startIcon={<FontAwesomeIcon icon={faCog} />}>
+          編集
+        </Button>
       </div>
-      <div className="hero-body">
-        <div className="container">
-          {show ? (
-            <EnableCustomRankingForm {...params} toggleShow={toggleShow} />
-          ) : (
-            <DisableCustomRankingForm {...params} />
-          )}
-        </div>
-      </div>
-    </section>
+      {show ? (
+        <EnableCustomRankingForm {...params} toggleShow={toggleShow} />
+      ) : (
+        <DisableCustomRankingForm {...params} />
+      )}
+    </>
   );
 };
 
 const DisableCustomRankingForm: React.FC<CustomRankingFormParams> = ({
   keyword,
   genres,
-  rankingType
+  rankingType,
 }) => {
   const genre =
     genres.length > 0
       ? genres
-          .map(genre => <span className="tag">{Genre.get(genre)}</span>)
+          .map((genre) => <span className="tag">{Genre.get(genre)}</span>)
           .reduce(
             (previous, current) => (
               <>
@@ -80,65 +111,69 @@ const DisableCustomRankingForm: React.FC<CustomRankingFormParams> = ({
       : "ジャンル設定なし";
   return (
     <>
-      <h1 className="title">
+      <Typography variant="h2" component="h1">
         {keyword ? `${keyword}の` : "カスタム"}
         {RankingTypeName.get(rankingType)}ランキング
-      </h1>
-      <h2 className="subtitle">{genre}</h2>
+      </Typography>
+      <Typography variant="subtitle1" component="h2">
+        {genre}
+      </Typography>
     </>
   );
 };
 
 const RankingTypeOptions = Array.from(
   RankingTypeName.entries()
-).map(([value, label]) => <option value={value}>{label}</option>);
+).map(([value, label]) => <MenuItem value={value}>{label}</MenuItem>);
 
-const EnableCustomRankingForm: React.FC<CustomRankingFormParams &
-  InnterParams> = ({
+const EnableCustomRankingForm: React.FC<
+  CustomRankingFormParams & InnterParams
+> = ({
   keyword: defaultKeyword,
   genres: defaultGenres,
   rankingType: defaultType,
   onSearch,
-  toggleShow
+  toggleShow,
 }) => {
+  const styles = useStyles();
+
   const [keyword, setKeyword] = useState(defaultKeyword);
   const [genres, setGenres] = useState<number[]>(defaultGenres);
   const [rankingType, setRankingType] = useState<RankingType>(defaultType);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     setKeyword(defaultKeyword);
   }, [defaultKeyword]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     setGenres(defaultGenres);
   }, [defaultGenres]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     setRankingType(defaultType);
   }, [defaultType]);
 
+  const handleChangeGenre = useCallback(
+    (e: React.ChangeEvent<{ value?: string }>) => {
+      if (!e.target.value) return;
+      const id = parseInt(e.target.value);
+      setGenres((genres) => {
+        if (genres.includes(id)) {
+          return genres.filter((x) => x !== id);
+        } else {
+          return [id].concat(genres).sort();
+        }
+      });
+    },
+    []
+  );
   const genreFilter = Array.from(Genre).map(([id, name]) => {
-    const genreChange = () => {
-      if (genres.includes(id)) {
-        setGenres(genres.filter(x => x !== id));
-      } else {
-        setGenres([id].concat(genres).sort());
-      }
-    };
     return (
-      <div
-        className="column is-one-fifth-desktop is-half-mobile control"
+      <FormControlLabel
         key={id}
-      >
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={genres.includes(id)}
-            onChange={genreChange}
-          />
-          {name}
-        </label>
-      </div>
+        control={<Checkbox checked={genres.includes(id)} value={id} />}
+        label={name}
+      />
     );
   });
 
@@ -158,79 +193,54 @@ const EnableCustomRankingForm: React.FC<CustomRankingFormParams &
   );
 
   const handleChangeType = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (e: React.ChangeEvent<{ value: unknown }>) => {
       setRankingType(e.target.value as RankingType);
     },
     []
   );
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">種類</label>
-        </div>
-        <div className="field-body">
-          <div className="field has-addons">
-            <div className="select">
-              <select value={rankingType} onChange={handleChangeType}>
-                {RankingTypeOptions}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">
-            キーワード
-            <br />
-            (未入力時はすべて)
-          </label>
-        </div>
-        <div className="field-body">
-          <div className="field">
-            <div className="control">
-              <input
-                type="text"
-                className="input"
-                value={keyword}
-                onChange={handleChangeKeyword}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">
-            ジャンル
-            <br />
-            (未選択時は全て)
-          </label>
-        </div>
-        <div className="field-body">
-          <div className="columns is-multiline">{genreFilter}</div>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label"></div>
-        <div className="field-body">
-          <div className="field is-grouped">
-            <div className="control">
-              <button type="submit" className="button is-primary">
-                <FontAwesomeIcon icon={faSearch} /> 検索
-              </button>
-            </div>
-            <div className="control">
-              <button className="button" onClick={toggleShow}>
-                <FontAwesomeIcon icon={faTimes} />
-                閉じる
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
+    <Paper className={styles.form}>
+      <form onSubmit={handleSubmit}>
+        <FormControl>
+          <InputLabel id="ranking-type">種類</InputLabel>
+          <Select
+            labelId="ranking-type"
+            value={rankingType}
+            onChange={handleChangeType}
+          >
+            {RankingTypeOptions}
+          </Select>
+        </FormControl>
+        <TextField
+          label="キーワード"
+          value={keyword}
+          onChange={handleChangeKeyword}
+          helperText="(未入力時はすべて)"
+        />
+        <FormControl>
+          <FormLabel>ジャンル</FormLabel>
+          <FormGroup onChange={handleChangeGenre} row>
+            {genreFilter}
+          </FormGroup>
+          <FormHelperText>(未選択時は全て)</FormHelperText>
+        </FormControl>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          startIcon={<FontAwesomeIcon icon={faSearch} />}
+        >
+          検索
+        </Button>
+        <Button
+          onClick={toggleShow}
+          variant="contained"
+          startIcon={<FontAwesomeIcon icon={faTimes} />}
+        >
+          閉じる
+        </Button>
+      </form>
+    </Paper>
   );
 };

@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import {
   RankingHistories,
   RankingHistoryItem,
 } from "../../interface/RankingHistory";
 import { RankingType } from "narou";
-import store from "store";
 import {
   parseISO,
   format,
@@ -24,8 +23,26 @@ import {
   Tooltip,
   Brush,
 } from "recharts";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { ja } from "date-fns/locale";
+import {
+  Paper,
+  Tabs,
+  Tab,
+  Table,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Link,
+  Typography,
+  useTheme,
+  makeStyles,
+  createStyles,
+} from "@material-ui/core";
+import { useLocalStorage } from "react-use";
+import { Grid, Hidden } from "@material-ui/core";
 
 function* rangeDate(start: Date, end: Date, type: RankingType) {
   if (!start) return;
@@ -53,6 +70,8 @@ const RankingHistoryCharts: React.FC<{
   ranking: RankingHistoryItem[];
   type: RankingType;
 }> = ({ ranking, type }) => {
+  const theme = useTheme();
+
   const parsedRanking = ranking.map(({ date, ...other }) => ({
     date: parseISO(date),
     ...other,
@@ -75,131 +94,157 @@ const RankingHistoryCharts: React.FC<{
       ポイント: pt,
     }));
   return (
-    <div className="columns">
-      <div className="column is-three-quarters-desktop">
-        <h3 className="subtitle">順位</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <Line type="monotone" dataKey="順位" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="date" />
-            <YAxis
-              reversed
-              domain={[1, 300]}
-              ticks={[10, 50, 100, 300]}
-              allowDataOverflow
-              scale="log"
-            />
-            <Brush dataKey="date" height={30} stroke="#8884d8" />
-            <Tooltip />
-          </LineChart>
-        </ResponsiveContainer>
-        <h3 className="subtitle">ポイント</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <Line type="monotone" dataKey="ポイント" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Brush dataKey="date" height={30} stroke="#8884d8" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="column">
-        <table className="table is-fullwidth">
-          <thead>
-            <tr>
-              <th>日付</th>
-              <th>順位</th>
-              <th>ポイント</th>
-            </tr>
-          </thead>
-          <tbody>
-            {parsedRanking.map(({ date, rank, pt }) => (
-              <tr key={date.toString()}>
-                <td>
-                  <Link
-                    to={`/ranking/${type}/${formatISO(date, {
-                      representation: "date",
-                    })}`}
-                  >
-                    {format(date, "yyyy年MM月dd日(E)", { locale: ja })}
-                  </Link>
-                </td>
-                <td>{rank}位</td>
-                <td>{pt.toLocaleString()}pt</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Grid container spacing={3}>
+      <Grid item sm={8}>
+        <Hidden smDown>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+              <Line
+                type="monotone"
+                dataKey="順位"
+                yAxisId="left"
+                stroke={theme.palette.primary.main}
+              />
+              <Line
+                type="monotone"
+                dataKey="ポイント"
+                yAxisId="right"
+                stroke={theme.palette.secondary.main}
+              />
+              <CartesianGrid stroke={theme.palette.text.secondary} />
+              <XAxis dataKey="date" stroke={theme.palette.text.primary} />
+              <YAxis
+                reversed
+                domain={[1, 300]}
+                ticks={[10, 50, 100, 300]}
+                allowDataOverflow
+                scale="log"
+                stroke={theme.palette.primary.main}
+                yAxisId="left"
+                label="順位"
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke={theme.palette.secondary.main}
+                label="ポイント"
+              />
+              <Brush
+                dataKey="date"
+                height={30}
+                stroke={theme.palette.primary.main}
+              />
+              <Tooltip
+                contentStyle={{ background: theme.palette.background.default }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </Hidden>
+      </Grid>
+
+      <Grid item sm={4}>
+        <TableContainer>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>日付</TableCell>
+                <TableCell>順位</TableCell>
+                <TableCell>ポイント</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {parsedRanking.map(({ date, rank, pt }) => (
+                <TableRow key={date.toString()}>
+                  <TableCell>
+                    <Link
+                      component={RouterLink}
+                      to={`/ranking/${type}/${formatISO(date, {
+                        representation: "date",
+                      })}`}
+                    >
+                      {format(date, "yyyy年MM月dd日(E)", { locale: ja })}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{rank}位</TableCell>
+                  <TableCell>{pt.toLocaleString()}pt</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Grid>
+    </Grid>
   );
 };
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      padding: theme.spacing(2),
+    },
+    title: {
+      marginBottom: theme.spacing(2),
+    },
+  })
+);
 
 export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
   ranking,
 }) => {
-  const [type, setType_] = useState<RankingType>(
-    store.get("HistoryRankingType", RankingType.Daily)
+  const styles = useStyles();
+  const [_type, setType] = useLocalStorage(
+    "HistoryRankingType",
+    RankingType.Daily
   );
-  const setType = useCallback((type: RankingType) => {
-    setType_(type);
-    store.set("HistoryRankingType", type);
-  }, []);
+  const type = _type ?? RankingType.Daily;
+  const handleChange = useCallback(
+    (_: React.ChangeEvent<{}>, newValue: RankingType) => {
+      setType(newValue);
+    },
+    [setType]
+  );
+  if (
+    ranking[RankingType.Daily].length === 0 &&
+    ranking[RankingType.Weekly].length === 0 &&
+    ranking[RankingType.Monthly].length === 0 &&
+    ranking[RankingType.Quarterly].length === 0
+  ) {
+    return null;
+  }
   return (
-    <>
-      <h2 className="title">ランキング履歴</h2>
-      <div className="tabs is-toggle is-fullwidth">
-        <ul>
-          <li className={type === RankingType.Daily ? "is-active" : ""}>
-            <a // eslint-disable-line jsx-a11y/anchor-is-valid
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setType(RankingType.Daily);
-              }}
-            >
-              <span>日間</span>
-            </a>
-          </li>
-          <li className={type === RankingType.Weekly ? "is-active" : ""}>
-            <a // eslint-disable-line jsx-a11y/anchor-is-valid
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setType(RankingType.Weekly);
-              }}
-            >
-              <span>週間</span>
-            </a>
-          </li>
-          <li className={type === RankingType.Monthly ? "is-active" : ""}>
-            <a // eslint-disable-line jsx-a11y/anchor-is-valid
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setType(RankingType.Monthly);
-              }}
-            >
-              <span>月間</span>
-            </a>
-          </li>
-          <li className={type === RankingType.Quarterly ? "is-active" : ""}>
-            <a // eslint-disable-line jsx-a11y/anchor-is-valid
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setType(RankingType.Quarterly);
-              }}
-            >
-              <span>四半期</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <Paper className={styles.root}>
+      <Typography variant="h4" component="h2" className={styles.title}>
+        ランキング履歴
+      </Typography>
+      <Tabs
+        value={type}
+        onChange={handleChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+      >
+        <Tab
+          value={RankingType.Daily}
+          label="日間"
+          disabled={ranking[RankingType.Daily].length === 0}
+        />
+        <Tab
+          value={RankingType.Weekly}
+          label="週間"
+          disabled={ranking[RankingType.Weekly].length === 0}
+        />
+        <Tab
+          value={RankingType.Monthly}
+          label="月間"
+          disabled={ranking[RankingType.Monthly].length === 0}
+        />
+        <Tab
+          value={RankingType.Quarterly}
+          label="四半期"
+          disabled={ranking[RankingType.Quarterly].length === 0}
+        />
+      </Tabs>
       <RankingHistoryCharts ranking={ranking[type]} type={type} />
-    </>
+    </Paper>
   );
 };

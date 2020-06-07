@@ -10,18 +10,29 @@ import {
   getDay,
   addHours,
 } from "date-fns/esm";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { FilterComponent } from "../components/ranking/Filter";
 import { Filter } from "../interface/Filter";
 import { useParams, useHistory } from "react-router-dom";
 import { parseISO } from "date-fns";
 import { RankingRender } from "../components/ranking/RankingRender";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
 import { TwitterShare } from "../components/common/TwitterShare";
 import { useAsync, useTitle } from "react-use";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import jaLocale from "date-fns/locale/ja";
+import { FormGroup } from "@material-ui/core";
+import {
+  Button,
+  Select,
+  MenuItem,
+  makeStyles,
+  FormControl,
+  InputLabel,
+} from "@material-ui/core";
 
 export type RankingParams = {
   date?: string;
@@ -45,8 +56,21 @@ function convertDate(date: Date, type: RankingType): Date {
       return startOfMonth(date);
   }
 }
+const useStyles = makeStyles((theme) => ({
+  form: {
+    flexWrap: "wrap",
+    "& > *": {
+      margin: theme.spacing(1),
+      marginTop: "auto",
+    },
+  },
+  grow: {
+    flexGrow: 1,
+  },
+}));
 
 const Ranking: React.FC = () => {
+  const styles = useStyles();
   const history = useHistory();
   const { date: _date, type: _type } = useParams<RankingParams>();
 
@@ -60,7 +84,11 @@ const Ranking: React.FC = () => {
   const ranking = value ?? [];
 
   const onTypeChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (
+      e: React.ChangeEvent<{
+        value: unknown;
+      }>
+    ) => {
       const defaultDate = addHours(new Date(), -12);
       const date = _date ? parseISO(_date) : defaultDate;
       const type = e.target.value as RankingType;
@@ -105,49 +133,39 @@ const Ranking: React.FC = () => {
   );
 
   return (
-    <div className="container">
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">日付</label>
-        </div>
-        <div className="field-body">
-          <div className="field has-addons">
-            <div className="control has-icons-left">
-              <ReactDatePicker
-                className="input"
-                dateFormat="yyyy/MM/dd"
-                minDate={new Date(2013, 5, 1)}
-                maxDate={new Date()}
-                selected={date}
-                onChange={onDateChange}
-              />
-              <span className="icon is-small is-left">
-                <FontAwesomeIcon icon={faCalendar} />
-              </span>
-            </div>
-            <p className="control">
-              <button className="button is-info" onClick={clearDate}>
-                リセット
-              </button>
-            </p>
-          </div>
-        </div>
-        <div className="field-label">
-          <label className="label">種類</label>
-        </div>
-        <div className="field-body">
-          <div className="field has-addons">
-            <div className="select">
-              <select value={type} onChange={onTypeChange}>
-                <option value={RankingType.Daily}>日間</option>
-                <option value={RankingType.Weekly}>週間</option>
-                <option value={RankingType.Monthly}>月間</option>
-                <option value={RankingType.Quarter}>四半期</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div className="field-body">
+    <>
+      <form noValidate autoComplete="off">
+        <FormGroup className={styles.form} row>
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={jaLocale}>
+            <KeyboardDatePicker
+              format="yyyy/MM/dd"
+              label="日付"
+              minDate={new Date(2013, 5, 1)}
+              maxDate={new Date()}
+              value={date}
+              onChange={onDateChange}
+            />
+          </MuiPickersUtilsProvider>
+          <FormControl>
+            <Button onClick={clearDate} variant="contained" color="primary">
+              リセット
+            </Button>
+          </FormControl>
+          <FormControl>
+            <InputLabel id="type">種類</InputLabel>
+            <Select
+              label="種類"
+              labelId="type"
+              value={type}
+              onChange={onTypeChange}
+            >
+              <MenuItem value={RankingType.Daily}>日間</MenuItem>
+              <MenuItem value={RankingType.Weekly}>週間</MenuItem>
+              <MenuItem value={RankingType.Monthly}>月間</MenuItem>
+              <MenuItem value={RankingType.Quarter}>四半期</MenuItem>
+            </Select>
+          </FormControl>
+          <div className={styles.grow}></div>
           <TwitterShare
             title={`${
               _date ? format(date, "yyyy/MM/dd") : "最新"
@@ -155,18 +173,12 @@ const Ranking: React.FC = () => {
           >
             ランキングを共有
           </TwitterShare>
-        </div>
-      </div>
+        </FormGroup>
+      </form>
       <FilterComponent onChange={setFilter} />
 
-      {loading ? (
-        <progress className="progress is-primary" max="100">
-          loading
-        </progress>
-      ) : (
-        <RankingRender ranking={ranking} filter={filter} />
-      )}
-    </div>
+      <RankingRender ranking={ranking} filter={filter} loading={loading} />
+    </>
   );
 };
 

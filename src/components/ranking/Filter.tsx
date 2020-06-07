@@ -1,312 +1,251 @@
 import React, { useState, useCallback } from "react";
 import Genre from "../../enum/Genre";
-import ReactDatePicker from "react-datepicker";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-import store from "store";
 import { Filter } from "../../interface/Filter";
+import {
+  useLocalStorage,
+  useDebounce,
+  useBoolean,
+  useUpdateEffect,
+} from "react-use";
+import {
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  Typography,
+  ExpansionPanelDetails,
+  InputAdornment,
+  TextField,
+  Checkbox,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  FormControlLabel,
+  Button,
+} from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { useHandleChange } from "../../util/useHandleChange";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+import jaLocale from "date-fns/locale/ja";
 
 export const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 export const initGenre = Array.from(Genre.keys());
 
 const StoryCount: React.FC<{
-  initValue: number;
+  value?: number;
   defaultValue: number;
-  onUpdate: (n: number) => void;
-}> = React.memo(
-  ({ initValue, defaultValue, onUpdate, children }) => {
-    const [enabled, setEnabled] = useState(initValue !== 0);
-    const [value, setValue] = useState(
-      initValue !== 0 ? initValue.toString() : defaultValue.toString()
-    );
-    const update = useCallback(
-      (n: number) => {
+  onUpdate: (n: number | undefined) => void;
+}> = ({ value: initValue, defaultValue, onUpdate, children }) => {
+  const [disabled, toggle] = useBoolean(initValue === undefined);
+  const [value, setValue] = useState(
+    initValue ? initValue.toString() : defaultValue.toString()
+  );
+  const handleChange = useHandleChange(setValue);
+  useUpdateEffect(() => {
+    setValue((initValue ?? defaultValue).toString());
+    toggle(initValue === undefined);
+  }, [initValue, defaultValue]);
+  useDebounce(
+    () => {
+      const n = parseInt(value);
+      if (!disabled && n) {
         onUpdate(n);
-        setValue(n.toString());
-      },
-      [onUpdate]
-    );
-    const toggle = useCallback(() => {
-      if (enabled) {
-        onUpdate(0);
-        setEnabled(false);
       } else {
-        const x = parseInt(value);
-        onUpdate(x > 0 ? x : defaultValue);
-        setEnabled(true);
+        onUpdate(undefined);
       }
-    }, [onUpdate, value, enabled, defaultValue]);
-
-    return (
-      <>
-        <div className="field has-addons">
-          <div className="control">
-            <label className="button checkbox">
-              <input
-                type="checkbox"
-                checked={enabled}
-                onChange={() => toggle()}
-              />
-            </label>
-          </div>
-          <div className="control">
-            <span className="button is-static">{children}</span>
-          </div>
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              value={value}
-              onChange={e => {
-                setValue(e.target.value);
-                const x = parseInt(e.target.value);
-                if (x > 0) update(x);
-              }}
-              disabled={!enabled}
-            />
-          </div>
-          <div className="control">
-            <span className="button is-static">話</span>
-          </div>
-        </div>
-      </>
-    );
-  },
-  (prev, next) =>
-    prev.children !== next.children &&
-    prev.defaultValue !== next.defaultValue &&
-    prev.onUpdate !== next.onUpdate
-);
+    },
+    1000,
+    [disabled, value, onUpdate]
+  );
+  return (
+    <TextField
+      onChange={handleChange}
+      value={value}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <Checkbox onChange={toggle} />
+            {children}
+          </InputAdornment>
+        ),
+        endAdornment: <InputAdornment position="end">話</InputAdornment>,
+      }}
+      disabled={disabled}
+    />
+  );
+};
 
 type FilterCompnentProps = {
   onChange: (filter: Filter) => void;
 };
+
 const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
   const [filter, setFilter] = useState(Filter.init());
-
-  const updateGenres = useCallback(
-    (genre: number[]) => {
-      const newFilter = filter.setGenres(genre);
-      setFilter(newFilter);
-      onChange(newFilter);
+  useDebounce(
+    () => {
+      onChange(filter);
     },
+    1000,
     [filter, onChange]
   );
 
+  const handleChangeGenre = useCallback(
+    (e: React.ChangeEvent<{ value?: string }>) => {
+      if (!e.target.value) return;
+      const id = parseInt(e.target.value);
+      setFilter((f) => {
+        if (f.genres.includes(id)) {
+          return f.setGenres(f.genres.filter((x) => x !== id));
+        } else {
+          return f.setGenres([id].concat(f.genres));
+        }
+      });
+    },
+    []
+  );
   const genreFilter = Array.from(Genre).map(([id, name]) => {
-    const genreChange = () => {
-      if (filter.genres.includes(id)) {
-        updateGenres(filter.genres.filter(x => x !== id));
-      } else {
-        updateGenres([id].concat(filter.genres));
-      }
-    };
     return (
-      <div
-        className="column is-one-fifth-desktop is-half-mobile control"
+      <FormControlLabel
         key={id}
-      >
-        <label className="checkbox">
-          <input
-            type="checkbox"
-            checked={filter.genres.includes(id)}
-            onChange={genreChange}
-          />
-          {name}
-        </label>
-      </div>
+        control={<Checkbox checked={filter.genres.includes(id)} value={id} />}
+        label={name}
+      />
     );
   });
-  const updateMax = (max: number) => {
-    const newFilter = filter.setMaxNo(max);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
-  const updateMin = (min: number) => {
-    const newFilter = filter.setMinNo(min);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
-  const setFirstUpdate = (firstUpdate: Date | null) => {
-    const newFilter = filter.setFirstUpdate(firstUpdate ?? undefined);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
-  const toggleEnableRensai = () => {
-    const newFilter = filter.setEnableRensai(!filter.enableRensai);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
-  const toggleEnableKanketsu = () => {
-    const newFilter = filter.setEnableKanketsu(!filter.enableKanketsu);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
-  const toggleEnableTanpen = () => {
-    const newFilter = filter.setEnableTanpen(!filter.enableTanpen);
-    setFilter(newFilter);
-    onChange(newFilter);
-  };
+  const updateMax = useCallback((max?: number | undefined) => {
+    setFilter((f) => f.setMaxNo(max));
+  }, []);
+  const updateMin = useCallback((min: number | undefined) => {
+    setFilter((f) => f.setMinNo(min));
+  }, []);
+  const setFirstUpdate = useCallback((firstUpdate: Date | null) => {
+    setFilter((f) => f.setFirstUpdate(firstUpdate ?? undefined));
+  }, []);
+  const toggleEnableRensai = useCallback(() => {
+    setFilter((f) => f.setEnableRensai(!f.enableRensai));
+  }, []);
+  const toggleEnableKanketsu = useCallback(() => {
+    setFilter((f) => f.setEnableKanketsu(!f.enableKanketsu));
+  }, []);
+  const toggleEnableTanpen = useCallback(() => {
+    setFilter((f) => f.setEnableTanpen(!f.enableTanpen));
+  }, []);
 
   const selectAll = useCallback(() => {
-    updateGenres(initGenre);
-  }, [updateGenres]);
+    setFilter((f) => f.setGenres(initGenre));
+  }, []);
   const unselectAll = useCallback(() => {
-    updateGenres([]);
-  }, [updateGenres]);
+    setFilter((f) => f.setGenres([]));
+  }, []);
 
   return (
-    <>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">ジャンル</label>
-        </div>
-        <div className="field-body">
-          <div className="columns is-multiline">{genreFilter}</div>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label"></label>
-        </div>
-        <div className="field-body">
-          <button className="button" onClick={selectAll}>
-            全選択
-          </button>
-          <button className="button" onClick={unselectAll}>
-            全解除
-          </button>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">話数</label>
-        </div>
-        <div className="field-body">
-          <StoryCount
-            initValue={filter.maxNo}
-            defaultValue={30}
-            onUpdate={updateMax}
-          >
-            最大
-          </StoryCount>
-          ～
-          <StoryCount
-            initValue={filter.minNo}
-            defaultValue={1}
-            onUpdate={updateMin}
-          >
-            最小
-          </StoryCount>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">更新開始日</label>
-        </div>
-        <div className="field-body">
-          <div className="field has-addons">
-            <div className="control has-icons-left">
-              <ReactDatePicker
-                className="input"
-                dateFormat="yyyy/MM/dd"
-                minDate={new Date(2013, 5, 1)}
-                maxDate={new Date()}
-                selected={filter.firstUpdate}
-                onChange={setFirstUpdate}
-              />
-              <span className="icon is-small is-left">
-                <FontAwesomeIcon icon={faCalendar} />
-              </span>
-            </div>
-            <p className="control">
-              <button
-                className="button is-info"
-                onClick={() => setFirstUpdate(null)}
-              >
-                リセット
-              </button>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="field is-horizontal">
-        <div className="field-label">
-          <label className="label">更新状態</label>
-        </div>
-        <div className="field-body">
-          <p className="control">
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={filter.enableRensai}
-                onChange={() => toggleEnableRensai()}
-              />
-              連載
-            </label>
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={filter.enableKanketsu}
-                onChange={() => toggleEnableKanketsu()}
-              />
-              完結
-            </label>
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={filter.enableTanpen}
-                onChange={() => toggleEnableTanpen()}
-              />
-              短編
-            </label>
-          </p>
-        </div>
-      </div>
-    </>
+    <form noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+      <FormGroup className={undefined}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">ジャンル</FormLabel>
+          <FormGroup onChange={handleChangeGenre} row>
+            {genreFilter}
+          </FormGroup>
+          <FormGroup row>
+            <Button onClick={selectAll}>全選択</Button>
+            <Button onClick={unselectAll}>全解除</Button>
+          </FormGroup>
+        </FormControl>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">話数</FormLabel>
+          <FormGroup row>
+            <StoryCount
+              value={filter.minNo}
+              defaultValue={1}
+              onUpdate={updateMin}
+            >
+              最小
+            </StoryCount>
+            ～
+            <StoryCount
+              value={filter.maxNo}
+              defaultValue={30}
+              onUpdate={updateMax}
+            >
+              最大
+            </StoryCount>
+          </FormGroup>
+        </FormControl>
+        <FormControl component="fieldset">
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={jaLocale}>
+            <KeyboardDatePicker
+              clearable
+              format="yyyy/MM/dd"
+              label="更新開始日"
+              minDate={new Date(2013, 5, 1)}
+              maxDate={new Date()}
+              value={filter.firstUpdate ?? null}
+              onChange={setFirstUpdate}
+            />
+          </MuiPickersUtilsProvider>
+        </FormControl>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">更新状態</FormLabel>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filter.enableRensai}
+                  onChange={toggleEnableRensai}
+                />
+              }
+              label="連載中"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filter.enableKanketsu}
+                  onChange={toggleEnableKanketsu}
+                />
+              }
+              label="完結"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={filter.enableTanpen}
+                  onChange={toggleEnableTanpen}
+                />
+              }
+              label="完結"
+            />
+          </FormGroup>
+        </FormControl>
+      </FormGroup>
+    </form>
   );
 };
 
 export const FilterComponent: React.FC<FilterCompnentProps> = ({
-  onChange
+  onChange,
 }) => {
-  const [showFilter, setShowFilter] = useState(store.get("showFilter", false));
-  const open = useCallback(() => {
-    setShowFilter(true);
-    store.set("showFilter", true);
-  }, []);
-  const close = useCallback(() => {
-    setShowFilter(false);
-    store.set("showFilter", false);
-  }, []);
+  const [showFilter, setShowFilter] = useLocalStorage("showFilter", false);
+  const toggleShowFIlter = useCallback(
+    (_: React.ChangeEvent<{}>, newExpanded: boolean) =>
+      setShowFilter(newExpanded),
+    [setShowFilter]
+  );
 
-  if (showFilter) {
-    return (
-      <article className="message">
-        <div className="message-header" onClick={() => close()}>
-          フィルター
-          <button className="delete" onClick={() => close()}></button>
-        </div>
-        <div className="message-body">
-          <InnterFilterComponent onChange={onChange} />
-        </div>
-      </article>
-    );
-  } else {
-    return (
-      <div className="field">
-        <p className="control is-expanded">
-          <button
-            className="button is-fullwidth is-info"
-            onClick={() => open()}
-          >
-            フィルターを開く
-          </button>
-        </p>
-      </div>
-    );
-  }
+  return (
+    <ExpansionPanel expanded={showFilter} onChange={toggleShowFIlter}>
+      <ExpansionPanelSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography>フィルター</Typography>
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <InnterFilterComponent onChange={onChange} />
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
+  );
 };
-
-

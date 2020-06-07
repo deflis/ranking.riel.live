@@ -6,6 +6,8 @@ import DetailItem from "../components/detail/DetailItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
 import { useAsync, useTitle } from "react-use";
+import FakeItem from "../components/detail/FakeItem";
+import Alert from "@material-ui/lab/Alert";
 
 type Result = {
   detail: NarouSearchResult;
@@ -41,24 +43,14 @@ const Detail: React.FC = () => {
   );
 
   if (loading) {
-    return (
-      <div className="container">
-        <progress className="progress is-primary" max="100">
-          loading
-        </progress>
-      </div>
-    );
+    return <FakeItem />;
   } else if (value && !error) {
-    return (
-      <div className="container">
-        <DetailRenderer {...value} />
-      </div>
-    );
+    return <DetailRenderer {...value} />;
   }
   return (
-    <div className="container">
+    <Alert severity="warning">
       情報が見つかりません。この小説は削除された可能性があります。
-    </div>
+    </Alert>
   );
 };
 export default Detail;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TwitterShareButton } from "react-share";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { Button } from '@material-ui/core';
 
 export const TwitterShare: React.FC<{ title?: string }> = ({
   title: titleOriginal,
@@ -20,14 +21,16 @@ export const TwitterShare: React.FC<{ title?: string }> = ({
   }, [titleOriginal]);
 
   return (
-    <TwitterShareButton
-      className="button"
+    <Button 
+      component={TwitterShareButton}
       title={title}
       url={window.location.toString()}
       hashtags={["なろうランキングビューワ"]}
       resetButtonStyle={false}
+      startIcon={<FontAwesomeIcon icon={faTwitter} />}
+      variant="contained"
     >
-      <FontAwesomeIcon icon={faTwitter} /> {children}
-    </TwitterShareButton>
+      {children}
+    </Button>
   );
 };

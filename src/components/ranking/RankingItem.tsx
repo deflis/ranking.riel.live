@@ -2,191 +2,177 @@ import React from "react";
 import { RankingResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
-import { parse, formatDistance, isBefore, addDays, isAfter } from "date-fns";
+import { parse, formatDistance, addDays, isAfter } from "date-fns";
 import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns/esm";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { OutboundLink } from "react-ga";
+import {
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Link,
+  CardActions,
+  Chip,
+  makeStyles,
+  createStyles,
+  Paper,
+  Collapse,
+} from "@material-ui/core";
+import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
+import StoryRender from "../common/StoryRender";
+import ItemBadge from "../common/badges/ItemBadge";
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
 const formatOptions = { locale: ja };
 const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    contents: {
+      "& > *:not(:last-child)": {
+        marginBottom: theme.spacing(1),
+      },
+    },
+    story: {
+      margin: theme.spacing(0, 2),
+      background: theme.palette.background.default,
+    },
+    actions: {
+      justifyContent: "flex-end",
+    },
+    flexGap: {
+      flexGrow: 1,
+    },
+    keywords: {
+      display: "flex",
+      flexWrap: "wrap",
+      background: theme.palette.background.default,
+      "& > *": {
+        margin: theme.spacing(0.5),
+      },
+    },
+  })
+);
+
 const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
-  const [isShowStory, toggleShowStory] = useToggle(false);
+  const styles = useStyles();
+  const [openStory, toggleStory] = useToggle(false);
+
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
-  const keywords = item.keyword
-    .split(/\s/g)
-    .map((keyword) => (
-      <Link className="tag" to={`/custom?keyword=${keyword}`}>
-        {keyword}
-      </Link>
-    ))
-    .reduce((previus, current) => (
-      <>
-        {previus} {current}
-      </>
-    ));
+  const firstup = parse(item.general_firstup, narouDateFormat, new Date());
   return (
-    <div className="card">
-      <header className="card-header">
-        <p className="card-header-title">
-          第{item.rank}位
-          <span
-            className={`tag ${
-              item.pt > 5000 ? "is-danger" : item.pt > 1000 ? "is-success" : ""
-            } is-light`}
-          >
-            {item.pt.toLocaleString()}pt
-          </span>
-          {isBefore(
-            parse(item.general_firstup, narouDateFormat, new Date()),
-            addMonths(new Date(), -1)
-          ) ? (
-            ""
-          ) : (
-            <span
-              className={`tag is-danger ${
-                isAfter(
-                  parse(item.general_firstup, narouDateFormat, new Date()),
-                  addDays(new Date(), -7)
-                )
-                  ? ""
-                  : "is-light"
-              }`}
-            >
-              New!
-            </span>
-          )}
-        </p>
-      </header>
-      <div className="card-content">
-        <div className="field is-grouped is-grouped-multiline">
-          <div className="control">
-            <div className="tags has-addons">
-              <span
-                className={`tag ${
-                  item.novel_type === 2
-                    ? "is-info"
-                    : item.end === 1
-                    ? "is-primary"
-                    : "is-success"
-                } is-light`}
+    <Card>
+      <CardContent className={styles.contents}>
+        <Typography color="textSecondary">
+          第{item.rank}位{" "}
+          <Tags>
+            <Tag>{item.pt.toLocaleString()}pt</Tag>
+            {isAfter(firstup, addMonths(new Date(), -1)) && (
+              <Tag
+                color="red"
+                light={isAfter(firstup, addDays(new Date(), -7))}
               >
-                {item.novel_type === 2
-                  ? " 短編"
-                  : item.end === 1
-                  ? " 連載中"
-                  : " 完結"}{" "}
-              </span>
-              {item.novel_type === 2 ? (
-                ""
-              ) : (
-                <span
-                  className={`tag ${
-                    item.general_all_no < 30
-                      ? "is-info"
-                      : item.general_all_no > 100
-                      ? "is-danger is-light"
-                      : ""
-                  }`}
-                >
-                  全{item.general_all_no.toLocaleString()}話
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="control">
-            <Link
-              to={`/custom?genres=${item.genre}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {Genre.get(item.genre)}
-            </Link>
-          </div>
-          <div className="control">
-            <span className="tag">
-              {Math.round(item.length / item.general_all_no).toLocaleString()}
-              文字/話
-            </span>
-          </div>
-        </div>
-        <div className="content">
-          <p>
-            <Link
-              className="title is-5"
-              to={`/detail/${item.ncode.toLowerCase()}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {entities.decode(item.title)}
-            </Link>
-          </p>
-          <p>
-            作者:{" "}
-            <OutboundLink
-              eventLabel="RankingItem-User"
-              to={user}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {entities.decode(item.writer)}
-            </OutboundLink>
-          </p>
-          <p>更新日時: {item.novelupdated_at}</p>
-          <p>
-            掲載開始:{" "}
-            {formatDistance(
-              parse(item.general_firstup, narouDateFormat, new Date()),
-              baseDate,
-              formatOptions
+                New!
+              </Tag>
             )}
-            前 / 最終更新:{" "}
-            {formatDistance(
-              parse(item.general_lastup, narouDateFormat, new Date()),
-              baseDate,
-              formatOptions
-            )}
-            前
-          </p>
-        </div>
-        <div className="content">
-          <p>{keywords}</p>
-        </div>
-        {isShowStory ? (
-          <div className="content">
-            <p>{item.story}</p>
-          </div>
-        ) : (
-          <></>
-        )}
-        <div className="card-footer">
-          <p className="card-footer-item">
-            <span className="button is-small" onClick={toggleShowStory}>
-              あらすじを{isShowStory ? "隠す" : "表示"}
-            </span>
-          </p>
-          <p className="card-footer-item">
-            <Link to={`/detail/${item.ncode.toLowerCase()}`}>小説情報</Link>
-          </p>
-          <p className="card-footer-item">
-            <OutboundLink
-              className="button"
-              eventLabel="RankingItem-read"
-              to={link}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              読む
-            </OutboundLink>
-          </p>
-        </div>
-      </div>
-    </div>
+          </Tags>
+        </Typography>
+        <Typography color="textSecondary">
+          <ItemBadge item={item} />
+          <Link
+            component={RouterLink}
+            to={`/custom?genres=${item.genre}`}
+            target="_blank"
+          >
+            {Genre.get(item.genre)}
+          </Link>
+          <Tag>
+            {Math.round(item.length / item.general_all_no).toLocaleString()}
+            文字/話
+          </Tag>
+        </Typography>
+        <Typography variant="h5" component="h2">
+          <Link
+            color="textPrimary"
+            component={RouterLink}
+            to={`/detail/${item.ncode.toLowerCase()}`}
+            target="_blank"
+          >
+            {entities.decode(item.title)}
+          </Link>
+        </Typography>
+        <Typography color="textSecondary">
+          作者:{" "}
+          <Link
+            component={OutboundLink}
+            eventLabel="RankingItem-User"
+            to={user}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {entities.decode(item.writer)}
+          </Link>
+        </Typography>
+        <Typography color="textSecondary">
+          更新日時: {item.novelupdated_at}
+        </Typography>
+        <Typography color="textSecondary">
+          掲載開始:{" "}
+          {formatDistance(
+            parse(item.general_firstup, narouDateFormat, new Date()),
+            baseDate,
+            formatOptions
+          )}
+          前 / 最終更新:{" "}
+          {formatDistance(
+            parse(item.general_lastup, narouDateFormat, new Date()),
+            baseDate,
+            formatOptions
+          )}
+          前
+        </Typography>
+        <Paper className={styles.keywords} variant="outlined">
+          {item.keyword
+            .split(/\s/g)
+            .filter((keyword) => keyword)
+            .map((keyword, i) => (
+              <Chip
+                key={i}
+                component={RouterLink}
+                to={`/custom?keyword=${keyword}`}
+                label={keyword}
+              />
+            ))}
+        </Paper>
+      </CardContent>
+      <Collapse in={openStory}>
+        <StoryRender className={styles.story} story={item.story} />
+      </Collapse>
+      <CardActions className={styles.actions}>
+        <Button onClick={toggleStory}>
+          あらすじを{openStory ? "隠す" : "表示"}
+        </Button>
+        <div className={styles.flexGap} />
+        <Link component={RouterLink} to={`/detail/${item.ncode.toLowerCase()}`}>
+          小説情報
+        </Link>
+        <Button
+          variant="contained"
+          component={OutboundLink}
+          eventLabel="RankingItem-read"
+          to={link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          読む
+        </Button>
+      </CardActions>
+    </Card>
   );
 };
 
