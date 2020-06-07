@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,15 +6,16 @@ import {
   useHistory,
 } from "react-router-dom";
 import ReactGA from "react-ga";
+import { makeStyles, Container, LinearProgress } from "@material-ui/core";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
-import Ranking from "./pages/ranking";
-import Detail from "./pages/detail";
-import CustomRanking from "./pages/custom";
-import About from "./pages/about";
 import MyThemeProvider from "./util/theme";
-import { makeStyles, Container } from '@material-ui/core';
+
+const Ranking = lazy(() => import("./pages/ranking"));
+const Detail = lazy(() => import("./pages/detail"));
+const CustomRanking = lazy(() => import("./pages/custom"));
+const About = lazy(() => import("./pages/about"));
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,29 +66,31 @@ const App: React.FC = () => {
         <div className={styles.main}>
           <Container maxWidth="lg">
             <ErrorBoundary>
-              <Switch>
-                <Route
-                  path={["/", "/ranking/:type", "/ranking/:type/:date"]}
-                  exact
-                  component={withTracker(Ranking)}
-                />
-                <Route
-                  path="/detail/:ncode"
-                  exact
-                  component={withTracker(Detail)}
-                />
-                <Route
-                  path="/custom"
-                  exact
-                  component={withTracker(CustomRanking)}
-                />
-                <Route
-                  path="/custom/:type"
-                  exact
-                  component={withTracker(CustomRanking)}
-                />
-                <Route path="/about" exact component={withTracker(About)} />
-              </Switch>
+              <Suspense fallback={<LinearProgress />}>
+                <Switch>
+                  <Route
+                    path={["/", "/ranking/:type", "/ranking/:type/:date"]}
+                    exact
+                    component={withTracker(Ranking)}
+                  />
+                  <Route
+                    path="/detail/:ncode"
+                    exact
+                    component={withTracker(Detail)}
+                  />
+                  <Route
+                    path="/custom"
+                    exact
+                    component={withTracker(CustomRanking)}
+                  />
+                  <Route
+                    path="/custom/:type"
+                    exact
+                    component={withTracker(CustomRanking)}
+                  />
+                  <Route path="/about" exact component={withTracker(About)} />
+                </Switch>
+              </Suspense>
             </ErrorBoundary>
           </Container>
         </div>
