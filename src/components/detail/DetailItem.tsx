@@ -2,7 +2,7 @@ import React from "react";
 import { NarouSearchResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
-import { parse, formatDistance, format } from "date-fns";
+import { formatDistance, format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Link as RouterLink } from "react-router-dom";
 import { TwitterShare } from "../common/TwitterShare";
@@ -29,7 +29,7 @@ import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 import { Paper } from "@material-ui/core";
 import ItemBadge from "../common/badges/ItemBadge";
-import { NarouDateFormat } from "../../util/NarouDateFormat";
+import { parse } from '../../util/NarouDateFormat';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -55,13 +55,13 @@ const baseDate = new Date();
 const formatOptions = { locale: ja };
 
 function formatRelative(date: string): string {
-  return formatDistance(parse(date, NarouDateFormat, baseDate), baseDate, {
+  return formatDistance(parse(date), baseDate, {
     locale: ja,
   });
 }
 function formatDate(date: string): string {
   return format(
-    parse(date, NarouDateFormat, baseDate),
+    parse(date),
     "yyyy年MM月dd日 hh:mm:ss",
     formatOptions
   );

@@ -1,8 +1,8 @@
 import { RankingResult } from "narou";
-import { isBefore, parse, parseISO, formatISO, isValid } from "date-fns";
+import { isBefore, parseISO, formatISO, isValid } from "date-fns";
 import store from "store";
 import { allGenres } from '../enum/Genre';
-import { NarouDateFormat } from '../util/NarouDateFormat';
+import { parse } from '../util/NarouDateFormat';
 
 export interface FilterInterface {
   execute(items: RankingResult[]): RankingResult[];
@@ -64,7 +64,7 @@ export class Filter implements FilterInterface {
           !this.firstUpdate ||
           isBefore(
             this.firstUpdate,
-            parse(item.general_firstup, NarouDateFormat, new Date())
+            parse(item.general_firstup)
           )
       )
       .filter(

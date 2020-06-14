@@ -1,7 +1,12 @@
 import { NarouSearchResult } from "narou";
-import { isAfter, parse } from "date-fns";
+import { isAfter } from "date-fns";
+import { parseFromTimeZone } from "date-fns-timezone";
 
-const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
+const narouDateFormat = "YYYY-MM-DD hh:mm:ss";
+const parse = (date: string) =>
+  parseFromTimeZone(date, narouDateFormat, {
+    timeZone: "Asia/Tokyo",
+  });
 
 class FilterBuilder {
   private maxNo?: number;
@@ -20,10 +25,7 @@ class FilterBuilder {
     }
     if (
       this.firstUpdate &&
-      isAfter(
-        this.firstUpdate,
-        parse(item.general_firstup, narouDateFormat, new Date())
-      )
+      isAfter(this.firstUpdate, parse(item.general_firstup))
     ) {
       return false;
     }

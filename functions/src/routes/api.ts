@@ -121,7 +121,7 @@ async function searchWithFilter(
     if (response.allcount < page * 500) {
       break;
     }
-  } while (result.length < 300 && page < 10);
+  } while (result.length < 300 && page < 5);
   return result;
 }
 

@@ -2,7 +2,7 @@ import React from "react";
 import { RankingResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
-import { parse, formatDistance, addDays, isAfter } from "date-fns";
+import { formatDistance, addDays, isAfter } from "date-fns";
 import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns/esm";
 import { Link as RouterLink } from "react-router-dom";
@@ -24,7 +24,7 @@ import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
-import { NarouDateFormat } from '../../util/NarouDateFormat';
+import { parse } from '../../util/NarouDateFormat';
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
@@ -64,7 +64,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
 
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
-  const firstup = parse(item.general_firstup, NarouDateFormat, new Date());
+  const firstup = parse(item.general_firstup);
   return (
     <Card>
       <CardContent className={styles.contents}>
@@ -124,13 +124,13 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
         <Typography color="textSecondary">
           掲載開始:{" "}
           {formatDistance(
-            parse(item.general_firstup, NarouDateFormat, new Date()),
+            parse(item.general_firstup),
             baseDate,
             formatOptions
           )}
           前 / 最終更新:{" "}
           {formatDistance(
-            parse(item.general_lastup, NarouDateFormat, new Date()),
+            parse(item.general_lastup),
             baseDate,
             formatOptions
           )}

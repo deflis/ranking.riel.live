@@ -27,7 +27,9 @@ const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
 
   const { value, loading, error } = useAsync(async () => {
-    const result = await ky(`/api/detail/${ncode}`);
+    const result = await ky(`/api/detail/${ncode}`, {
+      timeout: 60000,
+    });
     const json: Result = await result.json();
     if (json?.detail) {
       return json;
