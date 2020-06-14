@@ -23,3 +23,6 @@ Genre.set(9999, "その他〔その他〕");
 Genre.set(9801, "ノンジャンル〔ノンジャンル〕");
 
 export default Genre;
+
+
+export const allGenres = Array.from(Genre.keys());

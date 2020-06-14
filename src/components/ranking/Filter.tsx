@@ -4,16 +4,12 @@ import { Filter } from "../../interface/Filter";
 import {
   useLocalStorage,
   useDebounce,
-  useBoolean,
-  useUpdateEffect,
 } from "react-use";
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
   Typography,
   ExpansionPanelDetails,
-  InputAdornment,
-  TextField,
   Checkbox,
   FormControl,
   FormLabel,
@@ -22,61 +18,14 @@ import {
   Button,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useHandleChange } from "../../util/useHandleChange";
+import { StoryCount } from '../common/StoryCount';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import jaLocale from "date-fns/locale/ja";
-
-export const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
-
-export const initGenre = Array.from(Genre.keys());
-
-const StoryCount: React.FC<{
-  value?: number;
-  defaultValue: number;
-  onUpdate: (n: number | undefined) => void;
-}> = ({ value: initValue, defaultValue, onUpdate, children }) => {
-  const [disabled, toggle] = useBoolean(initValue === undefined);
-  const [value, setValue] = useState(
-    initValue ? initValue.toString() : defaultValue.toString()
-  );
-  const handleChange = useHandleChange(setValue);
-  useUpdateEffect(() => {
-    setValue((initValue ?? defaultValue).toString());
-    toggle(initValue === undefined);
-  }, [initValue, defaultValue]);
-  useDebounce(
-    () => {
-      const n = parseInt(value);
-      if (!disabled && n) {
-        onUpdate(n);
-      } else {
-        onUpdate(undefined);
-      }
-    },
-    1000,
-    [disabled, value, onUpdate]
-  );
-  return (
-    <TextField
-      onChange={handleChange}
-      value={value}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <Checkbox onChange={toggle} />
-            {children}
-          </InputAdornment>
-        ),
-        endAdornment: <InputAdornment position="end">話</InputAdornment>,
-      }}
-      disabled={disabled}
-    />
-  );
-};
+import { allGenres } from '../../enum/Genre';
 
 type FilterCompnentProps = {
   onChange: (filter: Filter) => void;
@@ -135,7 +84,7 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
   }, []);
 
   const selectAll = useCallback(() => {
-    setFilter((f) => f.setGenres(initGenre));
+    setFilter((f) => f.setGenres(allGenres));
   }, []);
   const unselectAll = useCallback(() => {
     setFilter((f) => f.setGenres([]));
@@ -150,8 +99,8 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
             {genreFilter}
           </FormGroup>
           <FormGroup row>
-            <Button onClick={selectAll}>全選択</Button>
-            <Button onClick={unselectAll}>全解除</Button>
+            <Button variant="contained" onClick={selectAll}>全選択</Button>
+            <Button variant="contained" onClick={unselectAll}>全解除</Button>
           </FormGroup>
         </FormControl>
         <FormControl component="fieldset">
@@ -215,7 +164,7 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
                   onChange={toggleEnableTanpen}
                 />
               }
-              label="完結"
+              label="短編"
             />
           </FormGroup>
         </FormControl>

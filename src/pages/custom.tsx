@@ -8,19 +8,30 @@ import { useMemo } from "react";
 import Genre from "../enum/Genre";
 import {
   CustomRankingForm,
-  CustomRankingFormEvent,
 } from "../components/custom/CustomRankingForm";
 import { RankingType, RankingTypeName } from "../interface/RankingType";
 import { useAsync, useTitle } from "react-use";
+import { CustomRankingParams } from "../interface/CustomRankingParams";
+import { formatISO, parseISO } from "date-fns";
 
-export type CustomRankingParams = {
+export type CustomRankingPathParams = {
   type?: RankingType;
 };
 
 export type CustomRankingQueryParams = {
-  keyword: string;
-  genres: string;
+  keyword?: string;
+  not_keyword?: string;
+  by_title?: string;
+  by_story?: string;
+  genres?: string;
+  min?: string;
+  max?: string;
+  first_update?: string;
+  rensai?: string;
+  kanketsu?: string;
+  tanpen?: string;
 };
+
 function convertOrder(type?: RankingType): Order {
   switch (type) {
     case RankingType.Daily:
@@ -39,14 +50,77 @@ function convertOrder(type?: RankingType): Order {
   }
 }
 
-function createParams(
-  keyword: string | undefined,
-  genres: number[]
-): URLSearchParams {
+function createSearchParams({
+  keyword,
+  notKeyword,
+  byStory,
+  byTitle,
+  genres,
+  max,
+  min,
+  firstUpdate,
+  rensai,
+  kanketsu,
+  tanpen,
+}: CustomRankingParams): URLSearchParams {
   const searchParams = new URLSearchParams();
   if (keyword) searchParams.set("keyword", keyword);
+  if (notKeyword) searchParams.set("not_keyword", notKeyword);
+  if (byStory) searchParams.set("by_story", "1");
+  if (byTitle) searchParams.set("by_title", "1");
   if (genres.length !== 0) searchParams.set("genres", genres.join(","));
+  if (max) searchParams.set("max", max.toString());
+  if (min) searchParams.set("min", min.toString());
+  if (firstUpdate)
+    searchParams.set(
+      "first_update",
+      formatISO(firstUpdate, { representation: "complete" })
+    );
+  if (!rensai) searchParams.set("rensai", "0");
+  if (!kanketsu) searchParams.set("kanketsu", "0");
+  if (!tanpen) searchParams.set("tanpen", "0");
   return searchParams;
+}
+
+function parseQuery(
+  {
+    keyword,
+    not_keyword,
+    by_story,
+    by_title,
+    genres,
+    max,
+    min,
+    first_update,
+    rensai,
+    kanketsu,
+    tanpen,
+  }: CustomRankingQueryParams,
+  rankingType: RankingType
+): CustomRankingParams {
+  function boolean(str: string | undefined, defaultValue: boolean): boolean {
+    return str === undefined ? defaultValue : str !== "0";
+  }
+  function int(str: string | undefined): number | undefined {
+    return str !== undefined ? parseInt(str, 10) : undefined;
+  }
+  function date(str: string | undefined): Date | undefined {
+    return str !== undefined ? parseISO(str) : undefined;
+  }
+  return {
+    keyword,
+    notKeyword: not_keyword,
+    byStory: boolean(by_story, false),
+    byTitle: boolean(by_title, false),
+    genres: conventGenres(genres),
+    max: int(max),
+    min: int(min),
+    firstUpdate: date(first_update),
+    rensai: boolean(rensai, true),
+    kanketsu: boolean(kanketsu, true),
+    tanpen: boolean(tanpen, true),
+    rankingType,
+  };
 }
 
 function conventGenres(rawGenres: string = "") {
@@ -57,31 +131,35 @@ function conventGenres(rawGenres: string = "") {
 }
 
 const CustomRanking: React.FC = () => {
-  const params = useParams<CustomRankingParams>();
-  const type = (params.type ?? RankingType.Daily) as RankingType;
-  const { keyword, genres: rawGenres } = useQuery<CustomRankingQueryParams>();
-  const genres = useMemo(() => conventGenres(rawGenres), [rawGenres]);
+  const { type } = useParams<CustomRankingPathParams>();
+  const query = useQuery<CustomRankingQueryParams>();
+  const params = useMemo(
+    () => parseQuery(query, (type ?? RankingType.Daily) as RankingType),
+    [query, type]
+  );
 
   const history = useHistory();
 
   useTitle(
-    `${keyword ? `${keyword}の` : "カスタム"}${RankingTypeName.get(
-      type
-    )}ランキング - なろうランキングビューワ`
+    `${
+      params.keyword ? `${params.keyword}の` : "カスタム"
+    }${RankingTypeName.get(params.rankingType)}ランキング - なろうランキングビューワ`
   );
 
   const { value, loading } = useAsync(async () => {
-    const result = await ky(`/api/custom/${convertOrder(type)}/`, {
-      searchParams: createParams(keyword, genres),
+    const result = await ky(`/api/custom/${convertOrder(params.rankingType)}/`, {
+      searchParams: createSearchParams(params),
     });
     return (await result.json()) as RankingResult[];
-  }, [type, keyword, genres]);
+  }, [params]);
 
   const ranking = value ?? [];
 
-  const handleSearch = useCallback<(e: CustomRankingFormEvent) => void>(
-    ({ keyword, genres, rankingType }) => {
-      history.push(`/custom/${rankingType}?${createParams(keyword, genres)}`);
+  const handleSearch = useCallback<(e: CustomRankingParams) => void>(
+    (params) => {
+      history.push(
+        `/custom/${params.rankingType}?${createSearchParams(params)}`
+      );
     },
     [history]
   );
@@ -89,9 +167,7 @@ const CustomRanking: React.FC = () => {
   return (
     <>
       <CustomRankingForm
-        keyword={keyword}
-        genres={genres}
-        rankingType={type}
+        params={params}
         onSearch={handleSearch}
       />
       <RankingRender ranking={ranking} loading={loading} />

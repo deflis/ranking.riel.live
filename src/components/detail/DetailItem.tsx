@@ -29,6 +29,7 @@ import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 import { Paper } from "@material-ui/core";
 import ItemBadge from "../common/badges/ItemBadge";
+import { NarouDateFormat } from "../../util/NarouDateFormat";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -52,16 +53,15 @@ const useStyles = makeStyles((theme) =>
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
 const formatOptions = { locale: ja };
-const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 function formatRelative(date: string): string {
-  return formatDistance(parse(date, narouDateFormat, baseDate), baseDate, {
+  return formatDistance(parse(date, NarouDateFormat, baseDate), baseDate, {
     locale: ja,
   });
 }
 function formatDate(date: string): string {
   return format(
-    parse(date, narouDateFormat, baseDate),
+    parse(date, NarouDateFormat, baseDate),
     "yyyy年MM月dd日 hh:mm:ss",
     formatOptions
   );

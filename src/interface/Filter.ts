@@ -1,7 +1,8 @@
 import { RankingResult } from "narou";
 import { isBefore, parse, parseISO, formatISO, isValid } from "date-fns";
 import store from "store";
-import { initGenre, narouDateFormat } from "../components/ranking/Filter";
+import { allGenres } from '../enum/Genre';
+import { NarouDateFormat } from '../util/NarouDateFormat';
 
 export interface FilterInterface {
   execute(items: RankingResult[]): RankingResult[];
@@ -32,7 +33,7 @@ export class Filter implements FilterInterface {
     this._enableKanketsu = enableKanketsu;
   }
   static init() {
-    const genre: number[] = store.get("genres", initGenre);
+    const genre: number[] = store.get("genres", allGenres);
     const _maxNo: number | undefined = store.get("maxNo", undefined);
     const maxNo: number | undefined = _maxNo === 0 ? undefined : _maxNo;
     const _minNo: number | undefined = store.get("minNo", undefined);
@@ -63,7 +64,7 @@ export class Filter implements FilterInterface {
           !this.firstUpdate ||
           isBefore(
             this.firstUpdate,
-            parse(item.general_firstup, narouDateFormat, new Date())
+            parse(item.general_firstup, NarouDateFormat, new Date())
           )
       )
       .filter(

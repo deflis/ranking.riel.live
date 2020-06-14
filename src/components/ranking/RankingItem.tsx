@@ -24,11 +24,11 @@ import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
+import { NarouDateFormat } from '../../util/NarouDateFormat';
 
 const entities = new AllHtmlEntities();
 const baseDate = new Date();
 const formatOptions = { locale: ja };
-const narouDateFormat = "yyyy-MM-dd HH:mm:ss";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -64,7 +64,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
 
   const user = `https://mypage.syosetu.com/${item.userid}/`;
   const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
-  const firstup = parse(item.general_firstup, narouDateFormat, new Date());
+  const firstup = parse(item.general_firstup, NarouDateFormat, new Date());
   return (
     <Card>
       <CardContent className={styles.contents}>
@@ -124,13 +124,13 @@ const RankingItem: React.FC<{ item: RankingResult }> = ({ item }) => {
         <Typography color="textSecondary">
           掲載開始:{" "}
           {formatDistance(
-            parse(item.general_firstup, narouDateFormat, new Date()),
+            parse(item.general_firstup, NarouDateFormat, new Date()),
             baseDate,
             formatOptions
           )}
           前 / 最終更新:{" "}
           {formatDistance(
-            parse(item.general_lastup, narouDateFormat, new Date()),
+            parse(item.general_lastup, NarouDateFormat, new Date()),
             baseDate,
             formatOptions
           )}
