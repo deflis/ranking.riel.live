@@ -134,9 +134,9 @@ type CustomQueryParams = {
   by_title?: string;
   by_story?: string;
   genres?: string;
-  minNo?: string;
-  maxNo?: string;
-  firstUpdate?: string;
+  min?: string;
+  max?: string;
+  first_update?: string;
   rensai?: string;
   kanketsu?: string;
   tanpen?: string;
@@ -156,9 +156,9 @@ router.get(
         by_title,
         by_story,
         genres,
-        minNo,
-        maxNo,
-        firstUpdate,
+        min,
+        max,
+        first_update,
         rensai,
         kanketsu,
         tanpen,
@@ -184,16 +184,16 @@ router.get(
         const genre: Genre[] = genres.split(",") as any;
         searchBuilder.genre(genre);
       }
-      if (maxNo) {
-        filterBuilder.setMaxNo(parseInt(maxNo, 10));
+      if (max) {
+        filterBuilder.setMaxNo(parseInt(max, 10));
       }
-      if (minNo) {
-        filterBuilder.setMinNo(parseInt(minNo, 10));
+      if (min) {
+        filterBuilder.setMinNo(parseInt(min, 10));
       }
-      if (firstUpdate) {
-        filterBuilder.setFirstUpdate(parseISO(firstUpdate));
+      if (first_update) {
+        filterBuilder.setFirstUpdate(parseISO(first_update));
       }
-      if (tanpen === "0" || minNo) {
+      if (tanpen === "0" || min) {
         searchBuilder.type(NovelType.Rensai)
         filterBuilder.disableTanpen();
       }
