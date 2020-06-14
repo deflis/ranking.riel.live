@@ -9,7 +9,7 @@
     "sourceMap": true,
     "strict": true,
     "typeRoots": [
-        "./node_modules/@types", // 上位の@typesを読まないようにする対策
+        "./node_modules/@types",
     ]
   },
   "compileOnSave": true,
