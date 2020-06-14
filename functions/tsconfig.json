@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "target": "es2018",
+    "lib": ["es2018"],
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "typeRoots": [
+        "./node_modules/@types", // 上位の@typesを読まないようにする対策
+    ]
   },
   "compileOnSave": true,
   "include": [

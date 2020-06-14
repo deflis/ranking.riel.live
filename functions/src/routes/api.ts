@@ -11,6 +11,7 @@ import {
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
 import SearchBuilder from "narou/dist/search-builder";
+import FilterBuilder from "../util/FilterBuilder";
 import { NovelType } from "narou/dist/params";
 
 const router = Router();
@@ -109,7 +110,7 @@ router.get(
 
 async function searchWithFilter(
   searchBuilder: SearchBuilder,
-  filter: (r: NarouSearchResult) => boolean
+  filter: (item: NarouSearchResult) => boolean
 ): Promise<NarouSearchResult[]> {
   let page = 0;
   let result: NarouSearchResult[] = [];
@@ -128,35 +129,92 @@ type CustomParams = {
   order: Order;
 };
 type CustomQueryParams = {
-  keyword: string;
-  genres: string;
-  type: NovelType;
+  keyword?: string;
+  not_keyword?: string;
+  by_title?: string;
+  by_story?: string;
+  genres?: string;
+  minNo?: string;
+  maxNo?: string;
+  firstUpdate?: string;
+  rensai?: string;
+  kanketsu?: string;
+  tanpen?: string;
 };
 
 router.get(
   "/custom/:order",
-  async (req: Request<CustomParams, any, any, CustomQueryParams>, res: Response<RankingResponse>) => {
+  async (
+    req: Request<CustomParams, any, any, CustomQueryParams>,
+    res: Response<RankingResponse>
+  ) => {
     try {
-      const order = req.params.order;
-      const { keyword, genres, type } = req.query;
+      const { order } = req.params;
+      const {
+        keyword,
+        not_keyword,
+        by_title,
+        by_story,
+        genres,
+        minNo,
+        maxNo,
+        firstUpdate,
+        rensai,
+        kanketsu,
+        tanpen,
+      } = req.query;
 
       const searchBuilder = search();
+      const filterBuilder = new FilterBuilder();
       searchBuilder.order(order).limit(500);
 
       if (keyword) {
         searchBuilder.word(keyword).byKeyword(true);
       }
+      if (not_keyword) {
+        searchBuilder.notWord(not_keyword).byKeyword(true);
+      }
+      if (by_title) {
+        searchBuilder.byTitle();
+      }
+      if (by_story) {
+        searchBuilder.byOutline();
+      }
       if (genres) {
         const genre: Genre[] = genres.split(",") as any;
         searchBuilder.genre(genre);
       }
-      if (type) {
-        searchBuilder.type(type);
+      if (maxNo) {
+        filterBuilder.setMaxNo(parseInt(maxNo, 10));
+      }
+      if (minNo) {
+        filterBuilder.setMinNo(parseInt(minNo, 10));
+      }
+      if (firstUpdate) {
+        filterBuilder.setFirstUpdate(parseISO(firstUpdate));
+      }
+      if (tanpen === "0" || minNo) {
+        searchBuilder.type(NovelType.Rensai)
+        filterBuilder.disableTanpen();
+      }
+      if (rensai === "0") {
+        if (tanpen === "0") {
+          searchBuilder.type(NovelType.RensaiEnd)
+        } else {
+          searchBuilder.type(NovelType.ShortAndRensai)
+        }
+        filterBuilder.disableRensai();
+      }
+      if (kanketsu === "0") {
+        if (tanpen === "0") {
+          searchBuilder.type(NovelType.RensaiNow)
+        }
+        filterBuilder.disableKanketsu();
       }
 
       const searchResult = await searchWithFilter(
         searchBuilder,
-        (value) => true
+        filterBuilder.create()
       );
 
       const rankingData: RankingResult[] = searchResult.map((value, index) => {
