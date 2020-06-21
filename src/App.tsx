@@ -11,6 +11,7 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import MyThemeProvider from "./util/theme";
+import GlobalStateProvider from "./util/globalState";
 
 const Ranking = lazy(() => import("./pages/ranking"));
 const Detail = lazy(() => import("./pages/detail"));
@@ -106,7 +107,9 @@ const WrappedApp: React.FC = () => {
 
   return (
     <MyThemeProvider>
-      <App />
+      <GlobalStateProvider>
+        <App />
+      </GlobalStateProvider>
     </MyThemeProvider>
   );
 };

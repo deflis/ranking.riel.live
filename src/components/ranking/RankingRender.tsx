@@ -51,15 +51,20 @@ export const RankingRender: React.FC<{
 }> = React.memo(({ ranking, filter, loading = false }) => {
   return (
     <Grid container spacing={3}>
+      <Grid item xs={12}></Grid>
       <Grid item xs={12}>
         <AdSense></AdSense>
       </Grid>
-      <Grid item xs={12}>
-        {loading && <LinearProgress />}
-        {!loading && ranking.length === 0 && (
+      {loading && (
+        <Grid item xs={12}>
+          <LinearProgress />
+        </Grid>
+      )}
+      {!loading && ranking.length === 0 && (
+        <Grid item xs={12}>
           <Alert severity="info">データがありません</Alert>
-        )}
-      </Grid>
+        </Grid>
+      )}
       {!loading && (
         <InsideRender ranking={ranking} filter={filter ?? new DummyFilter()} />
       )}

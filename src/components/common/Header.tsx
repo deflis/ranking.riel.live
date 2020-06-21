@@ -24,6 +24,8 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import { useHandleChange } from "../../util/useHandleChange";
 import { useToggleDarkMode } from "../../util/theme";
+import { useAdMode } from '../../util/globalState';
+import { AdDialog } from './AdDialog';
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -89,6 +91,21 @@ export const Header: React.FC = () => {
   const handleChangeNcode = useHandleChange(setNcode);
   const [expand, toggle] = useToggle(false);
   const [darkmode, toggleDarkmode] = useToggleDarkMode();
+  const [adMode, toggleAdMode] = useAdMode();
+  const [showAdDialog, toggleAdDialog] = useToggle(false);
+  const handleAdMode = useCallback(
+    () => {
+      if (adMode) {
+        toggleAdDialog();
+      } else {
+        toggleAdMode();
+      }
+    }, [adMode, toggleAdDialog, toggleAdMode]
+  )
+  const removeAd = useCallback(() => {
+    toggleAdMode();
+    toggleAdDialog();    
+  },[toggleAdMode, toggleAdDialog]);
 
   return (
     <>
@@ -171,6 +188,12 @@ export const Header: React.FC = () => {
           />
         </ListItem>
         <ListItem>
+          <FormControlLabel
+            control={<Switch checked={!adMode} onChange={handleAdMode} />}
+            label="広告を表示しない"
+          />
+        </ListItem>
+        <ListItem>
           <FormControl onSubmit={detail}>
             <InputBase
               placeholder="Nコード"
@@ -188,6 +211,7 @@ export const Header: React.FC = () => {
           </FormControl>
         </ListItem>
       </Drawer>
+      {showAdDialog && <AdDialog handleCancel={toggleAdDialog} handleOk={removeAd} />}
     </>
   );
 };
