@@ -1,5 +1,6 @@
 import React, { ErrorInfo } from "react";
 import Alert from "@material-ui/lab/Alert";
+import AdSense from "./AdSense";
 
 type ErrorState = {
   error?: Error;
@@ -20,9 +21,12 @@ class ErrorBoundary extends React.Component<{}, ErrorState> {
   public render() {
     if (this.state.error) {
       return (
-        <Alert severity="error">
-          {this.state.error.name}: {this.state.error.message}
-        </Alert>
+        <>
+          <Alert severity="error">
+            {this.state.error.name}: {this.state.error.message}
+          </Alert>
+          <AdSense />
+        </>
       );
     }
 
