@@ -14,6 +14,7 @@
     "@material-ui/lab": "^4.0.0-alpha.55",
     "@material-ui/pickers": "^3.2.10",
     "clsx": "^1.1.1",
+    "cross-env": "^7.0.2",
     "date-fns": "^2.14.0",
     "date-fns-timezone": "^0.1.4",
     "html-entities": "^1.3.1",
@@ -35,7 +36,7 @@
     "start": "npm-run-all -p start:*",
     "start:react": "react-scripts start",
     "start:firebase": "firebase serve --only functions,hosting",
-    "build": "rimraf functions/views/index.ejs && react-scripts build && node build-views.js",
+    "build": "rimraf functions/views/index.ejs && cross-env NODE_ENV=production PUBLIC_URL=https://ranking.riel.live react-scripts build && node build-views.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy"
