@@ -12,6 +12,10 @@
         "function": "api"
       },
       {
+        "source": "/_api/**",
+        "function": "api"
+      },
+      {
         "source": "/detail/*",
         "function": "api"
       },

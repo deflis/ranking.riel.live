@@ -147,7 +147,7 @@ const CustomRanking: React.FC = () => {
   );
 
   const { value, loading } = useAsync(async () => {
-    const result = await ky(`/api/custom/${convertOrder(params.rankingType)}/`, {
+    const result = await ky(`/_api/custom/${convertOrder(params.rankingType)}/`, {
       searchParams: createSearchParams(params),
       timeout: 60000,
     });

@@ -78,7 +78,7 @@ const Ranking: React.FC = () => {
   const { value, loading } = useAsync(async () => {
     const type = (_type as RankingType) ?? RankingType.Daily;
     const date = _date ? parseISO(_date) : addHours(new Date(), -12);
-    const result = await ky(`/api/ranking/${type}/${formatDate(date, type)}`, {
+    const result = await ky(`/_api/ranking/${type}/${formatDate(date, type)}`, {
       timeout: 60000,
     });
     return (await result.json()) as RankingResult[];
