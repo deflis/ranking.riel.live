@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useContext } from "react";
+import React, { useCallback, useEffect, useContext } from "react";
 import {
   MuiThemeProvider,
   createMuiTheme,
@@ -8,47 +8,39 @@ import { useLocalStorage } from "react-use";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import blue from "@material-ui/core/colors/blue";
 import red from "@material-ui/core/colors/red";
-import { mergeObjects } from "./mergeObjects";
 
 const theme: ThemeOptions = {
   typography: {
     fontFamily: ['"Noto Sans JP"', "sans-serif"].join(","),
   },
 };
-const lightTheme: ThemeOptions = {
-  palette: {
-    primary: blue,
-    secondary: red,
-  },
-};
-const darkTheme: ThemeOptions = {
-  palette: {
-    primary: {
-      main: blue[100],
-    },
-    secondary: {
-      main: red[100],
+
+const lightTheme = createMuiTheme(
+  {
+    palette: {
+      type: "light",
+      primary: blue,
+      secondary: red,
     },
   },
-};
+  theme
+);
 
-interface ThemeState {
-  darkmode: boolean;
-}
-type Action = { type: "TOGGLE_DARKMODE" };
-
-const themeReducer: React.Reducer<ThemeState, Action> = (state, action) => {
-  switch (action.type) {
-    case "TOGGLE_DARKMODE":
-      return {
-        darkmode: !state.darkmode,
-      };
-    default:
-      throw new Error();
-  }
-};
-
-const DispatchContext = React.createContext<[boolean, React.Dispatch<Action>]>([
+const darkTheme = createMuiTheme(
+  {
+    palette: {
+      type: "dark",
+      primary: {
+        main: blue[100],
+      },
+      secondary: {
+        main: red[100],
+      },
+    },
+  },
+  theme
+);
+const DispatchContext = React.createContext<[boolean, () => void]>([
   false,
   () => {
     throw new Error();
@@ -56,35 +48,20 @@ const DispatchContext = React.createContext<[boolean, React.Dispatch<Action>]>([
 ]);
 
 export function useToggleDarkMode(): [boolean, () => void] {
-  const [value, dispatch] = useContext(DispatchContext);
-  return [
-    value,
-    React.useCallback(() => dispatch({ type: "TOGGLE_DARKMODE" }), [dispatch]),
-  ];
+  return useContext(DispatchContext);
 }
 
 const MyThemeProvider: React.FC = ({ children }) => {
-  const [initDarkmode, setDarkmode] = useLocalStorage("darkmode", false);
-  const [{ darkmode }, dispatch] = useReducer(themeReducer, {
-    darkmode: initDarkmode ?? false,
-  });
-  useEffect(() => {
-    setDarkmode(darkmode);
-  }, [darkmode, setDarkmode]);
+  const [darkmode, setDarkmode] = useLocalStorage("darkmode", false);
+  const toggleDarkmode = useCallback(() => {
+    setDarkmode((x) => !x);
+  }, [setDarkmode]);
 
-  const currentTheme = React.useMemo(() => {
-    return createMuiTheme(
-      mergeObjects(theme, darkmode ? darkTheme : lightTheme, {
-        palette: {
-          type: darkmode ? "dark" : "light",
-        },
-      })
-    );
-  }, [darkmode]);
+  const currentTheme = darkmode ? darkTheme : lightTheme;
   return (
     <MuiThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <DispatchContext.Provider value={[darkmode, dispatch]}>
+      <DispatchContext.Provider value={[darkmode ?? false, toggleDarkmode]}>
         {children}
       </DispatchContext.Provider>
     </MuiThemeProvider>
