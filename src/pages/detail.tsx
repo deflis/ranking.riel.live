@@ -1,13 +1,15 @@
-import React from "react";
-import ky from "ky";
-import { useParams } from "react-router-dom";
-import { NarouSearchResult } from "narou";
-import DetailItem from "../components/detail/DetailItem";
-import { RankingHistories } from "../interface/RankingHistory";
-import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
-import { useAsync, useTitle } from "react-use";
-import FakeItem from "../components/detail/FakeItem";
-import Alert from "@material-ui/lab/Alert";
+import { NarouSearchResult } from 'narou';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useTitle } from 'react-use';
+
+import Alert from '@material-ui/lab/Alert';
+
+import useDetail from '../api/useDetail';
+import DetailItem from '../components/detail/DetailItem';
+import FakeItem from '../components/detail/FakeItem';
+import { RankingHistoryRender } from '../components/detail/RankingHistoryRender';
+import { RankingHistories } from '../interface/RankingHistory';
 
 type Result = {
   detail: NarouSearchResult;
@@ -26,28 +28,18 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
 
-  const { value, loading, error } = useAsync(async () => {
-    const result = await ky(`/_api/detail/${ncode}`, {
-      timeout: 60000,
-    });
-    const json: Result = await result.json();
-    if (json?.detail) {
-      return json;
-    } else {
-      throw json;
-    }
-  }, [ncode]);
+  const { result, loading } = useDetail(ncode);
 
   useTitle(
-    value
-      ? `${value.detail.title} - なろうランキングビューワ`
+    result
+      ? `${result.detail.title} - なろうランキングビューワ`
       : "なろうランキングビューワ"
   );
 
   if (loading) {
     return <FakeItem />;
-  } else if (value && !error) {
-    return <DetailRenderer {...value} />;
+  } else if (result) {
+    return <DetailRenderer {...result} />;
   }
   return (
     <Alert severity="warning">

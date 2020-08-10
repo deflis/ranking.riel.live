@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import {
   MuiThemeProvider,
   createMuiTheme,
@@ -54,7 +54,7 @@ export function useToggleDarkMode(): [boolean, () => void] {
 const MyThemeProvider: React.FC = ({ children }) => {
   const [darkmode, setDarkmode] = useLocalStorage("darkmode", false);
   const toggleDarkmode = useCallback(() => {
-    setDarkmode((x) => !x);
+    setDarkmode((x) => !(x ?? false));
   }, [setDarkmode]);
 
   const currentTheme = darkmode ? darkTheme : lightTheme;

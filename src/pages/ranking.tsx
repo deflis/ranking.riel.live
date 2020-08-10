@@ -1,61 +1,37 @@
-import React, { useState, useCallback } from "react";
-import { RankingResult } from "narou";
-import ky from "ky";
-import {
-  format,
-  formatISO,
-  setDay,
-  startOfMonth,
-  addDays,
-  getDay,
-  addHours,
-} from "date-fns/esm";
-import { FilterComponent } from "../components/ranking/Filter";
-import { Filter } from "../interface/Filter";
-import { useParams, useHistory } from "react-router-dom";
 import { parseISO } from "date-fns";
-import { RankingRender } from "../components/ranking/RankingRender";
-import { RankingType, RankingTypeName } from "../interface/RankingType";
-import { TwitterShare } from "../components/common/TwitterShare";
-import { useAsync, useTitle } from "react-use";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { addHours, format } from "date-fns/esm";
 import jaLocale from "date-fns/locale/ja";
-import { FormGroup } from "@material-ui/core";
+import React, { useCallback, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { useTitle } from "react-use";
+
+import DateFnsUtils from "@date-io/date-fns";
 import {
   Button,
-  Select,
-  MenuItem,
-  makeStyles,
   FormControl,
+  FormGroup,
   InputLabel,
+  makeStyles,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from "@material-ui/pickers";
+
+import useRanking, { convertDate, formatDate } from "../api/useRanking";
+import { TwitterShare } from "../components/common/TwitterShare";
+import { FilterComponent } from "../components/ranking/Filter";
+import { RankingRender } from "../components/ranking/RankingRender";
+import { Filter } from "../interface/Filter";
+import { RankingType, RankingTypeName } from "../interface/RankingType";
 
 export type RankingParams = {
   date?: string;
   type?: string;
 };
 
-function formatDate(date: Date, type: RankingType): string {
-  return formatISO(convertDate(date, type), { representation: "date" });
-}
-
-function convertDate(date: Date, type: RankingType): Date {
-  switch (type) {
-    case RankingType.Daily:
-    default:
-      return date;
-    case RankingType.Weekly:
-      return addDays(setDay(date, 2), getDay(date) < 2 ? -7 : 0);
-    case RankingType.Monthly:
-      return startOfMonth(date);
-    case RankingType.Quarter:
-      return startOfMonth(date);
-  }
-}
 const useStyles = makeStyles((theme) => ({
   form: {
     flexWrap: "wrap",
@@ -75,15 +51,12 @@ const Ranking: React.FC = () => {
   const { date: _date, type: _type } = useParams<RankingParams>();
 
   const [filter, setFilter] = useState(Filter.init());
-  const { value, loading } = useAsync(async () => {
-    const type = (_type as RankingType) ?? RankingType.Daily;
-    const date = _date ? parseISO(_date) : addHours(new Date(), -12);
-    const result = await ky(`/_api/ranking/${type}/${formatDate(date, type)}`, {
-      timeout: 60000,
-    });
-    return (await result.json()) as RankingResult[];
-  }, [_date, _type]);
-  const ranking = value ?? [];
+
+  const type = (_type as RankingType) ?? RankingType.Daily;
+  const date = convertDate(
+    _date ? parseISO(_date) : addHours(new Date(), -12),
+    type
+  );
 
   const onTypeChange = useCallback(
     (
@@ -121,18 +94,13 @@ const Ranking: React.FC = () => {
   );
 
   const clearDate = useCallback(() => onDateChange(null), [onDateChange]);
-
-  const type = (_type as RankingType) ?? RankingType.Daily;
-  const date = convertDate(
-    _date ? parseISO(_date) : addHours(new Date(), -12),
-    type
-  );
-
   useTitle(
     `${_date ? format(date, "yyyy/MM/dd") : "最新"}の${RankingTypeName.get(
       type
     )}ランキング - なろうランキングビューワ`
   );
+
+  const { ranking, loading } = useRanking(type, date);
 
   return (
     <>

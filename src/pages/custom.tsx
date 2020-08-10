@@ -1,18 +1,16 @@
-import React, { useCallback } from "react";
-import { RankingResult, Order } from "narou";
-import ky from "ky";
-import { useParams, useHistory } from "react-router-dom";
-import { RankingRender } from "../components/ranking/RankingRender";
-import { useQuery } from "../util/useQuery";
-import { useMemo } from "react";
-import Genre from "../enum/Genre";
-import {
-  CustomRankingForm,
-} from "../components/custom/CustomRankingForm";
-import { RankingType, RankingTypeName } from "../interface/RankingType";
-import { useAsync, useTitle } from "react-use";
-import { CustomRankingParams } from "../interface/CustomRankingParams";
 import { formatISO, parseISO } from "date-fns";
+import { Order } from "narou";
+import React, { useCallback, useMemo } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { useTitle } from "react-use";
+
+import { useCustomRanking } from "../api/useCustomRanking";
+import { CustomRankingForm } from "../components/custom/CustomRankingForm";
+import { RankingRender } from "../components/ranking/RankingRender";
+import Genre from "../enum/Genre";
+import { CustomRankingParams } from "../interface/CustomRankingParams";
+import { RankingType, RankingTypeName } from "../interface/RankingType";
+import { useQuery } from "../util/useQuery";
 
 export type CustomRankingPathParams = {
   type?: RankingType;
@@ -137,24 +135,18 @@ const CustomRanking: React.FC = () => {
     () => parseQuery(query, (type ?? RankingType.Daily) as RankingType),
     [query, type]
   );
+  const searchParams = useMemo(() => createSearchParams(params), [params]);
+  const order = convertOrder(params.rankingType);
 
   const history = useHistory();
 
   useTitle(
     `${
       params.keyword ? `${params.keyword}の` : "カスタム"
-    }${RankingTypeName.get(params.rankingType)}ランキング - なろうランキングビューワ`
+    }${RankingTypeName.get(
+      params.rankingType
+    )}ランキング - なろうランキングビューワ`
   );
-
-  const { value, loading } = useAsync(async () => {
-    const result = await ky(`/_api/custom/${convertOrder(params.rankingType)}/`, {
-      searchParams: createSearchParams(params),
-      timeout: 60000,
-    });
-    return (await result.json()) as RankingResult[];
-  }, [params]);
-
-  const ranking = value ?? [];
 
   const handleSearch = useCallback<(e: CustomRankingParams) => void>(
     (params) => {
@@ -165,12 +157,11 @@ const CustomRanking: React.FC = () => {
     [history]
   );
 
+  const { ranking, loading } = useCustomRanking(order, searchParams);
+
   return (
     <>
-      <CustomRankingForm
-        params={params}
-        onSearch={handleSearch}
-      />
+      <CustomRankingForm params={params} onSearch={handleSearch} />
       <RankingRender ranking={ranking} loading={loading} />
     </>
   );
