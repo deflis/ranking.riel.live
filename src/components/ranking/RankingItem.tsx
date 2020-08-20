@@ -85,11 +85,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
           </Typography>
           <Typography color="textSecondary">
             <ItemBadge item={item} />
-            <Link
-              component={RouterLink}
-              to={`/custom?genres=${item.genre}`}
-              target="_blank"
-            >
+            <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
               {Genre.get(item.genre)}
             </Link>
             <Tag>
@@ -102,7 +98,6 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
               color="textPrimary"
               component={RouterLink}
               to={`/detail/${item.ncode.toLowerCase()}`}
-              target="_blank"
             >
               {entities.decode(item.title)}
             </Link>

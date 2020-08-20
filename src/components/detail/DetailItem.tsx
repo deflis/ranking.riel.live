@@ -121,7 +121,6 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           <Link
             component={RouterLink}
             to={`/custom?genres=${item.genre}`}
-            target="_blank"
             rel="noopener noreferrer"
           >
             {Genre.get(item.genre)}
@@ -207,7 +206,6 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
             <Link
               component={RouterLink}
               to={`/custom?genres=${item.genre}`}
-              target="_blank"
             >
               {Genre.get(item.genre)}
             </Link>
