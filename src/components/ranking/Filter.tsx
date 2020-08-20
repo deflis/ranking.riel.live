@@ -1,10 +1,7 @@
 import React, { useState, useCallback } from "react";
 import Genre from "../../enum/Genre";
 import { Filter } from "../../interface/Filter";
-import {
-  useLocalStorage,
-  useDebounce,
-} from "react-use";
+import { useLocalStorage, useDebounce } from "react-use";
 import {
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -18,14 +15,14 @@ import {
   Button,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { StoryCount } from '../common/StoryCount';
+import { StoryCount } from "../common/StoryCount";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import jaLocale from "date-fns/locale/ja";
-import { allGenres } from '../../enum/Genre';
+import { allGenres } from "../../enum/Genre";
 
 type FilterCompnentProps = {
   onChange: (filter: Filter) => void;
@@ -99,8 +96,12 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
             {genreFilter}
           </FormGroup>
           <FormGroup row>
-            <Button variant="contained" onClick={selectAll}>全選択</Button>
-            <Button variant="contained" onClick={unselectAll}>全解除</Button>
+            <Button variant="contained" onClick={selectAll}>
+              全選択
+            </Button>
+            <Button variant="contained" onClick={unselectAll}>
+              全解除
+            </Button>
           </FormGroup>
         </FormControl>
         <FormControl component="fieldset">
@@ -173,28 +174,28 @@ const InnterFilterComponent: React.FC<FilterCompnentProps> = ({ onChange }) => {
   );
 };
 
-export const FilterComponent: React.FC<FilterCompnentProps> = ({
-  onChange,
-}) => {
-  const [showFilter, setShowFilter] = useLocalStorage("showFilter", false);
-  const toggleShowFIlter = useCallback(
-    (_: React.ChangeEvent<{}>, newExpanded: boolean) =>
-      setShowFilter(newExpanded),
-    [setShowFilter]
-  );
+export const FilterComponent: React.FC<FilterCompnentProps> = React.memo(
+  ({ onChange }) => {
+    const [showFilter, setShowFilter] = useLocalStorage("showFilter", false);
+    const toggleShowFIlter = useCallback(
+      (_: React.ChangeEvent<{}>, newExpanded: boolean) =>
+        setShowFilter(newExpanded),
+      [setShowFilter]
+    );
 
-  return (
-    <ExpansionPanel expanded={showFilter} onChange={toggleShowFIlter}>
-      <ExpansionPanelSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
-      >
-        <Typography>フィルター</Typography>
-      </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-        <InnterFilterComponent onChange={onChange} />
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
-  );
-};
+    return (
+      <ExpansionPanel expanded={showFilter} onChange={toggleShowFIlter}>
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>フィルター</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <InnterFilterComponent onChange={onChange} />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    );
+  }
+);

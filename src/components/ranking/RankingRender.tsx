@@ -55,14 +55,10 @@ export const RankingRender: React.FC<{
       <Grid item xs={12}>
         <AdSense></AdSense>
       </Grid>
-      {loading && (
+      {ranking.length === 0 && (
         <Grid item xs={12}>
-          <LinearProgress />
-        </Grid>
-      )}
-      {!loading && ranking.length === 0 && (
-        <Grid item xs={12}>
-          <Alert severity="info">データがありません</Alert>
+          {loading && <LinearProgress />}
+          {!loading && <Alert severity="info">データがありません</Alert>}
         </Grid>
       )}
       {!loading && (
