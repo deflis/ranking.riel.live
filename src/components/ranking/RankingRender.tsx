@@ -48,7 +48,7 @@ export const RankingRender: React.FC<{
   ranking: RankingResult[];
   filter?: FilterInterface;
   loading?: boolean;
-}> = React.memo(({ ranking, filter, loading = false }) => {
+}> = ({ ranking, filter, loading = false }) => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}></Grid>
@@ -69,4 +69,4 @@ export const RankingRender: React.FC<{
       </Grid>
     </Grid>
   );
-});
+};

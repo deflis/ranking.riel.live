@@ -102,9 +102,9 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
   );
 };
 
-const DisableCustomRankingForm: React.FC<{ params: CustomRankingParams }> = ({
-  params: { keyword, rankingType, genres },
-}) => {
+const DisableCustomRankingForm: React.FC<{
+  params: CustomRankingParams;
+}> = React.memo(({ params: { keyword, rankingType, genres } }) => {
   const genre =
     genres.length > 0
       ? genres
@@ -129,7 +129,7 @@ const DisableCustomRankingForm: React.FC<{ params: CustomRankingParams }> = ({
       </Typography>
     </>
   );
-};
+});
 
 const RankingTypeOptions = Array.from(
   RankingTypeName.entries()

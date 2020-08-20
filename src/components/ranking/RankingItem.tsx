@@ -173,7 +173,11 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
         </CardActions>
       </Card>
     );
-  }
+  },
+  (prev, next) =>
+    prev.item.ncode === next.item.ncode &&
+    prev.item.rank === next.item.rank &&
+    prev.item.pt === next.item.pt
 );
 
 export default RankingItem;

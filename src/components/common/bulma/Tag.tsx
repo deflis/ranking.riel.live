@@ -48,7 +48,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-type StyleProps = { addon?: boolean };
+type StyleProps = { addons?: boolean };
 
 const useStyles = makeStyles(
   (theme) => {
@@ -165,30 +165,30 @@ export type TagProps = {
 
 type TagPropsWithComponent<C extends React.ElementType> = {
   component?: C;
+  children: React.ReactNode;
 } & TagProps &
-  React.ComponentPropsWithRef<C>;
+  Omit<
+    React.ComponentPropsWithRef<C>,
+    "component" | "children" | keyof TagProps
+  >;
 
-type TagFC = <C extends React.ElementType = "span">(
-  props: React.PropsWithChildren<TagPropsWithComponent<C>>
-) => React.ReactElement;
-
-export const Tag: TagFC = ({
+export function Tag<C extends React.ElementType = "span">({
   component,
   children,
   color,
   light,
   className,
   ...props
-}) => {
+}: TagPropsWithComponent<C>): React.ReactElement {
   const Component = component ?? "span";
-  const style = useStyles({});
+  const style = useStyles();
   const colorStyles = useColorStyles();
   return (
     <Component
       className={clsx(
         style.tag,
         className,
-        color && colorStyles[color as ColorName],
+        color && colorStyles[color],
         light && colorStyles.light
       )}
       {...props}
@@ -196,15 +196,12 @@ export const Tag: TagFC = ({
       {children}
     </Component>
   );
-};
+}
 
-export const Tags: React.FC<{ addons?: boolean }> = ({
-  children,
-  addons: addon,
-}) => {
+export const Tags: React.FC<StyleProps> = ({ children, addons }) => {
   const style = useStyles();
   return (
-    <span className={clsx(style.tags, addon && style.hasAddons)}>
+    <span className={clsx(style.tags, addons && style.hasAddons)}>
       {children}
     </span>
   );

@@ -7,7 +7,7 @@ const StoryRender: React.FC<{
   className?: string;
   children?: never;
   variant?: Variant;
-}> = ({ className, story, variant = "caption" }) => (
+}> = React.memo(({ className, story, variant = "caption" }) => (
   <Paper variant="outlined" className={className}>
     <Typography variant={variant} component="p">
       {story.split("\n").reduce<JSX.Element | null>(
@@ -22,6 +22,6 @@ const StoryRender: React.FC<{
       )}
     </Typography>
   </Paper>
-);
+));
 
 export default StoryRender;

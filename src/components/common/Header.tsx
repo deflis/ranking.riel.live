@@ -24,8 +24,8 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import { useHandleChange } from "../../util/useHandleChange";
 import { useToggleDarkMode } from "../../util/theme";
-import { useAdMode } from '../../util/globalState';
-import { AdDialog } from './AdDialog';
+import { useAdMode } from "../../util/globalState";
+import { AdDialog } from "./AdDialog";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -33,50 +33,52 @@ function validate(ncode: string): boolean {
   return validateRegexp.test(ncode);
 }
 
-const useStyles = makeStyles((theme) => createStyles({
-  appBar: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  link: {
-    margin: theme.spacing(1, 1.5),
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.text.primary,
-    "&:hover": {
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    appBar: {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
+    grow: {
+      flexGrow: 1,
+    },
+    link: {
+      margin: theme.spacing(1, 1.5),
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
       color: theme.palette.text.primary,
+      "&:hover": {
+        color: theme.palette.text.primary,
+      },
     },
-  },
-  nav: {
-    display: "flex",
-    flexDirection: "row",
-    [theme.breakpoints.down("xs")]: {
-      display: "none",
+    nav: {
+      display: "flex",
+      flexDirection: "row",
+      [theme.breakpoints.down("xs")]: {
+        display: "none",
+      },
     },
-  },
-  search: {
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
+    search: {
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      "&:hover": {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
     },
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  inputInput: {
-    transition: theme.transitions.create("width"),
-    width: "100%",
-  },
-}));
+    inputRoot: {
+      color: "inherit",
+    },
+    inputInput: {
+      transition: theme.transitions.create("width"),
+      width: "100%",
+    },
+  })
+);
 
-export const Header: React.FC = () => {
+export const Header: React.FC = React.memo(() => {
   const classes = useStyles();
 
   const [ncode, setNcode] = useState("");
@@ -93,19 +95,17 @@ export const Header: React.FC = () => {
   const [darkmode, toggleDarkmode] = useToggleDarkMode();
   const [adMode, toggleAdMode] = useAdMode();
   const [showAdDialog, toggleAdDialog] = useToggle(false);
-  const handleAdMode = useCallback(
-    () => {
-      if (adMode) {
-        toggleAdDialog();
-      } else {
-        toggleAdMode();
-      }
-    }, [adMode, toggleAdDialog, toggleAdMode]
-  )
+  const handleAdMode = useCallback(() => {
+    if (adMode) {
+      toggleAdDialog();
+    } else {
+      toggleAdMode();
+    }
+  }, [adMode, toggleAdDialog, toggleAdMode]);
   const removeAd = useCallback(() => {
     toggleAdMode();
-    toggleAdDialog();    
-  },[toggleAdMode, toggleAdDialog]);
+    toggleAdDialog();
+  }, [toggleAdMode, toggleAdDialog]);
 
   return (
     <>
@@ -211,7 +211,9 @@ export const Header: React.FC = () => {
           </FormControl>
         </ListItem>
       </Drawer>
-      {showAdDialog && <AdDialog handleCancel={toggleAdDialog} handleOk={removeAd} />}
+      {showAdDialog && (
+        <AdDialog handleCancel={toggleAdDialog} handleOk={removeAd} />
+      )}
     </>
   );
-};
+});
