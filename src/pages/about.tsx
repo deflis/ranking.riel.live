@@ -3,12 +3,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { OutboundLink } from "react-ga";
-import {
-  Typography,
-  Paper,
-  Link,
-  makeStyles,
-} from "@material-ui/core";
+import { Typography, Paper, Link, makeStyles } from "@material-ui/core";
+import { SelfAd } from "../components/common/SelfAd";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -99,6 +95,9 @@ const About: React.FC = () => {
             ヒナプロジェクトが提供するものでもないため、ヒナプロジェクトへと問い合わせをすることもおやめください。
           </Typography>
         </section>
+      </Paper>
+      <Paper className={styles.paper}>
+        <SelfAd />
       </Paper>
     </>
   );

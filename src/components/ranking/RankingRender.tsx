@@ -6,6 +6,7 @@ import { Waypoint } from "react-waypoint";
 import AdSense from "../common/AdSense";
 import { Grid, LinearProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import { SelfAd } from "../common/SelfAd";
 
 const InsideRender: React.FC<{
   ranking: RankingResult[];
@@ -64,6 +65,9 @@ export const RankingRender: React.FC<{
       {!loading && (
         <InsideRender ranking={ranking} filter={filter ?? new DummyFilter()} />
       )}
+      <Grid item xs={12}>
+        <SelfAd />
+      </Grid>
       <Grid item xs={12}>
         <AdSense></AdSense>
       </Grid>

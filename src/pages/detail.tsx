@@ -1,26 +1,41 @@
-import { NarouSearchResult } from 'narou';
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useTitle } from 'react-use';
+import { NarouSearchResult } from "narou";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useTitle } from "react-use";
 
-import Alert from '@material-ui/lab/Alert';
+import Alert from "@material-ui/lab/Alert";
 
-import useDetail from '../api/useDetail';
-import DetailItem from '../components/detail/DetailItem';
-import FakeItem from '../components/detail/FakeItem';
-import { RankingHistoryRender } from '../components/detail/RankingHistoryRender';
-import { RankingHistories } from '../interface/RankingHistory';
+import useDetail from "../api/useDetail";
+import DetailItem from "../components/detail/DetailItem";
+import FakeItem from "../components/detail/FakeItem";
+import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
+import { RankingHistories } from "../interface/RankingHistory";
+import { SelfAd } from "../components/common/SelfAd";
+import { createStyles, makeStyles, Paper } from "@material-ui/core";
 
 type Result = {
   detail: NarouSearchResult;
   ranking: RankingHistories;
 };
 
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      marginTop: theme.spacing(2),
+      padding: theme.spacing(2),
+    },
+  })
+);
+
 const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
+  const classes = useStyles();
   return (
     <>
       <DetailItem item={detail} />
       <RankingHistoryRender ranking={ranking} />
+      <Paper className={classes.root}>
+        <SelfAd />
+      </Paper>
     </>
   );
 };
