@@ -174,7 +174,10 @@ export const Header: React.FC = React.memo(() => {
           <ListItemText primary="週間" />
         </ListItem>
         <ListItem button component={RouterLink} to="/ranking/m">
-          <ListItemText primary="週間" />
+          <ListItemText primary="月間" />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/ranking/q">
+          <ListItemText primary="四半期" />
         </ListItem>
         <Divider />
         <ListItem button component={RouterLink} to="/custom">
