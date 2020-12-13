@@ -45,6 +45,8 @@ function convertOrder(type?: RankingType): Order {
       return Order.YearlyPoint;
     case RankingType.All:
       return Order.HyokaDesc;
+    case RankingType.UniqueUser:
+      return Order.Weekly;
   }
 }
 

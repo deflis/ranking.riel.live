@@ -168,6 +168,9 @@ router.get(
       const filterBuilder = new FilterBuilder();
       searchBuilder.order(order).limit(500);
 
+      if (order === Order.Weekly) {
+        searchBuilder.opt("weekly");
+      }
       if (keyword) {
         searchBuilder.word(keyword).byKeyword(true);
       }
@@ -194,20 +197,20 @@ router.get(
         filterBuilder.setFirstUpdate(parseISO(first_update));
       }
       if (tanpen === "0" || min) {
-        searchBuilder.type(NovelType.Rensai)
+        searchBuilder.type(NovelType.Rensai);
         filterBuilder.disableTanpen();
       }
       if (rensai === "0") {
         if (tanpen === "0") {
-          searchBuilder.type(NovelType.RensaiEnd)
+          searchBuilder.type(NovelType.RensaiEnd);
         } else {
-          searchBuilder.type(NovelType.ShortAndRensai)
+          searchBuilder.type(NovelType.ShortAndRensai);
         }
         filterBuilder.disableRensai();
       }
       if (kanketsu === "0") {
         if (tanpen === "0") {
-          searchBuilder.type(NovelType.RensaiNow)
+          searchBuilder.type(NovelType.RensaiNow);
         }
         filterBuilder.disableKanketsu();
       }
@@ -229,6 +232,8 @@ router.get(
           pt = value.quarter_point;
         } else if (order === Order.YearlyPoint) {
           pt = value.yearly_point;
+        } else if (order === Order.Weekly) {
+          pt = value.weekly_unique;
         }
         return { ...value, rank: index + 1, pt };
       });

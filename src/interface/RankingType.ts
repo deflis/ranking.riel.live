@@ -4,7 +4,8 @@ export enum RankingType {
   Monthly = "m",
   Quarter = "q",
   Yearly = "y",
-  All = "a"
+  All = "a",
+  UniqueUser = "u",
 }
 
 export const RankingTypeName = new Map([
@@ -13,5 +14,6 @@ export const RankingTypeName = new Map([
   [RankingType.Monthly, "月間"],
   [RankingType.Quarter, "四半期"],
   [RankingType.Yearly, "年間"],
-  [RankingType.All, "全期間"]
+  [RankingType.All, "全期間"],
+  [RankingType.UniqueUser, "週間ユニークユーザー数"],
 ]);

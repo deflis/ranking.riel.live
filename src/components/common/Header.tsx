@@ -20,6 +20,7 @@ import {
   FormControl,
   Button,
   createStyles,
+  Divider,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useHandleChange } from "../../util/useHandleChange";
@@ -175,12 +176,46 @@ export const Header: React.FC = React.memo(() => {
         <ListItem button component={RouterLink} to="/ranking/m">
           <ListItemText primary="週間" />
         </ListItem>
+        <Divider />
         <ListItem button component={RouterLink} to="/custom">
           <ListItemText primary="カスタムランキング" />
         </ListItem>
+        <Divider />
+        <ListItem button component={RouterLink} to="/custom/y">
+          <ListItemText primary="年間" secondary="カスタムランキング" />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/custom/a">
+          <ListItemText primary="全期間" secondary="カスタムランキング" />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/custom/u">
+          <ListItemText
+            primary="週間ユニークユーザー数"
+            secondary="カスタムランキング"
+          />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/custom/d?genres=201">
+          <ListItemText
+            primary="日間ハイファンタジー"
+            secondary="カスタムランキング"
+          />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/custom/d?genres=101">
+          <ListItemText
+            primary="日間異世界恋愛"
+            secondary="カスタムランキング"
+          />
+        </ListItem>
+        <ListItem button component={RouterLink} to="/custom/d?genres=102">
+          <ListItemText
+            primary="日間現実世界恋愛"
+            secondary="カスタムランキング"
+          />
+        </ListItem>
+        <Divider />
         <ListItem button component={RouterLink} to="/about">
           <ListItemText primary="このサイトについて" />
         </ListItem>
+        <Divider />
         <ListItem>
           <FormControlLabel
             control={<Switch checked={darkmode} onChange={toggleDarkmode} />}
@@ -193,6 +228,7 @@ export const Header: React.FC = React.memo(() => {
             label="広告を表示しない"
           />
         </ListItem>
+        <Divider />
         <ListItem>
           <FormControl onSubmit={detail}>
             <InputBase
