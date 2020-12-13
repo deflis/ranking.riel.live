@@ -66,7 +66,7 @@ router.get(
   async (req: Request<DetailParams>, res: Response<DetailResponse>) => {
     try {
       const ncode = req.params.ncode;
-      const searchResultAsync = search().ncode(ncode).execute();
+      const searchResultAsync = search().ncode(ncode).opt("weekly").execute();
       const historyAsync = rankingHistory(ncode).catch((e) => {
         console.error(e);
         return [];

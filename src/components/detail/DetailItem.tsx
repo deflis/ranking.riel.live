@@ -29,7 +29,7 @@ import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 import { Paper } from "@material-ui/core";
 import ItemBadge from "../common/badges/ItemBadge";
-import { parse } from '../../util/NarouDateFormat';
+import { parse } from "../../util/NarouDateFormat";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -60,11 +60,7 @@ function formatRelative(date: string): string {
   });
 }
 function formatDate(date: string): string {
-  return format(
-    parse(date),
-    "yyyy年MM月dd日 hh:mm:ss",
-    formatOptions
-  );
+  return format(parse(date), "yyyy年MM月dd日 hh:mm:ss", formatOptions);
 }
 function round(number: number, precision: number): number {
   const shift = function (
@@ -203,10 +199,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
             </Link>
           </DetailItemText>
           <DetailItemText label="ジャンル">
-            <Link
-              component={RouterLink}
-              to={`/custom?genres=${item.genre}`}
-            >
+            <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
               {Genre.get(item.genre)}
             </Link>
           </DetailItemText>
@@ -269,6 +262,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
                 <TableCell>月間</TableCell>
                 <TableCell>四半期</TableCell>
                 <TableCell>年間</TableCell>
+                <TableCell>週間UU</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -279,6 +273,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
                 <TableCell>{item.monthly_point.toLocaleString()}</TableCell>
                 <TableCell>{item.quarter_point.toLocaleString()}</TableCell>
                 <TableCell>{item.yearly_point.toLocaleString()}</TableCell>
+                <TableCell>{item.weekly_unique.toLocaleString()}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
