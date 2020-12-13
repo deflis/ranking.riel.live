@@ -49,7 +49,7 @@
     "start": "npm-run-all -p start:*",
     "start:react": "react-scripts start",
     "start:firebase": "firebase serve --only functions,hosting",
-    "build": "rimraf functions/views/index.ejs && cross-env NODE_ENV=production PUBLIC_URL=https://ranking.riel.live react-scripts build && node build-views.js",
+    "build": "rimraf functions/views/index.ejs && cross-env NODE_ENV=production PUBLIC_URL=https://ranking.riel.live GENERATE_SOURCEMAP=false react-scripts build && node build-views.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy"
