@@ -1,49 +1,68 @@
+import { max } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  format,
+  formatISO,
+  isAfter,
+  isEqual,
+  parseISO,
+} from "date-fns/esm";
+import { ja } from "date-fns/locale";
+import { RankingType } from "narou";
 import React, { useCallback } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { useLocalStorage } from "react-use";
+import {
+  Brush,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import {
+  createStyles,
+  Grid,
+  Link,
+  makeStyles,
+  Paper,
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tabs,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+
 import {
   RankingHistories,
   RankingHistoryItem,
 } from "../../interface/RankingHistory";
-import { RankingType } from "narou";
-import {
-  parseISO,
-  format,
-  addDays,
-  isEqual,
-  formatISO,
-  addMonths,
-  isAfter,
-} from "date-fns/esm";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  Tooltip,
-  Brush,
-} from "recharts";
-import { Link as RouterLink } from "react-router-dom";
-import { ja } from "date-fns/locale";
-import {
-  Paper,
-  Tabs,
-  Tab,
-  Table,
-  TableContainer,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Link,
-  Typography,
-  useTheme,
-  makeStyles,
-  createStyles,
-} from "@material-ui/core";
-import { useLocalStorage } from "react-use";
-import { Grid, Hidden } from "@material-ui/core";
 
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      padding: theme.spacing(2),
+    },
+    title: {
+      marginBottom: theme.spacing(2),
+    },
+    chartContainer: {
+      overflow: "auto",
+    },
+    chart: {
+      minWidth: "640px",
+    },
+  })
+);
 function* rangeDate(start: Date, end: Date, type: RankingType) {
   if (!start) return;
   let date = new Date(start.getTime());
@@ -66,11 +85,13 @@ function* rangeDate(start: Date, end: Date, type: RankingType) {
   }
 }
 
+const lastDay = addDays(Date.now(), -1);
 const RankingHistoryCharts: React.FC<{
   ranking: RankingHistoryItem[];
   type: RankingType;
 }> = ({ ranking, type }) => {
   const theme = useTheme();
+  const styles = useStyles();
 
   const parsedRanking = ranking.map(({ date, ...other }) => ({
     date: parseISO(date),
@@ -79,7 +100,7 @@ const RankingHistoryCharts: React.FC<{
   const date = parsedRanking.map(({ date }) => date);
   const minDate = date[0];
   const maxDate = date[date.length - 1];
-  const data = Array.from(rangeDate(minDate, maxDate, type))
+  const data = Array.from(rangeDate(minDate, max([lastDay, maxDate]), type))
     .map(
       (date) =>
         parsedRanking.find((item) => isEqual(item.date, date)) ?? {
@@ -95,51 +116,80 @@ const RankingHistoryCharts: React.FC<{
     }));
   return (
     <Grid container spacing={3}>
-      <Grid item sm={8}>
-        <Hidden smDown>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data}>
-              <Line
-                type="monotone"
-                dataKey="順位"
-                yAxisId="left"
-                stroke={theme.palette.primary.main}
-              />
-              <Line
-                type="monotone"
-                dataKey="ポイント"
-                yAxisId="right"
-                stroke={theme.palette.secondary.main}
-              />
-              <CartesianGrid stroke={theme.palette.text.secondary} />
-              <XAxis dataKey="date" stroke={theme.palette.text.primary} />
-              <YAxis
-                reversed
-                domain={[1, 300]}
-                ticks={[10, 50, 100, 300]}
-                allowDataOverflow
-                scale="log"
-                stroke={theme.palette.primary.main}
-                yAxisId="left"
-                label="順位"
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                stroke={theme.palette.secondary.main}
-                label="ポイント"
-              />
-              <Brush
-                dataKey="date"
-                height={30}
-                stroke={theme.palette.primary.main}
-              />
-              <Tooltip
-                contentStyle={{ background: theme.palette.background.default }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </Hidden>
+      <Grid item sm={8} className={styles.chartContainer}>
+        <ResponsiveContainer width="100%" height={300} className={styles.chart}>
+          <LineChart data={data}>
+            <Line
+              type="monotone"
+              dataKey="順位"
+              yAxisId="left"
+              stroke={theme.palette.primary.main}
+            />
+            <Line
+              type="monotone"
+              dataKey="ポイント"
+              yAxisId="right"
+              stroke={theme.palette.secondary.main}
+            />
+            <CartesianGrid stroke={theme.palette.text.secondary} />
+            <YAxis
+              reversed
+              domain={[1, 300]}
+              ticks={[10, 50, 100, 300]}
+              allowDataOverflow
+              scale="log"
+              yAxisId="left"
+              axisLine={{ stroke: theme.palette.primary.main }}
+              tickLine={{ stroke: theme.palette.primary.main }}
+              tick={{ fill: theme.palette.primary.main }}
+              label={{
+                value: "順位",
+                position: "insideTopLeft",
+                fill: theme.palette.primary.main,
+              }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              axisLine={{ stroke: theme.palette.secondary.main }}
+              tickLine={{ stroke: theme.palette.secondary.main }}
+              tick={{ fill: theme.palette.secondary.main }}
+              label={{
+                value: "ポイント",
+                position: "insideTopRight",
+                fill: theme.palette.secondary.main,
+              }}
+            />
+            <XAxis dataKey="date" tick={{ fill: theme.palette.text.primary }} />
+            <Brush
+              dataKey="date"
+              height={30}
+              stroke={theme.palette.text.secondary}
+              fill={theme.palette.background.default}
+            >
+              <LineChart>
+                <Line
+                  type="monotone"
+                  dataKey="順位"
+                  yAxisId="left"
+                  stroke={theme.palette.text.secondary}
+                  dot={false}
+                />
+                <YAxis
+                  reversed
+                  domain={[1, 300]}
+                  allowDataOverflow
+                  scale="log"
+                  yAxisId="left"
+                  hide
+                />
+              </LineChart>
+            </Brush>
+            <Tooltip
+              contentStyle={{ background: theme.palette.background.default }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </Grid>
 
       <Grid item sm={4}>
@@ -176,17 +226,6 @@ const RankingHistoryCharts: React.FC<{
     </Grid>
   );
 };
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      padding: theme.spacing(2),
-    },
-    title: {
-      marginBottom: theme.spacing(2),
-    },
-  })
-);
 
 export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
   ranking,
