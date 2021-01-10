@@ -3,6 +3,7 @@ import {
   MuiThemeProvider,
   createMuiTheme,
   ThemeOptions,
+  useMediaQuery,
 } from "@material-ui/core";
 import { useLocalStorage } from "react-use";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -52,7 +53,8 @@ export function useToggleDarkMode(): [boolean, () => void] {
 }
 
 const MyThemeProvider: React.FC = ({ children }) => {
-  const [darkmode, setDarkmode] = useLocalStorage("darkmode", false);
+  const defaultMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [darkmode, setDarkmode] = useLocalStorage("darkmode", defaultMode);
   const toggleDarkmode = useCallback(() => {
     setDarkmode((x) => !(x ?? false));
   }, [setDarkmode]);
