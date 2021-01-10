@@ -37,6 +37,16 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(1),
       },
     },
+    title: {
+      ...(theme.ranking.titleHeight !== 0
+        ? {
+            overflow: "hidden",
+            display: "box",
+            boxOrient: "vertical",
+            lineClamp: theme.ranking.titleHeight,
+          }
+        : {}),
+    },
     story: {
       margin: theme.spacing(0, 2),
       background: theme.palette.background.default,
@@ -48,7 +58,7 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 1,
     },
     keywords: {
-      display: "flex",
+      display: theme.ranking.showKeyword ? "flex" : "none",
       flexWrap: "wrap",
       background: theme.palette.background.default,
       "& > *": {
@@ -93,11 +103,12 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
               文字/話
             </Tag>
           </Typography>
-          <Typography variant="h5" component="h2">
+          <Typography variant="h5" component="h2" className={styles.title}>
             <Link
               color="textPrimary"
               component={RouterLink}
               to={`/detail/${item.ncode.toLowerCase()}`}
+              title={entities.decode(item.title)}
             >
               {entities.decode(item.title)}
             </Link>
@@ -167,6 +178,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
             to={link}
             target="_blank"
             rel="noopener noreferrer"
+            title={entities.decode(item.title)}
           >
             読む
           </Button>

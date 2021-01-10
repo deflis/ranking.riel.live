@@ -106,11 +106,11 @@ const WrappedApp: React.FC = () => {
   ReactGA.pageview(window.location.pathname + window.location.search);
 
   return (
-    <MyThemeProvider>
-      <GlobalStateProvider>
+    <GlobalStateProvider>
+      <MyThemeProvider>
         <App />
-      </GlobalStateProvider>
-    </MyThemeProvider>
+      </MyThemeProvider>
+    </GlobalStateProvider>
   );
 };
 

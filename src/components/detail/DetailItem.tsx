@@ -94,6 +94,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
     .split(/\s/g)
     .map((keyword) => (
       <Chip
+        key={keyword}
         component={RouterLink}
         to={`/custom?keyword=${keyword}`}
         label={keyword}

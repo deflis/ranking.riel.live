@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrophy, faHammer } from "@fortawesome/free-solid-svg-icons";
@@ -6,7 +6,6 @@ import { useToggle } from "react-use";
 import {
   fade,
   makeStyles,
-  InputBase,
   AppBar,
   Toolbar,
   IconButton,
@@ -21,12 +20,19 @@ import {
   Button,
   createStyles,
   Divider,
+  Checkbox,
+  TextField,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useHandleChange } from "../../util/useHandleChange";
-import { useToggleDarkMode } from "../../util/theme";
-import { useAdMode } from "../../util/globalState";
+import {
+  useAdMode,
+  useTitleHeight,
+  useDarkMode,
+  useShowKeyword,
+} from "../../util/globalState";
 import { AdDialog } from "./AdDialog";
+import NumberTextField from "./NumberTextField";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -93,7 +99,7 @@ export const Header: React.FC = React.memo(() => {
 
   const handleChangeNcode = useHandleChange(setNcode);
   const [expand, toggle] = useToggle(false);
-  const [darkmode, toggleDarkmode] = useToggleDarkMode();
+  const [darkmode, toggleDarkmode] = useDarkMode();
   const [adMode, toggleAdMode] = useAdMode();
   const [showAdDialog, toggleAdDialog] = useToggle(false);
   const handleAdMode = useCallback(() => {
@@ -107,6 +113,24 @@ export const Header: React.FC = React.memo(() => {
     toggleAdMode();
     toggleAdDialog();
   }, [toggleAdMode, toggleAdDialog]);
+  const [titleHeightRaw, setTitleHeightRaw] = useTitleHeight();
+  const [titleHeight, setTitleHeight] = useState(
+    titleHeightRaw !== 0 ? titleHeightRaw : 2
+  );
+  const titleHeightStatus = titleHeightRaw !== 0;
+  const toggleTitleHeightStatus = useCallback(() => {
+    if (!titleHeightStatus) {
+      setTitleHeightRaw(titleHeight);
+    } else {
+      setTitleHeightRaw(0);
+    }
+  }, [titleHeightStatus, setTitleHeightRaw, titleHeight]);
+  useEffect(() => {
+    if (titleHeightStatus) {
+      setTitleHeightRaw(titleHeight);
+    }
+  }, [titleHeightStatus, titleHeight, setTitleHeightRaw]);
+  const [showKeyword, toggleShowKeyword] = useShowKeyword();
 
   return (
     <>
@@ -226,20 +250,44 @@ export const Header: React.FC = React.memo(() => {
           />
         </ListItem>
         <ListItem>
+          <Checkbox
+            edge="start"
+            checked={titleHeightStatus}
+            disableRipple
+            onClick={toggleTitleHeightStatus}
+          />
+          {titleHeightStatus ? (
+            <NumberTextField
+              label="タイトルの高さを指定する"
+              value={titleHeight}
+              onChange={setTitleHeight}
+              disabled={!titleHeightStatus}
+              fullWidth
+            />
+          ) : (
+            <ListItemText primary="タイトルの高さを指定する" />
+          )}
+        </ListItem>
+        <ListItem>
+          <Checkbox
+            edge="start"
+            checked={!showKeyword}
+            disableRipple
+            onClick={toggleShowKeyword}
+          />
+          <ListItemText primary="キーワードを表示しない" />
+        </ListItem>
+        <ListItem>
           <FormControlLabel
             control={<Switch checked={!adMode} onChange={handleAdMode} />}
             label="広告を表示しない"
           />
         </ListItem>
         <Divider />
-        <ListItem>
-          <FormControl onSubmit={detail}>
-            <InputBase
-              placeholder="Nコード"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
+        <FormControl onSubmit={detail}>
+          <ListItem>
+            <TextField
+              label="Nコード"
               onChange={handleChangeNcode}
               value={ncode}
             />
@@ -247,8 +295,8 @@ export const Header: React.FC = React.memo(() => {
               <FontAwesomeIcon icon={faHammer} />
               詳細を取得
             </Button>
-          </FormControl>
-        </ListItem>
+          </ListItem>
+        </FormControl>
       </Drawer>
       {showAdDialog && (
         <AdDialog handleCancel={toggleAdDialog} handleOk={removeAd} />

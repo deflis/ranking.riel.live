@@ -3,10 +3,10 @@ import Genre from "../../enum/Genre";
 import { Filter } from "../../interface/Filter";
 import { useLocalStorage, useDebounce } from "react-use";
 import {
-  ExpansionPanel,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionSummary,
   Typography,
-  ExpansionPanelDetails,
+  AccordionDetails,
   Checkbox,
   FormControl,
   FormLabel,
@@ -184,18 +184,18 @@ export const FilterComponent: React.FC<FilterCompnentProps> = React.memo(
     );
 
     return (
-      <ExpansionPanel expanded={showFilter} onChange={toggleShowFIlter}>
-        <ExpansionPanelSummary
+      <Accordion expanded={showFilter} onChange={toggleShowFIlter}>
+        <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
           <Typography>フィルター</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+        </AccordionSummary>
+        <AccordionDetails>
           <InnterFilterComponent onChange={onChange} />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
+        </AccordionDetails>
+      </Accordion>
     );
   }
 );

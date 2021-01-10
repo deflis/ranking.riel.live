@@ -1,15 +1,30 @@
-import React, { useCallback, useContext } from "react";
+import React from "react";
 import {
   MuiThemeProvider,
   createMuiTheme,
   ThemeOptions,
-  useMediaQuery,
+  Theme,
 } from "@material-ui/core";
-import { useLocalStorage } from "react-use";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import blue from "@material-ui/core/colors/blue";
 import red from "@material-ui/core/colors/red";
 
+import { useDarkMode, useShowKeyword, useTitleHeight } from "./globalState";
+declare module "@material-ui/core/styles/createMuiTheme" {
+  interface Theme {
+    ranking: {
+      titleHeight: number;
+      showKeyword: boolean;
+    };
+  }
+  // allow configuration using `createMuiTheme`
+  interface ThemeOptions {
+    ranking?: {
+      titleHeight?: number;
+      showKeyword?: boolean;
+    };
+  }
+}
 const theme: ThemeOptions = {
   typography: {
     fontFamily: ['"Noto Sans JP"', "sans-serif"].join(","),
@@ -41,31 +56,24 @@ const darkTheme = createMuiTheme(
   },
   theme
 );
-const DispatchContext = React.createContext<[boolean, () => void]>([
-  false,
-  () => {
-    throw new Error();
-  },
-]);
-
-export function useToggleDarkMode(): [boolean, () => void] {
-  return useContext(DispatchContext);
-}
 
 const MyThemeProvider: React.FC = ({ children }) => {
-  const defaultMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [darkmode, setDarkmode] = useLocalStorage("darkmode", defaultMode);
-  const toggleDarkmode = useCallback(() => {
-    setDarkmode((x) => !(x ?? false));
-  }, [setDarkmode]);
+  const [darkmode] = useDarkMode();
+  const [titleHeight] = useTitleHeight();
+  const [showKeyword] = useShowKeyword();
 
-  const currentTheme = darkmode ? darkTheme : lightTheme;
+  const currentTheme: Theme = {
+    ...(darkmode ? darkTheme : lightTheme),
+    ranking: {
+      titleHeight,
+      showKeyword,
+    },
+  };
+
   return (
     <MuiThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <DispatchContext.Provider value={[darkmode ?? false, toggleDarkmode]}>
-        {children}
-      </DispatchContext.Provider>
+      {children}
     </MuiThemeProvider>
   );
 };
