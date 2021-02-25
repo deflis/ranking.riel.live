@@ -239,6 +239,10 @@ export const Header: React.FC = React.memo(() => {
           />
         </ListItem>
         <Divider />
+        <ListItem button component={RouterLink} to="/cloud/d">
+          <ListItemText primary="ワードクラウド(ベータ)" />
+        </ListItem>
+        <Divider />
         <ListItem button component={RouterLink} to="/about">
           <ListItemText primary="このサイトについて" />
         </ListItem>

@@ -17,6 +17,7 @@ const Ranking = lazy(() => import("./pages/ranking"));
 const Detail = lazy(() => import("./pages/detail"));
 const CustomRanking = lazy(() => import("./pages/custom"));
 const About = lazy(() => import("./pages/about"));
+const RankingWordCloud = lazy(() => import("./pages/cloud"));
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,6 +91,11 @@ const App: React.FC = () => {
                     component={withTracker(CustomRanking)}
                   />
                   <Route path="/about" exact component={withTracker(About)} />
+                  <Route
+                    path={["/cloud/:type", "/cloud/:type/:date"]}
+                    exact
+                    component={RankingWordCloud}
+                  />
                 </Switch>
               </Suspense>
             </ErrorBoundary>

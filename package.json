@@ -15,9 +15,11 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.2.10",
     "clsx": "^1.1.1",
+    "comlink": "^4.3.0",
     "date-fns": "^2.16.1",
     "date-fns-timezone": "^0.1.4",
     "html-entities": "^1.3.1",
+    "kuromoji": "^0.1.2",
     "ky": "^0.20.0",
     "react": "^16.14.0",
     "react-adsense": "^0.1.0",
@@ -27,6 +29,7 @@
     "react-share": "^4.3.1",
     "react-use": "^15.3.4",
     "react-waypoint": "^9.0.3",
+    "react-wordcloud": "^1.2.7",
     "recharts": "^2.0.0-beta.8",
     "store": "^2.0.12",
     "swr": "^0.3.9",
@@ -45,11 +48,11 @@
   },
   "scripts": {
     "start": "npm-run-all -p start:*",
-    "start:react": "react-scripts start",
+    "start:react": "react-app-rewired start",
     "start:firebase": "firebase serve --only functions,hosting",
-    "build": "rimraf functions/views/index.ejs && cross-env NODE_ENV=production PUBLIC_URL=https://ranking.riel.live GENERATE_SOURCEMAP=false react-scripts build && node build-views.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build": "rimraf functions/views/index.ejs && cross-env NODE_ENV=production PUBLIC_URL=https://ranking.riel.live GENERATE_SOURCEMAP=false react-app-rewired build && node build-views.js",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "deploy": "firebase deploy"
   },
   "eslintConfig": {
@@ -68,6 +71,7 @@
     ]
   },
   "proxy": "http://localhost:5000",
+  "config-overrides-path": "react-app-rewired.config.js",
   "devDependencies": {
     "react-scripts": "4.0.1",
     "@testing-library/jest-dom": "^5.11.6",
@@ -75,6 +79,7 @@
     "@testing-library/user-event": "^11.4.2",
     "@types/html-entities": "^1.2.16",
     "@types/jest": "^25.2.3",
+    "@types/kuromoji": "^0.1.0",
     "@types/node": "^14.14.13",
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
@@ -88,6 +93,9 @@
     "narou": "^0.5.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
-    "rimraf": "^3.0.2"
+    "react-app-rewired": "2.1.x",
+    "rimraf": "^3.0.2",
+    "type-fest": "^0.21.2",
+    "worker-loader": "3.0.x"
   }
 }
