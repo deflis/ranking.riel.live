@@ -1,4 +1,11 @@
-import { addDays, formatISO, getDay, setDay, startOfMonth } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  formatISO,
+  getDay,
+  setDay,
+  startOfMonth,
+} from "date-fns";
 import { RankingResult } from "narou";
 import useSWR from "swr";
 
@@ -17,9 +24,21 @@ export function convertDate(date: Date, type: RankingType): Date {
     case RankingType.Weekly:
       return addDays(setDay(date, 2), getDay(date) < 2 ? -7 : 0);
     case RankingType.Monthly:
-      return startOfMonth(date);
     case RankingType.Quarter:
       return startOfMonth(date);
+  }
+}
+
+export function addDate(date: Date, type: RankingType, amount: number): Date {
+  switch (type) {
+    case RankingType.Daily:
+    default:
+      return addDays(date, amount);
+    case RankingType.Weekly:
+      return addDays(date, amount * 7);
+    case RankingType.Monthly:
+    case RankingType.Quarter:
+      return addMonths(date, amount);
   }
 }
 

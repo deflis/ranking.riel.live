@@ -1,4 +1,4 @@
-import { parseISO } from "date-fns";
+import { addDays, isEqual, isSameDay, parseISO } from "date-fns";
 import { addHours, format } from "date-fns/esm";
 import jaLocale from "date-fns/locale/ja";
 import React, { useCallback, useState } from "react";
@@ -20,7 +20,11 @@ import {
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 
-import useRanking, { convertDate, formatDate } from "../api/useRanking";
+import useRanking, {
+  addDate,
+  convertDate,
+  formatDate,
+} from "../api/useRanking";
 import { TwitterShare } from "../components/common/TwitterShare";
 import { FilterComponent } from "../components/ranking/Filter";
 import { RankingRender } from "../components/ranking/RankingRender";
@@ -100,6 +104,18 @@ const Ranking: React.FC = () => {
     )}ランキング - なろうランキングビューワ`
   );
 
+  const prevDate = useCallback(() => onDateChange(addDate(date, type, -1)), [
+    onDateChange,
+    date,
+    type,
+  ]);
+
+  const nextDate = useCallback(() => onDateChange(addDate(date, type, 1)), [
+    onDateChange,
+    date,
+    type,
+  ]);
+
   const { ranking, loading } = useRanking(type, date);
 
   return (
@@ -117,8 +133,22 @@ const Ranking: React.FC = () => {
             />
           </MuiPickersUtilsProvider>
           <FormControl>
+            <Button onClick={prevDate} variant="contained">
+              前
+            </Button>
+          </FormControl>
+          <FormControl>
             <Button onClick={clearDate} variant="contained" color="primary">
-              リセット
+              最新
+            </Button>
+          </FormControl>
+          <FormControl>
+            <Button
+              onClick={nextDate}
+              variant="contained"
+              disabled={isSameDay(date, convertDate(new Date(), type))}
+            >
+              次
             </Button>
           </FormControl>
           <FormControl>
