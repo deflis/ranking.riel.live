@@ -12,6 +12,7 @@ import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import MyThemeProvider from "./util/theme";
 import GlobalStateProvider from "./util/globalState";
+import { PropOver } from "./components/common/AdAmazon";
 
 const Ranking = lazy(() => import("./pages/ranking"));
 const Detail = lazy(() => import("./pages/detail"));
@@ -121,6 +122,7 @@ const App: React.FC = () => {
           </Container>
         </div>
         <Footer className={styles.footer} />
+        <PropOver />
       </Router>
     </div>
   );
