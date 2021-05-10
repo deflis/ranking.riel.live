@@ -115,12 +115,12 @@ const App: React.FC = () => {
                     component={RankingWordCloud}
                   />
                 </Switch>
+                <Route path="/r18" component={R18Dialog} />
               </Suspense>
             </ErrorBoundary>
           </Container>
         </div>
         <Footer className={styles.footer} />
-        <Route path="/r18" component={R18Dialog} />
       </Router>
     </div>
   );
