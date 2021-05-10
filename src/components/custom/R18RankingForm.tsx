@@ -1,37 +1,38 @@
-import React, { useState, useCallback, useMemo } from "react";
-import Genre from "../../enum/Genre";
-import { RankingType, RankingTypeName } from "../../interface/RankingType";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { set } from "date-fns/esm";
+import jaLocale from "date-fns/locale/ja";
+import { R18Site, R18SiteNotation } from "narou";
+import React, { useCallback, useState } from "react";
+import { useBoolean, useToggle, useUpdateEffect } from "react-use";
+
+import DateFnsUtils from "@date-io/date-fns";
 import { faCog, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { TwitterShare } from "../common/TwitterShare";
-import { useToggle, useUpdateEffect, useBoolean } from "react-use";
-import { CustomRankingParams } from "../../interface/CustomRankingParams";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Typography,
   Button,
   Checkbox,
+  createStyles,
+  FormControl,
   FormControlLabel,
   FormGroup,
-  FormControl,
-  FormLabel,
-  TextField,
-  Select,
-  MenuItem,
   FormHelperText,
+  FormLabel,
   InputLabel,
-  Paper,
   makeStyles,
-  createStyles,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
 } from "@material-ui/core";
 import {
-  MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
+  MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-import jaLocale from "date-fns/locale/ja";
+
+import { R18RankingParams } from "../../interface/CustomRankingParams";
+import { RankingType, RankingTypeName } from "../../interface/RankingType";
 import { StoryCount } from "../common/StoryCount";
-import { allGenres } from "../../enum/Genre";
-import { set } from "date-fns/esm";
+import { TwitterShare } from "../common/TwitterShare";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -54,17 +55,16 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-
-export interface CustomRankingFormParams {
-  params: CustomRankingParams;
-  onSearch: (e: CustomRankingParams) => void;
+export interface R18RankingFormParams {
+  params: R18RankingParams;
+  onSearch: (e: R18RankingParams) => void;
 }
 
 interface InnterParams {
   onClose: () => void;
 }
 
-export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
+export const R18RankingForm: React.FC<R18RankingFormParams> = ({
   params,
   onSearch,
 }) => {
@@ -75,7 +75,7 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
     <>
       <div className={styles.bar}>
         <TwitterShare
-          title={`${
+          title={`【R18】${
             params.keyword ? `${params.keyword}の` : "カスタム"
           }${RankingTypeName.get(params.rankingType)}ランキング`}
         >
@@ -103,21 +103,21 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
 };
 
 const DisableCustomRankingForm: React.FC<{
-  params: CustomRankingParams;
-}> = React.memo(({ params: { keyword, rankingType, genres } }) => {
+  params: R18RankingParams;
+}> = React.memo(({ params: { keyword, rankingType, sites } }) => {
   const genre =
-    genres.length > 0
-      ? genres
-          .map((genre) => <span className="tag">{Genre.get(genre)}</span>)
+    sites.length > 0
+      ? sites
+          .map((site) => <span className="tag">{R18SiteNotation[site]}</span>)
           .reduce(
             (previous, current) => (
               <>
                 {previous} {current}
               </>
             ),
-            <>ジャンル: </>
+            <>サイト: </>
           )
-      : "ジャンル設定なし";
+      : "サイト設定なし";
   return (
     <>
       <Typography variant="h2" component="h1">
@@ -136,7 +136,7 @@ const RankingTypeOptions = Array.from(
 ).map(([value, label]) => <MenuItem value={value}>{label}</MenuItem>);
 
 const EnableCustomRankingForm: React.FC<
-  CustomRankingFormParams & InnterParams
+  R18RankingFormParams & InnterParams
 > = ({ params, onSearch, onClose }) => {
   const styles = useStyles();
 
@@ -144,7 +144,7 @@ const EnableCustomRankingForm: React.FC<
   const [notKeyword, setNotKeyword] = useState(params.notKeyword);
   const [byStory, toggleByStory] = useBoolean(params.byStory);
   const [byTitle, toggleByTitle] = useBoolean(params.byTitle);
-  const [genres, setGenres] = useState(params.genres);
+  const [sites, setSites] = useState(params.sites);
   const [min, setMin] = useState(params.min);
   const [max, setMax] = useState(params.max);
   const [firstUpdate, setFirstUpdate] = useState(params.firstUpdate);
@@ -158,7 +158,7 @@ const EnableCustomRankingForm: React.FC<
     setNotKeyword(params.notKeyword);
     toggleByStory(params.byStory);
     toggleByTitle(params.byTitle);
-    setGenres(params.genres);
+    setSites(params.sites);
     setMin(params.min);
     setMax(params.max);
     setFirstUpdate(params.firstUpdate);
@@ -176,7 +176,7 @@ const EnableCustomRankingForm: React.FC<
         notKeyword,
         byStory,
         byTitle,
-        genres,
+        sites,
         min,
         max,
         firstUpdate,
@@ -192,7 +192,7 @@ const EnableCustomRankingForm: React.FC<
       notKeyword,
       byStory,
       byTitle,
-      genres,
+      sites,
       min,
       max,
       firstUpdate,
@@ -217,29 +217,15 @@ const EnableCustomRankingForm: React.FC<
     []
   );
 
-  const genreFilter = useMemo(
-    () =>
-      Array.from(Genre).map(([id, name]) => {
-        return (
-          <FormControlLabel
-            key={id}
-            control={<Checkbox checked={genres.includes(id)} value={id} />}
-            label={name}
-          />
-        );
-      }),
-    [genres]
-  );
-
-  const handleChangeGenre = useCallback(
+  const handleChangeSite = useCallback(
     (e: React.ChangeEvent<{ value?: string }>) => {
       if (!e.target.value) return;
       const id = parseInt(e.target.value);
-      setGenres((genres) => {
-        if (genres.includes(id)) {
-          return genres.filter((x) => x !== id);
+      setSites((sites) => {
+        if (sites.includes(id)) {
+          return sites.filter((x) => x !== id);
         } else {
-          return [id].concat(genres).sort();
+          return [id].concat(sites).sort();
         }
       });
     },
@@ -259,8 +245,17 @@ const EnableCustomRankingForm: React.FC<
     },
     []
   );
-  const selectAll = useCallback(() => setGenres(allGenres), []);
-  const unselectAll = useCallback(() => setGenres([]), []);
+  const selectAll = useCallback(
+    () =>
+      setSites([
+        R18Site.Nocturne,
+        R18Site.MoonLight,
+        R18Site.MoonLightBL,
+        R18Site.Midnight,
+      ]),
+    []
+  );
+  const unselectAll = useCallback(() => setSites([]), []);
 
   return (
     <Paper className={styles.form}>
@@ -297,9 +292,53 @@ const EnableCustomRankingForm: React.FC<
           />
         </FormGroup>
         <FormControl>
-          <FormLabel>ジャンル</FormLabel>
-          <FormGroup onChange={handleChangeGenre} row>
-            {genreFilter}
+          <FormLabel>サイト</FormLabel>
+          <FormGroup onChange={handleChangeSite} row>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sites.includes(R18Site.Nocturne)}
+                  value={R18Site.Nocturne}
+                />
+              }
+              label={R18SiteNotation[R18Site.Nocturne]}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sites.includes(R18Site.Nocturne)}
+                  value={R18Site.Nocturne}
+                />
+              }
+              label={R18SiteNotation[R18Site.Nocturne]}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sites.includes(R18Site.MoonLight)}
+                  value={R18Site.MoonLight}
+                />
+              }
+              label={R18SiteNotation[R18Site.MoonLight]}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sites.includes(R18Site.MoonLightBL)}
+                  value={R18Site.MoonLightBL}
+                />
+              }
+              label={R18SiteNotation[R18Site.MoonLightBL]}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sites.includes(R18Site.Midnight)}
+                  value={R18Site.Midnight}
+                />
+              }
+              label={R18SiteNotation[R18Site.Midnight]}
+            />
           </FormGroup>
           <FormGroup row>
             <Button variant="contained" onClick={selectAll}>

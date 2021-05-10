@@ -1,5 +1,5 @@
 import React from "react";
-import { RankingResult } from "narou";
+import { R18SiteNotation, RankingResult } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
 import { formatDistance, addDays, isAfter } from "date-fns";
@@ -73,8 +73,15 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
     const styles = useStyles();
     const [openStory, toggleStory] = useToggle(false);
 
+    const isR18 = item.nocgenre !== undefined;
+
     const user = `https://mypage.syosetu.com/${item.userid}/`;
-    const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
+    const link = isR18
+      ? `https://novel18.syosetu.com/${item.ncode.toLowerCase()}/`
+      : `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
+    const detail = isR18
+      ? `/r18/detail/${item.ncode.toLowerCase()}`
+      : `/detail/${item.ncode.toLowerCase()}`;
     const firstup = parse(item.general_firstup);
     return (
       <Card>
@@ -95,9 +102,16 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
           </Typography>
           <Typography color="textSecondary">
             <ItemBadge item={item} />
-            <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
-              {Genre.get(item.genre)}
-            </Link>
+            {!isR18 && (
+              <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
+                {Genre.get(item.genre)}
+              </Link>
+            )}
+            {isR18 && (
+              <Link component={RouterLink} to={`/r18?site=${item.nocgenre}`}>
+                {R18SiteNotation[item.nocgenre]}
+              </Link>
+            )}
             <Tag>
               {Math.round(item.length / item.general_all_no).toLocaleString()}
               文字/話
@@ -107,7 +121,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
             <Link
               color="textPrimary"
               component={RouterLink}
-              to={`/detail/${item.ncode.toLowerCase()}`}
+              to={detail}
               title={entities.decode(item.title)}
             >
               {entities.decode(item.title)}
@@ -115,15 +129,19 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
           </Typography>
           <Typography color="textSecondary">
             作者:{" "}
-            <Link
-              component={OutboundLink}
-              eventLabel="RankingItem-User"
-              to={user}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {entities.decode(item.writer)}
-            </Link>
+            {isR18 ? (
+              entities.decode(item.writer)
+            ) : (
+              <Link
+                component={OutboundLink}
+                eventLabel="RankingItem-User"
+                to={user}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {entities.decode(item.writer)}
+              </Link>
+            )}
           </Typography>
           <Typography color="textSecondary">
             更新日時: {item.novelupdated_at}
@@ -151,7 +169,11 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
                 <Chip
                   key={i}
                   component={RouterLink}
-                  to={`/custom?keyword=${keyword}`}
+                  to={
+                    isR18
+                      ? `/r18?keyword=${keyword}`
+                      : `/custom?keyword=${keyword}`
+                  }
                   label={keyword}
                 />
               ))}
@@ -165,10 +187,7 @@ const RankingItem: React.FC<{ item: RankingResult }> = React.memo(
             あらすじを{openStory ? "隠す" : "表示"}
           </Button>
           <div className={styles.flexGap} />
-          <Link
-            component={RouterLink}
-            to={`/detail/${item.ncode.toLowerCase()}`}
-          >
+          <Link component={RouterLink} to={detail}>
             小説情報
           </Link>
           <Button

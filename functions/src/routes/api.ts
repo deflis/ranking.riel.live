@@ -8,11 +8,13 @@ import {
   RankingResult,
   Genre,
   NarouSearchResult,
+  searchR18,
 } from "narou";
 import { parseISO, formatISO } from "date-fns";
 import SearchBuilder from "narou/dist/search-builder";
 import FilterBuilder from "../util/FilterBuilder";
-import { NovelType } from "narou/dist/params";
+import { NovelType, R18Site } from "narou/dist/params";
+import SearchBuilderR18 from "narou/dist/search-builder-r18";
 
 const router = Router();
 
@@ -216,6 +218,166 @@ router.get(
       }
 
       const searchResult = await searchWithFilter(
+        searchBuilder,
+        filterBuilder.create()
+      );
+
+      const rankingData: RankingResult[] = searchResult.map((value, index) => {
+        let pt = value.global_point;
+        if (order === Order.DailyPoint) {
+          pt = value.daily_point;
+        } else if (order === Order.WeeklyPoint) {
+          pt = value.weekly_point;
+        } else if (order === Order.MonthlyPoint) {
+          pt = value.monthly_point;
+        } else if (order === Order.QuarterPoint) {
+          pt = value.quarter_point;
+        } else if (order === Order.YearlyPoint) {
+          pt = value.yearly_point;
+        } else if (order === Order.Weekly) {
+          pt = value.weekly_unique;
+        }
+        return { ...value, rank: index + 1, pt };
+      });
+
+      res.json(rankingData);
+    } catch (e) {
+      console.error(e);
+      res.status(500).json(e);
+    }
+  }
+);
+
+router.get(
+  "/r18detail/:ncode",
+  async (
+    req: Request<DetailParams>,
+    res: Response<Omit<DetailResponse, "ranking">>
+  ) => {
+    try {
+      const ncode = req.params.ncode;
+      const searchResult = await searchR18()
+        .ncode(ncode)
+        .opt("weekly")
+        .execute();
+      const detail = searchResult.values?.[0];
+
+      if (detail) {
+        res.json({ detail });
+      } else {
+        res.status(404).json();
+      }
+    } catch (e) {
+      console.error(e);
+      res.status(500).json(e);
+    }
+  }
+);
+
+async function searchR18WithFilter(
+  searchBuilder: SearchBuilderR18,
+  filter: (item: NarouSearchResult) => boolean
+): Promise<NarouSearchResult[]> {
+  let page = 0;
+  let result: NarouSearchResult[] = [];
+  do {
+    const response = await searchBuilder.page(page, 500).execute();
+    result = result.concat(response.values.filter(filter));
+    page++;
+    if (response.allcount < page * 500) {
+      break;
+    }
+  } while (result.length < 300 && page < 5);
+  return result;
+}
+type R18QueryParams = CustomQueryParams & {
+  keyword?: string;
+  not_keyword?: string;
+  by_title?: string;
+  by_story?: string;
+  sites?: string;
+  min?: string;
+  max?: string;
+  first_update?: string;
+  rensai?: string;
+  kanketsu?: string;
+  tanpen?: string;
+};
+
+router.get(
+  "/r18/:order",
+  async (
+    req: Request<CustomParams, any, any, R18QueryParams>,
+    res: Response<RankingResponse>
+  ) => {
+    try {
+      const { order } = req.params;
+      const {
+        keyword,
+        not_keyword,
+        by_title,
+        by_story,
+        sites,
+        min,
+        max,
+        first_update,
+        rensai,
+        kanketsu,
+        tanpen,
+      } = req.query;
+
+      const searchBuilder = searchR18();
+      const filterBuilder = new FilterBuilder();
+      searchBuilder.order(order).limit(500);
+
+      if (order === Order.Weekly) {
+        searchBuilder.opt("weekly");
+      }
+      if (keyword) {
+        searchBuilder.word(keyword).byKeyword(true);
+      }
+      if (not_keyword) {
+        searchBuilder.notWord(not_keyword).byKeyword(true);
+      }
+      if (by_title) {
+        searchBuilder.byTitle();
+      }
+      if (by_story) {
+        searchBuilder.byOutline();
+      }
+      if (sites) {
+        const siteList: R18Site[] = sites.split(",") as any;
+        searchBuilder.r18Site(siteList);
+      }
+      if (max) {
+        filterBuilder.setMaxNo(parseInt(max, 10));
+      }
+      if (min) {
+        filterBuilder.setMinNo(parseInt(min, 10));
+      }
+      if (first_update) {
+        filterBuilder.setFirstUpdate(parseISO(first_update));
+      }
+      if (tanpen === "0" || min) {
+        searchBuilder.type(NovelType.Rensai);
+        filterBuilder.disableTanpen();
+      }
+      if (rensai === "0") {
+        if (tanpen === "0") {
+          searchBuilder.type(NovelType.RensaiEnd);
+        } else {
+          searchBuilder.type(NovelType.ShortAndRensai);
+        }
+        filterBuilder.disableRensai();
+      }
+      if (kanketsu === "0") {
+        if (tanpen === "0") {
+          searchBuilder.type(NovelType.RensaiNow);
+        }
+        filterBuilder.disableKanketsu();
+      }
+
+      const searchResult = await searchR18WithFilter(
         searchBuilder,
         filterBuilder.create()
       );

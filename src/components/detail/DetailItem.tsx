@@ -1,5 +1,5 @@
 import React from "react";
-import { NarouSearchResult } from "narou";
+import { NarouSearchResult, R18SiteNotation } from "narou";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
 import { formatDistance, format } from "date-fns";
@@ -83,20 +83,23 @@ function round(number: number, precision: number): number {
 
 const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
   const styles = useStyles();
-  const detail = `https://ncode.syosetu.com/novelview/infotop/ncode/${item.ncode.toLowerCase()}/`;
+  const isR18 = item.nocgenre !== undefined;
+  const baseUrl = isR18
+    ? "https://novel18.syosetu.com"
+    : "https://ncode.syosetu.com";
+  const ncode = item.ncode.toLowerCase();
+  const detail = `${baseUrl}/novelview/infotop/ncode/${ncode}/`;
   const user = `https://mypage.syosetu.com/${item.userid}/`;
-  const link = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/`;
-  const linkFirst = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/1/`;
-  const linkLast = `https://ncode.syosetu.com/${item.ncode.toLowerCase()}/${
-    item.general_all_no
-  }/`;
+  const link = `${baseUrl}/${ncode}/`;
+  const linkFirst = `${baseUrl}/${ncode}/1/`;
+  const linkLast = `${baseUrl}/${ncode}/${item.general_all_no}/`;
   const keywords = item.keyword
     .split(/\s/g)
     .map((keyword) => (
       <Chip
         key={keyword}
         component={RouterLink}
-        to={`/custom?keyword=${keyword}`}
+        to={isR18 ? `/r18?keyword=${keyword}` : `/custom?keyword=${keyword}`}
         label={keyword}
       />
     ));
@@ -189,21 +192,34 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
         </Grid>
         <Grid item sm={5}>
           <DetailItemText label="作者">
-            <Link
-              component={OutboundLink}
-              eventLabel="DetailItem-UserPage"
-              to={user}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {entities.decode(item.writer)}
-            </Link>
+            {isR18 ? (
+              entities.decode(item.writer)
+            ) : (
+              <Link
+                component={OutboundLink}
+                eventLabel="DetailItem-UserPage"
+                to={user}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {entities.decode(item.writer)}
+              </Link>
+            )}
           </DetailItemText>
-          <DetailItemText label="ジャンル">
-            <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
-              {Genre.get(item.genre)}
-            </Link>
-          </DetailItemText>
+          {item.genre && (
+            <DetailItemText label="ジャンル">
+              <Link component={RouterLink} to={`/custom?genres=${item.genre}`}>
+                {Genre.get(item.genre)}
+              </Link>
+            </DetailItemText>
+          )}
+          {item.nocgenre && (
+            <DetailItemText label="ジャンル">
+              <Link component={RouterLink} to={`/r18?genres=${item.nocgenre}`}>
+                {R18SiteNotation[item.nocgenre]}
+              </Link>
+            </DetailItemText>
+          )}
           <DetailItemText label="キーワード">
             <Tags>{keywords}</Tags>
           </DetailItemText>

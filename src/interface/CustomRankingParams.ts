@@ -1,4 +1,6 @@
-import { RankingType } from './RankingType';
+import { R18Site } from "narou";
+import { RankingType } from "./RankingType";
+import { Except } from "type-fest";
 
 export interface CustomRankingParams {
   keyword?: string;
@@ -14,3 +16,7 @@ export interface CustomRankingParams {
   tanpen: boolean;
   rankingType: RankingType;
 }
+
+export type R18RankingParams = Except<CustomRankingParams, "genres"> & {
+  sites: R18Site[];
+};

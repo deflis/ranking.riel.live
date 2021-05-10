@@ -12,6 +12,9 @@ import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import MyThemeProvider from "./util/theme";
 import GlobalStateProvider from "./util/globalState";
+import R18Ranking from "./pages/r18";
+import R18Detail from "./pages/r18detail";
+import { R18DialogForm } from "./components/common/R18Dialog";
 
 const Ranking = lazy(() => import("./pages/ranking"));
 const Detail = lazy(() => import("./pages/detail"));
@@ -90,6 +93,21 @@ const App: React.FC = () => {
                     exact
                     component={withTracker(CustomRanking)}
                   />
+                  <Route
+                    path="/r18"
+                    exact
+                    component={withTracker(R18Ranking)}
+                  />
+                  <Route
+                    path="/r18/:type"
+                    exact
+                    component={withTracker(R18Ranking)}
+                  />
+                  <Route
+                    path="/r18/detail/:ncode"
+                    exact
+                    component={withTracker(R18Detail)}
+                  />
                   <Route path="/about" exact component={withTracker(About)} />
                   <Route
                     path={["/cloud/:type", "/cloud/:type/:date"]}
@@ -102,6 +120,7 @@ const App: React.FC = () => {
           </Container>
         </div>
         <Footer className={styles.footer} />
+        <Route path="/r18" component={R18DialogForm} />
       </Router>
     </div>
   );
