@@ -7,9 +7,9 @@ import AdSense from "../common/AdSense";
 import { Grid, LinearProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { SelfAd } from "../common/SelfAd";
-import { AdRandomWidth } from "../common/AdRandom";
 import { chunk } from "../../util/chunk";
 import { useAdMode } from "../../util/globalState";
+import { AdAmazonWidth } from "../common/AdAmazon";
 
 const InsideRender: React.FC<{
   ranking: RankingResult[];
@@ -38,7 +38,7 @@ const InsideRender: React.FC<{
         {previous}
         {index !== 0 && adMode && (
           <Grid item xs={12}>
-            <AdRandomWidth key={index} />
+            <AdAmazonWidth key={index} />
           </Grid>
         )}
         {current}
@@ -73,7 +73,7 @@ export const RankingRender: React.FC<{
     <Grid container spacing={3}>
       <Grid item xs={12}></Grid>
       <Grid item xs={12}>
-        <AdRandomWidth />
+        <AdSense />
       </Grid>
       {ranking.length === 0 && (
         <Grid item xs={12}>
