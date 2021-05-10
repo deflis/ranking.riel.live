@@ -49,18 +49,34 @@ const AdAmazon468x60: React.FC = () => {
     />
   );
 };
+const AdAmazon180x150: React.FC = () => {
+  const style = useStyles();
+
+  return (
+    <iframe
+      title="Amazon広告"
+      className={style.ad468}
+      src="https://rcm-fe.amazon-adsystem.com/e/cm?o=9&p=9&l=ez&f=ifr&linkID=d5d233b3cf96a106aca1f58181777280&t=riel011-22&tracking_id=riel011-22"
+      width="180"
+      height="150"
+      scrolling="no"
+    />
+  );
+};
 
 export const AdAmazonWidth: React.FC = () => {
   const style = useStyles();
   const [adMode] = useAdMode();
 
   const matches = useMediaQuery("(min-width:728px)");
+  const matches2 = useMediaQuery("(min-width:468px)");
   return (
     <>
       {adMode && (
         <div className={style.contiainer}>
           {matches && <AdAmazon728x90 />}
-          {!matches && <AdAmazon468x60 />}
+          {!matches && matches2 && <AdAmazon468x60 />}
+          {!matches2 && <AdAmazon180x150 />}
         </div>
       )}
     </>
