@@ -30,6 +30,8 @@ import DetailItemText from "./DetailItemText";
 import { Paper } from "@material-ui/core";
 import ItemBadge from "../common/badges/ItemBadge";
 import { parse } from "../../util/NarouDateFormat";
+import { FirstAd } from "../common/FirstAd";
+import { AdAmazonWidth } from "../common/AdAmazon";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -179,6 +181,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           </Tag>
         </Typography>
       </div>
+      <FirstAd />
       <Grid container spacing={3}>
         <Grid item sm={7}>
           <Typography className={styles.storyTitle} variant="h5" component="h2">
@@ -260,7 +263,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           </Hidden>
         </Grid>
       </Grid>
-      <AdSense></AdSense>
+      <AdAmazonWidth />
       <Paper className={styles.tableBox}>
         <Typography
           variant="h4"

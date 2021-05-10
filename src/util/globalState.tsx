@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, useContext } from "react";
+import React, { useReducer, createContext, useContext, useEffect } from "react";
 import { useLocalStorage } from "react-use";
 
 interface GlobalState {
@@ -6,6 +6,7 @@ interface GlobalState {
   adMode: boolean;
   titleHeight: number;
   showKeyword: boolean;
+  count: number;
 }
 
 type Action =
@@ -20,6 +21,7 @@ const DispatchContext = createContext<[GlobalState, React.Dispatch<Action>]>([
     adMode: true,
     titleHeight: 0,
     showKeyword: true,
+    count: 0,
   },
   () => {
     throw new Error();
@@ -61,6 +63,10 @@ export function useShowKeyword(): [boolean, () => void] {
     ]),
   ];
 }
+export function useCount(): number {
+  const [{ count }] = useContext(DispatchContext);
+  return count;
+}
 
 const defaultDarkmode = window.matchMedia("(prefers-color-scheme: dark)")
   .matches;
@@ -73,6 +79,8 @@ export const GlobalStateProvider: React.FC = ({ children }) => {
     "titleHeight",
     undefined
   );
+  const [count, setCount] = useLocalStorage("count", 0);
+  useEffect(() => setCount((count) => (count ?? 0) + 1), [setCount]);
 
   const stateReducer: React.Reducer<GlobalState, Action> = (state, action) => {
     switch (action.type) {
@@ -113,6 +121,7 @@ export const GlobalStateProvider: React.FC = ({ children }) => {
     adMode: adMode ?? true,
     showKeyword: showKeyword ?? true,
     titleHeight: titleHeight ?? 0,
+    count: count ?? 0,
   });
 
   return (

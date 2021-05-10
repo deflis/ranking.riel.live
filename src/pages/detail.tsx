@@ -12,6 +12,8 @@ import { RankingHistoryRender } from "../components/detail/RankingHistoryRender"
 import { RankingHistories } from "../interface/RankingHistory";
 import { SelfAd } from "../components/common/SelfAd";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
+import { AdAmazonWidth } from "../components/common/AdAmazon";
+import AdSense from "../components/common/AdSense";
 
 type Result = {
   detail: NarouSearchResult;
@@ -57,9 +59,13 @@ const Detail: React.FC = () => {
     return <DetailRenderer {...result} />;
   }
   return (
-    <Alert severity="warning">
-      情報が見つかりません。この小説は削除された可能性があります。
-    </Alert>
+    <>
+      <AdAmazonWidth />
+      <Alert severity="warning">
+        情報が見つかりません。この小説は削除された可能性があります。
+      </Alert>
+      <AdSense />
+    </>
   );
 };
 export default Detail;
