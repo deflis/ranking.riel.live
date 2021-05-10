@@ -59,3 +59,5 @@ export const R18DialogForm: React.FC = () => {
     <></>
   );
 };
+
+export default R18DialogForm;

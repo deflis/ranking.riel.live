@@ -12,14 +12,14 @@ import { Header } from "./components/common/Header";
 import { Footer } from "./components/common/Footer";
 import MyThemeProvider from "./util/theme";
 import GlobalStateProvider from "./util/globalState";
-import R18Ranking from "./pages/r18";
-import R18Detail from "./pages/r18detail";
-import { R18DialogForm } from "./components/common/R18Dialog";
 
 const Ranking = lazy(() => import("./pages/ranking"));
 const Detail = lazy(() => import("./pages/detail"));
 const CustomRanking = lazy(() => import("./pages/custom"));
 const About = lazy(() => import("./pages/about"));
+const R18Ranking = lazy(() => import("./pages/r18"));
+const R18Detail = lazy(() => import("./pages/r18detail"));
+const R18Dialog = lazy(() => import("./components/common/R18Dialog"));
 const RankingWordCloud = lazy(() => import("./pages/cloud"));
 
 const useStyles = makeStyles((theme) => ({
@@ -120,7 +120,7 @@ const App: React.FC = () => {
           </Container>
         </div>
         <Footer className={styles.footer} />
-        <Route path="/r18" component={R18DialogForm} />
+        <Route path="/r18" component={R18Dialog} />
       </Router>
     </div>
   );
