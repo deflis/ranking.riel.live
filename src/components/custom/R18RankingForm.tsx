@@ -306,15 +306,6 @@ const EnableCustomRankingForm: React.FC<
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={sites.includes(R18Site.Nocturne)}
-                  value={R18Site.Nocturne}
-                />
-              }
-              label={R18SiteNotation[R18Site.Nocturne]}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
                   checked={sites.includes(R18Site.MoonLight)}
                   value={R18Site.MoonLight}
                 />

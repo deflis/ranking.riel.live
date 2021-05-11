@@ -31,7 +31,7 @@ import { Paper } from "@material-ui/core";
 import ItemBadge from "../common/badges/ItemBadge";
 import { parse } from "../../util/NarouDateFormat";
 import { FirstAd } from "../common/FirstAd";
-import { AdAmazonWidth } from "../common/AdAmazon";
+import { AdRandomWidth } from "../common/AdRandom";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -263,7 +263,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
           </Hidden>
         </Grid>
       </Grid>
-      <AdAmazonWidth />
+      <AdRandomWidth />
       <Paper className={styles.tableBox}>
         <Typography
           variant="h4"
