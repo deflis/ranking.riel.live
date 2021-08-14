@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
 import { RankingResult } from "narou";
-import RankingItem from "./RankingItem";
-import { FilterInterface, DummyFilter } from "../../interface/Filter";
-import { Waypoint } from "react-waypoint";
-import AdSense from "../common/AdSense";
+import React, { useEffect, useState } from "react";
+
 import { Grid, LinearProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-import { SelfAd } from "../common/SelfAd";
+
+import { DummyFilter, FilterInterface } from "../../interface/Filter";
 import { chunk } from "../../util/chunk";
 import { useAdMode } from "../../util/globalState";
 import { AdAmazonWidth } from "../common/AdAmazon";
+import AdSense from "../common/AdSense";
+import { SelfAd } from "../common/SelfAd";
+import FakeItem from "./FakeItem";
+import RankingItem from "./RankingItem";
+import { useWaypoint } from "../../util/useWaypoint";
 
 const InsideRender: React.FC<{
   ranking: RankingResult[];
@@ -46,19 +49,32 @@ const InsideRender: React.FC<{
     ),
     <></>
   );
+  const [ref, waypointEnter] = useWaypoint<HTMLDivElement>(
+    () => {
+      console.log("waypoint");
+      setMax((x) => x + 10);
+    },
+    1000,
+    []
+  );
 
   return (
     <>
       {renderItems}
       {max < items.length ? (
-        <Grid item xs={12}>
-          <Waypoint onEnter={() => setMax((x) => x + 10)}>
-            <LinearProgress />
-          </Waypoint>
-          <button className="button" onClick={() => setMax((x) => x + 10)}>
-            続きを見る
-          </button>
-        </Grid>
+        <>
+          <Grid item xs={6} ref={ref}>
+            <FakeItem />
+          </Grid>
+          <Grid item xs={6}>
+            <FakeItem />
+          </Grid>
+          <Grid item xs={12}>
+            <button className="button" onClick={waypointEnter}>
+              続きを見る
+            </button>
+          </Grid>
+        </>
       ) : null}
     </>
   );
