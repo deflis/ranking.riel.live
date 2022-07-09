@@ -1,0 +1,39 @@
+
+
+.tags {
+  @apply items-center inline-flex flex-wrap justify-start;
+  
+  .tag {
+    @apply mb-0.5;
+    &:not(:last-child) {
+      @apply mr-0.5;
+    }
+  }
+  
+  &.addon .tag {
+    @apply mr-0;
+
+    &:not(:first-child) {
+      @apply ml-0 rounded-l-none;
+    }
+
+    &:not(:last-child) {
+      @apply ml-0 rounded-r-none;
+    }
+  }
+}
+  
+.tag {
+  @apply rounded inline-flex justify-center px-1 whitespace-nowrap;
+  font-size: 80%;
+  @apply text-gray-700 bg-gray-200 dark:bg-gray-700;
+  &.cyan {
+    @apply bg-sky-500 text-white;
+  }
+  &.lightGreen {
+    @apply bg-lime-500 text-lime-100;
+  }
+  &.red {
+    @apply bg-red-500 text-red-100;
+  }
+}
