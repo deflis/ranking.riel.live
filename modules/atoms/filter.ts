@@ -1,6 +1,6 @@
-import { formatISO, isBefore, parseISO } from "date-fns";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { DateTime } from "luxon";
 import { NarouSearchResult } from "narou";
 import { allGenres } from "../enum/Genre";
 import { parse } from "../utils/NarouDateFormat";
@@ -17,9 +17,11 @@ export const enableRensaiAtom = atomWithStorage("enableRensai", true);
 export const enableKanketsuAtom = atomWithStorage("enableKanketsu", true);
 export const firstUpdateAtom = atom(
   (get) =>
-    get(firstUpdateRawAtom) ? parseISO(get(firstUpdateRawAtom)) : undefined,
-  (_, set, value: Date | undefined) =>
-    set(firstUpdateRawAtom, value ? formatISO(value) : undefined)
+    get(firstUpdateRawAtom)
+      ? DateTime.fromISO(get(firstUpdateRawAtom))
+      : undefined,
+  (_, set, value: DateTime | undefined) =>
+    set(firstUpdateRawAtom, value?.toISODate())
 );
 
 export const isUseFilterAtom = atom(
@@ -54,8 +56,7 @@ export const filterAtom = atom((get) => {
           minNo !== undefined || minNo < 1 || item.general_all_no >= minNo
       )
       .filter(
-        (item) =>
-          !firstUpdate || isBefore(firstUpdate, parse(item.general_firstup))
+        (item) => !firstUpdate || firstUpdate < parse(item.general_firstup)
       )
       .filter(
         (item) =>
