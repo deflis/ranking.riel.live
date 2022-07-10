@@ -11,6 +11,7 @@ import { SelectBox } from "../ui/atoms/SelectBox";
 import { Button } from "../ui/atoms/Button";
 import Link from "next/link";
 import { DateTime } from "luxon";
+import { FilterComponent } from "../ui/ranking/Filter";
 
 const rankingTypeList = [
   RankingType.Daily,
@@ -62,7 +63,7 @@ export const Ranking: React.FC<{ date: DateTime; type: RankingType }> = ({
           }))}
         />
       </div>
-      {/*<FilterComponent />*/}
+      <FilterComponent />
       <RankingRender ranking={data} loading={isLoading} />
     </>
   );

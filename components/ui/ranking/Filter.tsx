@@ -1,21 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useLocalStorage, useDebounce } from "react-use";
-import {
-  Accordion,
-  AccordionSummary,
-  Typography,
-  AccordionDetails,
-  Checkbox,
-  FormControl,
-  FormLabel,
-  FormGroup,
-  FormControlLabel,
-  Button,
-  Input,
-  TextField,
-} from "@mui/material";
 import { StoryCount } from "../common/StoryCount";
-import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
 import { useAtom } from "jotai";
 import {
   enableKanketsuAtom,
@@ -28,6 +13,11 @@ import {
 } from "../../../modules/atoms/filter";
 import Genre, { allGenres } from "../../../modules/enum/Genre";
 import { useHydrateAtoms } from "jotai/utils";
+import { DateTime } from "luxon";
+import { Button } from "../atoms/Button";
+import DatePicker from "../atoms/DatePicker";
+import { Checkbox } from "../atoms/Checkbox";
+import { Disclosure } from "@headlessui/react";
 
 const InnterFilterComponent: React.FC = () => {
   useHydrateAtoms([
@@ -41,23 +31,26 @@ const InnterFilterComponent: React.FC = () => {
   ] as const);
   const [genres, setGenres] = useAtom(genresAtom);
   const handleChangeGenre = useCallback(
-    (e: React.ChangeEvent<{ value?: string }>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.value) return;
       const id = parseInt(e.target.value);
-      if (genres.includes(id)) {
-        return setGenres(genres.filter((x) => x !== id));
-      } else {
-        return setGenres([id].concat(genres));
-      }
+      setGenres((genres) =>
+        genres.includes(id) ? genres.filter((x) => x !== id) : [...genres, id]
+      );
     },
-    []
+    [setGenres]
   );
   const genreFilter = Array.from(Genre).map(([id, name]) => (
-    <FormControlLabel
-      key={id}
-      control={<Checkbox checked={genres.includes(id)} value={id} />}
-      label={name}
-    />
+    <React.Fragment key={id}>
+      <label>
+        <Checkbox
+          checked={genres.includes(id)}
+          value={id}
+          onChange={handleChangeGenre}
+        />
+        {name}
+      </label>
+    </React.Fragment>
   ));
 
   const [maxNo, setMaxNo] = useAtom(maxNoAtom);
@@ -66,125 +59,76 @@ const InnterFilterComponent: React.FC = () => {
   const updateMin = useCallback((min: number | undefined) => setMinNo(min), []);
   const [firstUpdate, setFirstUpdate] = useAtom(firstUpdateAtom);
   const updateFirstUpdate = useCallback(
-    (firstUpdate: Date | null) => setFirstUpdate(firstUpdate ?? undefined),
-    []
+    (firstUpdate: DateTime | null) => setFirstUpdate(firstUpdate ?? undefined),
+    [setFirstUpdate]
   );
   const [enableRensai, setEnableRensai] = useAtom(enableRensaiAtom);
   const toggleEnableRensai = useCallback(
-    () => setEnableRensai(!enableRensai),
-    []
+    () => setEnableRensai((x) => !x),
+    [setEnableRensai]
   );
   const [enableKanketsu, setEnableKanketsu] = useAtom(enableKanketsuAtom);
   const toggleEnableKanketsu = useCallback(
-    () => setEnableKanketsu(!enableKanketsu),
-    []
+    () => setEnableKanketsu((x) => !x),
+    [setEnableKanketsu]
   );
   const [enableTanpen, setEnableTanpen] = useAtom(enableTanpenAtom);
   const toggleEnableTanpen = useCallback(
-    () => setEnableTanpen(!enableTanpen),
-    []
+    () => setEnableTanpen((x) => !x),
+    [setEnableTanpen]
   );
 
-  const selectAll = useCallback(() => setGenres(allGenres), []);
-  const unselectAll = useCallback(() => setGenres([]), []);
+  const selectAll = useCallback(() => setGenres(allGenres), [setGenres]);
+  const unselectAll = useCallback(() => setGenres([]), [setGenres]);
 
   return (
     <form noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-      <FormGroup className={undefined}>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">ジャンル</FormLabel>
-          <FormGroup onChange={handleChangeGenre} row>
-            {genreFilter}
-          </FormGroup>
-          <FormGroup row>
-            <Button variant="contained" onClick={selectAll}>
-              全選択
-            </Button>
-            <Button variant="contained" onClick={unselectAll}>
-              全解除
-            </Button>
-          </FormGroup>
-        </FormControl>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">話数</FormLabel>
-          <FormGroup row>
-            <StoryCount value={minNo} defaultValue={1} onUpdate={updateMin}>
-              最小
-            </StoryCount>
-            ～
-            <StoryCount value={maxNo} defaultValue={30} onUpdate={updateMax}>
-              最大
-            </StoryCount>
-          </FormGroup>
-        </FormControl>
-        <FormControl component="fieldset">
-          <DesktopDatePicker
-            label="更新開始日"
-            minDate={new Date(2013, 5, 1)}
-            maxDate={new Date()}
+      <div>
+        <fieldset>
+          <legend>ジャンル</legend>
+          {genreFilter}
+          <Button onClick={selectAll}>全選択</Button>
+          <Button onClick={unselectAll}>全解除</Button>
+        </fieldset>
+        <fieldset>
+          <legend>話数</legend>
+          <StoryCount value={minNo} defaultValue={1} onUpdate={updateMin}>
+            最小
+          </StoryCount>
+          ～
+          <StoryCount value={maxNo} defaultValue={30} onUpdate={updateMax}>
+            最大
+          </StoryCount>
+        </fieldset>
+        <fieldset>
+          <DatePicker
+            minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
+            maxDate={DateTime.now()}
             value={firstUpdate ?? null}
             onChange={updateFirstUpdate}
-            inputFormat="yyyy/MM/dd"
-            renderInput={(params) => <TextField {...params} />}
           />
-        </FormControl>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">更新状態</FormLabel>
-          <FormGroup row>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={enableRensai}
-                  onChange={toggleEnableRensai}
-                />
-              }
-              label="連載中"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={enableKanketsu}
-                  onChange={toggleEnableKanketsu}
-                />
-              }
-              label="完結"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={enableTanpen}
-                  onChange={toggleEnableTanpen}
-                />
-              }
-              label="短編"
-            />
-          </FormGroup>
-        </FormControl>
-      </FormGroup>
+        </fieldset>
+        <fieldset>
+          <legend>更新状態</legend>
+          <Checkbox checked={enableRensai} onChange={toggleEnableRensai} />
+          連載中
+          <Checkbox checked={enableKanketsu} onChange={toggleEnableKanketsu} />
+          完結
+          <Checkbox checked={enableTanpen} onChange={toggleEnableTanpen} />
+          短編
+        </fieldset>
+      </div>
     </form>
   );
 };
 
 export const FilterComponent: React.FC = () => {
-  const [showFilter, setShowFilter] = useLocalStorage("showFilter", false);
-  const toggleShowFIlter = useCallback(
-    (_: React.ChangeEvent<{}>, newExpanded: boolean) =>
-      setShowFilter(newExpanded),
-    [setShowFilter]
-  );
-
   return (
-    <Accordion expanded={showFilter} onChange={toggleShowFIlter}>
-      <AccordionSummary
-        expandIcon={<></>}
-        aria-controls="panel1a-content"
-        id="panel1a-header"
-      >
-        <Typography>フィルター</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
+    <Disclosure>
+      <Disclosure.Button className="py-2">フィルター</Disclosure.Button>
+      <Disclosure.Panel className="text-gray-500">
         <InnterFilterComponent />
-      </AccordionDetails>
-    </Accordion>
+      </Disclosure.Panel>
+    </Disclosure>
   );
 };

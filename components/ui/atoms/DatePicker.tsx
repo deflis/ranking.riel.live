@@ -1,6 +1,7 @@
 import { DateTime, Interval } from "luxon";
 import { Popover, Transition } from "@headlessui/react";
-import { HiChevronDown, HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { IoCalendarOutline } from "react-icons/io5";
 import { useCallback, useState } from "react";
 import clsx from "clsx";
 import { SelectBox } from "./SelectBox";
@@ -63,12 +64,14 @@ const Calender: React.FC<{
 };
 
 export const DatePicker: React.FC<{
-  value: DateTime;
+  value: DateTime | null;
   minDate: DateTime;
   maxDate: DateTime;
   onChange: (date: DateTime) => void;
 }> = ({ value, onChange, minDate, maxDate }) => {
-  const [current, setCurrent] = useState(value.startOf("month"));
+  const [current, setCurrent] = useState(
+    (value ?? DateTime.now()).startOf("month")
+  );
   const decreaseMonth = useCallback(
     () => setCurrent((x) => x.minus({ month: 1 })),
     []
@@ -92,8 +95,11 @@ export const DatePicker: React.FC<{
       {({ open }) => (
         <>
           <Popover.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
-            {value.toFormat("yyyy/MM/dd")}
-            <HiChevronDown className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+            {value?.toFormat("yyyy/MM/dd")}
+            <IoCalendarOutline
+              className="-mr-1 ml-2 h-5 w-5"
+              aria-hidden="true"
+            />
           </Popover.Button>
 
           <Transition

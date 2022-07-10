@@ -1,7 +1,8 @@
 import React, { PropsWithChildren, useState } from "react";
-import { TextField, InputAdornment, Checkbox } from "@mui/material";
 import { useBoolean, useUpdateEffect } from "react-use";
 import { useHandleChange } from "../../../modules/utils/useHandleChange";
+import { Checkbox } from "../atoms/Checkbox";
+import { TextField } from "../atoms/TextField";
 
 export const StoryCount: React.FC<
   PropsWithChildren<{
@@ -28,19 +29,10 @@ export const StoryCount: React.FC<
     }
   }, [disabled, value, onUpdate]);
   return (
-    <TextField
-      onChange={handleChange}
-      value={value}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <Checkbox checked={!disabled} onChange={toggle} />
-            {children}
-          </InputAdornment>
-        ),
-        endAdornment: <InputAdornment position="end">話</InputAdornment>,
-      }}
-      disabled={disabled}
-    />
+    <>
+      <Checkbox checked={!disabled} onChange={toggle} />
+      {children}
+      <TextField onChange={handleChange} value={value} disabled={disabled} />話
+    </>
   );
 };

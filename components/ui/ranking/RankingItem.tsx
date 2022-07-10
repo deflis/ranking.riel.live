@@ -4,7 +4,6 @@ import { formatDistance, addDays, isAfter } from "date-fns";
 import { ja } from "date-fns/locale";
 import { addMonths } from "date-fns";
 import RouterLink from "next/link";
-import { OutboundLink } from "react-ga";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
@@ -14,7 +13,7 @@ import { decode } from "html-entities";
 import Genre from "../../../modules/enum/Genre";
 import FakeItem from "./FakeItem";
 import { Transition } from "@headlessui/react";
-import { durationFromNow } from "../../../modules/utils/date";
+import { Paper } from "../atoms/Paper";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
@@ -78,14 +77,9 @@ const RankingItemRender: React.FC<{
         {isR18 ? (
           decode(item.writer)
         ) : (
-          <OutboundLink
-            eventLabel="RankingItem-User"
-            to={user}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={user} target="_blank" rel="noopener noreferrer">
             {decode(item?.writer)}
-          </OutboundLink>
+          </a>
         )}
       </p>
       <p color="textSecondary">更新日時: {item?.novelupdated_at}</p>
@@ -97,7 +91,7 @@ const RankingItemRender: React.FC<{
           </>
         )}
       </p>
-      <div className="p-2 rounded border">
+      <Paper className="p-2 space-2">
         {item &&
           item.keyword
             .split(/\s/g)
@@ -112,12 +106,12 @@ const RankingItemRender: React.FC<{
                 }
                 passHref
               >
-                <a className=" box-border rounded-full bg-gray-200 inline-block text-sm h-8 justify-center align-middle">
+                <a className="box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center">
                   <span className="px-2">{keyword}</span>
                 </a>
               </RouterLink>
             ))}
-      </div>
+      </Paper>
 
       <Transition
         show={openStory}
@@ -135,15 +129,14 @@ const RankingItemRender: React.FC<{
           あらすじを{openStory ? "隠す" : "表示"}
         </button>
         <RouterLink href={detail}>小説情報</RouterLink>
-        <OutboundLink
-          eventLabel="RankingItem-read"
-          to={link}
+        <a
+          href={link}
           target="_blank"
           rel="noopener noreferrer"
           title={decode(item?.title)}
         >
           読む
-        </OutboundLink>
+        </a>
       </div>
     </div>
   );

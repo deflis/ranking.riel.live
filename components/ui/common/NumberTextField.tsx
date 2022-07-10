@@ -1,60 +1,31 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import {
-  Theme,
-  TextField,
-  StandardTextFieldProps,
-  FilledTextFieldProps,
-  OutlinedTextFieldProps,
-} from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
-import clsx from 'clsx';
-import { useDebounce } from 'react-use';
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  InputHTMLAttributes,
+} from "react";
+import clsx from "clsx";
+import { useDebounce } from "react-use";
+import { TextField } from "../atoms/TextField";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    input: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-  })
-);
-
-export type NumberTextFieldProps =
-  | (Omit<StandardTextFieldProps, 'value' | 'onChange' | 'defaultValue'> & {
-      value: number;
-      onChange: (value: number) => void;
-      onRawChange?: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => void;
-      errorMessage?: React.ReactNode;
-      demical?: boolean;
-    })
-  | (Omit<FilledTextFieldProps, 'value' | 'onChange' | 'defaultValue'> & {
-      value: number;
-      onChange: (value: number) => void;
-      onRawChange?: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => void;
-      errorMessage?: React.ReactNode;
-      demical?: boolean;
-    })
-  | (Omit<OutlinedTextFieldProps, 'value' | 'onChange' | 'defaultValue'> & {
-      value: number;
-      onChange: (value: number) => void;
-      onRawChange?: (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      ) => void;
-      errorMessage?: React.ReactNode;
-      demical?: boolean;
-    });
+export type NumberTextFieldProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange" | "defaultValue"
+> & {
+  value: number;
+  onChange: (value: number) => void;
+  onRawChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: boolean;
+  errorMessage?: React.ReactNode;
+  demical?: boolean;
+};
 
 function hankaku2Zenkaku(str: string): string {
   return str
     .replace(/[０-９]/g, function (s) {
       return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
     })
-    .replace(/．/g, '.');
+    .replace(/．/g, ".");
 }
 
 const integerRegex = /^[0-9０-９]+$/;
@@ -74,7 +45,6 @@ export const NumberTextField: React.FC<NumberTextFieldProps> = ({
   demical,
   ...props
 }) => {
-  const classess = useStyles();
   const [state, setState] = useState(value.toString());
   const [error, setError] = useState(rawError ?? false);
 
@@ -87,7 +57,7 @@ export const NumberTextField: React.FC<NumberTextFieldProps> = ({
     );
   }, [rawError, state, demical]);
   const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       onRawChange && onRawChange(event);
       setState(event.target.value);
     },
@@ -102,9 +72,13 @@ export const NumberTextField: React.FC<NumberTextFieldProps> = ({
       }
     }
   }, [demical, state, value, error, onChange]);
+
+  // 10秒経つと強制的にパースする
   useDebounce(() => parse(), 10000, [parse]);
+
+  // blurイベントでパースする
   const handleBlur = useCallback(
-    (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (event: React.FocusEvent<HTMLInputElement>) => {
       parse();
       onBlur && onBlur(event);
     },
@@ -113,12 +87,10 @@ export const NumberTextField: React.FC<NumberTextFieldProps> = ({
 
   return (
     <TextField
-      className={clsx(className, classess.input)}
+      className={clsx(className)}
       value={state}
       onChange={handleChange}
       onBlur={handleBlur}
-      error={error}
-      helperText={error ? errorMessage ?? '数字ではありません' : undefined}
       {...props}
     />
   );

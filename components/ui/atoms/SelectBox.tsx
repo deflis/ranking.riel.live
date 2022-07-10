@@ -12,18 +12,27 @@ export type ListBoxProps<T> = {
   value: T;
   options: ListBoxOption<T>[];
   onChange(value: T): void;
+  className?: string;
+  buttonClassName?: string;
 };
 
 export const SelectBox = <T = string,>({
   value: selectedValue,
   options,
   onChange,
+  className,
+  buttonClassName,
 }: ListBoxProps<T>) => (
-  <div className="relative inline-block text-left">
+  <div className={clsx("relative inline-block text-left", className)}>
     <Listbox value={selectedValue} onChange={onChange}>
       {({ open }) => (
         <>
-          <Listbox.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+          <Listbox.Button
+            className={clsx(
+              "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500",
+              buttonClassName
+            )}
+          >
             {options.find(({ value }) => value === selectedValue)?.label}
             <HiChevronDown className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
           </Listbox.Button>
