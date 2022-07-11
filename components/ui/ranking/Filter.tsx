@@ -35,7 +35,9 @@ const InnterFilterComponent: React.FC = () => {
       if (!e.target.value) return;
       const id = parseInt(e.target.value);
       setGenres((genres) =>
-        genres.includes(id) ? genres.filter((x) => x !== id) : [...genres, id]
+        genres.includes(id)
+          ? genres.filter((x) => x !== id)
+          : [...genres, id].sort()
       );
     },
     [setGenres]

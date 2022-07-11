@@ -1,13 +1,14 @@
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { DateTime } from "luxon";
 import {
   NarouNovelJsonp,
+  NarouSearchResult,
   ranking,
   RankingType as NarouRankingType,
 } from "narou";
 import { useQueries, useQuery } from "react-query";
-import { filterAtom, isUseFilterAtom } from "../../atoms/filter";
+import { filterAtom, forLogAtom, isUseFilterAtom } from "../../atoms/filter";
 import { formatDate } from "../../utils/date";
 import { detailFetcher, detailKey } from "./detail";
 
@@ -21,30 +22,35 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
       ranking(new NarouNovelJsonp()).date(date.toJSDate()).type(type).execute(),
   });
 
+  useHydrateAtoms([
+    [isUseFilterAtom, false],
+    [filterAtom, (x: NarouSearchResult) => x],
+  ] as const);
+
   const isUseFilter = useAtomValue(isUseFilterAtom);
   const items = useQueries(
-    isUseFilter
-      ? data.map((v) => ({
-          queryKey: detailKey(v.ncode),
-          queryFn: detailFetcher,
-          enabled: isUseFilter,
-        }))
-      : []
+    data?.map((v) => ({
+      queryKey: detailKey(v.ncode),
+      queryFn: detailFetcher,
+      enabled: isUseFilter,
+    })) ?? []
   );
-  useHydrateAtoms([[filterAtom, (x) => x]] as const);
+
   const filter = useAtomValue(filterAtom);
   const isLoading = isLoadingQuery || items.some((x) => x.isLoading);
-  if (!isLoading && isUseFilter) {
-    const filteredItems = filter(items.map((x) => x.data));
-    return {
-      data: data.filter((rank) =>
-        filteredItems.some((item) => item.ncode === rank.ncode)
-      ),
-      isLoading,
-    };
-  }
+  const filteredItems = items
+    .filter((x) => x.data && filter(x.data))
+    .map((x) => x.data!);
 
-  return { data: data ?? [], isLoading };
+  return {
+    data:
+      data?.filter(
+        (rank) =>
+          !isUseFilter ||
+          filteredItems.some((item) => item.ncode === rank.ncode)
+      ) ?? [],
+    isLoading,
+  };
 }
 
 export default useRanking;

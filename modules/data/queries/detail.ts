@@ -5,7 +5,7 @@ import detailLoader from "../loaders/detail";
 export const detailKey = (ncode: string) =>
   ["detail", ncode.toLowerCase()] as const;
 export const detailFetcher: QueryFunction<
-  NarouSearchResult,
+  NarouSearchResult | undefined,
   ReturnType<typeof detailKey>
 > = async ({ queryKey: [, ncode] }) => await detailLoader.load(ncode);
 

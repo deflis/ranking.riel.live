@@ -3,7 +3,11 @@ import { NarouNovelJsonp } from "narou";
 import { NarouSearchResult } from "narou";
 import { search } from "narou";
 
-export const detailLoader = new DataLoader<string, NarouSearchResult, string>(
+export const detailLoader = new DataLoader<
+  string,
+  NarouSearchResult | undefined,
+  string
+>(
   async (ncodes) => {
     const { values } = await search(undefined, new NarouNovelJsonp())
       .ncode(ncodes as string[])
