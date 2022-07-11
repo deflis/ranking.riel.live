@@ -2,7 +2,6 @@
 module.exports = {
   darkMode: "class",
   purge: ["./components/**/*.{js,ts,jsx,tsx}", "./pages/**/*.{js,ts,jsx,tsx}"],
-  content: ["node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
