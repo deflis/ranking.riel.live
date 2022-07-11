@@ -16,7 +16,9 @@ import { DateTime } from "luxon";
 import { Button } from "../atoms/Button";
 import DatePicker from "../atoms/DatePicker";
 import { Checkbox } from "../atoms/Checkbox";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
+import { HiChevronDown } from "react-icons/hi";
+import clsx from "clsx";
 
 const InnterFilterComponent: React.FC = () => {
   useHydrateAtoms([
@@ -125,11 +127,30 @@ const InnterFilterComponent: React.FC = () => {
 
 export const FilterComponent: React.FC = () => {
   return (
-    <Disclosure>
-      <Disclosure.Button className="py-2">フィルター</Disclosure.Button>
-      <Disclosure.Panel className="text-gray-500">
-        <InnterFilterComponent />
-      </Disclosure.Panel>
+    <Disclosure
+      as="div"
+      className="w-full border rounded-lg m-4 border-gray-200 shadow-md "
+    >
+      {({ open }) => (
+        <>
+          <Disclosure.Button className="py-2 w-full flex p-2">
+            <span className="w-full">フィルター</span>
+            <HiChevronDown className={clsx(open && "transform rotate-180")} />
+          </Disclosure.Button>
+          <Transition
+            enter="transition duration-100 ease-out"
+            enterFrom="transform scale-95 opacity-0"
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-95 opacity-0"
+          >
+            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5">
+              <InnterFilterComponent />
+            </Disclosure.Panel>
+          </Transition>
+        </>
+      )}
     </Disclosure>
   );
 };
