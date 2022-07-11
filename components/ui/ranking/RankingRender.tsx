@@ -90,12 +90,8 @@ export const RankingRender: React.FC<{
 }> = ({ ranking, loading = false }) => {
   return (
     <>
-      {ranking.length === 0 && (
-        <>
-          {loading && <></>}
-          {!loading && <p>データがありません</p>}
-        </>
-      )}
+      {loading && <></>}
+      {!loading && ranking.length === 0 && <p>データがありません</p>}
       <InsideRender ranking={ranking} />
     </>
   );
