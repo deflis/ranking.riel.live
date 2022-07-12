@@ -84,7 +84,7 @@ export const filterAtom = atom((get) => {
     (genres.length === 0 || genres.includes(item.genre)) &&
     (maxNo === undefined || maxNo < 1 || item.general_all_no <= maxNo) &&
     (minNo === undefined || minNo < 1 || item.general_all_no >= minNo) &&
-    (!firstUpdate || firstUpdate < parse(item.general_firstup)) &&
+    (!firstUpdate || firstUpdate < parse(item.general_firstup)!) &&
     ((enableTanpen && item.novel_type === 2) ||
       (enableRensai && item.novel_type === 1 && item.end === 1) ||
       (enableKanketsu && item.novel_type === 1 && item.end === 0));

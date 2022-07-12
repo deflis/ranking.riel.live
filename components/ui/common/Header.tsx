@@ -1,38 +1,29 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Link as RouterLink, useHistory } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrophy, faHammer } from "@fortawesome/free-solid-svg-icons";
+import { useAtom } from "jotai";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  FormEventHandler,
+  MouseEventHandler,
+} from "react";
 import { useToggle } from "react-use";
 import {
-  alpha,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Drawer,
-  ListItem,
-  ListItemText,
-  Link,
-  Switch,
-  FormControlLabel,
-  FormControl,
-  Button,
-  Divider,
-  Checkbox,
-  TextField,
-} from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
-import MenuIcon from "@mui/icons-material/Menu";
-import { useHandleChange } from "../../util/useHandleChange";
-import {
-  useAdMode,
-  useTitleHeight,
-  useDarkMode,
-  useShowKeyword,
-} from "../../util/globalState";
+  adModeAtom,
+  darkModeAtom,
+  showKeywordAtom,
+  titleHeightAtom,
+} from "../../../modules/atoms/global";
+import { useHandleChange } from "../../../modules/utils/useHandleChange";
+import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
+import NextLink from "next/link";
+
 import { AdDialog } from "./AdDialog";
 import NumberTextField from "./NumberTextField";
+import { Checkbox } from "../atoms/Checkbox";
+import { Button } from "../atoms/Button";
+import { FaHammer, FaTrophy } from "react-icons/fa";
+import { TextField } from "../atoms/TextField";
+import { HiMenu } from "react-icons/hi";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -40,80 +31,40 @@ function validate(ncode: string): boolean {
   return validateRegexp.test(ncode);
 }
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    appBar: {
-      borderBottom: `1px solid ${theme.palette.divider}`,
-    },
-    grow: {
-      flexGrow: 1,
-    },
-    link: {
-      margin: theme.spacing(1, 1.5),
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-      color: theme.palette.text.primary,
-      "&:hover": {
-        color: theme.palette.text.primary,
-      },
-    },
-    nav: {
-      display: "flex",
-      flexDirection: "row",
-      [theme.breakpoints.down('md')]: {
-        display: "none",
-      },
-    },
-    search: {
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: alpha(theme.palette.common.white, 0.15),
-      "&:hover": {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-      },
-    },
-    inputRoot: {
-      color: "inherit",
-    },
-    inputInput: {
-      transition: theme.transitions.create("width"),
-      width: "100%",
-    },
-  })
-);
-
-export const Header: React.FC = React.memo(() => {
-  const classes = useStyles();
-
+export const Header: React.FC = () => {
   const [ncode, setNcode] = useState("");
-  const history = useHistory();
-  const detail = useCallback(() => {
-    if (!validate(ncode)) {
-      return;
-    }
-    history.push(`/detail/${ncode}`);
-  }, [history, ncode]);
+  const detail = useCallback(
+    (e: { preventDefault: () => void }) => {
+      e.preventDefault();
+      if (!validate(ncode)) {
+        return;
+      }
+      `/detail/${ncode}`;
+    },
+    [ncode]
+  );
 
   const handleChangeNcode = useHandleChange(setNcode);
   const [expand, toggle] = useToggle(false);
-  const [darkmode, toggleDarkmode] = useDarkMode();
-  const [adMode, toggleAdMode] = useAdMode();
+  const [darkmode, setDarkmode] = useAtom(darkModeAtom);
+  const toggleDarkmode = useCallback(
+    () => setDarkmode((x) => !x),
+    [setDarkmode]
+  );
+  const [adMode, setAdMode] = useAtom(adModeAtom);
   const [showAdDialog, toggleAdDialog] = useToggle(false);
   const handleAdMode = useCallback(() => {
     if (adMode) {
       toggleAdDialog();
     } else {
-      toggleAdMode();
+      setAdMode(true);
     }
-  }, [adMode, toggleAdDialog, toggleAdMode]);
+  }, [adMode, toggleAdDialog, setAdMode]);
   const removeAd = useCallback(() => {
-    toggleAdMode();
+    setAdMode(false);
     toggleAdDialog();
-  }, [toggleAdMode, toggleAdDialog]);
-  const [titleHeightRaw, setTitleHeightRaw] = useTitleHeight();
+  }, [setAdMode, toggleAdDialog]);
+  const [titleHeightRaw, setTitleHeightRaw] = useAtom(titleHeightAtom);
   const [titleHeight, setTitleHeight] = useState(
     titleHeightRaw !== 0 ? titleHeightRaw : 2
   );
@@ -130,183 +81,180 @@ export const Header: React.FC = React.memo(() => {
       setTitleHeightRaw(titleHeight);
     }
   }, [titleHeightStatus, titleHeight, setTitleHeightRaw]);
-  const [showKeyword, toggleShowKeyword] = useShowKeyword();
+  const [showKeyword, setShowKeyword] = useAtom(showKeywordAtom);
+  const toggleShowKeyword = useCallback(
+    () => setShowKeyword((x) => !x),
+    [setShowKeyword]
+  );
 
-  return <>
-    <AppBar
-      elevation={0}
-      className={classes.appBar}
-      position="static"
-      color="default"
-    >
-      <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
+  return (
+    <header>
+      <nav className="shadow-md py-2 bg-white relative flex items-center w-full justify-between">
+        <button
+          className="rounded-full hover:bg-slate-300 w-10 h-10"
           onClick={toggle}
-          size="large">
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6">
-          <Link
-            component={RouterLink}
-            className={classes.title}
-            to="/"
-            color="textPrimary"
-            underline="none"
-          >
-            <FontAwesomeIcon icon={faTrophy} />
-            なろうランキング
-          </Link>
-        </Typography>
-        <div className={classes.grow} />
-        <nav className={classes.nav}>
-          <Link
-            component={RouterLink}
-            className={classes.link}
-            to="/ranking/d"
-          >
+        >
+          <HiMenu className="w-5 h-5 m-auto" />
+        </button>
+        <h6>
+          <NextLink href="/" passHref>
+            <a>
+              <FaTrophy className="w-5 h-5 inline" />
+              なろうランキング
+            </a>
+          </NextLink>
+        </h6>
+        <div className="grow" />
+        <div className="space-x-4 mx-2 hidden sm:block">
+          <NextLink href="/ranking/d">日間</NextLink>
+          <NextLink href="/ranking/w">週間</NextLink>
+          <NextLink href="/ranking/m">月間</NextLink>
+          <NextLink href="/custom">カスタムランキング</NextLink>
+        </div>
+      </nav>
+      <Sidebar open={expand} onClose={toggle}>
+        <NextLink href="/ranking/d" passHref>
+          <SidebarItem as="a" hover>
             日間
-          </Link>
-          <Link
-            component={RouterLink}
-            className={classes.link}
-            to="/ranking/w"
-          >
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/ranking/w" passHref>
+          <SidebarItem as="a" hover>
             週間
-          </Link>
-          <Link
-            component={RouterLink}
-            className={classes.link}
-            to="/ranking/m"
-          >
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/ranking/m" passHref>
+          <SidebarItem as="a" hover>
             月間
-          </Link>
-          <Link component={RouterLink} className={classes.link} to="/custom">
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/ranking/q" passHref>
+          <SidebarItem as="a" hover>
+            四半期
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <NextLink href="/custom" passHref>
+          <SidebarItem as="a" hover>
             カスタムランキング
-          </Link>
-        </nav>
-      </Toolbar>
-    </AppBar>
-    <Drawer open={expand} onClose={toggle}>
-      <ListItem button component={RouterLink} to="/ranking/d">
-        <ListItemText primary="日間" />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/ranking/w">
-        <ListItemText primary="週間" />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/ranking/m">
-        <ListItemText primary="月間" />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/ranking/q">
-        <ListItemText primary="四半期" />
-      </ListItem>
-      <Divider />
-      <ListItem button component={RouterLink} to="/custom">
-        <ListItemText primary="カスタムランキング" />
-      </ListItem>
-      <Divider />
-      <ListItem button component={RouterLink} to="/custom/y">
-        <ListItemText primary="年間" secondary="カスタムランキング" />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/custom/a">
-        <ListItemText primary="全期間" secondary="カスタムランキング" />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/custom/u">
-        <ListItemText
-          primary="週間ユニークユーザー数"
-          secondary="カスタムランキング"
-        />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/custom/d?genres=201">
-        <ListItemText
-          primary="日間ハイファンタジー"
-          secondary="カスタムランキング"
-        />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/custom/d?genres=101">
-        <ListItemText
-          primary="日間異世界恋愛"
-          secondary="カスタムランキング"
-        />
-      </ListItem>
-      <ListItem button component={RouterLink} to="/custom/d?genres=102">
-        <ListItemText
-          primary="日間現実世界恋愛"
-          secondary="カスタムランキング"
-        />
-      </ListItem>
-      <Divider />
-      <ListItem button component={RouterLink} to="/r18">
-        <ListItemText primary="R18ランキング" />
-      </ListItem>
-      <Divider />
-      <ListItem button component={RouterLink} to="/cloud/d">
-        <ListItemText primary="ワードクラウド(ベータ)" />
-      </ListItem>
-      <Divider />
-      <ListItem button component={RouterLink} to="/about">
-        <ListItemText primary="このサイトについて" />
-      </ListItem>
-      <Divider />
-      <ListItem>
-        <FormControlLabel
-          control={<Switch checked={darkmode} onChange={toggleDarkmode} />}
-          label="ダークモード"
-        />
-      </ListItem>
-      <ListItem>
-        <Checkbox
-          edge="start"
-          checked={titleHeightStatus}
-          disableRipple
-          onClick={toggleTitleHeightStatus}
-        />
-        {titleHeightStatus ? (
-          <NumberTextField
-            label="タイトルの高さを指定する"
-            value={titleHeight}
-            onChange={setTitleHeight}
-            disabled={!titleHeightStatus}
-            fullWidth
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <NextLink href="/custom/y" passHref>
+          <SidebarItem as="a" hover>
+            年間
+            <br />
+            カスタムランキング
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/custom/a" passHref>
+          <SidebarItem as="a" hover>
+            全期間
+            <br />
+            カスタムランキング
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/custom/u" passHref>
+          <SidebarItem as="a" hover>
+            週間ユニークユーザー数
+            <br />
+            カスタムランキング
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/custom/d?genres=201" passHref>
+          <SidebarItem as="a" hover>
+            日間ハイファンタジー
+            <br />
+            カスタムランキング
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/custom/d?genres=101" passHref>
+          <SidebarItem as="a" hover>
+            日間異世界恋愛
+            <br />
+            カスタムランキング
+          </SidebarItem>
+        </NextLink>
+        <NextLink href="/custom/d?genres=102" passHref>
+          <SidebarItem as="a" hover>
+            <a>
+              日間現実世界恋愛
+              <br />
+              カスタムランキング
+            </a>
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <NextLink href="/r18" passHref>
+          <SidebarItem as="a" hover>
+            R18ランキング
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <NextLink href="/cloud/d">
+          <SidebarItem as="a" hover>
+            ワードクラウド(ベータ)
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <NextLink href="/about">
+          <SidebarItem as="a" hover>
+            このサイトについて
+          </SidebarItem>
+        </NextLink>
+        <Divider />
+        <SidebarItem as="label">
+          <Checkbox checked={darkmode} onClick={toggleDarkmode} />
+          ダークモード
+        </SidebarItem>
+        <SidebarItem as="label">
+          <Checkbox
+            checked={titleHeightStatus}
+            onClick={toggleTitleHeightStatus}
           />
-        ) : (
-          <ListItemText primary="タイトルの高さを指定する" />
-        )}
-      </ListItem>
-      <ListItem>
-        <Checkbox
-          edge="start"
-          checked={!showKeyword}
-          disableRipple
-          onClick={toggleShowKeyword}
-        />
-        <ListItemText primary="キーワードを表示しない" />
-      </ListItem>
-      <ListItem>
-        <FormControlLabel
-          control={<Switch checked={!adMode} onChange={handleAdMode} />}
-          label="広告を表示しない"
-        />
-      </ListItem>
-      <Divider />
-      <FormControl onSubmit={detail}>
-        <ListItem>
-          <TextField
-            label="Nコード"
-            onChange={handleChangeNcode}
-            value={ncode}
-          />
+          タイトルの高さを指定する
+          {titleHeightStatus && (
+            <NumberTextField
+              value={titleHeight!}
+              onChange={setTitleHeight}
+              disabled={!titleHeightStatus}
+              className="w-20 ml-2"
+            />
+          )}
+        </SidebarItem>
+        <SidebarItem>
+          <label>
+            <Checkbox checked={!showKeyword} onClick={toggleShowKeyword} />
+            キーワードを表示しない
+          </label>
+        </SidebarItem>
+        <SidebarItem>
+          <label>
+            <Checkbox checked={!adMode} onClick={handleAdMode} />
+            広告を表示しない
+          </label>
+        </SidebarItem>
+        <Divider />
+        <SidebarItem as="form" className="flex" onSubmit={detail}>
+          <label>
+            Nコード
+            <TextField
+              onChange={handleChangeNcode}
+              value={ncode}
+              className="w-20"
+            />
+          </label>
           <Button disabled={!validate(ncode)} onClick={detail}>
-            <FontAwesomeIcon icon={faHammer} />
+            <FaHammer className="w-5 h-5 inline" />
             詳細を取得
           </Button>
-        </ListItem>
-      </FormControl>
-    </Drawer>
-    {showAdDialog && (
-      <AdDialog handleCancel={toggleAdDialog} handleOk={removeAd} />
-    )}
-  </>;
-});
+        </SidebarItem>
+      </Sidebar>
+      <AdDialog
+        open={showAdDialog}
+        handleCancel={toggleAdDialog}
+        handleOk={removeAd}
+      />
+    </header>
+  );
+};

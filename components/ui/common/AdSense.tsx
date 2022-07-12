@@ -10,6 +10,7 @@ declare global {
 }
 
 export const AdSense: React.FC = () => {
+  return null;
   const adMode = useAtomValue(adModeAtom);
   return adMode ? <InnerAdSense /> : null;
 };

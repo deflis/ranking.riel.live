@@ -34,7 +34,7 @@ const CalenderDay: React.FC<{
 };
 
 const Calender: React.FC<{
-  value: DateTime;
+  value: DateTime | null;
   current: DateTime;
   minDate: DateTime;
   maxDate: DateTime;
@@ -67,7 +67,7 @@ export const DatePicker: React.FC<{
   value: DateTime | null;
   minDate: DateTime;
   maxDate: DateTime;
-  onChange: (date: DateTime) => void;
+  onChange: (date: DateTime | null) => void;
 }> = ({ value, onChange, minDate, maxDate }) => {
   const [current, setCurrent] = useState(
     (value ?? DateTime.now()).startOf("month")
