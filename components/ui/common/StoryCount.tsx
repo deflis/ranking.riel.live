@@ -30,8 +30,10 @@ export const StoryCount: React.FC<
   }, [disabled, value, onUpdate]);
   return (
     <>
-      <Checkbox checked={!disabled} onChange={toggle} />
-      {children}
+      <label>
+        <Checkbox checked={!disabled} onChange={toggle} />
+        {children}
+      </label>
       <TextField onChange={handleChange} value={value} disabled={disabled} />話
     </>
   );
