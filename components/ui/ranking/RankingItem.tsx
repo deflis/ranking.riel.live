@@ -39,7 +39,7 @@ const RankingItemRender: React.FC<{
         第{rankingItem.rank}位{" "}
         <Tags>
           <Tag>{rankingItem.pt?.toLocaleString()}pt</Tag>
-          {firstup.diffNow().as("month") <= 1 && (
+          {firstup && firstup.diffNow().as("month") <= 1 && (
             <Tag tagColor="red" light={firstup.diffNow().as("day") <= 7}>
               New!
             </Tag>
@@ -86,8 +86,8 @@ const RankingItemRender: React.FC<{
       <p color="textSecondary">
         {item && (
           <>
-            掲載開始: {parse(item.general_firstup).toRelative()} / 最終更新:{" "}
-            {parse(item.general_lastup).toRelative()}
+            掲載開始: {parse(item.general_firstup)?.toRelative()} / 最終更新:{" "}
+            {parse(item.general_lastup)?.toRelative()}
           </>
         )}
       </p>

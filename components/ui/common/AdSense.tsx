@@ -14,6 +14,7 @@ export const AdSense: React.FC = () => {
   return adMode ? <InnerAdSense /> : null;
 };
 
+// eslint-disable-next-line react/display-name
 export const InnerAdSense = React.memo(() => {
   useMount(() => {
     try {
