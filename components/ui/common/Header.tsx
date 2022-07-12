@@ -1,11 +1,5 @@
 import { useAtom } from "jotai";
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  FormEventHandler,
-  MouseEventHandler,
-} from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useToggle } from "react-use";
 import {
   adModeAtom,
@@ -66,9 +60,9 @@ export const Header: React.FC = () => {
   }, [setAdMode, toggleAdDialog]);
   const [titleHeightRaw, setTitleHeightRaw] = useAtom(titleHeightAtom);
   const [titleHeight, setTitleHeight] = useState(
-    titleHeightRaw !== 0 ? titleHeightRaw : 2
+    titleHeightRaw > 0 ? titleHeightRaw : 2
   );
-  const titleHeightStatus = titleHeightRaw !== 0;
+  const titleHeightStatus = titleHeightRaw && titleHeightRaw > 0;
   const toggleTitleHeightStatus = useCallback(() => {
     if (!titleHeightStatus) {
       setTitleHeightRaw(titleHeight);
@@ -215,7 +209,7 @@ export const Header: React.FC = () => {
           タイトルの高さを指定する
           {titleHeightStatus && (
             <NumberTextField
-              value={titleHeight!}
+              value={titleHeight ?? 2}
               onChange={setTitleHeight}
               disabled={!titleHeightStatus}
               className="w-20 ml-2"
