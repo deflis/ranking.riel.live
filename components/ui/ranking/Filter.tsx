@@ -129,7 +129,7 @@ export const FilterComponent: React.FC = () => {
   return (
     <Disclosure
       as="div"
-      className="w-full border rounded-lg m-4 border-gray-200 shadow-md "
+      className="w-full border rounded-lg m-4 bg-white border-gray-200 shadow-md "
     >
       {({ open }) => (
         <>

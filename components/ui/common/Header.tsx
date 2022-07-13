@@ -62,7 +62,7 @@ export const Header: React.FC = () => {
   const [titleHeight, setTitleHeight] = useState(
     titleHeightRaw > 0 ? titleHeightRaw : 2
   );
-  const titleHeightStatus = titleHeightRaw && titleHeightRaw > 0;
+  const titleHeightStatus = !!titleHeightRaw && titleHeightRaw > 0;
   const toggleTitleHeightStatus = useCallback(() => {
     if (!titleHeightStatus) {
       setTitleHeightRaw(titleHeight);
@@ -83,9 +83,9 @@ export const Header: React.FC = () => {
 
   return (
     <header>
-      <nav className="shadow-md py-2 bg-white relative flex items-center w-full justify-between">
+      <nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between">
         <button
-          className="rounded-full hover:bg-slate-300 w-10 h-10"
+          className="rounded-full hover:bg-stone-300 w-10 h-10"
           onClick={toggle}
         >
           <HiMenu className="w-5 h-5 m-auto" />

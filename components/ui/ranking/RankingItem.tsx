@@ -34,7 +34,7 @@ const RankingItemRender: React.FC<{
   const firstup = parse(item?.general_firstup);
 
   return (
-    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 space-y-2">
       <p color="textSecondary">
         第{rankingItem.rank}位{" "}
         <Tags>
@@ -91,7 +91,7 @@ const RankingItemRender: React.FC<{
           </>
         )}
       </p>
-      <Paper className="p-2 space-2">
+      <Paper className="p-2 space-2 bg-gray-50 ">
         {item &&
           item.keyword
             .split(/\s/g)
@@ -116,11 +116,13 @@ const RankingItemRender: React.FC<{
       <Transition
         show={openStory}
         enter="transition duration-100 ease-out"
-        enterFrom="transform scale-95 opacity-0"
+        enterFrom="transform scale-75 opacity-0 "
         enterTo="transform scale-100 opacity-100"
         leave="transition duration-75 ease-out"
         leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-95 opacity-0"
+        leaveTo="transform scale-75 opacity-0"
+        as={Paper}
+        className="bg-gray-100 p-2 whitespace-pre-wrap text-sm"
       >
         {item?.story}
       </Transition>
