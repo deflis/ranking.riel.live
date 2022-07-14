@@ -18,7 +18,7 @@ specifiers:
   kuromoji: ^0.1.2
   luxon: ^2.4.0
   mabiki: ^1.0.1
-  narou: ^0.6.2
+  narou: ^0.7.0
   next: 12.1.6
   postcss: ^8.4.14
   postcss-import: ^14.1.0
@@ -44,7 +44,7 @@ dependencies:
   kuromoji: 0.1.2
   luxon: 2.4.0
   mabiki: 1.0.1
-  narou: 0.6.2
+  narou: 0.7.0
   next: 12.1.6_biqbaboplfbrettd7655fr4n2y
   prop-types: 15.8.1
   react: 18.2.0
@@ -1919,10 +1919,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  /narou/0.6.2:
-    resolution: {integrity: sha512-NADod4dlhAPJug4q1gn8XBhgva/QM6qQ0WZrd9vyCH6cCOQm5RqbekwjsRQXZ1R+sy5ti4R0rfu40i+4UIUr7A==}
+  /narou/0.7.0:
+    resolution: {integrity: sha512-P386hMPGwBKj/5jL3pg5fjMSZTZBVGGa5O42ykOf+oMxf2GOWEqVjLOUvlWYs0dNGqClZ0enBhZwC5l12sL6HA==}
     dependencies:
       date-fns: 2.28.0
+    optionalDependencies:
       node-fetch: 2.6.7
     transitivePeerDependencies:
       - encoding
@@ -1984,6 +1985,7 @@ packages:
     dependencies:
       whatwg-url: 5.0.0
     dev: false
+    optional: true
 
   /node-releases/2.0.5:
     resolution: {integrity: sha512-U9h1NLROZTq9uE1SNffn6WuPDg8icmi3ns4rEl/oTfIle4iLjTliCzgTsbaIFMq/Xn078/lfY/BL0GWZ+psK4Q==}
@@ -3009,6 +3011,7 @@ packages:
   /tr46/0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
     dev: false
+    optional: true
 
   /ts-easing/0.2.0:
     resolution: {integrity: sha512-Z86EW+fFFh/IFB1fqQ3/+7Zpf9t2ebOAxNI/V6Wo7r5gqiqtxmgTlQ1qbqQcjLKYeSHPTsEmvlJUDg/EuL0uHQ==}
@@ -3102,6 +3105,7 @@ packages:
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
     dev: false
+    optional: true
 
   /whatwg-url/5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
@@ -3109,6 +3113,7 @@ packages:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
     dev: false
+    optional: true
 
   /which-boxed-primitive/1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}
