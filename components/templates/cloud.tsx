@@ -32,7 +32,7 @@ import { RankingType, RankingTypeName } from "../interface/RankingType";
 import WordCloud from "react-wordcloud";
 import { wrap } from "comlink";
 import TokenizerWorker, { TokenizerApi } from "../worker/tokenizer.worker";
-import { Genre, RankingResult } from "narou";
+import { Genre, RankingResult } from "narou/src/index.browser";
 import { useQuery } from "../util/useQuery";
 import { reducerForMap } from "../util/kuromoji";
 import useSWR from "swr";

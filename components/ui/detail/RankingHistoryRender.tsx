@@ -9,7 +9,7 @@ import {
   parseISO,
 } from "date-fns";
 import { ja } from "date-fns/locale";
-import { RankingType } from "narou";
+import { RankingType } from "narou/src/index.browser";
 import React, { useCallback } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useLocalStorage } from "react-use";

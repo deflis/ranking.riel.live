@@ -16,7 +16,7 @@ export type ListBoxProps<T> = {
   buttonClassName?: string;
 };
 
-export const SelectBox = <T = string,>({
+export const SelectBox = <T,>({
   value: selectedValue,
   options,
   onChange,

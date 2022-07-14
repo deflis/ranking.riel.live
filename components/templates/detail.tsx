@@ -1,9 +1,9 @@
-import { NarouSearchResult } from "narou";
+import { NarouSearchResult } from "narou/src/index.browser";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useTitle } from "react-use";
 
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 import useDetail from "../api/useDetail";
 import DetailItem from "../components/detail/DetailItem";
@@ -12,8 +12,8 @@ import { RankingHistoryRender } from "../components/detail/RankingHistoryRender"
 import { RankingHistories } from "../interface/RankingHistory";
 import { SelfAd } from "../components/common/SelfAd";
 import { Paper } from "@mui/material";
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import createStyles from "@mui/styles/createStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import { AdAmazonWidth } from "../components/common/AdAmazon";
 import AdSense from "../components/common/AdSense";
 

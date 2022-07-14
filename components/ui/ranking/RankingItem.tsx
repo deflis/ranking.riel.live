@@ -1,28 +1,27 @@
 import React from "react";
-import { NarouRankingResult, NarouSearchResult, R18SiteNotation } from "narou";
-import { formatDistance, addDays, isAfter } from "date-fns";
-import { ja } from "date-fns/locale";
-import { addMonths } from "date-fns";
-import RouterLink from "next/link";
+import {
+  GenreNotation,
+  NarouRankingResult,
+} from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
 import { useDetail } from "../../../modules/data/queries/detail";
 import { parse } from "../../../modules/utils/NarouDateFormat";
 import { decode } from "html-entities";
-import Genre from "../../../modules/enum/Genre";
-import FakeItem from "./FakeItem";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
+import { Link as RouterLink } from "@tanstack/react-location";
+import { DetailResult } from "../../../modules/data/loaders/detail";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
-  item: NarouSearchResult | undefined;
+  item: DetailResult | undefined;
   isError?: boolean;
 }> = ({ rankingItem, item }) => {
   const [openStory, toggleStory] = useToggle(false);
 
-  const isR18 = item?.nocgenre !== undefined;
+  const isR18 = false; //item?.nocgenre !== undefined;
 
   const user = `https://mypage.syosetu.com/${item?.userid}/`;
   const link = isR18
@@ -51,15 +50,16 @@ const RankingItemRender: React.FC<{
           <>
             <ItemBadge item={item} />
             {!isR18 && (
-              <RouterLink href={`/custom?genres=${item.genre}`}>
-                {Genre.get(item.genre)}
+              <RouterLink to={`/custom?genres=${item.genre}`}>
+                {GenreNotation[item.genre]}
               </RouterLink>
             )}
-            {isR18 && (
-              <RouterLink href={`/r18?site=${item.nocgenre}`}>
-                {R18SiteNotation[item.nocgenre]}
-              </RouterLink>
-            )}
+            {
+              isR18 && null
+              //              <RouterLink to={`/r18?site=${item.nocgenre}`}>
+              //                {R18SiteNotation[item.nocgenre]}
+              //              </RouterLink>
+            }
             <Tag>
               {Math.round(item.length / item.general_all_no).toLocaleString()}
               文字/話
@@ -68,14 +68,14 @@ const RankingItemRender: React.FC<{
         )}
       </p>
       <h2 className="mb-2 text-2xl text-gray-800 dark:text-white">
-        <RouterLink href={detail} title={decode(item?.title ?? "")}>
+        <RouterLink to={detail} title={decode(item?.title ?? "")}>
           {decode(item?.title)}
         </RouterLink>
       </h2>
       <p color="textSecondary">
         作者:{" "}
         {isR18 ? (
-          decode(item.writer)
+          decode(item?.writer)
         ) : (
           <a href={user} target="_blank" rel="noopener noreferrer">
             {decode(item?.writer)}
@@ -99,12 +99,11 @@ const RankingItemRender: React.FC<{
             .map((keyword, i) => (
               <RouterLink
                 key={i}
-                href={
+                to={
                   isR18
                     ? `/r18?keyword=${keyword}`
                     : `/custom?keyword=${keyword}`
                 }
-                passHref
               >
                 <a className="box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center">
                   <span className="px-2">{keyword}</span>
@@ -130,7 +129,7 @@ const RankingItemRender: React.FC<{
         <button onClick={toggleStory}>
           あらすじを{openStory ? "隠す" : "表示"}
         </button>
-        <RouterLink href={detail}>小説情報</RouterLink>
+        <RouterLink to={detail}>小説情報</RouterLink>
         <a
           href={link}
           target="_blank"

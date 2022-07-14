@@ -1,5 +1,6 @@
-import { NarouRankingResult } from "narou";
-import React, { useEffect, useState } from "react";
+import { NarouRankingResult } from "narou/src/index.browser";
+import React, { useCallback, useEffect, useState } from "react";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { chunk } from "../../../modules/utils/chunk";
 import { AdAmazonWidth } from "../common/AdAmazon";
@@ -9,19 +10,11 @@ import FakeItem from "./FakeItem";
 import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
-import { useHydrateAtoms } from "jotai/utils";
-import { useWaypoint } from "../../../modules/utils/useWaypoint";
-import InfiniteScroll from "react-infinite-scroller";
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];
 }> = ({ ranking }) => {
   const [max, setMax] = useState(10);
-
-  useHydrateAtoms([[adModeAtom, true]] as const);
-  useEffect(() => {
-    setMax(10);
-  }, [ranking]);
 
   const rankingItems = ranking.slice(0, max).map((item) => (
     <div className="w-full md:basis-1/2 box-border p-4" key={item.ncode}>
@@ -44,42 +37,32 @@ const InsideRender: React.FC<{
     <></>
   );
 
-  const [ref, waypointEnter] = useWaypoint<HTMLDivElement>(
-    () => {
-      console.log("waypoint");
+  const [sentryRef] = useInfiniteScroll({
+    loading: false,
+    hasNextPage: max < ranking.length,
+    onLoadMore: useCallback(() => {
       setMax((x) => x + 10);
-    },
-    1000,
-    []
-  );
+    }, [setMax]),
+    rootMargin: "0px 0px 400px 0px",
+  });
 
   return (
     <>
-      <InfiniteScroll
-        className="flex w-full flex-wrap flex-row"
-        loadMore={() => setMax((x) => x + 10)}
-        hasMore={max < ranking.length}
-        loader={
-          <div className="flex w-full flex-wrap flex-row" key="0">
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-          </div>
-        }
-      >
-        {renderItems}
-      </InfiniteScroll>
-      <>
-        <div className="w-full">
-          <SelfAd />
+      <div className="flex w-full flex-wrap flex-row">{renderItems}</div>
+      <div className="flex w-full flex-wrap flex-row" ref={sentryRef}>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
         </div>
-        <div className="w-full">
-          <AdSense></AdSense>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
         </div>
-      </>
+      </div>
+      <div className="w-full">
+        <SelfAd />
+      </div>
+      <div className="w-full">
+        <AdSense></AdSense>
+      </div>
     </>
   );
 };

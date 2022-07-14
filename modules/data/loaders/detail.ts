@@ -1,18 +1,53 @@
 import DataLoader from "dataloader";
-import { NarouNovelJsonp } from "narou";
-import { NarouSearchResult } from "narou";
-import { search } from "narou";
+import {
+  PickedNarouSearchResult,
+  DefaultSearchResultFields,
+  Fields,
+  search,
+} from "narou/src/index.browser";
+
+export type DetailResult = PickedNarouSearchResult<
+  | "ncode"
+  | "title"
+  | "userid"
+  | "writer"
+  | "genre"
+  | "noveltype"
+  | "end"
+  | "general_firstup"
+  | "length"
+  | "general_all_no"
+  | "novelupdated_at"
+  | "general_lastup"
+  | "keyword"
+  | "story"
+>;
 
 export const detailLoader = new DataLoader<
   string,
-  NarouSearchResult | undefined,
+  DetailResult | undefined,
   string
 >(
   async (ncodes) => {
-    const { values } = await search(undefined, new NarouNovelJsonp())
+    const { values } = await search()
       .ncode(ncodes as string[])
       .limit(ncodes.length)
-      .opt("weekly")
+      .fields([
+        Fields.ncode,
+        Fields.title,
+        Fields.userid,
+        Fields.writer,
+        Fields.genre,
+        Fields.noveltype,
+        Fields.end,
+        Fields.general_firstup,
+        Fields.length,
+        Fields.general_all_no,
+        Fields.novelupdated_at,
+        Fields.general_lastup,
+        Fields.keyword,
+        Fields.story,
+      ])
       .execute();
     return ncodes
       .map((x) => x.toLowerCase())

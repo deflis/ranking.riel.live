@@ -1,5 +1,5 @@
 import { formatISO, parseISO } from "date-fns";
-import { Order, R18Site } from "narou";
+import { Order, R18Site } from "narou/src/index.browser";
 import React, { useCallback, useMemo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useTitle } from "react-use";

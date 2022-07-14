@@ -9,7 +9,7 @@ import {
 } from "../../../modules/atoms/global";
 import { useHandleChange } from "../../../modules/utils/useHandleChange";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
-import NextLink from "next/link";
+import { Link as RouterLink } from "@tanstack/react-location";
 
 import { AdDialog } from "./AdDialog";
 import NumberTextField from "./NumberTextField";
@@ -91,85 +91,85 @@ export const Header: React.FC = () => {
           <HiMenu className="w-5 h-5 m-auto" />
         </button>
         <h6>
-          <NextLink href="/" passHref>
+          <RouterLink to="/">
             <a>
               <FaTrophy className="w-5 h-5 inline" />
               なろうランキング
             </a>
-          </NextLink>
+          </RouterLink>
         </h6>
         <div className="grow" />
         <div className="space-x-4 mx-2 hidden sm:block">
-          <NextLink href="/ranking/d">日間</NextLink>
-          <NextLink href="/ranking/w">週間</NextLink>
-          <NextLink href="/ranking/m">月間</NextLink>
-          <NextLink href="/custom">カスタムランキング</NextLink>
+          <RouterLink to="/ranking/d">日間</RouterLink>
+          <RouterLink to="/ranking/w">週間</RouterLink>
+          <RouterLink to="/ranking/m">月間</RouterLink>
+          <RouterLink to="/custom">カスタムランキング</RouterLink>
         </div>
       </nav>
       <Sidebar open={expand} onClose={toggle}>
-        <NextLink href="/ranking/d" passHref>
+        <RouterLink to="/ranking/d">
           <SidebarItem as="a" hover>
             日間
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/ranking/w" passHref>
+        </RouterLink>
+        <RouterLink to="/ranking/w">
           <SidebarItem as="a" hover>
             週間
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/ranking/m" passHref>
+        </RouterLink>
+        <RouterLink to="/ranking/m">
           <SidebarItem as="a" hover>
             月間
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/ranking/q" passHref>
+        </RouterLink>
+        <RouterLink to="/ranking/q">
           <SidebarItem as="a" hover>
             四半期
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
-        <NextLink href="/custom" passHref>
+        <RouterLink to="/custom">
           <SidebarItem as="a" hover>
             カスタムランキング
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
-        <NextLink href="/custom/y" passHref>
+        <RouterLink to="/custom/y">
           <SidebarItem as="a" hover>
             年間
             <br />
             カスタムランキング
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/custom/a" passHref>
+        </RouterLink>
+        <RouterLink to="/custom/a">
           <SidebarItem as="a" hover>
             全期間
             <br />
             カスタムランキング
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/custom/u" passHref>
+        </RouterLink>
+        <RouterLink to="/custom/u">
           <SidebarItem as="a" hover>
             週間ユニークユーザー数
             <br />
             カスタムランキング
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/custom/d?genres=201" passHref>
+        </RouterLink>
+        <RouterLink to="/custom/d?genres=201">
           <SidebarItem as="a" hover>
             日間ハイファンタジー
             <br />
             カスタムランキング
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/custom/d?genres=101" passHref>
+        </RouterLink>
+        <RouterLink to="/custom/d?genres=101">
           <SidebarItem as="a" hover>
             日間異世界恋愛
             <br />
             カスタムランキング
           </SidebarItem>
-        </NextLink>
-        <NextLink href="/custom/d?genres=102" passHref>
+        </RouterLink>
+        <RouterLink to="/custom/d?genres=102">
           <SidebarItem as="a" hover>
             <a>
               日間現実世界恋愛
@@ -177,25 +177,25 @@ export const Header: React.FC = () => {
               カスタムランキング
             </a>
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
-        <NextLink href="/r18" passHref>
+        <RouterLink to="/r18">
           <SidebarItem as="a" hover>
             R18ランキング
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
-        <NextLink href="/cloud/d">
+        <RouterLink to="/cloud/d">
           <SidebarItem as="a" hover>
             ワードクラウド(ベータ)
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
-        <NextLink href="/about">
+        <RouterLink to="/about">
           <SidebarItem as="a" hover>
             このサイトについて
           </SidebarItem>
-        </NextLink>
+        </RouterLink>
         <Divider />
         <SidebarItem as="label">
           <Checkbox checked={darkmode} onClick={toggleDarkmode} />

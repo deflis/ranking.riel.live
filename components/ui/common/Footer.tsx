@@ -1,5 +1,5 @@
 import React from "react";
-import NextLink from "next/link";
+import { Link as RouterLink } from "@tanstack/react-location";
 
 export const Footer: React.FC<{ className?: string }> = ({ className }) => {
   return (
@@ -27,7 +27,7 @@ export const Footer: React.FC<{ className?: string }> = ({ className }) => {
           運営者は、本サービスの利用による利用者の不利益・損害に関して一切の責任を負わないものとします。
         </p>
         <p>
-          <NextLink href="/about">このサイトについて</NextLink>
+          <RouterLink to="/about">このサイトについて</RouterLink>
         </p>
       </div>
     </footer>

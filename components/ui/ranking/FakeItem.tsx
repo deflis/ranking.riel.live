@@ -1,5 +1,4 @@
-import { isAfter } from "date-fns";
-import { NarouRankingResult } from "narou";
+import { NarouRankingResult } from "narou/src/index.browser";
 import React from "react";
 import { Tag, Tags } from "../common/bulma/Tag";
 

@@ -1,21 +1,26 @@
-import { NarouSearchResult } from "narou";
+import { End, NovelType } from "narou/src/index.browser";
 import React from "react";
+import { DetailResult } from "../../../../modules/data/loaders/detail";
 import { Tags, Tag } from "../bulma/Tag";
 
-const ItemBadge: React.FC<{ item: NarouSearchResult }> = ({ item }) => (
+const ItemBadge: React.FC<{ item: DetailResult }> = ({ item }) => (
   <Tags addons>
     <Tag
       tagColor={
-        item.novel_type === 2
+        item.noveltype === NovelType.Tanpen
           ? "cyan"
-          : item.end === 1
+          : item.end === End.Rensai
           ? "lightGreen"
           : undefined
       }
     >
-      {item.novel_type === 2 ? "短編" : item.end === 1 ? "連載中" : "完結"}
+      {item.noveltype === NovelType.Tanpen
+        ? "短編"
+        : item.end === End.Rensai
+        ? "連載中"
+        : "完結"}
     </Tag>
-    {item.novel_type !== 2 && (
+    {item.noveltype !== NovelType.Tanpen && (
       <Tag
         tagColor={
           item.general_all_no < 30

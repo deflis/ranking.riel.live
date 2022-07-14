@@ -1,17 +1,17 @@
-import { NarouSearchResult } from "narou";
+import { NarouSearchResult } from "narou/src/index.browser";
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useTitle } from "react-use";
 
-import Alert from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 
 import DetailItem from "../components/detail/DetailItem";
 import FakeItem from "../components/detail/FakeItem";
 import { RankingHistories } from "../interface/RankingHistory";
 import { SelfAd } from "../components/common/SelfAd";
 import { Paper } from "@mui/material";
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import createStyles from "@mui/styles/createStyles";
+import makeStyles from "@mui/styles/makeStyles";
 import useR18Detail from "../api/useR18Detail";
 
 type Result = {

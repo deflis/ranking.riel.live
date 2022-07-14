@@ -1,4 +1,4 @@
-import { RankingType } from "narou";
+import { RankingType } from "narou/src/index.browser";
 
 export type RankingHistories = {
   [type in RankingType]: RankingHistoryItem[];

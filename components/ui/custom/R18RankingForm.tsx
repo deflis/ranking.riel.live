@@ -1,6 +1,6 @@
 import { set } from "date-fns";
 import jaLocale from "date-fns/locale/ja";
-import { R18Site, R18SiteNotation } from "narou";
+import { R18Site, R18SiteNotation } from "narou/src/index.browser";
 import React, { useCallback, useState } from "react";
 import { useBoolean, useToggle, useUpdateEffect } from "react-use";
 

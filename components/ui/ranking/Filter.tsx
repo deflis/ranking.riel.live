@@ -10,8 +10,7 @@ import {
   maxNoAtom,
   minNoAtom,
 } from "../../../modules/atoms/filter";
-import Genre, { allGenres } from "../../../modules/enum/Genre";
-import { useHydrateAtoms } from "jotai/utils";
+import { allGenres } from "../../../modules/enum/Genre";
 import { DateTime } from "luxon";
 import { Button } from "../atoms/Button";
 import DatePicker from "../atoms/DatePicker";
@@ -19,22 +18,14 @@ import { Checkbox } from "../atoms/Checkbox";
 import { Disclosure, Transition } from "@headlessui/react";
 import { HiChevronDown } from "react-icons/hi";
 import clsx from "clsx";
+import { Genre, GenreNotation } from "narou/src/index.browser";
 
 const InnterFilterComponent: React.FC = () => {
-  useHydrateAtoms([
-    [enableKanketsuAtom, true],
-    [enableRensaiAtom, true],
-    [enableTanpenAtom, true],
-    [firstUpdateAtom, undefined],
-    [genresAtom, allGenres],
-    [maxNoAtom, 0],
-    [minNoAtom, 0],
-  ] as const);
   const [genres, setGenres] = useAtom(genresAtom);
   const handleChangeGenre = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (!e.target.value) return;
-      const id = parseInt(e.target.value);
+      const id = parseInt(e.target.value) as Genre;
       setGenres((genres) =>
         genres.includes(id)
           ? genres.filter((x) => x !== id)
@@ -43,7 +34,7 @@ const InnterFilterComponent: React.FC = () => {
     },
     [setGenres]
   );
-  const genreFilter = Array.from(Genre).map(([id, name]) => (
+  const genreFilter = allGenres.map((id) => (
     <React.Fragment key={id}>
       <label>
         <Checkbox
@@ -51,7 +42,7 @@ const InnterFilterComponent: React.FC = () => {
           value={id}
           onChange={handleChangeGenre}
         />
-        {name}
+        {GenreNotation[id]}
       </label>
     </React.Fragment>
   ));
@@ -81,7 +72,10 @@ const InnterFilterComponent: React.FC = () => {
     [setEnableTanpen]
   );
 
-  const selectAll = useCallback(() => setGenres(allGenres), [setGenres]);
+  const selectAll = useCallback(
+    () => setGenres(allGenres as unknown as Genre[]),
+    [setGenres]
+  );
   const unselectAll = useCallback(() => setGenres([]), [setGenres]);
 
   return (

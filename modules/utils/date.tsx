@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType as NarouRankingType } from "narou";
+import { RankingType as NarouRankingType } from "narou/src/index.browser";
 
 export function formatDate(date: DateTime, type: NarouRankingType): string {
   return convertDate(date, type).toISODate();

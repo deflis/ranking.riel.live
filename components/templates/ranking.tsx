@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 
-import { RankingType } from "narou";
+import { RankingType } from "narou/src/index.browser";
 import useRanking from "../../modules/data/queries/ranking";
 import { RankingRender } from "../ui/ranking/RankingRender";
 import DatePicker from "../ui/atoms/DatePicker";
-import { useRouter } from "next/router";
 import { rankingPath } from "../../modules/paths/createPaths";
 import { RankingTypeName } from "../../modules/interfaces/RankingType";
 import { SelectBox } from "../ui/atoms/SelectBox";
 import { Button } from "../ui/atoms/Button";
-import Link from "next/link";
 import { DateTime } from "luxon";
 import { FilterComponent } from "../ui/ranking/Filter";
+import {
+  useNavigate,
+  useMatch,
+  Link,
+  MakeGenerics,
+} from "@tanstack/react-location";
 
 const rankingTypeList = [
   RankingType.Daily,
@@ -21,42 +25,58 @@ const rankingTypeList = [
 ] as const;
 
 export type RankingParams = {
-  date?: string;
-  type?: string;
+  date: string;
+  type: RankingType;
 };
 
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
-export const Ranking: React.FC<{ date: DateTime; type: RankingType }> = ({
-  date,
-  type,
-}) => {
+const useParams = (): [RankingType, DateTime] => {
+  const {
+    params: { date: dateRaw, type },
+  } = useMatch<MakeGenerics<{ Params: RankingParams }>>();
+  const date = useMemo(
+    () =>
+      dateRaw
+        ? DateTime.fromISO(dateRaw)
+        : DateTime.now()
+            .minus({ hour: 12 })
+            .setZone("Asia/Tokyo")
+            .startOf("day"),
+    [dateRaw]
+  );
+  return [type ?? RankingType.Daily, date];
+};
+export const Ranking: React.FC = () => {
+  const [type, date] = useParams();
   const { data, isLoading } = useRanking(type, date);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <>
       <div className=" mb-6 space-x-2">
-        <Link href={rankingPath(type, date.minus({ day: 1 }))} passHref>
+        <Link to={rankingPath(type, date.minus({ day: 1 }))}>
           <Button as="a">前</Button>
         </Link>
         <DatePicker
           minDate={minDate}
           maxDate={maxDate}
           value={date}
-          onChange={(date) => router.push(rankingPath(type, date))}
+          onChange={(date) => date && navigate({ to: rankingPath(type, date) })}
         />
 
-        <Link href={rankingPath(type, date.plus({ day: 1 }))} passHref>
+        <Link to={rankingPath(type, date.plus({ day: 1 }))}>
           <Button as="a">次</Button>
         </Link>
-        <Link href={rankingPath(type)} passHref>
+        <Link to={rankingPath(type)}>
           <Button as="a">最新</Button>
         </Link>
         <SelectBox
           value={type}
-          onChange={(type: RankingType) => router.push(rankingPath(type, date))}
+          onChange={(type: RankingType) =>
+            navigate({ to: rankingPath(type, date) })
+          }
           options={rankingTypeList.map((value) => ({
             value,
             label: RankingTypeName.get(value),

@@ -1,5 +1,5 @@
 import Kuromoji from "kuromoji";
-import { Genre, RankingResult } from "narou";
+import { Genre, RankingResult } from "narou/src/index.browser";
 import { promisify } from "util";
 
 const DIC_URL = "/dict";
@@ -9,9 +9,8 @@ const NO_CONTENT = "*";
 const builder = Kuromoji.builder({ dicPath: DIC_URL });
 const build = promisify(builder.build.bind(builder));
 
-let tokenizer:
-  | Kuromoji.Tokenizer<Kuromoji.IpadicFeatures>
-  | undefined = undefined;
+let tokenizer: Kuromoji.Tokenizer<Kuromoji.IpadicFeatures> | undefined =
+  undefined;
 const getTokenizer: typeof build = async () => {
   if (tokenizer === undefined) {
     return (tokenizer = await build());
@@ -31,11 +30,13 @@ const tokenize = (
     );
 };
 
-export const reducerForMap = <T, K, V>(
-  fnKey: (value: T) => K,
-  fnValue: (reduceValue: V | undefined, nextValue: T) => V
-): ((map: Map<K, V>, value: T) => Map<K, V>) => (map, value) =>
-  map.set(fnKey(value), fnValue(map.get(fnKey(value)), value));
+export const reducerForMap =
+  <T, K, V>(
+    fnKey: (value: T) => K,
+    fnValue: (reduceValue: V | undefined, nextValue: T) => V
+  ): ((map: Map<K, V>, value: T) => Map<K, V>) =>
+  (map, value) =>
+    map.set(fnKey(value), fnValue(map.get(fnKey(value)), value));
 
 export const tokenizeTitle = async (ranking: RankingResult[]) => {
   const tokenizer = await getTokenizer();

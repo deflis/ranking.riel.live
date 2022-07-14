@@ -1,14 +1,11 @@
-import { useAtom, useAtomValue } from "jotai";
-import { useHydrateAtoms } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import {
-  NarouNovelJsonp,
-  NarouSearchResult,
   ranking,
   RankingType as NarouRankingType,
-} from "narou";
+} from "narou/src/index.browser";
 import { useQueries, useQuery } from "react-query";
-import { filterAtom, forLogAtom, isUseFilterAtom } from "../../atoms/filter";
+import { filterAtom, isUseFilterAtom } from "../../atoms/filter";
 import { formatDate } from "../../utils/date";
 import { detailFetcher, detailKey } from "./detail";
 
@@ -18,14 +15,8 @@ export const rankingKey = (type: NarouRankingType, date: DateTime) =>
 export function useRanking(type: NarouRankingType, date: DateTime) {
   const { data, isLoading: isLoadingQuery } = useQuery({
     queryKey: rankingKey(type, date),
-    queryFn: () =>
-      ranking(new NarouNovelJsonp()).date(date.toJSDate()).type(type).execute(),
+    queryFn: () => ranking().date(date.toJSDate()).type(type).execute(),
   });
-
-  useHydrateAtoms([
-    [isUseFilterAtom, false],
-    [filterAtom, (x: NarouSearchResult) => x],
-  ] as const);
 
   const isUseFilter = useAtomValue(isUseFilterAtom);
   const items = useQueries(
