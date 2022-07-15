@@ -16,6 +16,9 @@ import {
   Link,
   MakeGenerics,
 } from "@tanstack/react-location";
+import { useAtomValue } from "jotai";
+import { filterConditonsAtom } from "../../modules/atoms/filter";
+import { addDate, convertDate } from "../../modules/utils/date";
 
 const rankingTypeList = [
   RankingType.Daily,
@@ -25,8 +28,8 @@ const rankingTypeList = [
 ] as const;
 
 export type RankingParams = {
-  date: string;
-  type: RankingType;
+  date?: string;
+  type?: RankingType;
 };
 
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
@@ -38,12 +41,15 @@ const useParams = (): [RankingType, DateTime] => {
   } = useMatch<MakeGenerics<{ Params: RankingParams }>>();
   const date = useMemo(
     () =>
-      dateRaw
-        ? DateTime.fromISO(dateRaw)
-        : DateTime.now()
-            .minus({ hour: 12 })
-            .setZone("Asia/Tokyo")
-            .startOf("day"),
+      convertDate(
+        dateRaw
+          ? DateTime.fromISO(dateRaw)
+          : DateTime.now()
+              .minus({ hour: 12 })
+              .setZone("Asia/Tokyo")
+              .startOf("day"),
+        type ?? RankingType.Daily
+      ),
     [dateRaw]
   );
   return [type ?? RankingType.Daily, date];
@@ -56,7 +62,7 @@ export const Ranking: React.FC = () => {
   return (
     <>
       <div className=" mb-6 space-x-2">
-        <Link to={rankingPath(type, date.minus({ day: 1 }))}>
+        <Link to={rankingPath(type, addDate(date, type, -1))}>
           <Button as="a">前</Button>
         </Link>
         <DatePicker
@@ -66,7 +72,7 @@ export const Ranking: React.FC = () => {
           onChange={(date) => date && navigate({ to: rankingPath(type, date) })}
         />
 
-        <Link to={rankingPath(type, date.plus({ day: 1 }))}>
+        <Link to={rankingPath(type, addDate(date, type, 1))}>
           <Button as="a">次</Button>
         </Link>
         <Link to={rankingPath(type)}>

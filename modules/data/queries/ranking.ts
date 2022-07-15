@@ -1,28 +1,35 @@
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
+import { RankingType } from "narou";
 import {
+  NarouRankingResult,
   ranking,
   RankingType as NarouRankingType,
 } from "narou/src/index.browser";
-import { useQueries, useQuery } from "react-query";
+import { QueryFunction, useQueries, useQuery } from "react-query";
 import { filterAtom, isUseFilterAtom } from "../../atoms/filter";
-import { formatDate } from "../../utils/date";
-import { detailFetcher, detailKey } from "./detail";
+import { detailListingFetcher, detailListingKey } from "./detail";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>
-  ["ranking", type, formatDate(date, type)] as const;
+  ["ranking", type, date] as const;
+export const rankingFetcher: QueryFunction<
+  NarouRankingResult[],
+  ReturnType<typeof rankingKey>
+> = async ({ queryKey: [, type, date] }) =>
+  await ranking().date(date.toJSDate()).type(type).execute();
 
 export function useRanking(type: NarouRankingType, date: DateTime) {
   const { data, isLoading: isLoadingQuery } = useQuery({
     queryKey: rankingKey(type, date),
-    queryFn: () => ranking().date(date.toJSDate()).type(type).execute(),
+    queryFn: rankingFetcher,
+    staleTime: Infinity, // ランキングデータは不変なはず
   });
 
   const isUseFilter = useAtomValue(isUseFilterAtom);
   const items = useQueries(
     data?.map((v) => ({
-      queryKey: detailKey(v.ncode),
-      queryFn: detailFetcher,
+      queryKey: detailListingKey(v.ncode),
+      queryFn: detailListingFetcher,
       enabled: isUseFilter,
     })) ?? []
   );

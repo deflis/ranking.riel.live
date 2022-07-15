@@ -1,12 +1,9 @@
 import React from "react";
-import {
-  GenreNotation,
-  NarouRankingResult,
-} from "narou/src/index.browser";
+import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
-import { useDetail } from "../../../modules/data/queries/detail";
+import { useDetailForListing } from "../../../modules/data/queries/detail";
 import { parse } from "../../../modules/utils/NarouDateFormat";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
@@ -146,7 +143,11 @@ const RankingItemRender: React.FC<{
 const RankingItem: React.FC<{ item: NarouRankingResult }> = ({
   item: rankingItem,
 }) => {
-  const { data: item, isLoading, error } = useDetail(rankingItem.ncode);
+  const {
+    data: item,
+    isLoading,
+    error,
+  } = useDetailForListing(rankingItem.ncode);
   return (
     <>
       {isLoading && (

@@ -18,3 +18,20 @@ export function convertDate(date: DateTime, type: NarouRankingType): DateTime {
       return date.startOf("month");
   }
 }
+
+export function addDate(
+  date: DateTime,
+  type: NarouRankingType,
+  amount: number
+): DateTime {
+  switch (type) {
+    case NarouRankingType.Daily:
+    default:
+      return date.plus({ day: amount });
+    case NarouRankingType.Weekly:
+      return date.plus({ week: amount });
+    case NarouRankingType.Monthly:
+    case NarouRankingType.Quarterly:
+      return date.plus({ month: amount });
+  }
+}

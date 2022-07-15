@@ -1,45 +1,118 @@
-import * as React from "react";
 import { useCustomTheme } from "./modules/theme/theme";
-import { Provider, useAtomValue } from "jotai";
+import { Provider, useSetAtom } from "jotai";
 import { queryClientAtom } from "jotai/query";
-import { QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Layout } from "./components/Layout";
-import { Outlet, ReactLocation, Router } from "@tanstack/react-location";
+import {
+  DefaultGenerics,
+  Outlet,
+  ReactLocation,
+  Route,
+  Router,
+  useMatches,
+} from "@tanstack/react-location";
 import { Ranking } from "./components/templates/ranking";
-export type PropsDehydratedState = {
-  dehydratedState?: unknown;
-};
+import { RankingType } from "narou/src/index.browser";
+import { DateTime } from "luxon";
+import { convertDate } from "./modules/utils/date";
+import { prefetchRanking } from "./modules/data/prefetch";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+    },
+  },
+});
+
+const location = new ReactLocation();
+const routes: Route<DefaultGenerics>[] = [
+  {
+    path: "/",
+    element: <Ranking />,
+    loader: () => {
+      prefetchRanking(
+        queryClient,
+        RankingType.Daily,
+        convertDate(
+          DateTime.now()
+            .minus({ hour: 12 })
+            .setZone("Asia/Tokyo")
+            .startOf("day"),
+          RankingType.Daily
+        )
+      );
+      return {};
+    },
+  },
+  {
+    path: "ranking",
+    children: [
+      {
+        path: ":type",
+        children: [
+          {
+            path: "/",
+            element: <Ranking />,
+            loader: ({ params: { type } }) => {
+              prefetchRanking(
+                queryClient,
+                type as RankingType,
+                convertDate(
+                  DateTime.now()
+                    .minus({ hour: 12 })
+                    .setZone("Asia/Tokyo")
+                    .startOf("day"),
+                  type as RankingType
+                )
+              );
+              return {};
+            },
+          },
+          {
+            path: ":date",
+            element: <Ranking />,
+            loader: ({ params: { date, type } }) => {
+              prefetchRanking(
+                queryClient,
+                type as RankingType,
+                convertDate(DateTime.fromISO(date), type as RankingType)
+              );
+              return {};
+            },
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const queryClient = useAtomValue(queryClientAtom);
-  queryClient.defaultQueryOptions({
-    refetchOnWindowFocus: false,
-    staleTime: 10 * 60 * 1000,
-  });
-
   const theme = useCustomTheme();
 
+  const match = useMatches();
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <Layout>{children}</Layout>
+    <Layout>
+      {children}
       <ReactQueryDevtools />
-    </QueryClientProvider>
+    </Layout>
   );
 };
 
-const location = new ReactLocation();
-
 function App() {
   return (
-    // Build our routes and render our router
-    <Router location={location} routes={[{ path: "/", element: <Ranking /> }]}>
-      <Provider>
-        <AppInside>
-          <Outlet />
-        </AppInside>
-      </Provider>
-    </Router>
+    <Provider initialValues={[[queryClientAtom, queryClient]]}>
+      <QueryClientProvider client={queryClient}>
+        <Router location={location} routes={routes}>
+          <AppInside>
+            <Outlet />
+          </AppInside>
+        </Router>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

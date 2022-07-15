@@ -1,5 +1,5 @@
 import { NarouRankingResult } from "narou/src/index.browser";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { chunk } from "../../../modules/utils/chunk";
@@ -10,6 +10,9 @@ import FakeItem from "./FakeItem";
 import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
+import { useIsFetching, useQueryClient } from "react-query";
+import { prefetchDetail } from "../../../modules/data/prefetch";
+import { usePrevious } from "react-use";
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];
@@ -36,9 +39,22 @@ const InsideRender: React.FC<{
     ),
     <></>
   );
-
+  const rankingConstants = useMemo(
+    () => ranking.map(({ ncode, pt }) => `${ncode}${pt}`).join(),
+    [ranking]
+  );
+  useEffect(() => {
+    setMax(10);
+  }, [rankingConstants]);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    prefetchDetail(
+      queryClient,
+      ranking.slice(max, max + 10).map((x) => x.ncode)
+    );
+  }, [max, rankingConstants]);
   const [sentryRef] = useInfiniteScroll({
-    loading: false,
+    loading: !!useIsFetching(),
     hasNextPage: max < ranking.length,
     onLoadMore: useCallback(() => {
       setMax((x) => x + 10);
