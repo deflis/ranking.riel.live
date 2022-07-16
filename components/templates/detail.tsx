@@ -1,43 +1,28 @@
 import { NarouSearchResult } from "narou/src/index.browser";
 import React from "react";
-import { useParams } from "react-router-dom";
 import { useTitle } from "react-use";
 
-import Alert from "@mui/material/Alert";
-
-import useDetail from "../api/useDetail";
-import DetailItem from "../components/detail/DetailItem";
-import FakeItem from "../components/detail/FakeItem";
-import { RankingHistoryRender } from "../components/detail/RankingHistoryRender";
-import { RankingHistories } from "../interface/RankingHistory";
-import { SelfAd } from "../components/common/SelfAd";
-import { Paper } from "@mui/material";
-import createStyles from "@mui/styles/createStyles";
-import makeStyles from "@mui/styles/makeStyles";
-import { AdAmazonWidth } from "../components/common/AdAmazon";
-import AdSense from "../components/common/AdSense";
+import DetailItem from "../ui/detail/DetailItem";
+import FakeItem from "../ui/detail/FakeItem";
+import { RankingHistoryRender } from "../ui/detail/RankingHistoryRender";
+import { SelfAd } from "../ui/common/SelfAd";
+import { AdAmazonWidth } from "../ui/common/AdAmazon";
+import AdSense from "../ui/common/AdSense";
+import { RankingHistories } from "../../modules/interfaces/RankingHistory";
+import { useMatch } from "@tanstack/react-location";
+import { useDetailForView } from "../../modules/data/queries/item";
 
 type Result = {
   detail: NarouSearchResult;
   ranking: RankingHistories;
 };
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      marginTop: theme.spacing(2),
-      padding: theme.spacing(2),
-    },
-  })
-);
-
 const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
-  const classes = useStyles();
   return (
     <>
       <DetailItem item={detail} />
       <RankingHistoryRender ranking={ranking} />
-      <Paper className={classes.root}>
+      <Paper className={""}>
         <SelfAd />
       </Paper>
     </>
@@ -45,13 +30,15 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 };
 
 const Detail: React.FC = () => {
-  const { ncode } = useParams<{ ncode: string }>();
+  const {
+    params: { ncode },
+  } = useMatch<{ Params: { ncode: string } }>();
 
-  const { result, loading } = useDetail(ncode);
+  const { data, isLoading } = useDetailForView(ncode);
 
   useTitle(
-    result
-      ? `${result.detail.title} - なろうランキングビューワ`
+    data
+      ? `${data.title} - なろうランキングビューワ`
       : "なろうランキングビューワ"
   );
 

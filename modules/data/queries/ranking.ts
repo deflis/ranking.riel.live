@@ -8,7 +8,7 @@ import {
 } from "narou/src/index.browser";
 import { QueryFunction, useQueries, useQuery } from "react-query";
 import { filterAtom, isUseFilterAtom } from "../../atoms/filter";
-import { detailListingFetcher, detailListingKey } from "./detail";
+import { itemFetcher, itemKey } from "./item";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>
   ["ranking", type, date] as const;
@@ -28,8 +28,8 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
   const isUseFilter = useAtomValue(isUseFilterAtom);
   const items = useQueries(
     data?.map((v) => ({
-      queryKey: detailListingKey(v.ncode),
-      queryFn: detailListingFetcher,
+      queryKey: itemKey(v.ncode),
+      queryFn: itemFetcher,
       enabled: isUseFilter,
     })) ?? []
   );

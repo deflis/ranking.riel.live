@@ -3,17 +3,17 @@ import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
-import { useDetailForListing } from "../../../modules/data/queries/detail";
+import { useItemForListing } from "../../../modules/data/queries/item";
 import { parse } from "../../../modules/utils/NarouDateFormat";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
 import { Link as RouterLink } from "@tanstack/react-location";
-import { DetailResult } from "../../../modules/data/loaders/detail";
+import { ItemResult } from "../../../modules/data/loaders/items";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
-  item: DetailResult | undefined;
+  item: ItemResult | undefined;
   isError?: boolean;
 }> = ({ rankingItem, item }) => {
   const [openStory, toggleStory] = useToggle(false);
@@ -143,11 +143,7 @@ const RankingItemRender: React.FC<{
 const RankingItem: React.FC<{ item: NarouRankingResult }> = ({
   item: rankingItem,
 }) => {
-  const {
-    data: item,
-    isLoading,
-    error,
-  } = useDetailForListing(rankingItem.ncode);
+  const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
   return (
     <>
       {isLoading && (

@@ -16,8 +16,6 @@ import {
   Link,
   MakeGenerics,
 } from "@tanstack/react-location";
-import { useAtomValue } from "jotai";
-import { filterConditonsAtom } from "../../modules/atoms/filter";
 import { addDate, convertDate } from "../../modules/utils/date";
 
 const rankingTypeList = [

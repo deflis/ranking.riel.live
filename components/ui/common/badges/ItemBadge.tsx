@@ -1,9 +1,9 @@
 import { End, NovelType } from "narou/src/index.browser";
 import React from "react";
-import { DetailResult } from "../../../../modules/data/loaders/detail";
+import { ItemResult } from "../../../../modules/data/loaders/items";
 import { Tags, Tag } from "../bulma/Tag";
 
-const ItemBadge: React.FC<{ item: DetailResult }> = ({ item }) => (
+const ItemBadge: React.FC<{ item: ItemResult }> = ({ item }) => (
   <Tags addons>
     <Tag
       tagColor={

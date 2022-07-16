@@ -4,7 +4,7 @@ import { rankingKey, rankingFetcher } from "./queries/ranking";
 import { RankingType } from "narou/src/params";
 import { convertDate } from "../utils/date";
 import { NarouRankingResult } from "narou/src/narou-ranking-results";
-import { detailListingFetcher, detailListingKey } from "./queries/detail";
+import { itemFetcher, itemKey } from "./queries/item";
 
 export const prefetchRanking = async (
   queryClient: QueryClient,
@@ -30,7 +30,7 @@ export const prefetchDetail = async (
 ) => {
   await Promise.all(
     ncodes.map(async (ncode) =>
-      queryClient.prefetchQuery(detailListingKey(ncode), detailListingFetcher)
+      queryClient.prefetchQuery(itemKey(ncode), itemFetcher)
     )
   );
 };

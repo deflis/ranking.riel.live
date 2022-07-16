@@ -1,5 +1,9 @@
 import React from "react";
-import { NarouSearchResult, R18SiteNotation } from "narou/src/index.browser";
+import {
+  NarouSearchResult,
+  NovelType,
+  R18SiteNotation,
+} from "narou/src/index.browser";
 import { AllHtmlEntities } from "html-entities";
 import Genre from "../../enum/Genre";
 import { formatDistance, format } from "date-fns";
@@ -32,6 +36,7 @@ import ItemBadge from "../common/badges/ItemBadge";
 import { parse } from "../../util/NarouDateFormat";
 import { FirstAd } from "../common/FirstAd";
 import { AdRandomWidth } from "../common/AdRandom";
+import { ItemResult } from "../../../modules/data/loaders/items";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -83,9 +88,9 @@ function round(number: number, precision: number): number {
   return shift(Math.round(shift(number, precision, false)), precision, true);
 }
 
-const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
+const DetailItem: React.FC<{ item: ItemResult }> = ({ item }) => {
   const styles = useStyles();
-  const isR18 = item.nocgenre !== undefined;
+  const isR18 = false; //item.nocgenre !== undefined;
   const baseUrl = isR18
     ? "https://novel18.syosetu.com"
     : "https://ncode.syosetu.com";
@@ -142,7 +147,7 @@ const DetailItem: React.FC<{ item: NarouSearchResult }> = ({ item }) => {
         </Typography>
         <Typography variant="subtitle2">
           <ItemBadge item={item} />
-          {item.noveltype === 2 ? (
+          {item.noveltype === NovelType.Tanpen ? (
             <Link
               component={OutboundLink}
               eventLabel="DetailItem-read"
