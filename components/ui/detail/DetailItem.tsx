@@ -37,6 +37,7 @@ import { parse } from "../../util/NarouDateFormat";
 import { FirstAd } from "../common/FirstAd";
 import { AdRandomWidth } from "../common/AdRandom";
 import { ItemResult } from "../../../modules/data/loaders/items";
+import { ItemDetailResult } from "../../../modules/data/queries/item";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -88,7 +89,7 @@ function round(number: number, precision: number): number {
   return shift(Math.round(shift(number, precision, false)), precision, true);
 }
 
-const DetailItem: React.FC<{ item: ItemResult }> = ({ item }) => {
+const DetailItem: React.FC<{ item: ItemDetailResult }> = ({ item }) => {
   const styles = useStyles();
   const isR18 = false; //item.nocgenre !== undefined;
   const baseUrl = isR18
@@ -115,14 +116,7 @@ const DetailItem: React.FC<{ item: ItemResult }> = ({ item }) => {
     <>
       <div className={styles.titleBox}>
         <Typography variant="subtitle1">
-          <Tag
-            component={OutboundLink}
-            className="tag"
-            eventLabel="DetailItem-NCode"
-            to={link}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Tag as="a" href={link} target="_blank" rel="noopener noreferrer">
             {item.ncode}
           </Tag>{" "}
           <Link

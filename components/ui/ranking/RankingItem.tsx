@@ -3,13 +3,15 @@ import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
-import { useItemForListing } from "../../../modules/data/queries/item";
+import {
+  ItemResult,
+  useItemForListing,
+} from "../../../modules/data/queries/item";
 import { parse } from "../../../modules/utils/NarouDateFormat";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
 import { Link as RouterLink } from "@tanstack/react-location";
-import { ItemResult } from "../../../modules/data/loaders/items";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
