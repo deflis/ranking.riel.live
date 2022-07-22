@@ -6,7 +6,10 @@ import {
   search,
   rankingHistory,
   RankingHistoryResult,
+  RankingType,
 } from "narou/src/index.browser";
+import { DateTime } from "luxon";
+import { RankingHistories } from "../../interfaces/RankingHistory";
 
 export type ItemResult = PickedNarouSearchResult<
   | "ncode"
@@ -61,9 +64,10 @@ export const itemDetailFetcher: QueryFunction<
 export const itemRankingHistoryKey = (ncode: Ncode) =>
   ["item", ncode.toLowerCase(), "ranking"] as const;
 export const itemRankingHistoryFetcher: QueryFunction<
-  RankingHistoryResult[],
+  RankingHistories,
   ReturnType<typeof itemRankingHistoryKey>
-> = async ({ queryKey: [, ncode] }) => await rankingHistory(ncode);
+> = async ({ queryKey: [, ncode] }) =>
+  formatRankingHistory(await rankingHistory(ncode));
 
 export const useItemForListing = (ncode: Ncode) => {
   const { data, isLoading, error } = useQuery({
@@ -161,3 +165,24 @@ const itemDetailLoader = new DataLoader<Ncode, DetailResult | undefined>(
     maxBatchSize: 500,
   }
 );
+
+const rankingTypes = [
+  RankingType.Daily,
+  RankingType.Weekly,
+  RankingType.Monthly,
+  RankingType.Quarterly,
+] as const;
+
+const formatRankingHistory = (history: RankingHistoryResult[]) => {
+  const rankingData = Object.create(null) as RankingHistories;
+  for (const type of rankingTypes) {
+    rankingData[type] = history
+      .filter((x) => x.type === type)
+      .map(({ date, pt, rank }) => ({
+        date: DateTime.fromJSDate(date),
+        pt,
+        rank,
+      }));
+  }
+  return rankingData;
+};
