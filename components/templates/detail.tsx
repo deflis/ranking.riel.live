@@ -1,4 +1,3 @@
-import { NarouSearchResult } from "narou/src/index.browser";
 import React from "react";
 import { useTitle } from "react-use";
 
@@ -8,12 +7,12 @@ import { RankingHistoryRender } from "../ui/detail/RankingHistoryRender";
 import { SelfAd } from "../ui/common/SelfAd";
 import { AdAmazonWidth } from "../ui/common/AdAmazon";
 import AdSense from "../ui/common/AdSense";
-import { RankingHistories } from "../../modules/interfaces/RankingHistory";
 import { useMatch } from "@tanstack/react-location";
 import { useDetailForView } from "../../modules/data/queries/item";
+import { ItemDetail, RankingHistories } from "../../modules/data/types";
 
 type Result = {
-  detail: NarouSearchResult;
+  detail: ItemDetail;
   ranking: RankingHistories;
 };
 
@@ -21,10 +20,10 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
   return (
     <>
       <DetailItem item={detail} />
-      <RankingHistoryRender ranking={ranking} />
+      {/*<RankingHistoryRender ranking={ranking} />
       <Paper className={""}>
         <SelfAd />
-      </Paper>
+  </Paper> */}
     </>
   );
 };
@@ -34,25 +33,23 @@ const Detail: React.FC = () => {
     params: { ncode },
   } = useMatch<{ Params: { ncode: string } }>();
 
-  const { data, isLoading } = useDetailForView(ncode);
+  const { item, ranking, isLoading } = useDetailForView(ncode);
 
   useTitle(
-    data
-      ? `${data.title} - なろうランキングビューワ`
+    item
+      ? `${item.title} - なろうランキングビューワ`
       : "なろうランキングビューワ"
   );
 
-  if (loading) {
+  if (isLoading) {
     return <FakeItem />;
-  } else if (result) {
-    return <DetailRenderer {...result} />;
+  } else if (item && ranking) {
+    return <DetailRenderer detail={item} ranking={ranking} />;
   }
   return (
     <>
       <AdAmazonWidth />
-      <Alert severity="warning">
-        情報が見つかりません。この小説は削除された可能性があります。
-      </Alert>
+      <div>情報が見つかりません。この小説は削除された可能性があります。</div>
       <AdSense />
     </>
   );

@@ -9,6 +9,7 @@ import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
 import { Link as RouterLink } from "@tanstack/react-location";
+import { Chip } from "../atoms/Chip";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
@@ -96,7 +97,8 @@ const RankingItemRender: React.FC<{
             .split(/\s/g)
             .filter((keyword) => keyword)
             .map((keyword, i) => (
-              <RouterLink
+              <Chip
+                as={RouterLink}
                 key={i}
                 to={
                   isR18
@@ -104,10 +106,8 @@ const RankingItemRender: React.FC<{
                     : `/custom?keyword=${keyword}`
                 }
               >
-                <a className="box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center">
-                  <span className="px-2">{keyword}</span>
-                </a>
-              </RouterLink>
+                {keyword}
+              </Chip>
             ))}
       </Paper>
 

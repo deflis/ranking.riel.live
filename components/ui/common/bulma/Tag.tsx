@@ -1,4 +1,11 @@
-import React from "react";
+import React, {
+  ComponentPropsWithoutRef,
+  ElementType,
+  ForwardedRef,
+  forwardRef,
+  PropsWithRef,
+  ReactElement,
+} from "react";
 import { tag, tags, addon, cyan, lightGreen, red } from "./Tag.module.css";
 import clsx from "clsx";
 /*
@@ -30,26 +37,39 @@ THE SOFTWARE.
 
 type ColorName = "cyan" | "lightGreen" | "red";
 
-export type TagProps = {
+export type TagProps<T extends ElementType = "span"> = {
+  as?: T;
   tagColor?: ColorName;
   light?: boolean;
-  children: React.ReactNode;
-};
+} & Omit<ComponentPropsWithoutRef<T>, "as" | "light" | "tagColor">;
 
-export const Tag: React.FC<TagProps> = ({ tagColor, light, children }) => {
+function TagBase<T extends ElementType = "span">(
+  { as, tagColor, light, className, ...props }: TagProps<T>,
+  ref?: ForwardedRef<T>
+) {
+  const Component = as ?? "span";
   return (
-    <span
+    <Component
+      ref={ref as any}
       className={clsx(
         tag,
         tagColor === "cyan" && cyan,
         tagColor === "lightGreen" && lightGreen,
-        tagColor === "red" && red
+        tagColor === "red" && red,
+        className
       )}
-    >
-      {children}
-    </span>
+      {...props}
+    />
   );
-};
+}
+
+interface Tag {
+  <T extends ElementType = "a">(
+    x: PropsWithRef<TagProps<T>>
+  ): ReactElement | null;
+}
+
+export const Tag: Tag = forwardRef(TagBase) as any;
 
 export const Tags: React.FC<{
   addons?: boolean;

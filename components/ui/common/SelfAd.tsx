@@ -1,7 +1,8 @@
 import React from "react";
-import Ad from "./ad.jpg";
+//import Ad from "./ad.jpg";
 
 export const SelfAd: React.FC = () => {
+  return null;
   return (
     <div className="flex justify-center">
       <a href="https://riel.live" target="_blank" rel="noreferrer">

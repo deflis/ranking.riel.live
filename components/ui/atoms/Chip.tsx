@@ -4,17 +4,18 @@ import {
   ElementType,
   ForwardedRef,
   forwardRef,
+  PropsWithChildren,
   PropsWithRef,
   ReactElement,
 } from "react";
 
-type ButtonProps<T extends ElementType = "a"> = {
+type ChipProps<T extends ElementType = "a"> = {
   as?: T;
   color?: "primary";
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "color">;
+} & PropsWithChildren<Omit<ComponentPropsWithoutRef<T>, "as" | "color">>;
 
 function ChipBase<T extends ElementType = "a">(
-  { className, as, color, ...props }: ButtonProps<T>,
+  { className, as, color, children, ...props }: ChipProps<T>,
   ref: ForwardedRef<T>
 ) {
   const Component = as ?? "a";
@@ -22,19 +23,19 @@ function ChipBase<T extends ElementType = "a">(
     <Component
       ref={ref as any}
       className={clsx(
-        "text-black border-gray-300 border focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center",
-        color === "primary" &&
-          "border-none text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+        "box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center",
         className
       )}
       {...props}
-    />
+    >
+      <span className="px-2">{children}</span>
+    </Component>
   );
 }
 
 interface Chip {
   <T extends ElementType = "a">(
-    x: PropsWithRef<ButtonProps<T>>
+    x: PropsWithRef<ChipProps<T>>
   ): ReactElement | null;
 }
 

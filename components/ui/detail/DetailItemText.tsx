@@ -1,40 +1,12 @@
-import makeStyles from '@mui/styles/makeStyles';
-import createStyles from '@mui/styles/createStyles';
-import React from "react";
+import React, { PropsWithChildren } from "react";
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-    },
-    label: {
-      flexBasis: 0,
-      flexGrow: 1,
-      flexShrink: 0,
-      marginRight: "1.5rem",
-      textAlign: "right",
-      fontWeight: "bold",
-      "&:not(:last-child)": {
-        marginBottom: theme.spacing(1),
-      },
-    },
-    body: {
-      flexBasis: 0,
-      flexGrow: 3,
-      flexShrink: 1,
-    },
-  })
-);
-
-const DetailItemText: React.FC<{ label: React.ReactNode }> = ({
-  label,
-  children,
-}) => {
-  const styles = useStyles();
+const DetailItemText: React.FC<
+  PropsWithChildren<{ label: React.ReactNode }>
+> = ({ label, children }) => {
   return (
-    <div className={styles.root}>
-      <div className={styles.label}>{label}</div>
-      <div className={styles.body}>{children}</div>
+    <div>
+      <div>{label}</div>
+      <div>{children}</div>
     </div>
   );
 };

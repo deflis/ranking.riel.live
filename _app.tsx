@@ -17,6 +17,7 @@ import { RankingType } from "narou/src/index.browser";
 import { DateTime, Settings } from "luxon";
 import { convertDate } from "./modules/utils/date";
 import { prefetchRanking } from "./modules/data/prefetch";
+import Detail from "./components/templates/detail";
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
@@ -83,6 +84,13 @@ const routes: Route<DefaultGenerics>[] = [
         ],
       },
     ],
+  },
+  {
+    path: "detail/:ncode",
+    element: <Detail />,
+    loader: () => {
+      return {};
+    },
   },
 ];
 
