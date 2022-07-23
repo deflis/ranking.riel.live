@@ -14,9 +14,12 @@ import {
 } from "@tanstack/react-location";
 import { Ranking } from "./components/templates/ranking";
 import { RankingType } from "narou/src/index.browser";
-import { DateTime } from "luxon";
+import { DateTime, Settings } from "luxon";
 import { convertDate } from "./modules/utils/date";
 import { prefetchRanking } from "./modules/data/prefetch";
+
+Settings.defaultZone = "Asia/Tokyo";
+Settings.defaultLocale = "ja";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,10 +40,7 @@ const routes: Route<DefaultGenerics>[] = [
         queryClient,
         RankingType.Daily,
         convertDate(
-          DateTime.now()
-            .minus({ hour: 12 })
-            .setZone("Asia/Tokyo")
-            .startOf("day"),
+          DateTime.now().minus({ hour: 12 }).startOf("day"),
           RankingType.Daily
         )
       );
@@ -61,10 +61,7 @@ const routes: Route<DefaultGenerics>[] = [
                 queryClient,
                 type as RankingType,
                 convertDate(
-                  DateTime.now()
-                    .minus({ hour: 12 })
-                    .setZone("Asia/Tokyo")
-                    .startOf("day"),
+                  DateTime.now().minus({ hour: 12 }).startOf("day"),
                   type as RankingType
                 )
               );

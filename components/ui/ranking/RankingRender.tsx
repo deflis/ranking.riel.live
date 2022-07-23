@@ -12,7 +12,6 @@ import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
 import { useIsFetching, useQueryClient } from "react-query";
 import { prefetchDetail } from "../../../modules/data/prefetch";
-import { usePrevious } from "react-use";
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];

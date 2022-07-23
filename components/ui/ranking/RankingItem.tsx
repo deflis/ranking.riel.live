@@ -3,11 +3,8 @@ import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
-import {
-  ItemResult,
-  useItemForListing,
-} from "../../../modules/data/queries/item";
-import { parse } from "../../../modules/utils/NarouDateFormat";
+import { Item } from "../../../modules/data/types";
+import { useItemForListing } from "../../../modules/data/queries/item";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
@@ -15,7 +12,7 @@ import { Link as RouterLink } from "@tanstack/react-location";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
-  item: ItemResult | undefined;
+  item: Item | undefined;
   isError?: boolean;
 }> = ({ rankingItem, item }) => {
   const [openStory, toggleStory] = useToggle(false);
@@ -29,19 +26,22 @@ const RankingItemRender: React.FC<{
   const detail = isR18
     ? `/r18/detail/${item?.ncode?.toLowerCase()}`
     : `/detail/${item?.ncode?.toLowerCase()}`;
-  const firstup = parse(item?.general_firstup);
 
   return (
     <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 space-y-2">
-      <p color="textSecondary">
+      <p>
         第{rankingItem.rank}位{" "}
         <Tags>
           <Tag>{rankingItem.pt?.toLocaleString()}pt</Tag>
-          {firstup && firstup.diffNow().as("month") <= 1 && (
-            <Tag tagColor="red" light={firstup.diffNow().as("day") <= 7}>
-              New!
-            </Tag>
-          )}
+          {item?.general_firstup &&
+            item.general_firstup.diffNow().as("month") <= 1 && (
+              <Tag
+                tagColor="red"
+                light={item.general_firstup.diffNow().as("day") <= 7}
+              >
+                New!
+              </Tag>
+            )}
         </Tags>
       </p>
       <p>
@@ -71,7 +71,7 @@ const RankingItemRender: React.FC<{
           {decode(item?.title)}
         </RouterLink>
       </h2>
-      <p color="textSecondary">
+      <p>
         作者:{" "}
         {isR18 ? (
           decode(item?.writer)
@@ -81,12 +81,12 @@ const RankingItemRender: React.FC<{
           </a>
         )}
       </p>
-      <p color="textSecondary">更新日時: {item?.novelupdated_at}</p>
-      <p color="textSecondary">
+      <p>更新日時: {item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss")}</p>
+      <p>
         {item && (
           <>
-            掲載開始: {parse(item.general_firstup)?.toRelative()} / 最終更新:{" "}
-            {parse(item.general_lastup)?.toRelative()}
+            掲載開始: {item?.general_firstup?.toRelative()} / 最終更新:{" "}
+            {item?.general_lastup?.toRelative()}
           </>
         )}
       </p>

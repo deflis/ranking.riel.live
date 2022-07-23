@@ -1,7 +1,6 @@
 import { QueryFunction, useQueries, useQuery } from "react-query";
 import DataLoader from "dataloader";
 import {
-  PickedNarouSearchResult,
   Fields,
   search,
   rankingHistory,
@@ -9,59 +8,23 @@ import {
   RankingType,
 } from "narou/src/index.browser";
 import { DateTime } from "luxon";
-import { RankingHistories } from "../../interfaces/RankingHistory";
+import { Detail, ItemDetail, Item, RankingHistories } from "../types";
 
-export type ItemResult = PickedNarouSearchResult<
-  | "ncode"
-  | "title"
-  | "userid"
-  | "writer"
-  | "genre"
-  | "noveltype"
-  | "end"
-  | "general_firstup"
-  | "length"
-  | "general_all_no"
-  | "novelupdated_at"
-  | "general_lastup"
-  | "keyword"
-  | "story"
->;
-
-type DetailResult = PickedNarouSearchResult<
-  | "all_hyoka_cnt"
-  | "impression_cnt"
-  | "review_cnt"
-  | "fav_novel_cnt"
-  | "all_point"
-  | "global_point"
-  | "daily_point"
-  | "weekly_point"
-  | "monthly_point"
-  | "quarter_point"
-  | "yearly_point"
-  | "weekly_unique"
->;
-
-export type ItemDetailResult = DetailResult & ItemResult;
-
-export type Ncode = string;
-
-export const itemKey = (ncode: Ncode) =>
+export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;
 export const itemFetcher: QueryFunction<
-  ItemResult | undefined,
+  Item | undefined,
   ReturnType<typeof itemKey>
 > = async ({ queryKey: [, ncode] }) => await itemLoader.load(ncode);
 
-export const itemDetailKey = (ncode: Ncode) =>
+export const itemDetailKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "detail"] as const;
 export const itemDetailFetcher: QueryFunction<
-  DetailResult | undefined,
+  Detail | undefined,
   ReturnType<typeof itemDetailKey>
 > = async ({ queryKey: [, ncode] }) => await itemDetailLoader.load(ncode);
 
-export const itemRankingHistoryKey = (ncode: Ncode) =>
+export const itemRankingHistoryKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "ranking"] as const;
 export const itemRankingHistoryFetcher: QueryFunction<
   RankingHistories,
@@ -69,7 +32,7 @@ export const itemRankingHistoryFetcher: QueryFunction<
 > = async ({ queryKey: [, ncode] }) =>
   formatRankingHistory(await rankingHistory(ncode));
 
-export const useItemForListing = (ncode: Ncode) => {
+export const useItemForListing = (ncode: string) => {
   const { data, isLoading, error } = useQuery({
     queryKey: itemKey(ncode),
     queryFn: itemFetcher,
@@ -77,7 +40,7 @@ export const useItemForListing = (ncode: Ncode) => {
   return { data, isLoading, error };
 };
 
-export const useDetailForView = (ncode: Ncode) => {
+export const useDetailForView = (ncode: string) => {
   const [listing, others, ranking] = useQueries([
     {
       queryKey: itemKey(ncode),
@@ -95,7 +58,7 @@ export const useDetailForView = (ncode: Ncode) => {
   return {
     item:
       listing.data && others.data
-        ? ({ ...listing.data, ...others.data } as ItemDetailResult | undefined)
+        ? ({ ...listing.data, ...others.data } as ItemDetail | undefined)
         : undefined,
     ranking: ranking.data,
     isLoading: listing.isLoading || listing.isLoading || ranking.isLoading,
@@ -103,7 +66,7 @@ export const useDetailForView = (ncode: Ncode) => {
   };
 };
 
-const itemLoader = new DataLoader<Ncode, ItemResult | undefined>(
+const itemLoader = new DataLoader<string, Item | undefined>(
   async (ncodes) => {
     const { values } = await search()
       .ncode(ncodes as string[])
@@ -127,7 +90,23 @@ const itemLoader = new DataLoader<Ncode, ItemResult | undefined>(
       .execute();
     return ncodes
       .map((x) => x.toLowerCase())
-      .map((ncode) => values.find((x) => x.ncode.toLowerCase() === ncode));
+      .map((ncode) =>
+        values
+          .map(
+            ({
+              general_firstup,
+              general_lastup,
+              novelupdated_at,
+              ...ohters
+            }) => ({
+              general_firstup: parse(general_firstup),
+              general_lastup: parse(general_lastup),
+              novelupdated_at: parse(novelupdated_at),
+              ...ohters,
+            })
+          )
+          .find((x) => x.ncode.toLowerCase() === ncode)
+      );
   },
   {
     cache: false,
@@ -135,7 +114,7 @@ const itemLoader = new DataLoader<Ncode, ItemResult | undefined>(
   }
 );
 
-const itemDetailLoader = new DataLoader<Ncode, DetailResult | undefined>(
+const itemDetailLoader = new DataLoader<string, Detail | undefined>(
   async (ncodes) => {
     const { values } = await search()
       .ncode(ncodes as string[])
@@ -186,3 +165,10 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
   }
   return rankingData;
 };
+
+const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
+
+const parse = (date: string) =>
+  DateTime.fromFormat(date, NarouDateFormat, {
+    zone: "Asia/Tokyo",
+  });
