@@ -95,7 +95,7 @@ const routes: Route<DefaultGenerics>[] = [
 ];
 
 const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const theme = useCustomTheme();
+  useCustomTheme();
 
   const match = useMatches();
 

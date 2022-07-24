@@ -1,7 +1,7 @@
 import React from "react";
 import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
-import { useToggle } from "react-use";
+import { useCss, useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Item } from "../../../modules/data/types";
 import { useItemForListing } from "../../../modules/data/queries/item";
@@ -10,12 +10,30 @@ import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
 import { Link as RouterLink } from "@tanstack/react-location";
 import { Chip } from "../atoms/Chip";
+import { useAtomValue } from "jotai";
+import {
+  showKeywordAtom,
+  titleHeightAtom,
+} from "../../../modules/atoms/global";
+import clsx from "clsx";
+import { Button } from "../atoms/Button";
 
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
   item: Item | undefined;
   isError?: boolean;
 }> = ({ rankingItem, item }) => {
+  const titleHeight = useAtomValue(titleHeightAtom);
+  const titleHeightCss = useCss({
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: titleHeight,
+    lineClamp: titleHeight,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  });
+  const showKeyword = useAtomValue(showKeywordAtom);
+
   const [openStory, toggleStory] = useToggle(false);
 
   const isR18 = false; //item?.nocgenre !== undefined;
@@ -67,7 +85,12 @@ const RankingItemRender: React.FC<{
           </>
         )}
       </p>
-      <h2 className="mb-2 text-2xl text-gray-800 dark:text-white">
+      <h2
+        className={clsx(
+          "mb-2 text-2xl text-gray-800 dark:text-white",
+          titleHeight > 0 && titleHeightCss
+        )}
+      >
         <RouterLink to={detail} title={decode(item?.title ?? "")}>
           {decode(item?.title)}
         </RouterLink>
@@ -91,7 +114,9 @@ const RankingItemRender: React.FC<{
           </>
         )}
       </p>
-      <Paper className="p-2 space-2 bg-gray-50 ">
+      <Paper
+        className={clsx("p-2 space-2 bg-gray-50 ", !showKeyword && "hidden")}
+      >
         {item &&
           item.keyword
             .split(/\s/g)
@@ -113,10 +138,10 @@ const RankingItemRender: React.FC<{
 
       <Transition
         show={openStory}
-        enter="transition duration-100 ease-out"
-        enterFrom="transform scale-75 opacity-0 "
+        enter="transition duration-100 origin-top ease-out"
+        enterFrom="transform scale-75 scale-y-0 opacity-0 "
         enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 ease-out"
+        leave="transition duration-75 origin-top ease-out"
         leaveFrom="transform scale-100 opacity-100"
         leaveTo="transform scale-75 opacity-0"
         as={Paper}
@@ -124,19 +149,21 @@ const RankingItemRender: React.FC<{
       >
         {item?.story}
       </Transition>
-      <div>
-        <button onClick={toggleStory}>
+      <div className="flex space-x-2 items-center">
+        <Button onClick={toggleStory}>
           あらすじを{openStory ? "隠す" : "表示"}
-        </button>
+        </Button>
+        <div className="flex-grow" />
         <RouterLink to={detail}>小説情報</RouterLink>
-        <a
+        <Button
+          as="a"
           href={link}
           target="_blank"
           rel="noopener noreferrer"
           title={decode(item?.title)}
         >
           読む
-        </a>
+        </Button>
       </div>
     </div>
   );

@@ -10,5 +10,6 @@
 
 body {
   @apply font-sans;
-  @apply bg-gray-50;
+  @apply bg-gray-50 text-gray-900;
+  @apply dark:bg-black dark:text-white;
 }

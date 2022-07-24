@@ -1,14 +1,15 @@
-import React from "react";
+import { useEffect } from "react";
 
-import {
-  darkModeAtom,
-  showKeywordAtom,
-  titleHeightAtom,
-} from "../atoms/global";
+import { darkModeAtom } from "../atoms/global";
 import { useAtomValue } from "jotai";
 
 export const useCustomTheme: () => void = () => {
   const darkmode = useAtomValue(darkModeAtom);
-  const titleHeight = useAtomValue(titleHeightAtom);
-  const showKeyword = useAtomValue(showKeywordAtom);
+  useEffect(() => {
+    if (darkmode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkmode]);
 };

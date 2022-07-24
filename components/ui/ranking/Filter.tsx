@@ -123,13 +123,13 @@ export const FilterComponent: React.FC = () => {
   return (
     <Disclosure
       as="div"
-      className="w-full border rounded-lg m-4 bg-white border-gray-200 shadow-md "
+      className="border rounded-lg m-4 bg-white border-gray-200 shadow-md "
     >
       {({ open }) => (
         <>
           <Disclosure.Button className="py-2 w-full flex p-2">
             <span className="w-full">フィルター</span>
-            <HiChevronDown className={clsx(open && "transform rotate-180")} />
+            <HiChevronDown className={clsx("", open && "transform rotate-180")} />
           </Disclosure.Button>
           <Transition
             enter="transition duration-100 ease-out"
