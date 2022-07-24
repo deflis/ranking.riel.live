@@ -20,8 +20,8 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
   return (
     <>
       <DetailItem item={detail} />
-      {/*<RankingHistoryRender ranking={ranking} />
-      <Paper className={""}>
+      <RankingHistoryRender ranking={ranking} />
+      {/*<Paper className={""}>
         <SelfAd />
   </Paper> */}
     </>

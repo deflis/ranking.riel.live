@@ -1,18 +1,11 @@
-import { max } from "date-fns";
-import {
-  addDays,
-  addMonths,
-  format,
-  formatISO,
-  isAfter,
-  isEqual,
-  parseISO,
-} from "date-fns";
-import { ja } from "date-fns/locale";
+import { Tab } from "@headlessui/react";
+import clsx from "clsx";
+import { atom, useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+import { DateTime } from "luxon";
 import { RankingType } from "narou/src/index.browser";
-import React, { useCallback } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { useLocalStorage } from "react-use";
+import React, { useMemo, useState } from "react";
+
 import {
   Brush,
   CartesianGrid,
@@ -23,116 +16,80 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-import {
-  Grid,
-  Link,
-  Paper,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Tabs,
-  Typography,
-  useTheme,
-} from "@mui/material";
-
-import createStyles from "@mui/styles/createStyles";
-import makeStyles from "@mui/styles/makeStyles";
-
 import {
   RankingHistories,
   RankingHistoryItem,
-} from "../../interface/RankingHistory";
+} from "../../../modules/data/types";
+import { RankingTypeName } from "../../../modules/interfaces/RankingType";
+import { Paper } from "../atoms/Paper";
+import { Link as RouterLink } from "@tanstack/react-location";
+import { convertDate } from "../../../modules/utils/date";
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      padding: theme.spacing(2),
-    },
-    title: {
-      marginBottom: theme.spacing(2),
-    },
-    chartContainer: {
-      overflow: "auto",
-    },
-    chart: {
-      minWidth: "640px",
-    },
-  })
-);
-function* rangeDate(start: Date, end: Date, type: RankingType) {
+function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {
   if (!start) return;
-  let date = new Date(start.getTime());
-  while (!isAfter(date, end)) {
+  let date = start;
+  while (date <= end) {
     yield date;
     switch (type) {
       case RankingType.Daily:
-        date = addDays(date, 1);
+        date = date.plus({ day: 1 });
         break;
       case RankingType.Weekly:
-        date = addDays(date, 7);
+        date = date.plus({ week: 1 });
         break;
       case RankingType.Monthly:
-        date = addMonths(date, 1);
-        break;
       case RankingType.Quarterly:
-        date = addMonths(date, 1);
+        date = date.plus({ month: 1 });
         break;
     }
   }
 }
 
-const lastDay = addDays(Date.now(), -1);
+type DataType = {
+  date: Date;
+  rank: number | null;
+  pt: number | null;
+};
 const RankingHistoryCharts: React.FC<{
   ranking: RankingHistoryItem[];
   type: RankingType;
 }> = ({ ranking, type }) => {
-  const theme = useTheme();
-  const styles = useStyles();
-
-  const parsedRanking = ranking.map(({ date, ...other }) => ({
-    date: parseISO(date),
-    ...other,
-  }));
-  const date = parsedRanking.map(({ date }) => date);
+  const date = ranking.map(({ date }) => date);
   const minDate = date[0];
   const maxDate = date[date.length - 1];
-  const data = Array.from(rangeDate(minDate, max([lastDay, maxDate]), type))
+
+  const data = Array.from(rangeDate(minDate, maxDate, type))
     .map(
       (date) =>
-        parsedRanking.find((item) => isEqual(item.date, date)) ?? {
+        ranking.find((item) => date.equals(item.date)) ?? {
           date,
           rank: null,
           pt: null,
         }
     )
     .map(({ date, rank, pt }) => ({
-      date: format(date, "yyyy年MM月dd日(E)", { locale: ja }),
+      date: date.toFormat("yyyy年MM月dd日(E)"),
       順位: rank,
       ポイント: pt,
     }));
   return (
-    <Grid container spacing={3}>
-      <Grid item sm={8} className={styles.chartContainer}>
-        <ResponsiveContainer width="100%" height={300} className={styles.chart}>
+    <div>
+      <div>
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
             <Line
               type="monotone"
               dataKey="順位"
               yAxisId="left"
-              stroke={theme.palette.primary.main}
+              stroke={"blue"}
             />
             <Line
               type="monotone"
               dataKey="ポイント"
               yAxisId="right"
-              stroke={theme.palette.secondary.main}
+              stroke={"red"}
             />
-            <CartesianGrid stroke={theme.palette.text.secondary} />
+            <CartesianGrid stroke={"red"} />
             <YAxis
               reversed
               domain={[1, 300]}
@@ -140,40 +97,35 @@ const RankingHistoryCharts: React.FC<{
               allowDataOverflow
               scale="log"
               yAxisId="left"
-              axisLine={{ stroke: theme.palette.primary.main }}
-              tickLine={{ stroke: theme.palette.primary.main }}
-              tick={{ fill: theme.palette.primary.main }}
+              axisLine={{ stroke: "red" }}
+              tickLine={{ stroke: "red" }}
+              tick={{ fill: "red" }}
               label={{
                 value: "順位",
                 position: "insideTopLeft",
-                fill: theme.palette.primary.main,
+                fill: "red",
               }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
-              axisLine={{ stroke: theme.palette.secondary.main }}
-              tickLine={{ stroke: theme.palette.secondary.main }}
-              tick={{ fill: theme.palette.secondary.main }}
+              axisLine={{ stroke: "blue" }}
+              tickLine={{ stroke: "blue" }}
+              tick={{ fill: "blue" }}
               label={{
                 value: "ポイント",
                 position: "insideTopRight",
-                fill: theme.palette.secondary.main,
+                fill: "blue",
               }}
             />
-            <XAxis dataKey="date" tick={{ fill: theme.palette.text.primary }} />
-            <Brush
-              dataKey="date"
-              height={30}
-              stroke={theme.palette.text.secondary}
-              fill={theme.palette.background.default}
-            >
+            <XAxis dataKey="date" tick={{ fill: "red" }} />
+            <Brush dataKey="date" height={30} stroke={"red"} fill={"white"}>
               <LineChart>
                 <Line
                   type="monotone"
                   dataKey="順位"
                   yAxisId="left"
-                  stroke={theme.palette.text.secondary}
+                  stroke={"blue"}
                   dot={false}
                 />
                 <YAxis
@@ -186,63 +138,59 @@ const RankingHistoryCharts: React.FC<{
                 />
               </LineChart>
             </Brush>
-            <Tooltip
-              contentStyle={{ background: theme.palette.background.default }}
-            />
+            <Tooltip contentStyle={{ background: "white" }} />
           </LineChart>
         </ResponsiveContainer>
-      </Grid>
+      </div>
 
-      <Grid item sm={4}>
-        <TableContainer>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>日付</TableCell>
-                <TableCell>順位</TableCell>
-                <TableCell>ポイント</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {parsedRanking.map(({ date, rank, pt }) => (
-                <TableRow key={date.toString()}>
-                  <TableCell>
-                    <Link
-                      component={RouterLink}
-                      to={`/ranking/${type}/${formatISO(date, {
-                        representation: "date",
-                      })}`}
-                    >
-                      {format(date, "yyyy年MM月dd日(E)", { locale: ja })}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{rank}位</TableCell>
-                  <TableCell>{pt.toLocaleString()}pt</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
-    </Grid>
+      <div>
+        <table>
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>順位</th>
+              <th>ポイント</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ranking.map(({ date, rank, pt }) => (
+              <tr key={date.toUnixInteger()}>
+                <td>
+                  <RouterLink to={`/ranking/${type}/${date.toISODate()}`}>
+                    {date.toFormat("yyyy年MM月dd日(E)")}
+                  </RouterLink>
+                </td>
+                <td>{rank}位</td>
+                <td>{pt.toLocaleString()}pt</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 
+const RankingTabs = [
+  RankingType.Daily,
+  RankingType.Weekly,
+  RankingType.Monthly,
+  RankingType.Quarterly,
+];
+const rankingHistoryTypeAtom = atomWithStorage<RankingType>(
+  "HistoryRankingType",
+  RankingType.Daily
+);
+const tabIndexAtom = atom<number, number>(
+  (get) => RankingTabs.findIndex((x) => x === get(rankingHistoryTypeAtom)),
+  (_, set, index) => {
+    set(rankingHistoryTypeAtom, RankingTabs[index]);
+  }
+);
 export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
   ranking,
 }) => {
-  const styles = useStyles();
-  const [_type, setType] = useLocalStorage(
-    "HistoryRankingType",
-    RankingType.Daily
-  );
-  const type = _type ?? RankingType.Daily;
-  const handleChange = useCallback(
-    (_: React.ChangeEvent<{}>, newValue: RankingType) => {
-      setType(newValue);
-    },
-    [setType]
-  );
+  const [selectedIndex, setSelectedIndex] = useAtom(tabIndexAtom);
   if (
     ranking[RankingType.Daily].length === 0 &&
     ranking[RankingType.Weekly].length === 0 &&
@@ -252,39 +200,44 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
     return null;
   }
   return (
-    <Paper className={styles.root}>
-      <Typography variant="h4" component="h2" className={styles.title}>
-        ランキング履歴
-      </Typography>
-      <Tabs
-        value={type}
-        onChange={handleChange}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-      >
-        <Tab
-          value={RankingType.Daily}
-          label="日間"
-          disabled={ranking[RankingType.Daily].length === 0}
-        />
-        <Tab
-          value={RankingType.Weekly}
-          label="週間"
-          disabled={ranking[RankingType.Weekly].length === 0}
-        />
-        <Tab
-          value={RankingType.Monthly}
-          label="月間"
-          disabled={ranking[RankingType.Monthly].length === 0}
-        />
-        <Tab
-          value={RankingType.Quarterly}
-          label="四半期"
-          disabled={ranking[RankingType.Quarterly].length === 0}
-        />
-      </Tabs>
-      <RankingHistoryCharts ranking={ranking[type]} type={type} />
+    <Paper>
+      <h2>ランキング履歴</h2>
+      <div className="w-full px-2 py-16 sm:px-0">
+        <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+          <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+            {RankingTabs.map((type) => (
+              <Tab
+                key={type}
+                className={({ selected }) =>
+                  clsx(
+                    "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700",
+                    "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+                    selected
+                      ? "bg-white shadow"
+                      : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                  )
+                }
+                disabled={ranking[type].length == 0}
+              >
+                {RankingTypeName.get(type)}
+              </Tab>
+            ))}
+          </Tab.List>
+          <Tab.Panels className="mt-2">
+            {RankingTabs.map((type) => (
+              <Tab.Panel
+                key={type}
+                className={clsx(
+                  "rounded-xl bg-white p-3",
+                  "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                )}
+              >
+                <RankingHistoryCharts ranking={ranking[type]} type={type} />
+              </Tab.Panel>
+            ))}
+          </Tab.Panels>
+        </Tab.Group>
+      </div>
     </Paper>
   );
 };
