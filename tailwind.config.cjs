@@ -7,6 +7,7 @@ module.exports = {
       fontFamily: {
         sans: ['"Noto Sans JP"', "sans-serif"],
       },
+      colors: (theme) => ({}),
     },
   },
   plugins: [require("@tailwindcss/forms")],
