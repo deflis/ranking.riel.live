@@ -15,7 +15,7 @@ import DetailItemText from "./DetailItemText";
 import ItemBadge from "../common/badges/ItemBadge";
 // import { FirstAd } from "../common/FirstAd";
 import { AdRandomWidth } from "../common/AdRandom";
-import { ItemDetail } from "../../../modules/data/types";
+import { ItemDetail, NocItemDetail } from "../../../modules/data/types";
 import { Chip } from "../atoms/Chip";
 import { Paper } from "../atoms/Paper";
 import { Button } from "../atoms/Button";
@@ -51,8 +51,14 @@ function round(number: number, precision: number): number {
   return shift(Math.round(shift(number, precision, false)), precision, true);
 }
 
-const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
-  const isR18 = false; //item.nocgenre !== undefined;
+function checkR18(item: ItemDetail | NocItemDetail): item is NocItemDetail {
+  return (item as NocItemDetail).nocgenre !== undefined;
+}
+
+const DetailItem: React.FC<{ item: ItemDetail | NocItemDetail }> = ({
+  item,
+}) => {
+  const isR18 = checkR18(item);
   const baseUrl = isR18
     ? "https://novel18.syosetu.com"
     : "https://ncode.syosetu.com";
@@ -76,17 +82,22 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
           >
             {item.ncode}
           </Tag>{" "}
-          <RouterLink
-            to={`/custom?genres=${item.genre}`}
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline dark:text-blue-400"
-          >
-            {GenreNotation[item.genre]}
-          </RouterLink>
+          {!isR18 ? (
+            <RouterLink
+              to={`/custom?genres=${item.genre}`}
+              rel="noopener noreferrer"
+              className=""
+            >
+              {GenreNotation[item.genre]}
+            </RouterLink>
+          ) : (
+            <RouterLink to={`/r18?genres=${item.nocgenre}`}>
+              {R18SiteNotation[item.nocgenre]}
+            </RouterLink>
+          )}
         </p>
         <h1 className="text-4xl">
           <a
-            color="textPrimary"
             href={link}
             target="_blank"
             rel="noopener noreferrer"
@@ -149,42 +160,41 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
               </a>
             )}
           </DetailItemText>
-          {item.genre && (
+          {!isR18 && (
             <DetailItemText
               label="ジャンル"
               icon={<HiGlobeAlt className="w-3 h-3 inline" />}
             >
-              <a href={`/custom?genres=${item.genre}`}>
+              <RouterLink to={`/custom?genres=${item.genre}`}>
                 {GenreNotation[item.genre]}
-              </a>
+              </RouterLink>
             </DetailItemText>
           )}
-          {/*item.nocgenre && (
-            <DetailItemText label="ジャンル">
-              <Link component={RouterLink} to={`/r18?genres=${item.nocgenre}`}>
+          {isR18 && (
+            <DetailItemText label="サイト">
+              <RouterLink to={`/r18?genres=${item.nocgenre}`}>
                 {R18SiteNotation[item.nocgenre]}
-              </Link>
+              </RouterLink>
             </DetailItemText>
-          )*/}
+          )}
           <DetailItemText label="キーワード">
             <div className="inline-flex flex-wrap items-center justify-start ">
-              {item &&
-                item.keyword
-                  .split(/\s/g)
-                  .filter((keyword) => keyword)
-                  .map((keyword, i) => (
-                    <Chip
-                      as={RouterLink}
-                      key={i}
-                      to={
-                        isR18
-                          ? `/r18?keyword=${keyword}`
-                          : `/custom?keyword=${keyword}`
-                      }
-                    >
-                      {keyword}
-                    </Chip>
-                  ))}
+              {item.keyword
+                .split(/\s/g)
+                .filter((keyword) => keyword)
+                .map((keyword, i) => (
+                  <Chip
+                    as={RouterLink}
+                    key={i}
+                    to={
+                      isR18
+                        ? `/r18?keyword=${keyword}`
+                        : `/custom?keyword=${keyword}`
+                    }
+                  >
+                    {keyword}
+                  </Chip>
+                ))}
             </div>
           </DetailItemText>
           <DetailItemText

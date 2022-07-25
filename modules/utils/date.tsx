@@ -1,6 +1,17 @@
 import { DateTime } from "luxon";
 import { RankingType as NarouRankingType } from "narou/src/index.browser";
 
+export const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
+
+export function parseDate(date: string): DateTime;
+export function parseDate(date: string | undefined): DateTime | undefined {
+  return date
+    ? DateTime.fromFormat(date, NarouDateFormat, {
+        zone: "Asia/Tokyo",
+      })
+    : undefined;
+}
+
 export function formatDate(date: DateTime, type: NarouRankingType): string {
   return convertDate(date, type).toISODate();
 }

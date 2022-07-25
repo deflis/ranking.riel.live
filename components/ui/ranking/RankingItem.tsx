@@ -1,9 +1,13 @@
 import React from "react";
-import { GenreNotation, NarouRankingResult } from "narou/src/index.browser";
+import {
+  GenreNotation,
+  NarouRankingResult,
+  R18SiteNotation,
+} from "narou/src/index.browser";
 import { Tag, Tags } from "../common/bulma/Tag";
 import { useCss, useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
-import { Item } from "../../../modules/data/types";
+import { Item, NocItem } from "../../../modules/data/types";
 import { useItemForListing } from "../../../modules/data/queries/item";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
@@ -18,10 +22,14 @@ import {
 import clsx from "clsx";
 import { Button } from "../atoms/Button";
 
+function checkR18(item: Item | NocItem | undefined): item is NocItem {
+  return (item as NocItem).nocgenre !== undefined;
+}
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
-  item: Item | undefined;
-  isError?: boolean;
+  item: Item | NocItem | undefined;
+  isLoading: boolean;
+  isError: boolean;
 }> = ({ rankingItem, item }) => {
   const titleHeight = useAtomValue(titleHeightAtom);
   const titleHeightCss = useCss({
@@ -36,7 +44,7 @@ const RankingItemRender: React.FC<{
 
   const [openStory, toggleStory] = useToggle(false);
 
-  const isR18 = false; //item?.nocgenre !== undefined;
+  const isR18 = checkR18(item);
 
   const user = `https://mypage.syosetu.com/${item?.userid}/`;
   const link = isR18
@@ -72,12 +80,11 @@ const RankingItemRender: React.FC<{
                 {GenreNotation[item.genre]}
               </RouterLink>
             )}
-            {
-              isR18 && null
-              //              <RouterLink to={`/r18?site=${item.nocgenre}`}>
-              //                {R18SiteNotation[item.nocgenre]}
-              //              </RouterLink>
-            }
+            {isR18 && (
+              <RouterLink to={`/r18?site=${item.nocgenre}`}>
+                {R18SiteNotation[item.nocgenre]}
+              </RouterLink>
+            )}
             <Tag>
               {Math.round(item.length / item.general_all_no).toLocaleString()}
               文字/話
@@ -175,13 +182,12 @@ const RankingItem: React.FC<{ item: NarouRankingResult }> = ({
   const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
   return (
     <>
-      {isLoading && (
-        <RankingItemRender item={undefined} rankingItem={rankingItem} />
-      )}
-      {item && <RankingItemRender item={item} rankingItem={rankingItem} />}
-      {error && (
-        <RankingItemRender item={undefined} rankingItem={rankingItem} isError />
-      )}
+      <RankingItemRender
+        item={item}
+        rankingItem={rankingItem}
+        isLoading={isLoading}
+        isError={!!error}
+      />
     </>
   );
 };

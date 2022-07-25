@@ -9,6 +9,7 @@ import {
 } from "narou/src/index.browser";
 import { DateTime } from "luxon";
 import { Detail, ItemDetail, Item, RankingHistories } from "../types";
+import { parseDate } from "../../utils/date";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;
@@ -99,9 +100,9 @@ const itemLoader = new DataLoader<string, Item | undefined>(
               novelupdated_at,
               ...ohters
             }) => ({
-              general_firstup: parse(general_firstup),
-              general_lastup: parse(general_lastup),
-              novelupdated_at: parse(novelupdated_at),
+              general_firstup: parseDate(general_firstup),
+              general_lastup: parseDate(general_lastup),
+              novelupdated_at: parseDate(novelupdated_at),
               ...ohters,
             })
           )
@@ -167,8 +168,3 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
 };
 
 const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
-
-const parse = (date: string) =>
-  DateTime.fromFormat(date, NarouDateFormat, {
-    zone: "Asia/Tokyo",
-  });
