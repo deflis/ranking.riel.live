@@ -18,6 +18,7 @@ import {
 } from "@tanstack/react-location";
 import { addDate, convertDate } from "../../modules/utils/date";
 import { Paper } from "../ui/atoms/Paper";
+import { useTitle } from "react-use";
 
 const rankingTypeList = [
   RankingType.Daily,
@@ -57,6 +58,12 @@ export const Ranking: React.FC = () => {
   const [type, date] = useParams();
   const { data, isLoading } = useRanking(type, date);
   const navigate = useNavigate();
+
+  useTitle(
+    `${date ? date.toFormat("yyyy/MM/dd") : "最新"}の${RankingTypeName.get(
+      type
+    )}ランキング - なろうランキングビューワ`
+  );
 
   return (
     <>
