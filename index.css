@@ -14,6 +14,6 @@ body {
   @apply dark:bg-zinc-900 dark:text-white;
 }
 
-a {
-  @apply hover:underline;
+a:not(.link-reset) {
+  @apply text-blue-500 hover:underline dark:text-blue-400;
 }

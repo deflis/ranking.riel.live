@@ -52,6 +52,7 @@ function TagBase<T extends ElementType = "span">(
     <Component
       ref={ref as any}
       className={clsx(
+        "link-reset",
         tag,
         tagColor === "cyan" && cyan,
         tagColor === "lightGreen" && lightGreen,

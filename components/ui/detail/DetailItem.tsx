@@ -101,6 +101,7 @@ const DetailItem: React.FC<{ item: ItemDetail | NocItemDetail }> = ({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
+            className="link-reset hover:underline"
           >
             {decode(item.title)}
           </a>

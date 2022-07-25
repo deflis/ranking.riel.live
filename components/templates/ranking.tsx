@@ -35,7 +35,7 @@ export type RankingParams = {
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
-const useParams = (): [RankingType, DateTime] => {
+const useParams = (): [RankingType, DateTime, boolean] => {
   const {
     params: { date: dateRaw, type },
   } = useMatch<MakeGenerics<{ Params: RankingParams }>>();
@@ -52,17 +52,17 @@ const useParams = (): [RankingType, DateTime] => {
       ),
     [dateRaw]
   );
-  return [type ?? RankingType.Daily, date];
+  return [type ?? RankingType.Daily, date, !dateRaw];
 };
 export const Ranking: React.FC = () => {
-  const [type, date] = useParams();
+  const [type, date, isNow] = useParams();
   const { data, isLoading } = useRanking(type, date);
   const navigate = useNavigate();
 
   useTitle(
-    `${date ? date.toFormat("yyyy/MM/dd") : "最新"}の${RankingTypeName.get(
-      type
-    )}ランキング - なろうランキングビューワ`
+    `${isNow ? "最新" : date.toFormat("yyyy/MM/dd")}の${
+      RankingTypeName[type]
+    }ランキング - なろうランキングビューワ`
   );
 
   return (
@@ -96,7 +96,7 @@ export const Ranking: React.FC = () => {
             }
             options={rankingTypeList.map((value) => ({
               value,
-              label: RankingTypeName.get(value),
+              label: RankingTypeName[value],
             }))}
           />
         </Paper>

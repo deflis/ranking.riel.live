@@ -91,11 +91,9 @@ export const Header: React.FC = () => {
           <HiMenu className="w-5 h-5 m-auto" />
         </button>
         <h6>
-          <RouterLink to="/">
-            <a>
-              <FaTrophy className="w-5 h-5 inline" />
-              なろうランキング
-            </a>
+          <RouterLink to="/" className="link-reset hover:underline">
+            <FaTrophy className="w-5 h-5 inline" />
+            なろうランキング
           </RouterLink>
         </h6>
         <div className="grow" />
@@ -171,11 +169,9 @@ export const Header: React.FC = () => {
         </RouterLink>
         <RouterLink to="/custom/d?genres=102">
           <SidebarItem as="a" hover>
-            <a>
-              日間現実世界恋愛
-              <br />
-              カスタムランキング
-            </a>
+            日間現実世界恋愛
+            <br />
+            カスタムランキング
           </SidebarItem>
         </RouterLink>
         <Divider />

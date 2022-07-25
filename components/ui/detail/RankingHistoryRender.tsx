@@ -266,7 +266,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
                   }
                   disabled={ranking[type].length == 0}
                 >
-                  {RankingTypeName.get(type)}
+                  {RankingTypeName[type]}
                 </Tab>
               ))}
             </div>

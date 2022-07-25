@@ -26,7 +26,7 @@ function SidebarItemBase<T extends ElementType = "span">(
       <Component
         ref={ref as any}
         className={clsx(
-          "flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
+          "link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
           hover && "hover:text-gray-900 hover:bg-gray-100",
           className
         )}

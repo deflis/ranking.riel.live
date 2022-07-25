@@ -23,14 +23,14 @@ import clsx from "clsx";
 import { Button } from "../atoms/Button";
 
 function checkR18(item: Item | NocItem | undefined): item is NocItem {
-  return (item as NocItem).nocgenre !== undefined;
+  return !!item && (item as NocItem).nocgenre !== undefined;
 }
 const RankingItemRender: React.FC<{
   rankingItem: NarouRankingResult;
   item: Item | NocItem | undefined;
   isLoading: boolean;
   isError: boolean;
-}> = ({ rankingItem, item }) => {
+}> = ({ rankingItem, item, isError, isLoading }) => {
   const titleHeight = useAtomValue(titleHeightAtom);
   const titleHeightCss = useCss({
     display: "-webkit-box",
@@ -45,6 +45,7 @@ const RankingItemRender: React.FC<{
   const [openStory, toggleStory] = useToggle(false);
 
   const isR18 = checkR18(item);
+  const isNotfound = (!item && !isLoading) || isError;
 
   const user = `https://mypage.syosetu.com/${item?.userid}/`;
   const link = isR18
@@ -92,86 +93,96 @@ const RankingItemRender: React.FC<{
           </>
         )}
       </p>
-      <h2
-        className={clsx(
-          "mb-2 text-2xl text-gray-800 dark:text-white",
-          titleHeight > 0 && titleHeightCss
-        )}
-      >
-        <RouterLink to={detail} title={decode(item?.title ?? "")}>
-          {decode(item?.title)}
-        </RouterLink>
-      </h2>
-      <p>
-        作者:{" "}
-        {isR18 ? (
-          decode(item?.writer)
-        ) : (
-          <a href={user} target="_blank" rel="noopener noreferrer">
-            {decode(item?.writer)}
-          </a>
-        )}
-      </p>
-      <p>更新日時: {item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss")}</p>
-      <p>
+      <h2 className="mb-2">
         {item && (
-          <>
-            掲載開始: {item?.general_firstup?.toRelative()} / 最終更新:{" "}
-            {item?.general_lastup?.toRelative()}
-          </>
+          <RouterLink
+            to={detail}
+            title={decode(item.title)}
+            className={clsx(
+              "link-reset text-2xl text-gray-800 dark:text-white hover:underline",
+              titleHeight > 0 && titleHeightCss
+            )}
+          >
+            {decode(item.title)}
+          </RouterLink>
         )}
-      </p>
-      <Paper
-        className={clsx("p-2 space-2 bg-gray-50 ", !showKeyword && "hidden")}
-      >
-        {item &&
-          item.keyword
-            .split(/\s/g)
-            .filter((keyword) => keyword)
-            .map((keyword, i) => (
-              <Chip
-                as={RouterLink}
-                key={i}
-                to={
-                  isR18
-                    ? `/r18?keyword=${keyword}`
-                    : `/custom?keyword=${keyword}`
-                }
-              >
-                {keyword}
-              </Chip>
-            ))}
-      </Paper>
+        {isNotfound && `この小説は見つかりません`}
+      </h2>
 
-      <Transition
-        show={openStory}
-        enter="transition duration-100 origin-top ease-out"
-        enterFrom="transform scale-75 scale-y-0 opacity-0 "
-        enterTo="transform scale-100 opacity-100"
-        leave="transition duration-75 origin-top ease-out"
-        leaveFrom="transform scale-100 opacity-100"
-        leaveTo="transform scale-75 opacity-0"
-        as={Paper}
-        className="bg-gray-100 p-2 whitespace-pre-wrap text-sm"
-      >
-        {item?.story}
-      </Transition>
-      <div className="flex space-x-2 items-center">
-        <Button onClick={toggleStory}>
-          あらすじを{openStory ? "隠す" : "表示"}
-        </Button>
-        <div className="flex-grow" />
-        <RouterLink to={detail}>小説情報</RouterLink>
-        <Button
-          as="a"
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={decode(item?.title)}
-        >
-          読む
-        </Button>
-      </div>
+      {item && (
+        <>
+          <p>
+            作者:{" "}
+            {isR18 ? (
+              decode(item.writer)
+            ) : (
+              <a href={user} target="_blank" rel="noopener noreferrer">
+                {decode(item.writer)}
+              </a>
+            )}
+          </p>
+          <p>
+            更新日時: {item.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss")}
+          </p>
+          <p>
+            掲載開始: {item.general_firstup.toRelative()} / 最終更新:{" "}
+            {item.general_lastup.toRelative()}
+          </p>
+          <Paper
+            className={clsx(
+              "p-2 space-2 bg-gray-50 ",
+              !showKeyword && "hidden"
+            )}
+          >
+            {item.keyword
+              .split(/\s/g)
+              .filter((keyword) => keyword)
+              .map((keyword, i) => (
+                <Chip
+                  as={RouterLink}
+                  key={i}
+                  to={
+                    isR18
+                      ? `/r18?keyword=${keyword}`
+                      : `/custom?keyword=${keyword}`
+                  }
+                >
+                  {keyword}
+                </Chip>
+              ))}
+          </Paper>
+
+          <Transition
+            show={openStory}
+            enter="transition duration-100 origin-top ease-out"
+            enterFrom="transform scale-75 scale-y-0 opacity-0 "
+            enterTo="transform scale-100 opacity-100"
+            leave="transition duration-75 origin-top ease-out"
+            leaveFrom="transform scale-100 opacity-100"
+            leaveTo="transform scale-75 opacity-0"
+            as={Paper}
+            className="bg-gray-100 p-2 whitespace-pre-wrap text-sm"
+          >
+            {item.story}
+          </Transition>
+          <div className="flex space-x-2 items-center">
+            <Button onClick={toggleStory}>
+              あらすじを{openStory ? "隠す" : "表示"}
+            </Button>
+            <div className="flex-grow" />
+            <RouterLink to={detail}>小説情報</RouterLink>
+            <Button
+              as="a"
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={decode(item?.title)}
+            >
+              読む
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
