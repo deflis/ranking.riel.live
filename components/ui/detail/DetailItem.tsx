@@ -7,8 +7,6 @@ import {
   GenreNotation,
 } from "narou/src/index.browser";
 import { decode } from "html-entities";
-import { formatDistance, format } from "date-fns";
-import { ja } from "date-fns/locale";
 import { TwitterShare } from "../common/TwitterShare";
 import AdSense from "../common/AdSense";
 import { Tag, Tags } from "../common/bulma/Tag";
@@ -22,6 +20,16 @@ import { Chip } from "../atoms/Chip";
 import { Paper } from "../atoms/Paper";
 import { Button } from "../atoms/Button";
 import { Link as RouterLink } from "@tanstack/react-location";
+import { FaPenNib } from "react-icons/fa";
+import {
+  HiBookmark,
+  HiCalendar,
+  HiChatAlt,
+  HiGlobeAlt,
+  HiPencilAlt,
+  HiThumbUp,
+} from "react-icons/hi";
+import { IoLanguage, IoTime, IoTimeOutline } from "react-icons/io5";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 function round(number: number, precision: number): number {
@@ -59,14 +67,24 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
     <>
       <div>
         <p>
-          <Tag as="a" href={link} target="_blank" rel="noopener noreferrer">
+          <Tag
+            className="text-sm"
+            as="a"
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {item.ncode}
           </Tag>{" "}
-          <a href={`/custom?genres=${item.genre}`} rel="noopener noreferrer">
+          <RouterLink
+            to={`/custom?genres=${item.genre}`}
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline dark:text-blue-400"
+          >
             {GenreNotation[item.genre]}
-          </a>
+          </RouterLink>
         </p>
-        <h1>
+        <h1 className="text-4xl">
           <a
             color="textPrimary"
             href={link}
@@ -76,37 +94,53 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
             {decode(item.title)}
           </a>
         </h1>
-        <h2>
-          <ItemBadge item={item} />
+        <p className="text-sm">
+          <ItemBadge item={item} />{" "}
           {item.noveltype === NovelType.Tanpen ? (
             <a href={link} target="_blank" rel="noopener noreferrer">
               読む
             </a>
           ) : (
             <>
-              <a href={linkFirst} target="_blank" rel="noopener noreferrer">
+              <a
+                href={linkFirst}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline dark:text-blue-400"
+              >
                 第1話を読む
               </a>{" "}
               |{" "}
-              <a href={linkLast} target="_blank" rel="noopener noreferrer">
+              <a
+                href={linkLast}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline dark:text-blue-400"
+              >
                 最新話を読む
               </a>
             </>
-          )}
+          )}{" "}
           <Tag>
             {Math.round(item.length / item.general_all_no).toLocaleString()}
             文字/話
           </Tag>
-        </h2>
+        </p>
       </div>
       {/*<FirstAd />*/}
-      <div>
-        <div>
-          <h2>あらすじ</h2>
-          <StoryRender story={item.story} />
+      <div className="flex space-x-2 flex-col md:flex-row">
+        <div className="w-full md:w-1/2 xl:w-7/12">
+          <h2 className="text-xl">あらすじ</h2>
+          <StoryRender
+            story={item.story}
+            className="bg-white p-2 md:max-h-screen overflow-auto"
+          />
         </div>
-        <div>
-          <DetailItemText label="作者">
+        <div className="w-full md:w-1/2 xl:w-5/12 shrink-0 m-0 p-2 text-sm space-y-2">
+          <DetailItemText
+            label="作者"
+            icon={<FaPenNib className="w-3 h-3 inline" />}
+          >
             {isR18 ? (
               decode(item.writer)
             ) : (
@@ -116,7 +150,10 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
             )}
           </DetailItemText>
           {item.genre && (
-            <DetailItemText label="ジャンル">
+            <DetailItemText
+              label="ジャンル"
+              icon={<HiGlobeAlt className="w-3 h-3 inline" />}
+            >
               <a href={`/custom?genres=${item.genre}`}>
                 {GenreNotation[item.genre]}
               </a>
@@ -130,7 +167,7 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
             </DetailItemText>
           )*/}
           <DetailItemText label="キーワード">
-            <Paper className="p-2 space-2 bg-gray-50 ">
+            <div className="inline-flex flex-wrap items-center justify-start ">
               {item &&
                 item.keyword
                   .split(/\s/g)
@@ -148,39 +185,57 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
                       {keyword}
                     </Chip>
                   ))}
-            </Paper>{" "}
+            </div>
           </DetailItemText>
-          <DetailItemText label="掲載日">
+          <DetailItemText
+            label="掲載日"
+            icon={<HiCalendar className="w-3 h-3 inline" />}
+          >
             {item.general_firstup.toFormat(dateFormat)} （
-            {item.general_firstup.toRelative()}前）
+            {item.general_firstup.toRelative()}）
           </DetailItemText>
-          <DetailItemText label="最新部分掲載日">
+          <DetailItemText
+            label="最新部分掲載日"
+            icon={<IoTime className="w-3 h-3 inline" />}
+          >
             {item.general_lastup.toFormat(dateFormat)} （
-            {item.general_lastup.toRelative()}前）
+            {item.general_lastup.toRelative()}）
           </DetailItemText>
-          <DetailItemText label="感想">
+          <DetailItemText
+            label="感想"
+            icon={<HiChatAlt className="w-3 h-3 inline" />}
+          >
             {item.impression_cnt.toLocaleString()}件
           </DetailItemText>
-          <DetailItemText label="レビュー">
+          <DetailItemText
+            label="レビュー"
+            icon={<HiPencilAlt className="w-3 h-3 inline" />}
+          >
             {item.review_cnt.toLocaleString()}件
           </DetailItemText>
-          <DetailItemText label="ブックマーク登録">
+          <DetailItemText
+            label="ブックマーク登録"
+            icon={<HiBookmark className="w-3 h-3 inline" />}
+          >
             {item.fav_novel_cnt.toLocaleString()}件
           </DetailItemText>
-          <DetailItemText label="総合評価">
+          <DetailItemText
+            label="総合評価"
+            icon={<HiThumbUp className="w-3 h-3 inline" />}
+          >
             {item.all_point.toLocaleString()}pt /{" "}
             {item.all_hyoka_cnt.toLocaleString()}人 = 平均
             {round(item.all_point / item.all_hyoka_cnt, 2).toLocaleString()}
             pt
           </DetailItemText>
-          <DetailItemText label="文字数">
+          <DetailItemText
+            label="文字数"
+            icon={<IoLanguage className="w-3 h-3 inline" />}
+          >
             {item.length.toLocaleString()}文字 / 全
             {item.general_all_no.toLocaleString()}話 ={" "}
             {Math.round(item.length / item.general_all_no).toLocaleString()}
             文字/話
-          </DetailItemText>
-          <DetailItemText label="更新日時">
-            {item.novelupdated_at.toFormat(dateFormat)}
           </DetailItemText>
           {/*<Hidden lgDown>
             <AdSense></AdSense>
@@ -189,9 +244,9 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
       </div>
 
       <AdRandomWidth />
-      <Paper>
-        <h2>獲得ポイント</h2>
-        <table>
+      <Paper className="p-2 bg-white">
+        <h2 className="text-xl">獲得ポイント</h2>
+        <table className="w-full table-auto">
           <tr>
             <th>総合評価ポイント</th>
             <th>日間</th>
@@ -203,18 +258,33 @@ const DetailItem: React.FC<{ item: ItemDetail }> = ({ item }) => {
           </tr>
           <tbody>
             <tr>
-              <td>{item.global_point.toLocaleString()}</td>
-              <td>{item.daily_point.toLocaleString()}</td>
-              <td>{item.weekly_point.toLocaleString()}</td>
-              <td>{item.monthly_point.toLocaleString()}</td>
-              <td>{item.quarter_point.toLocaleString()}</td>
-              <td>{item.yearly_point.toLocaleString()}</td>
-              <td>{item.weekly_unique.toLocaleString()}</td>
+              <td className="text-center">
+                {item.global_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.daily_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.weekly_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.monthly_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.quarter_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.yearly_point.toLocaleString()}
+              </td>
+              <td className="text-center">
+                {item.weekly_unique.toLocaleString()}
+              </td>
             </tr>
           </tbody>
         </table>
       </Paper>
-      <p>
+
+      <p className="box-border my-4">
         <Button as="a" href={detail} target="_blank" rel="noopener noreferrer">
           小説情報
         </Button>{" "}

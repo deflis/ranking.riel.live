@@ -17,6 +17,7 @@ import {
   MakeGenerics,
 } from "@tanstack/react-location";
 import { addDate, convertDate } from "../../modules/utils/date";
+import { Paper } from "../ui/atoms/Paper";
 
 const rankingTypeList = [
   RankingType.Daily,
@@ -59,35 +60,41 @@ export const Ranking: React.FC = () => {
 
   return (
     <>
-      <div className=" mb-6 space-x-2">
-        <Link to={rankingPath(type, addDate(date, type, -1))}>
-          <Button as="a">前</Button>
-        </Link>
-        <DatePicker
-          minDate={minDate}
-          maxDate={maxDate}
-          value={date}
-          onChange={(date) => date && navigate({ to: rankingPath(type, date) })}
-        />
+      <div className="mx-4 mt-2">
+        <Paper className="mb-6 space-x-2 p-2 bg-white">
+          <Link to={rankingPath(type, addDate(date, type, -1))}>
+            <Button as="a">前</Button>
+          </Link>
+          <DatePicker
+            minDate={minDate}
+            maxDate={maxDate}
+            value={date}
+            onChange={(date) =>
+              date && navigate({ to: rankingPath(type, date) })
+            }
+          />
 
-        <Link to={rankingPath(type, addDate(date, type, 1))}>
-          <Button as="a">次</Button>
-        </Link>
-        <Link to={rankingPath(type)}>
-          <Button as="a">最新</Button>
-        </Link>
-        <SelectBox
-          value={type}
-          onChange={(type: RankingType) =>
-            navigate({ to: rankingPath(type, date) })
-          }
-          options={rankingTypeList.map((value) => ({
-            value,
-            label: RankingTypeName.get(value),
-          }))}
-        />
+          <Link to={rankingPath(type, addDate(date, type, 1))}>
+            <Button as="a">次</Button>
+          </Link>
+          <Link to={rankingPath(type)}>
+            <Button as="a" color="primary">
+              最新
+            </Button>
+          </Link>
+          <SelectBox
+            value={type}
+            onChange={(type: RankingType) =>
+              navigate({ to: rankingPath(type, date) })
+            }
+            options={rankingTypeList.map((value) => ({
+              value,
+              label: RankingTypeName.get(value),
+            }))}
+          />
+        </Paper>
+        <FilterComponent />
       </div>
-      <FilterComponent />
       <RankingRender ranking={data} loading={isLoading} />
     </>
   );

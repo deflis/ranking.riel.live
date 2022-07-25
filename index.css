@@ -5,11 +5,15 @@
 @tailwind utilities;
 
 .layout {
-  @apply container mx-auto max-w-screen-lg;
+  @apply container mx-auto max-w-screen-2xl mt-4;
 }
 
 body {
   @apply font-sans;
-  @apply bg-background text-gray-900;
+  @apply bg-neutral-50 text-gray-900;
   @apply dark:bg-zinc-900 dark:text-white;
+}
+
+a {
+  @apply hover:underline;
 }
