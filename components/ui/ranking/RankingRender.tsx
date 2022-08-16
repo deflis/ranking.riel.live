@@ -11,7 +11,7 @@ import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
 import { useIsFetching, useQueryClient } from "react-query";
-import { prefetchDetail } from "../../../modules/data/prefetch";
+import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];
@@ -47,7 +47,7 @@ const InsideRender: React.FC<{
   }, [rankingConstants]);
   const queryClient = useQueryClient();
   useEffect(() => {
-    prefetchDetail(
+    prefetchRankingDetail(
       queryClient,
       ranking.slice(max, max + 10).map((x) => x.ncode)
     );

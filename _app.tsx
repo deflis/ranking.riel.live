@@ -16,7 +16,7 @@ import { Ranking } from "./components/templates/ranking";
 import { RankingType } from "narou/src/index.browser";
 import { DateTime, Settings } from "luxon";
 import { convertDate } from "./modules/utils/date";
-import { prefetchRanking } from "./modules/data/prefetch";
+import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
 import Detail from "./components/templates/detail";
 
 Settings.defaultZone = "Asia/Tokyo";
@@ -88,7 +88,8 @@ const routes: Route<DefaultGenerics>[] = [
   {
     path: "detail/:ncode",
     element: <Detail />,
-    loader: () => {
+    loader: async ({ params: { ncode } }) => {
+      await prefetchDetail(queryClient, ncode);
       return {};
     },
   },

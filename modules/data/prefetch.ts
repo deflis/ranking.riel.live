@@ -4,7 +4,7 @@ import { rankingKey, rankingFetcher } from "./ranking";
 import { RankingType } from "narou/src/params";
 import { convertDate } from "../utils/date";
 import { NarouRankingResult } from "narou/src/narou-ranking-results";
-import { itemFetcher, itemKey } from "./item";
+import { itemDetailFetcher, itemDetailKey, itemFetcher, itemKey } from "./item";
 
 export const prefetchRanking = async (
   queryClient: QueryClient,
@@ -18,13 +18,13 @@ export const prefetchRanking = async (
   const ranking = queryClient.getQueryData<NarouRankingResult[]>(
     rankingKey(type, convertDate(date, type))
   );
-  await prefetchDetail(
+  await prefetchRankingDetail(
     queryClient,
     ranking?.slice(0, 10).map((x) => x.ncode) ?? []
   );
 };
 
-export const prefetchDetail = async (
+export const prefetchRankingDetail = async (
   queryClient: QueryClient,
   ncodes: string[]
 ) => {
@@ -33,4 +33,14 @@ export const prefetchDetail = async (
       queryClient.prefetchQuery(itemKey(ncode), itemFetcher)
     )
   );
+};
+
+export const prefetchDetail = async (
+  queryClient: QueryClient,
+  ncode: string
+) => {
+  await Promise.all([
+    queryClient.prefetchQuery(itemKey(ncode), itemFetcher),
+    queryClient.prefetchQuery(itemDetailKey(ncode), itemDetailFetcher),
+  ]);
 };
