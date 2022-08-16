@@ -7,7 +7,7 @@ import {
   RankingType as NarouRankingType,
 } from "narou/src/index.browser";
 import { QueryFunction, useQueries, useQuery } from "react-query";
-import { filterAtom, isUseFilterAtom } from "../../atoms/filter";
+import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 import { itemFetcher, itemKey } from "./item";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>

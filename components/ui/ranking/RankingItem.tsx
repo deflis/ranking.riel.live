@@ -8,7 +8,7 @@ import { Tag, Tags } from "../common/bulma/Tag";
 import { useCss, useToggle } from "react-use";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Item, NocItem } from "../../../modules/data/types";
-import { useItemForListing } from "../../../modules/data/queries/item";
+import { useItemForListing } from "../../../modules/data/item";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";

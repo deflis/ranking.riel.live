@@ -1,10 +1,10 @@
 import { DateTime } from "luxon";
 import { QueryClient } from "react-query";
-import { rankingKey, rankingFetcher } from "./queries/ranking";
+import { rankingKey, rankingFetcher } from "./ranking";
 import { RankingType } from "narou/src/params";
 import { convertDate } from "../utils/date";
 import { NarouRankingResult } from "narou/src/narou-ranking-results";
-import { itemFetcher, itemKey } from "./queries/item";
+import { itemFetcher, itemKey } from "./item";
 
 export const prefetchRanking = async (
   queryClient: QueryClient,

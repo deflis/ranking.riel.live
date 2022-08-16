@@ -8,8 +8,8 @@ import {
   RankingType,
 } from "narou/src/index.browser";
 import { DateTime } from "luxon";
-import { Detail, ItemDetail, Item, RankingHistories } from "../types";
-import { parseDate } from "../../utils/date";
+import { Detail, ItemDetail, Item, RankingHistories } from "./types";
+import { parseDate } from "../utils/date";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;

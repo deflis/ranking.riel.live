@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 import { RankingType } from "narou/src/index.browser";
-import useRanking from "../../modules/data/queries/ranking";
+import useRanking from "../../modules/data/ranking";
 import { RankingRender } from "../ui/ranking/RankingRender";
 import DatePicker from "../ui/atoms/DatePicker";
 import { rankingPath } from "../../modules/paths/createPaths";
