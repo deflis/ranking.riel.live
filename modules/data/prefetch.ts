@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { QueryClient } from "react-query";
+import { QueryClient } from '@tanstack/react-query';
 import { rankingKey, rankingFetcher } from "./ranking";
 import { RankingType } from "narou/src/params";
 import { convertDate } from "../utils/date";

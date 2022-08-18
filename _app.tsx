@@ -1,8 +1,8 @@
 import { useCustomTheme } from "./modules/theme/theme";
-import { Provider, useSetAtom } from "jotai";
+import { Provider } from "jotai";
 import { queryClientAtom } from "jotai/query";
-import { QueryClient, QueryClientProvider, useQueryClient } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Layout } from "./components/Layout";
 import {
   DefaultGenerics,
@@ -10,7 +10,6 @@ import {
   ReactLocation,
   Route,
   Router,
-  useMatches,
 } from "@tanstack/react-location";
 import { Ranking } from "./components/templates/ranking";
 import { RankingType } from "narou/src/index.browser";
@@ -98,12 +97,12 @@ const routes: Route<DefaultGenerics>[] = [
 const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
   useCustomTheme();
 
-  const match = useMatches();
-
   return (
     <Layout>
       {children}
+      {/* なんかdevtoolsの動作がおかしいのでコメントアウト 
       <ReactQueryDevtools />
+      */}
     </Layout>
   );
 };

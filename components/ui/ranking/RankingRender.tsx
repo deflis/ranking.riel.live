@@ -10,7 +10,7 @@ import FakeItem from "./FakeItem";
 import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
-import { useIsFetching, useQueryClient } from "react-query";
+import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 
 const InsideRender: React.FC<{

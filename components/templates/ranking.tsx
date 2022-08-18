@@ -69,9 +69,9 @@ export const Ranking: React.FC = () => {
     <>
       <div className="mx-4 mt-2">
         <Paper className="mb-6 space-x-2 p-2 bg-white">
-          <Link to={rankingPath(type, addDate(date, type, -1))}>
-            <Button as="a">前</Button>
-          </Link>
+          <Button as={Link} to={rankingPath(type, addDate(date, type, -1))}>
+            前
+          </Button>
           <DatePicker
             minDate={minDate}
             maxDate={maxDate}
@@ -81,14 +81,12 @@ export const Ranking: React.FC = () => {
             }
           />
 
-          <Link to={rankingPath(type, addDate(date, type, 1))}>
-            <Button as="a">次</Button>
-          </Link>
-          <Link to={rankingPath(type)}>
-            <Button as="a" color="primary">
-              最新
-            </Button>
-          </Link>
+          <Button as={Link} to={rankingPath(type, addDate(date, type, 1))}>
+            次
+          </Button>
+          <Button as={Link} to={rankingPath(type)} color="primary">
+            最新
+          </Button>
           <SelectBox
             value={type}
             onChange={(type: RankingType) =>

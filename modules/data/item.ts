@@ -1,4 +1,4 @@
-import { QueryFunction, useQueries, useQuery } from "react-query";
+import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import DataLoader from "dataloader";
 import {
   Fields,
@@ -42,20 +42,22 @@ export const useItemForListing = (ncode: string) => {
 };
 
 export const useDetailForView = (ncode: string) => {
-  const [listing, others, ranking] = useQueries([
-    {
-      queryKey: itemKey(ncode),
-      queryFn: itemFetcher,
-    },
-    {
-      queryKey: itemDetailKey(ncode),
-      queryFn: itemDetailFetcher,
-    },
-    {
-      queryKey: itemRankingHistoryKey(ncode),
-      queryFn: itemRankingHistoryFetcher,
-    },
-  ]);
+  const [listing, others, ranking] = useQueries({
+    queries: [
+      {
+        queryKey: itemKey(ncode),
+        queryFn: itemFetcher,
+      },
+      {
+        queryKey: itemDetailKey(ncode),
+        queryFn: itemDetailFetcher,
+      },
+      {
+        queryKey: itemRankingHistoryKey(ncode),
+        queryFn: itemRankingHistoryFetcher,
+      },
+    ],
+  });
   return {
     item:
       listing.data && others.data

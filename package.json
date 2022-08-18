@@ -9,13 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^1.6.5",
+    "@headlessui/react": "^1.6.6",
     "@tanstack/react-location": "^3.7.4",
-    "clsx": "^1.1.1",
+    "@tanstack/react-query": "^4.1.3",
+    "@tanstack/react-query-devtools": "^4.0.10",
+    "clsx": "^1.2.1",
     "dataloader": "^2.1.0",
     "html-entities": "^2.3.3",
-    "jotai": "^1.7.2",
-    "luxon": "^2.4.0",
+    "jotai": "^1.7.8",
+    "luxon": "^3.0.1",
     "mabiki": "^1.0.1",
     "narou": "^0.7.5",
     "prop-types": "^15.8.1",
@@ -23,26 +25,25 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-infinite-scroll-hook": "^4.0.3",
-    "react-query": "^3.39.1",
     "react-use": "^17.4.0",
-    "recharts": "^2.1.12",
-    "type-fest": "^2.13.1"
+    "recharts": "^2.1.13",
+    "type-fest": "^2.18.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.2",
     "@types/html-entities": "^1.3.4",
-    "@types/luxon": "^2.3.2",
-    "@types/node": "^18.0.4",
-    "@types/react": "^18.0.15",
+    "@types/luxon": "^3.0.0",
+    "@types/node": "^18.7.5",
+    "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-infinite-scroller": "^1.2.3",
-    "@vitejs/plugin-react": "^2.0.0",
-    "autoprefixer": "^10.4.7",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.1.6",
-    "typescript": "^4.6.4",
-    "vite": "^3.0.0",
-    "vite-plugin-sass-dts": "^1.1.36"
+    "@vitejs/plugin-react": "^2.0.1",
+    "autoprefixer": "^10.4.8",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.8",
+    "vite-plugin-sass-dts": "^1.1.40"
   },
   "peerDependenciesMeta": {
     "narou": {

@@ -214,13 +214,13 @@ export const Header: React.FC = () => {
         </SidebarItem>
         <SidebarItem>
           <label>
-            <Checkbox checked={!showKeyword} onClick={toggleShowKeyword} />
+            <Checkbox checked={!showKeyword} onChange={toggleShowKeyword} />
             キーワードを表示しない
           </label>
         </SidebarItem>
         <SidebarItem>
           <label>
-            <Checkbox checked={!adMode} onClick={handleAdMode} />
+            <Checkbox checked={!adMode} onChange={handleAdMode} />
             広告を表示しない
           </label>
         </SidebarItem>
