@@ -22,7 +22,7 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
   const { data, isLoading: isLoadingQuery } = useQuery({
     queryKey: rankingKey(type, date),
     queryFn: rankingFetcher,
-    //staleTime: Infinity, // ランキングデータは不変なはず
+    staleTime: Infinity, // ランキングデータは不変なはず
   });
 
   const isUseFilter = useAtomValue(isUseFilterAtom);

@@ -2,9 +2,8 @@ import { Atom, atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
 import { Genre } from "narou/src/index.browser";
-import { ItemResult } from "../data/loaders/items";
+import { Item } from "../data/types";
 import { allGenres } from "../enum/Genre";
-import { parse } from "../utils/NarouDateFormat";
 
 export const genresAtom = atomWithStorage("genres", Array.from(allGenres));
 export const maxNoAtom = atomWithStorage<number | undefined>(
@@ -80,12 +79,11 @@ export const filterAtom = atom((get) => {
   const enableTanpen = get(enableTanpenAtom);
   const enableRensai = get(enableRensaiAtom);
   const enableKanketsu = get(enableKanketsuAtom);
-  return (item: ItemResult): boolean =>
-    !!item?.title &&
+  return (item: Item): boolean =>
     (genres.length === 0 || genres.includes(item.genre)) &&
     (maxNo === undefined || maxNo < 1 || item.general_all_no <= maxNo) &&
     (minNo === undefined || minNo < 1 || item.general_all_no >= minNo) &&
-    (!firstUpdate || firstUpdate < parse(item.general_firstup)!) &&
+    (!firstUpdate || firstUpdate < item.general_firstup) &&
     ((enableTanpen && item.noveltype === 2) ||
       (enableRensai && item.noveltype === 1 && item.end === 1) ||
       (enableKanketsu && item.noveltype === 1 && item.end === 0));

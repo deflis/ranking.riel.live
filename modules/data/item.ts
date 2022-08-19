@@ -168,5 +168,3 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
   }
   return rankingData;
 };
-
-const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
