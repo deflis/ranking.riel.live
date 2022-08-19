@@ -1,7 +1,7 @@
 import { useCustomTheme } from "./modules/theme/theme";
 import { Provider } from "jotai";
 import { queryClientAtom } from "jotai/query";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Layout } from "./components/Layout";
 import {
@@ -17,6 +17,8 @@ import { DateTime, Settings } from "luxon";
 import { convertDate } from "./modules/utils/date";
 import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
 import Detail from "./components/templates/detail";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { persister } from "./modules/utils/persister";
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
@@ -29,7 +31,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
 const location = new ReactLocation();
 const routes: Route<DefaultGenerics>[] = [
   {
@@ -110,13 +111,16 @@ const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
 function App() {
   return (
     <Provider initialValues={[[queryClientAtom, queryClient]]}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+      >
         <Router location={location} routes={routes}>
           <AppInside>
             <Outlet />
           </AppInside>
         </Router>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </Provider>
   );
 }
