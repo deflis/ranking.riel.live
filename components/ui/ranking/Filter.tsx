@@ -103,6 +103,7 @@ const InnterFilterComponent: React.FC = () => {
             maxDate={DateTime.now()}
             value={firstUpdate ?? null}
             onChange={updateFirstUpdate}
+            clearable
           />
         </fieldset>
         <fieldset>

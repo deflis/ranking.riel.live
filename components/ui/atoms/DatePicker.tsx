@@ -1,7 +1,7 @@
 import { DateTime, Interval } from "luxon";
 import { Popover, Transition } from "@headlessui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { IoCalendarOutline } from "react-icons/io5";
+import { IoCalendarOutline, IoClose } from "react-icons/io5";
 import { useCallback, useState } from "react";
 import clsx from "clsx";
 import { SelectBox } from "./SelectBox";
@@ -68,7 +68,8 @@ export const DatePicker: React.FC<{
   minDate: DateTime;
   maxDate: DateTime;
   onChange: (date: DateTime | null) => void;
-}> = ({ value, onChange, minDate, maxDate }) => {
+  clearable?: boolean;
+}> = ({ value, onChange, minDate, maxDate, clearable }) => {
   const [current, setCurrent] = useState(
     (value ?? DateTime.now()).startOf("month")
   );
@@ -88,6 +89,9 @@ export const DatePicker: React.FC<{
     (month: number) => setCurrent((x) => x.set({ month })),
     []
   );
+  const clearDate = useCallback(() => {
+    onChange(null);
+  }, []);
   const prevMonthButtonDisabled = minDate > current.minus({ month: 1 });
   const nextMonthButtonDisabled = current.plus({ month: 1 }) > maxDate;
   return (
@@ -168,6 +172,17 @@ export const DatePicker: React.FC<{
                   >
                     <HiChevronRight className="w-5 h-5 text-gray-600" />
                   </button>
+                  {clearable && (
+                    <button
+                      onClick={clearDate}
+                      type="button"
+                      className={clsx(
+                        "inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
+                      )}
+                    >
+                      <IoClose className="w-5 h-5 text-gray-600" />
+                    </button>
+                  )}
                 </div>
               </div>
               <Calender
