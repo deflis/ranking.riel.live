@@ -72,7 +72,7 @@ export const useDetailForView = (ncode: string) => {
 const itemLoader = new DataLoader<string, Item | undefined>(
   async (ncodes) => {
     const { values } = await search()
-      .ncode(ncodes as string[])
+      .ncode(ncodes)
       .limit(ncodes.length)
       .fields([
         Fields.ncode,
@@ -120,7 +120,7 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 const itemDetailLoader = new DataLoader<string, Detail | undefined>(
   async (ncodes) => {
     const { values } = await search()
-      .ncode(ncodes as string[])
+      .ncode(ncodes)
       .limit(ncodes.length)
       .fields([
         Fields.ncode,
