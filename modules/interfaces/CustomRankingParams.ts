@@ -1,6 +1,7 @@
 import { R18Site } from "narou/src/index.browser";
 import { RankingType } from "./RankingType";
 import { Except } from "type-fest";
+import { DateTime } from "luxon";
 
 export interface CustomRankingParams {
   keyword?: string;
@@ -10,7 +11,7 @@ export interface CustomRankingParams {
   genres: number[];
   min?: number;
   max?: number;
-  firstUpdate?: Date;
+  firstUpdate?: DateTime;
   rensai: boolean;
   kanketsu: boolean;
   tanpen: boolean;

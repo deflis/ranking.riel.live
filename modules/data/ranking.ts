@@ -1,6 +1,5 @@
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
-import { RankingType } from "narou";
 import {
   NarouRankingResult,
   ranking,

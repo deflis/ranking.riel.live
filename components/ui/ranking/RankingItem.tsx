@@ -21,12 +21,13 @@ import {
 } from "../../../modules/atoms/global";
 import clsx from "clsx";
 import { Button } from "../atoms/Button";
+import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
 
 function checkR18(item: Item | NocItem | undefined): item is NocItem {
   return !!item && (item as NocItem).nocgenre !== undefined;
 }
 const RankingItemRender: React.FC<{
-  rankingItem: NarouRankingResult;
+  rankingItem: RankingResultItem;
   item: Item | NocItem | undefined;
   isLoading: boolean;
   isError: boolean;
@@ -187,7 +188,7 @@ const RankingItemRender: React.FC<{
   );
 };
 
-const RankingItem: React.FC<{ item: NarouRankingResult }> = ({
+const RankingItem: React.FC<{ item: RankingResultItem }> = ({
   item: rankingItem,
 }) => {
   const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
