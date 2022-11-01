@@ -1,21 +1,18 @@
-import { Genre, Order } from "narou/src/index.browser";
-import React, { useCallback, useMemo } from "react";
+import { DateTime } from "luxon";
+import { Genre } from "narou/src/index.browser";
+import React, { useCallback } from "react";
 import { useSearchParam, useTitle } from "react-use";
-import {
-  useNavigate,
-  useMatch,
-  MakeGenerics,
-  useSearch,
-} from "@tanstack/react-location";
+
+import { MakeGenerics, useMatch, useNavigate } from "@tanstack/react-location";
+
+import { allGenres } from "../../modules/enum/Genre";
 import { CustomRankingParams } from "../../modules/interfaces/CustomRankingParams";
 import {
   RankingType,
   RankingTypeName,
 } from "../../modules/interfaces/RankingType";
-import { DateTime } from "luxon";
-import { allGenres } from "../../modules/enum/Genre";
-import { CustomRankingRender } from "../ui/ranking/CustomRankingRender";
 import { CustomRankingForm } from "../ui/custom/CustomRankingForm";
+import { CustomRankingRender } from "../ui/ranking/CustomRankingRender";
 
 export type CustomRankingPathParams = {
   type?: RankingType;

@@ -40,11 +40,12 @@ export const useCustomRankingMaxPage = (params: CustomRankingParams) => {
     params.rensai,
   ]);
   const { data } = useQuery({
-    queryKey: customRankingKey(params, fields, 1),
+    queryKey: customRankingKey(params, fields, 0),
     queryFn: customRankingFetcher,
   });
-  const maxPage = (data?.allcount ?? 0) / PAGE_ITEM_NUM;
-  return maxPage < 200 ? Math.floor(maxPage) : 200;
+  return data && data?.allcount < 2000
+    ? Math.floor(data.allcount / PAGE_ITEM_NUM)
+    : 200;
 };
 
 export const useCustomRanking = (params: CustomRankingParams, page: number) => {
@@ -72,7 +73,7 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
   > = useCallback(
     async ({ queryKey: [params, page] }) => {
       const values: PickedNarouSearchResult<CustomRankingResultKeyNames>[] = [];
-      let fetchPage = 1;
+      let fetchPage = 0;
       while (values.length < page * PAGE_ITEM_NUM) {
         const result = await queryClient.fetchQuery({
           queryKey: customRankingKey(params, fields, fetchPage),
@@ -80,10 +81,10 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
         });
         const resultValues = result.values.filter(filter);
         values.push(...resultValues);
-        if (result.allcount / PAGE_ITEM_NUM < result.page) {
+        fetchPage++;
+        if (result.allcount < fetchPage * PAGE_ITEM_NUM) {
           break;
         }
-        fetchPage + 1;
       }
       return formatCustomRankingRaw(params.rankingType, values).slice(
         (page - 1) * 10,
@@ -213,8 +214,7 @@ const customRankingFetcher: QueryFunction<
 }) => {
   const searchBuilder = search()
     .order(order)
-    .limit(10)
-    .page(page - 1)
+    .page(page, 10)
     .fields([
       Fields.ncode,
       Fields.general_all_no,

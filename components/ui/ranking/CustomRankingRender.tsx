@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { AdAmazonWidth } from "../common/AdAmazon";
@@ -29,6 +29,30 @@ const InsideRender: React.FC<{
         <div className="w-full md:basis-1/2 box-border p-4">
           <FakeItem />
         </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
+        <div className="w-full md:basis-1/2 box-border p-4">
+          <FakeItem />
+        </div>
       </>
     );
   }
@@ -38,7 +62,10 @@ const InsideRender: React.FC<{
   return (
     <>
       {data.map((item) => (
-        <div className="w-full md:basis-1/2 box-border p-4" key={item.ncode}>
+        <div
+          className="w-full md:basis-1/2 box-border p-4"
+          key={`${item.rank}-${item.ncode}`}
+        >
           <RankingItem item={item} />
         </div>
       ))}
@@ -50,6 +77,11 @@ export const CustomRankingRender: React.FC<{
   params: CustomRankingParams;
 }> = ({ params }) => {
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [params]);
+
   const maxPage = useCustomRankingMaxPage(params);
   const pages = Array.from({ length: page }, (_, i) => i + 1);
   const adMode = useAtomValue(adModeAtom);
@@ -77,6 +109,30 @@ export const CustomRankingRender: React.FC<{
         hasMore={page < maxPage}
         loader={
           <>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
             <div className="w-full md:basis-1/2 box-border p-4">
               <FakeItem />
             </div>
