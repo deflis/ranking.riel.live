@@ -1,21 +1,25 @@
-import { useCustomTheme } from "./modules/theme/theme";
-import { QueryClient } from "@tanstack/react-query";
-import { Layout } from "./components/Layout";
+import { DateTime, Settings } from "luxon";
+import { RankingType, search } from "narou/src/index.browser";
+
 import {
   DefaultGenerics,
   Outlet,
+  parseSearchWith,
   ReactLocation,
   Route,
   Router,
+  stringifySearchWith,
 } from "@tanstack/react-location";
-import Ranking from "./components/templates/ranking";
-import { RankingType } from "narou/src/index.browser";
-import { DateTime, Settings } from "luxon";
-import { convertDate } from "./modules/utils/date";
-import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
-import Detail from "./components/templates/detail";
-import CustomRanking from "./components/templates/custom";
+import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+
+import { Layout } from "./components/Layout";
+import CustomRanking from "./components/templates/custom";
+import Detail from "./components/templates/detail";
+import Ranking from "./components/templates/ranking";
+import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
+import { useCustomTheme } from "./modules/theme/theme";
+import { convertDate } from "./modules/utils/date";
 import { persister } from "./modules/utils/persister";
 
 Settings.defaultZone = "Asia/Tokyo";
@@ -29,7 +33,10 @@ const queryClient = new QueryClient({
     },
   },
 });
-const location = new ReactLocation();
+const location = new ReactLocation({
+  parseSearch: parseSearchWith((search) => search),
+  stringifySearch: stringifySearchWith((search: any) => String(search)),
+});
 const routes: Route<DefaultGenerics>[] = [
   {
     path: "/",
@@ -94,6 +101,12 @@ const routes: Route<DefaultGenerics>[] = [
   {
     path: "custom",
     element: <CustomRanking />,
+    children: [
+      {
+        path: ":type",
+        element: <CustomRanking />,
+      },
+    ],
   },
 ];
 

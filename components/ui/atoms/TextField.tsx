@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { forwardRef, InputHTMLAttributes, PropsWithRef } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 
 export const TextField: React.FC<InputHTMLAttributes<HTMLInputElement>> =
   forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(

@@ -1,6 +1,6 @@
-import { Order } from "narou/src/index.browser";
+import { Genre, Order } from "narou/src/index.browser";
 import React, { useCallback, useMemo } from "react";
-import { useTitle } from "react-use";
+import { useSearchParam, useTitle } from "react-use";
 import {
   useNavigate,
   useMatch,
@@ -15,6 +15,7 @@ import {
 import { DateTime } from "luxon";
 import { allGenres } from "../../modules/enum/Genre";
 import { CustomRankingRender } from "../ui/ranking/CustomRankingRender";
+import { CustomRankingForm } from "../ui/custom/CustomRankingForm";
 
 export type CustomRankingPathParams = {
   type?: RankingType;
@@ -33,26 +34,6 @@ export type CustomRankingQueryParams = {
   kanketsu?: string;
   tanpen?: string;
 };
-
-function convertOrder(type?: RankingType): Order {
-  switch (type) {
-    case RankingType.Daily:
-    default:
-      return Order.DailyPoint;
-    case RankingType.Weekly:
-      return Order.WeeklyPoint;
-    case RankingType.Monthly:
-      return Order.MonthlyPoint;
-    case RankingType.Quarter:
-      return Order.QuarterPoint;
-    case RankingType.Yearly:
-      return Order.YearlyPoint;
-    case RankingType.All:
-      return Order.HyokaDesc;
-    case RankingType.UniqueUser:
-      return Order.Weekly;
-  }
-}
 
 function createSearchParams({
   keyword,
@@ -82,66 +63,45 @@ function createSearchParams({
   return searchParams;
 }
 
-function parseQuery(
-  {
-    keyword,
-    not_keyword,
-    by_story,
-    by_title,
-    genres,
-    max,
-    min,
-    first_update,
-    rensai,
-    kanketsu,
-    tanpen,
-  }: CustomRankingQueryParams,
-  rankingType: RankingType
-): CustomRankingParams {
-  function boolean(str: string | undefined, defaultValue: boolean): boolean {
-    return str === undefined ? defaultValue : str !== "0";
+function parseQuery(rankingType: RankingType): CustomRankingParams {
+  function boolean(str: string | null, defaultValue: boolean): boolean {
+    return str === null ? defaultValue : str !== "0";
   }
-  function int(str: string | undefined): number | undefined {
-    return str !== undefined ? parseInt(str, 10) : undefined;
+  function int(str: string | null): number | undefined {
+    return str !== null ? parseInt(str, 10) : undefined;
   }
-  function date(str: string | undefined): DateTime | undefined {
-    return str !== undefined ? DateTime.fromISO(str) : undefined;
+  function date(str: string | null): DateTime | undefined {
+    return str !== null ? DateTime.fromISO(str) : undefined;
   }
   return {
-    keyword,
-    notKeyword: not_keyword,
-    byStory: boolean(by_story, false),
-    byTitle: boolean(by_title, false),
-    genres: conventGenres(genres),
-    max: int(max),
-    min: int(min),
-    firstUpdate: date(first_update),
-    rensai: boolean(rensai, true),
-    kanketsu: boolean(kanketsu, true),
-    tanpen: boolean(tanpen, true),
+    keyword: useSearchParam("keyword") ?? undefined,
+    notKeyword: useSearchParam("not_keyword") ?? undefined,
+    byStory: boolean(useSearchParam("by_story"), false),
+    byTitle: boolean(useSearchParam("by_title"), false),
+    genres: conventGenres(useSearchParam("genres")),
+    max: int(useSearchParam("max")),
+    min: int(useSearchParam("min")),
+    firstUpdate: date(useSearchParam("first_update")),
+    rensai: boolean(useSearchParam("rensai"), true),
+    kanketsu: boolean(useSearchParam("kanketsu"), true),
+    tanpen: boolean(useSearchParam("tanpen"), true),
     rankingType,
   };
 }
 
-function conventGenres(rawGenres: string = "") {
-  return rawGenres
+function conventGenres(rawGenres: string | null): Genre[] {
+  return (rawGenres ?? "")
     .split(",")
-    .map((x) => Number(x))
-    .filter((x) => allGenres.includes(x as any));
+    .map((x) => Number(x) as Genre)
+    .filter((x) => allGenres.includes(x));
 }
 
 export const CustomRanking: React.FC = () => {
-  const query = useSearch() as CustomRankingQueryParams;
   const {
     params: { type },
   } = useMatch<MakeGenerics<{ Params: CustomRankingPathParams }>>();
 
-  const params = useMemo(
-    () => parseQuery(query, (type ?? RankingType.Daily) as RankingType),
-    [query, type]
-  );
-  const searchParams = useMemo(() => createSearchParams(params), [params]);
-  const order = convertOrder(params.rankingType);
+  const params = parseQuery((type ?? RankingType.Daily) as RankingType);
 
   const navigate = useNavigate();
 
@@ -162,7 +122,7 @@ export const CustomRanking: React.FC = () => {
 
   return (
     <>
-      {/*<CustomRankingForm params={params} onSearch={handleSearch} />*/}
+      <CustomRankingForm params={params} onSearch={handleSearch} />
       <CustomRankingRender params={params} />
     </>
   );

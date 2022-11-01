@@ -1,6 +1,6 @@
 import { NarouRankingResult } from "narou/src/index.browser";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import useInfiniteScroll from "react-infinite-scroll-hook";
+import InfiniteScroll from "react-infinite-scroller";
 
 import { chunk } from "../../../modules/utils/chunk";
 import { AdAmazonWidth } from "../common/AdAmazon";
@@ -10,7 +10,7 @@ import FakeItem from "./FakeItem";
 import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
-import { useIsFetching, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 
 const InsideRender: React.FC<{
@@ -52,31 +52,37 @@ const InsideRender: React.FC<{
       ranking.slice(max, max + 10).map((x) => x.ncode)
     );
   }, [max, rankingConstants]);
-  const [sentryRef] = useInfiniteScroll({
-    loading: !!useIsFetching(),
-    hasNextPage: max < ranking.length,
-    onLoadMore: useCallback(() => {
-      setMax((x) => x + 10);
-    }, [setMax]),
-    rootMargin: "0px 0px 400px 0px",
-  });
 
   return (
     <>
-      <div className="flex w-full flex-wrap flex-row">{renderItems}</div>
-      <div className="flex w-full flex-wrap flex-row" ref={sentryRef}>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-      </div>
+      <InfiniteScroll
+        pageStart={1}
+        loadMore={useCallback(
+          (page) => {
+            setMax(page * 10);
+          },
+          [setMax]
+        )}
+        hasMore={max < ranking.length}
+        loader={
+          <>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+          </>
+        }
+        className="flex w-full flex-wrap flex-row"
+      >
+        {renderItems}
+      </InfiniteScroll>
       <div className="w-full">
         <SelfAd />
       </div>
       <div className="w-full">
-        <AdSense></AdSense>
+        <AdSense />
       </div>
     </>
   );

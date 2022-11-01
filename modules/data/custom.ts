@@ -6,14 +6,46 @@ import {
   PickedNarouSearchResult,
   search,
 } from "narou/src/index.browser";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { QueryFunction, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-import { convertOrder, formatCustomRankingRaw } from "./custom/utils";
+import {
+  convertOrder,
+  formatCustomRankingRaw,
+  RankingData,
+} from "./custom/utils";
+
+const PAGE_ITEM_NUM = 10 as const;
+
+export const useCustomRankingMaxPage = (params: CustomRankingParams) => {
+  const fields = useMemo(() => {
+    const filterBuilder = new FilterBuilder();
+    if (params.max) filterBuilder.setMaxNo(params.max);
+    if (params.min) filterBuilder.setMaxNo(params.min);
+    if (params.firstUpdate) filterBuilder.setFirstUpdate(params.firstUpdate);
+    if (!params.tanpen) filterBuilder.disableTanpen();
+    if (!params.kanketsu) filterBuilder.disableKanketsu();
+    if (!params.rensai) filterBuilder.disableRensai();
+    return filterBuilder.fields();
+  }, [
+    params.max,
+    params.min,
+    params.firstUpdate,
+    params.tanpen,
+    params.kanketsu,
+    params.rensai,
+  ]);
+  const { data } = useQuery({
+    queryKey: customRankingKey(params, fields, 1),
+    queryFn: customRankingFetcher,
+  });
+  const maxPage = (data?.allcount ?? 0) / PAGE_ITEM_NUM;
+  return maxPage < 200 ? Math.floor(maxPage) : 200;
+};
 
 export const useCustomRanking = (params: CustomRankingParams, page: number) => {
   const [filter, fields] = useMemo(() => {
@@ -34,42 +66,52 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
     params.rensai,
   ]);
   const queryClient = useQueryClient();
-  const { isLoading, data } = useQuery({
-    queryKey: [params, page] as const,
-    queryFn: async ({ queryKey: [params, page] }) => {
-      const values: PickedNarouSearchResult<
-        | "ncode"
-        | "general_all_no"
-        | "general_firstup"
-        | "noveltype"
-        | "end"
-        | "daily_point"
-        | "weekly_point"
-        | "monthly_point"
-        | "quarter_point"
-        | "yearly_point"
-        | "all_hyoka_cnt"
-        | "weekly_unique"
-      >[] = [];
-      while (values.length < page * 10) {
+  const queryFn: QueryFunction<
+    RankingData[],
+    readonly [CustomRankingParams, number]
+  > = useCallback(
+    async ({ queryKey: [params, page] }) => {
+      const values: PickedNarouSearchResult<CustomRankingResultKeyNames>[] = [];
+      let fetchPage = 1;
+      while (values.length < page * PAGE_ITEM_NUM) {
         const result = await queryClient.fetchQuery({
-          queryKey: customRankingKey(params, fields, 1),
+          queryKey: customRankingKey(params, fields, fetchPage),
           queryFn: customRankingFetcher,
         });
         const resultValues = result.values.filter(filter);
         values.push(...resultValues);
-        if (result.allcount / 10 < result.page) {
+        if (result.allcount / PAGE_ITEM_NUM < result.page) {
           break;
         }
+        fetchPage + 1;
       }
       return formatCustomRankingRaw(params.rankingType, values).slice(
         (page - 1) * 10,
         page * 10
       );
     },
+    [queryClient, fields]
+  );
+  const { isLoading, data } = useQuery({
+    queryKey: [params, page] as const,
+    queryFn,
   });
   return { isLoading, data };
 };
+
+type CustomRankingResultKeyNames =
+  | "ncode"
+  | "general_all_no"
+  | "general_firstup"
+  | "noveltype"
+  | "end"
+  | "daily_point"
+  | "weekly_point"
+  | "monthly_point"
+  | "quarter_point"
+  | "yearly_point"
+  | "all_hyoka_cnt"
+  | "weekly_unique";
 
 const customRankingKey = (
   params: CustomRankingParams,
@@ -85,6 +127,7 @@ const customRankingKey = (
     rensai,
     kanketsu,
     tanpen,
+    genres,
   } = params;
   let novelTypeParam: NovelTypeParam | null = null;
   if (!tanpen) {
@@ -141,26 +184,15 @@ const customRankingKey = (
     notKeyword,
     byTitle,
     byStory,
+    genres,
     novelTypeParam,
     [...fields, ...newFields] as const,
     optionalFields,
     page,
   ] as const;
 };
-type NarouCustomRankingSearchResults = NarouSearchResults<
-  | "ncode"
-  | "general_all_no"
-  | "general_firstup"
-  | "noveltype"
-  | "end"
-  | "daily_point"
-  | "weekly_point"
-  | "monthly_point"
-  | "quarter_point"
-  | "yearly_point"
-  | "all_hyoka_cnt"
-  | "weekly_unique"
->;
+type NarouCustomRankingSearchResults =
+  NarouSearchResults<CustomRankingResultKeyNames>;
 const customRankingFetcher: QueryFunction<
   NarouCustomRankingSearchResults,
   ReturnType<typeof customRankingKey>
@@ -172,6 +204,7 @@ const customRankingFetcher: QueryFunction<
     notKeyword,
     byTitle,
     byStory,
+    genres,
     novelTypeParam,
     fields,
     optionalFields,
@@ -181,7 +214,7 @@ const customRankingFetcher: QueryFunction<
   const searchBuilder = search()
     .order(order)
     .limit(10)
-    .page(page)
+    .page(page - 1)
     .fields([
       Fields.ncode,
       Fields.general_all_no,
@@ -201,6 +234,9 @@ const customRankingFetcher: QueryFunction<
   searchBuilder.fields(fields);
   searchBuilder.opt(optionalFields);
 
+  if (genres.length > 0) {
+    searchBuilder.genre(genres);
+  }
   if (keyword) {
     searchBuilder.word(keyword).byKeyword(true);
   }

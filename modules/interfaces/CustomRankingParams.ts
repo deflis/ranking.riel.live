@@ -1,4 +1,4 @@
-import { R18Site } from "narou/src/index.browser";
+import { Genre, R18Site } from "narou/src/index.browser";
 import { RankingType } from "./RankingType";
 import { Except } from "type-fest";
 import { DateTime } from "luxon";
@@ -8,7 +8,7 @@ export interface CustomRankingParams {
   notKeyword?: string;
   byTitle: boolean;
   byStory: boolean;
-  genres: number[];
+  genres: Genre[];
   min?: number;
   max?: number;
   firstUpdate?: DateTime;
