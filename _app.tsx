@@ -1,8 +1,5 @@
 import { useCustomTheme } from "./modules/theme/theme";
-import { Provider } from "jotai";
-import { queryClientAtom } from "jotai/query";
 import { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Layout } from "./components/Layout";
 import {
   DefaultGenerics,
@@ -11,12 +8,13 @@ import {
   Route,
   Router,
 } from "@tanstack/react-location";
-import { Ranking } from "./components/templates/ranking";
+import Ranking from "./components/templates/ranking";
 import { RankingType } from "narou/src/index.browser";
 import { DateTime, Settings } from "luxon";
 import { convertDate } from "./modules/utils/date";
 import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
 import Detail from "./components/templates/detail";
+import CustomRanking from "./components/templates/custom";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { persister } from "./modules/utils/persister";
 
@@ -93,6 +91,10 @@ const routes: Route<DefaultGenerics>[] = [
       return {};
     },
   },
+  {
+    path: "custom",
+    element: <CustomRanking />,
+  },
 ];
 
 const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -110,18 +112,16 @@ const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
 
 function App() {
   return (
-    <Provider initialValues={[[queryClientAtom, queryClient]]}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister }}
-      >
-        <Router location={location} routes={routes}>
-          <AppInside>
-            <Outlet />
-          </AppInside>
-        </Router>
-      </PersistQueryClientProvider>
-    </Provider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
+      <Router location={location} routes={routes}>
+        <AppInside>
+          <Outlet />
+        </AppInside>
+      </Router>
+    </PersistQueryClientProvider>
   );
 }
 

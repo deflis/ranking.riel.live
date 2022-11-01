@@ -1,16 +1,20 @@
-import { formatISO, parseISO } from "date-fns";
 import { Order } from "narou/src/index.browser";
 import React, { useCallback, useMemo } from "react";
-import { useHistory, useParams } from "react-router-dom";
 import { useTitle } from "react-use";
-
-import { useCustomRanking } from "../api/useCustomRanking";
-import { CustomRankingForm } from "../components/custom/CustomRankingForm";
-import { RankingRender } from "../components/ranking/RankingRender";
-import Genre from "../enum/Genre";
-import { CustomRankingParams } from "../interface/CustomRankingParams";
-import { RankingType, RankingTypeName } from "../interface/RankingType";
-import { useQuery } from "../util/useQuery";
+import {
+  useNavigate,
+  useMatch,
+  MakeGenerics,
+  useSearch,
+} from "@tanstack/react-location";
+import { CustomRankingParams } from "../../modules/interfaces/CustomRankingParams";
+import {
+  RankingType,
+  RankingTypeName,
+} from "../../modules/interfaces/RankingType";
+import { DateTime } from "luxon";
+import { allGenres } from "../../modules/enum/Genre";
+import { CustomRankingRender } from "../ui/ranking/CustomRankingRender";
 
 export type CustomRankingPathParams = {
   type?: RankingType;
@@ -71,11 +75,7 @@ function createSearchParams({
   if (genres.length !== 0) searchParams.set("genres", genres.join(","));
   if (max) searchParams.set("max", max.toString());
   if (min) searchParams.set("min", min.toString());
-  if (firstUpdate)
-    searchParams.set(
-      "first_update",
-      formatISO(firstUpdate, { representation: "complete" })
-    );
+  if (firstUpdate) searchParams.set("first_update", firstUpdate.toISODate());
   if (!rensai) searchParams.set("rensai", "0");
   if (!kanketsu) searchParams.set("kanketsu", "0");
   if (!tanpen) searchParams.set("tanpen", "0");
@@ -104,8 +104,8 @@ function parseQuery(
   function int(str: string | undefined): number | undefined {
     return str !== undefined ? parseInt(str, 10) : undefined;
   }
-  function date(str: string | undefined): Date | undefined {
-    return str !== undefined ? parseISO(str) : undefined;
+  function date(str: string | undefined): DateTime | undefined {
+    return str !== undefined ? DateTime.fromISO(str) : undefined;
   }
   return {
     keyword,
@@ -127,12 +127,15 @@ function conventGenres(rawGenres: string = "") {
   return rawGenres
     .split(",")
     .map((x) => Number(x))
-    .filter((x) => Genre.has(x));
+    .filter((x) => allGenres.includes(x as any));
 }
 
-const CustomRanking: React.FC = () => {
-  const { type } = useParams<CustomRankingPathParams>();
-  const query = useQuery<CustomRankingQueryParams>();
+export const CustomRanking: React.FC = () => {
+  const query = useSearch() as CustomRankingQueryParams;
+  const {
+    params: { type },
+  } = useMatch<MakeGenerics<{ Params: CustomRankingPathParams }>>();
+
   const params = useMemo(
     () => parseQuery(query, (type ?? RankingType.Daily) as RankingType),
     [query, type]
@@ -140,31 +143,27 @@ const CustomRanking: React.FC = () => {
   const searchParams = useMemo(() => createSearchParams(params), [params]);
   const order = convertOrder(params.rankingType);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useTitle(
-    `${
-      params.keyword ? `${params.keyword}の` : "カスタム"
-    }${RankingTypeName.get(
-      params.rankingType
-    )}ランキング - なろうランキングビューワ`
+    `${params.keyword ? `${params.keyword}の` : "カスタム"}${
+      RankingTypeName[params.rankingType]
+    }ランキング - なろうランキングビューワ`
   );
 
   const handleSearch = useCallback<(e: CustomRankingParams) => void>(
     (params) => {
-      history.push(
-        `/custom/${params.rankingType}?${createSearchParams(params)}`
-      );
+      navigate({
+        to: `/custom/${params.rankingType}?${createSearchParams(params)}`,
+      });
     },
     [history]
   );
 
-  const { ranking, loading } = useCustomRanking(order, searchParams);
-
   return (
     <>
-      <CustomRankingForm params={params} onSearch={handleSearch} />
-      <RankingRender ranking={ranking} loading={loading} />
+      {/*<CustomRankingForm params={params} onSearch={handleSearch} />*/}
+      <CustomRankingRender params={params} />
     </>
   );
 };
