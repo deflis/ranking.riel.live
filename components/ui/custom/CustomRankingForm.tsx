@@ -1,9 +1,9 @@
 import { DateTime } from "luxon";
 import { Genre, GenreNotation } from "narou/src/index.browser";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
+import { Controller, useController, useForm } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
-import { useBoolean, useToggle, useUpdateEffect } from "react-use";
-import { useForm, Controller, useController, Control } from "react-hook-form";
+import { useToggle } from "react-use";
 
 import { allGenres } from "../../../modules/enum/Genre";
 import { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -14,11 +14,12 @@ import {
 import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
 import { Paper } from "../atoms/Paper";
-import { StoryCount } from "../common/StoryCount";
-import { TwitterShare } from "../common/TwitterShare";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
-import { DatePicker } from "../atoms/DatePicker";
+import { Tag } from "../common/bulma/Tag";
+import { StoryCount } from "../common/StoryCount";
+import { TwitterShare } from "../common/TwitterShare";
+import { FirstUpdateDatePicker } from "./FirstUpdateDatePicker";
 
 export interface CustomRankingFormParams {
   params: CustomRankingParams;
@@ -36,8 +37,9 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
   const [show, toggleShow] = useToggle(false);
 
   return (
-    <>
-      <div>
+    <div className="p-4 space-y-4">
+      <div className="flex flex-row space-y-4">
+        <div className="flex-grow" />
         <TwitterShare
           title={`${params.keyword ? `${params.keyword}の` : "カスタム"}${
             RankingTypeName[params.rankingType]
@@ -46,7 +48,7 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
           ランキングを共有
         </TwitterShare>{" "}
         <Button onClick={toggleShow}>
-          <FaCog />
+          <FaCog className="w-5 h-5 pr-2 inline" />
           編集
         </Button>
       </div>
@@ -59,7 +61,7 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
       ) : (
         <DisableCustomRankingForm params={params} />
       )}
-    </>
+    </div>
   );
 };
 
@@ -69,7 +71,7 @@ const DisableCustomRankingForm: React.FC<{
   const genre =
     genres.length > 0
       ? genres
-          .map((genre) => <span className="tag">{GenreNotation[genre]}</span>)
+          .map((genre) => <Tag>{GenreNotation[genre]}</Tag>)
           .reduce(
             (previous, current) => (
               <>
@@ -81,7 +83,7 @@ const DisableCustomRankingForm: React.FC<{
       : "ジャンル設定なし";
   return (
     <>
-      <h1>
+      <h1 className="text-4xl md:text-6xl my-8">
         {keyword ? `${keyword}の` : "カスタム"}
         {RankingTypeName[rankingType]}ランキング
       </h1>
@@ -102,23 +104,6 @@ const rankingTypeList = [
 
 type InnerParams = Omit<CustomRankingParams, "firstUpdate"> & {
   firstUpdate: string | undefined;
-};
-
-const FirstUpdateDatePicker: React.FC<{ control: Control<InnerParams> }> = ({
-  control,
-}) => {
-  const {
-    field: { onChange, value },
-  } = useController({ control, name: "firstUpdate" });
-  return (
-    <DatePicker
-      minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
-      maxDate={DateTime.now()}
-      value={value ? DateTime.fromISO(value) : null}
-      onChange={(value) => onChange(value?.toISODate())}
-      clearable
-    />
-  );
 };
 
 const EnableCustomRankingForm: React.FC<
@@ -162,7 +147,7 @@ const EnableCustomRankingForm: React.FC<
 
   const genreFilter = allGenres.map((id) => (
     <React.Fragment key={id}>
-      <label>
+      <label className="inline-block">
         <Checkbox
           checked={genres.includes(id)}
           value={id}
@@ -177,44 +162,56 @@ const EnableCustomRankingForm: React.FC<
   const unselectAll = useCallback(() => setGenres([]), []);
 
   return (
-    <Paper>
-      <form onSubmit={handleSubmit(handleSearch)}>
+    <form onSubmit={handleSubmit(handleSearch)}>
+      <Paper className="bg-white p-4 space-y-4">
         <fieldset>
-          <legend>種類</legend>
-          <Controller
-            name="rankingType"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <SelectBox
-                value={value}
-                onChange={onChange}
-                options={rankingTypeList.map((value) => ({
-                  value,
-                  label: RankingTypeName[value],
-                }))}
-              />
-            )}
-          />
+          <label className="inline-flex flex-col">
+            <span className="font-bold text-sm text-slate-500">種類</span>
+            <Controller
+              name="rankingType"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <SelectBox
+                  value={value}
+                  onChange={onChange}
+                  options={rankingTypeList.map((value) => ({
+                    value,
+                    label: RankingTypeName[value],
+                  }))}
+                />
+              )}
+            />
+          </label>
+        </fieldset>
+        <fieldset className="space-x-2 flex items-end">
+          <label className="inline-flex flex-col">
+            <span className="font-bold text-sm text-slate-500">キーワード</span>
+            <TextField {...register("keyword")} className="align-middle" />
+          </label>
+          <label className="inline-flex flex-col">
+            <span className="font-bold text-sm  text-slate-500">
+              除外キーワード
+            </span>
+            <TextField {...register("notKeyword")} className="align-middle" />
+          </label>
+
+          <label>
+            <Checkbox {...register("byTitle")} className="align-middle" />
+            <span className="align-middle">タイトルを含める</span>
+          </label>
+          <label>
+            <Checkbox {...register("byStory")} className="align-middle" />
+            <span className="align-middle">あらすじを含める</span>
+          </label>
         </fieldset>
         <fieldset>
-          <legend>キーワード</legend>
-          <TextField {...register("keyword")} />
-          <legend>除外キーワード</legend>
-          <TextField {...register("notKeyword")} />
-          <Checkbox {...register("byTitle")} />
-          タイトルを含める
-          <Checkbox {...register("byStory")} />
-          あらすじを含める
-        </fieldset>
-        <fieldset>
-          <legend>ジャンル</legend>
+          <legend className="font-bold text-sm text-slate-500">ジャンル</legend>
           {genreFilter}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>
-          未選択時は全て
         </fieldset>
         <fieldset>
-          <legend>話数</legend>
+          <legend className="font-bold text-sm text-slate-500">話数</legend>
           <Controller
             name="min"
             control={control}
@@ -235,11 +232,14 @@ const EnableCustomRankingForm: React.FC<
             )}
           />
         </fieldset>
-        <div>
-          <FirstUpdateDatePicker control={control} />
-        </div>
         <fieldset>
-          <legend>更新状態</legend>
+          <legend className="font-bold text-sm text-slate-500">
+            更新開始日
+          </legend>
+          <FirstUpdateDatePicker control={control} />
+        </fieldset>
+        <fieldset>
+          <legend className="font-bold text-sm text-slate-500">更新状態</legend>
           <Checkbox {...register("rensai")} />
           連載中
           <Checkbox {...register("kanketsu")} />
@@ -247,17 +247,17 @@ const EnableCustomRankingForm: React.FC<
           <Checkbox {...register("tanpen")} />
           短編
         </fieldset>
-        <div>
-          <Button type="submit" color="primary">
-            <FaSearch />
+        <fieldset className="space-x-4">
+          <Button type="submit" color="primary" className="font-bold">
+            <FaSearch className="w-5 h-5 pr-2 inline" />
             検索
           </Button>
-          <Button onClick={onClose}>
-            <FaTimes />
+          <Button onClick={onClose} className="font-bold">
+            <FaTimes className="w-5 h-5 pr-2 inline" />
             閉じる
           </Button>
-        </div>
-      </form>
-    </Paper>
+        </fieldset>
+      </Paper>
+    </form>
   );
 };
