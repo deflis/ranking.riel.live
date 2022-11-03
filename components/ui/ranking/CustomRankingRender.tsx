@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import useInfiniteScroll from "react-infinite-scroll-hook";
 
 import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";

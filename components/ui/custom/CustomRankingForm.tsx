@@ -3,7 +3,7 @@ import { Genre, GenreNotation } from "narou/src/index.browser";
 import React, { useCallback, useEffect, useState } from "react";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useBoolean, useToggle, useUpdateEffect } from "react-use";
-import { useForm, Controller, useController } from "react-hook-form";
+import { useForm, Controller, useController, Control } from "react-hook-form";
 
 import { allGenres } from "../../../modules/enum/Genre";
 import { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -100,16 +100,48 @@ const rankingTypeList = [
   RankingType.UniqueUser,
 ] as const;
 
+type InnerParams = Omit<CustomRankingParams, "firstUpdate"> & {
+  firstUpdate: string | undefined;
+};
+
+const FirstUpdateDatePicker: React.FC<{ control: Control<InnerParams> }> = ({
+  control,
+}) => {
+  const {
+    field: { onChange, value },
+  } = useController({ control, name: "firstUpdate" });
+  return (
+    <DatePicker
+      minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
+      maxDate={DateTime.now()}
+      value={value ? DateTime.fromISO(value) : null}
+      onChange={(value) => onChange(value?.toISODate())}
+      clearable
+    />
+  );
+};
+
 const EnableCustomRankingForm: React.FC<
   CustomRankingFormParams & InnterParams
 > = ({ params, onSearch, onClose }) => {
-  const { control, register, handleSubmit, reset } = useForm({
+  const { firstUpdate, ...otherParams } = params;
+  const { control, register, handleSubmit, reset } = useForm<InnerParams>({
     mode: "onSubmit",
-    defaultValues: params,
+    defaultValues: { firstUpdate: firstUpdate?.toISODate(), ...otherParams },
   });
   useEffect(() => {
-    reset(params);
+    const { firstUpdate, ...otherParams } = params;
+    reset({ firstUpdate: firstUpdate?.toISODate(), ...otherParams });
   }, [params]);
+  const handleSearch = useCallback(
+    ({ firstUpdate, ...params }: InnerParams) => {
+      onSearch({
+        firstUpdate: firstUpdate ? DateTime.fromISO(firstUpdate) : undefined,
+        ...params,
+      });
+    },
+    [onSearch]
+  );
   const {
     field: { value: genres, onChange: setGenres },
   } = useController({ name: "genres", control });
@@ -146,7 +178,7 @@ const EnableCustomRankingForm: React.FC<
 
   return (
     <Paper>
-      <form onSubmit={handleSubmit(onSearch)}>
+      <form onSubmit={handleSubmit(handleSearch)}>
         <fieldset>
           <legend>種類</legend>
           <Controller
@@ -204,19 +236,7 @@ const EnableCustomRankingForm: React.FC<
           />
         </fieldset>
         <div>
-          <Controller
-            name="firstUpdate"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <DatePicker
-                minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
-                maxDate={DateTime.now()}
-                value={value ?? null}
-                onChange={onChange}
-                clearable
-              />
-            )}
-          />
+          <FirstUpdateDatePicker control={control} />
         </div>
         <fieldset>
           <legend>更新状態</legend>
