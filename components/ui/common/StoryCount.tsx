@@ -34,7 +34,13 @@ export const StoryCount: React.FC<
         <Checkbox checked={!disabled} onChange={toggle} />
         {children}
       </label>
-      <TextField onChange={handleChange} value={value} disabled={disabled} />話
+      <TextField
+        onChange={handleChange}
+        value={value}
+        disabled={disabled}
+        className="w-20"
+      />
+      話
     </>
   );
 };

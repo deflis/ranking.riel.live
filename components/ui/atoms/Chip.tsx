@@ -23,7 +23,7 @@ function ChipBase<T extends ElementType = "a">(
     <Component
       ref={ref as any}
       className={clsx(
-        "link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center",
+        "link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center dark:bg-gray-700",
         className
       )}
       {...props}

@@ -163,7 +163,7 @@ const EnableCustomRankingForm: React.FC<
 
   return (
     <form onSubmit={handleSubmit(handleSearch)}>
-      <Paper className="bg-white p-4 space-y-4">
+      <Paper className="bg-white p-4 space-y-4 dark:bg-gray-800 dark:border-gray-700">
         <fieldset>
           <label className="inline-flex flex-col">
             <span className="font-bold text-sm text-slate-500">種類</span>
@@ -178,6 +178,7 @@ const EnableCustomRankingForm: React.FC<
                     value,
                     label: RankingTypeName[value],
                   }))}
+                  buttonClassName="w-52"
                 />
               )}
             />
@@ -226,7 +227,7 @@ const EnableCustomRankingForm: React.FC<
             name="max"
             control={control}
             render={({ field: { onChange, value } }) => (
-              <StoryCount value={value} defaultValue={1} onUpdate={onChange}>
+              <StoryCount value={value} defaultValue={30} onUpdate={onChange}>
                 最大
               </StoryCount>
             )}

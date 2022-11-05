@@ -6,7 +6,7 @@ const FakeItem: React.FC<{
   rankingItem?: NarouRankingResult | undefined;
 }> = ({ rankingItem }) => {
   return (
-    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 ">
+    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
       <p color="textSecondary">
         {rankingItem && (
           <>

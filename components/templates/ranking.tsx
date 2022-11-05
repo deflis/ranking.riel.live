@@ -68,7 +68,7 @@ export const Ranking: React.FC = () => {
   return (
     <>
       <div className="mx-4 mt-2">
-        <Paper className="mb-6 space-x-2 p-2 bg-white">
+        <Paper className="mb-6 space-x-2 p-2 bg-white dark:bg-gray-800 dark:border-gray-700">
           <Button as={Link} to={rankingPath(type, addDate(date, type, -1))}>
             前
           </Button>

@@ -9,7 +9,7 @@ import {
 } from "../../../modules/atoms/global";
 import { useHandleChange } from "../../../modules/utils/useHandleChange";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
-import { Link as RouterLink } from "@tanstack/react-location";
+import { Link as RouterLink, useNavigate } from "@tanstack/react-location";
 
 import { AdDialog } from "./AdDialog";
 import NumberTextField from "./NumberTextField";
@@ -27,15 +27,16 @@ function validate(ncode: string): boolean {
 
 export const Header: React.FC = () => {
   const [ncode, setNcode] = useState("");
+  const navigate = useNavigate();
   const detail = useCallback(
     (e: { preventDefault: () => void }) => {
       e.preventDefault();
       if (!validate(ncode)) {
         return;
       }
-      `/detail/${ncode}`;
+      navigate({ to: `/detail/${ncode}` });
     },
-    [ncode]
+    [navigate, ncode]
   );
 
   const handleChangeNcode = useHandleChange(setNcode);
@@ -83,9 +84,9 @@ export const Header: React.FC = () => {
 
   return (
     <header>
-      <nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between">
+      <nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between dark:bg-neutral-900">
         <button
-          className="rounded-full hover:bg-stone-300 w-10 h-10"
+          className="rounded-full hover:bg-stone-300 dark:hover:bg-neutral-800  w-10 h-10"
           onClick={toggle}
         >
           <HiMenu className="w-5 h-5 m-auto" />

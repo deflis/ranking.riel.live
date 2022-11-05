@@ -26,8 +26,9 @@ function SidebarItemBase<T extends ElementType = "span">(
       <Component
         ref={ref as any}
         className={clsx(
-          "link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
-          hover && "hover:text-gray-900 hover:bg-gray-100",
+          "link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 dark:text-gray-300 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
+          hover &&
+            "hover:text-gray-900 hover:bg-gray-100 darl:hover:text-gray-100 dark:hover:bg-gray-700",
           className
         )}
         {...props}
@@ -44,7 +45,9 @@ interface SidebarItem {
 
 export const SidebarItem: SidebarItem = forwardRef(SidebarItemBase) as any;
 
-export const Divider = () => <hr className="my-2" />;
+export const Divider = () => (
+  <hr className="my-2 border-stone-200 dark:border-stone-700" />
+);
 
 export const Sidebar: React.FC<
   PropsWithChildren<{
@@ -74,7 +77,7 @@ export const Sidebar: React.FC<
         leaveFrom="opacity-100 scale-100 origin-left"
         leaveTo="opacity-0 scale-x-0 origin-left"
       >
-        <Dialog.Panel className="w-120 h-full shadow-md bg-white px-1 absolute top-0 overflow-y-auto">
+        <Dialog.Panel className="w-120 h-full shadow-md bg-white dark:bg-neutral-900 px-1 absolute top-0 overflow-y-auto">
           <ul className="relative">{children}</ul>
         </Dialog.Panel>
       </Transition.Child>

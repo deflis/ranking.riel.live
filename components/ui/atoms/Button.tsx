@@ -22,9 +22,10 @@ function ButtonBase<T extends ElementType = "button">(
     <Component
       ref={ref as any}
       className={clsx(
-        "link-reset bg-white text-black border-gray-300 border focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 text-center",
-        color === "primary" &&
-          "border-none text-white bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+        "link-reset focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-3 py-2 text-center",
+        color === "primary"
+          ? "border-none bg-blue-700 text-white  hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          : "bg-white text-black border-gray-300 border focus:ring-blue-300 dark:bg-gray-200 dark:border-slate-300 dark:text-black",
         className
       )}
       {...props}

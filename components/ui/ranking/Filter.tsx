@@ -80,15 +80,15 @@ const InnterFilterComponent: React.FC = () => {
 
   return (
     <form noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-      <div>
+      <div className="pb-4 space-y-4">
         <fieldset>
-          <legend>ジャンル</legend>
+          <legend className="font-bold text-sm text-slate-500">ジャンル</legend>
           {genreFilter}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>
         </fieldset>
         <fieldset>
-          <legend>話数</legend>
+          <legend className="font-bold text-sm text-slate-500">話数</legend>
           <StoryCount value={minNo} defaultValue={1} onUpdate={updateMin}>
             最小
           </StoryCount>
@@ -98,6 +98,9 @@ const InnterFilterComponent: React.FC = () => {
           </StoryCount>
         </fieldset>
         <fieldset>
+          <legend className="font-bold text-sm text-slate-500">
+            更新開始日
+          </legend>
           <DatePicker
             minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
             maxDate={DateTime.now()}
@@ -107,7 +110,7 @@ const InnterFilterComponent: React.FC = () => {
           />
         </fieldset>
         <fieldset>
-          <legend>更新状態</legend>
+          <legend className="font-bold text-sm text-slate-500">更新状態</legend>
           <Checkbox checked={enableRensai} onChange={toggleEnableRensai} />
           連載中
           <Checkbox checked={enableKanketsu} onChange={toggleEnableKanketsu} />
@@ -124,7 +127,7 @@ export const FilterComponent: React.FC = () => {
   return (
     <Disclosure
       as="div"
-      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md "
+      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
     >
       {({ open }) => (
         <>
@@ -142,7 +145,7 @@ export const FilterComponent: React.FC = () => {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5">
+            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
               <InnterFilterComponent />
             </Disclosure.Panel>
           </Transition>

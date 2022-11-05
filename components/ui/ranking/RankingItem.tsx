@@ -131,7 +131,7 @@ const RankingItemRender: React.FC<{
           </p>
           <Paper
             className={clsx(
-              "p-2 space-2 bg-gray-50 ",
+              "p-2 space-2 bg-gray-50 dark:bg-gray-900",
               !showKeyword && "hidden"
             )}
           >
