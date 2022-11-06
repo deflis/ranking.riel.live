@@ -127,7 +127,7 @@ export const FilterComponent: React.FC = () => {
   return (
     <Disclosure
       as="div"
-      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700"
+      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 z-0"
     >
       {({ open }) => (
         <>
@@ -138,6 +138,7 @@ export const FilterComponent: React.FC = () => {
             />
           </Disclosure.Button>
           <Transition
+            className="relative z-0"
             enter="transition duration-100 ease-out"
             enterFrom="transform scale-95 opacity-0"
             enterTo="transform scale-100 opacity-100"

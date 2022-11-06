@@ -119,14 +119,7 @@ const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
   useEffect(() => setCount((count) => (count ?? 0) + 1), [setCount]);
   const darkmode = useAtomValue(darkModeAtom);
 
-  return (
-    <Layout isDark={darkmode}>
-      {children}
-      {/* なんかdevtoolsの動作がおかしいのでコメントアウト 
-      <ReactQueryDevtools />
-      */}
-    </Layout>
-  );
+  return <Layout isDark={darkmode}>{children}</Layout>;
 };
 
 function App() {

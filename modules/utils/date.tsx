@@ -23,7 +23,7 @@ export function convertDate(date: DateTime, type: NarouRankingType): DateTime {
       return date.startOf("day");
     case NarouRankingType.Weekly:
       const newDate = date.startOf("week").plus({ day: 1 });
-      return newDate < date ? newDate : newDate.minus({ week: -1 });
+      return newDate <= date ? newDate : newDate.minus({ week: 1 });
     case NarouRankingType.Monthly:
     case NarouRankingType.Quarterly:
       return date.startOf("month");
