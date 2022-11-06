@@ -182,12 +182,6 @@ export const Header: React.FC = () => {
           </SidebarItem>
         </RouterLink>
         <Divider />
-        <RouterLink to="/cloud/d">
-          <SidebarItem as="a" hover>
-            ワードクラウド(ベータ)
-          </SidebarItem>
-        </RouterLink>
-        <Divider />
         <RouterLink to="/about">
           <SidebarItem as="a" hover>
             このサイトについて
