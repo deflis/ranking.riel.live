@@ -1,0 +1,51 @@
+declare const styles:
+  & Readonly<{ "date_picker": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "date_picker_transition": string }>
+  & Readonly<{ "enter": string }>
+  & Readonly<{ "enter_from": string }>
+  & Readonly<{ "enter_to": string }>
+  & Readonly<{ "leave": string }>
+  & Readonly<{ "leave_from": string }>
+  & Readonly<{ "leave_to": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "date_picker_panel": string }>
+  & Readonly<{ "header": string }>
+  & Readonly<{ "header": string }>
+  & Readonly<{ "header": string }>
+  & Readonly<{ "header": string }>
+  & Readonly<{ "header": string }>
+  & Readonly<{ "button": string }>
+  & Readonly<{ "button": string }>
+  & Readonly<{ "button": string }>
+  & Readonly<{ "disabled": string }>
+  & Readonly<{ "disabled": string }>
+  & Readonly<{ "disabled": string }>
+  & Readonly<{ "icon": string }>
+  & Readonly<{ "date_selector": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "calender": string }>
+  & Readonly<{ "day": string }>
+  & Readonly<{ "day": string }>
+  & Readonly<{ "day": string }>
+  & Readonly<{ "day": string }>
+  & Readonly<{ "day": string }>
+  & Readonly<{ "today": string }>
+  & Readonly<{ "selected": string }>
+;
+export default styles;
+//# sourceMappingURL=./DatePicker.module.css.d.ts.map

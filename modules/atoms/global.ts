@@ -9,3 +9,4 @@ export const darkModeAtom = atomWithStorage("darkMode", darkMode);
 export const adModeAtom = atomWithStorage("useAd", true);
 export const showKeywordAtom = atomWithStorage("showKeyword", true);
 export const titleHeightAtom = atomWithStorage<number>("titleHeight", 0);
+export const countAtom = atomWithStorage<number>("count", 0);

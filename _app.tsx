@@ -21,6 +21,9 @@ import { prefetchDetail, prefetchRanking } from "./modules/data/prefetch";
 import { useCustomTheme } from "./modules/theme/theme";
 import { convertDate } from "./modules/utils/date";
 import { persister } from "./modules/utils/persister";
+import { useAtomValue, useSetAtom } from "jotai";
+import { countAtom, darkModeAtom } from "./modules/atoms/global";
+import { useEffect } from "react";
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
@@ -112,9 +115,12 @@ const routes: Route<DefaultGenerics>[] = [
 
 const AppInside: React.FC<React.PropsWithChildren> = ({ children }) => {
   useCustomTheme();
+  const setCount = useSetAtom(countAtom);
+  useEffect(() => setCount((count) => (count ?? 0) + 1), [setCount]);
+  const darkmode = useAtomValue(darkModeAtom);
 
   return (
-    <Layout>
+    <Layout isDark={darkmode}>
       {children}
       {/* なんかdevtoolsの動作がおかしいのでコメントアウト 
       <ReactQueryDevtools />

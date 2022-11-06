@@ -5,6 +5,8 @@ import { IoCalendarOutline, IoClose } from "react-icons/io5";
 import { useCallback, useState } from "react";
 import clsx from "clsx";
 import { SelectBox } from "./SelectBox";
+import form_styles from "./form.module.css";
+import styles from "./DatePicker.module.css";
 
 const CalenderDay: React.FC<{
   date: DateTime;
@@ -19,14 +21,10 @@ const CalenderDay: React.FC<{
   return (
     <div
       className={clsx(
-        selected && "bg-blue-500 text-white",
-        date.diffNow("day").get("day") === 0 &&
-          "bg-blue-300 text-white dark:blue-800",
-        !disabled &&
-          "cursor-pointer text-gray-700 hover:bg-blue-200 dark:text-white dark:hover:bg-blue-800",
-        disabled && "text-gray-200 dark:text-black",
-        "w-full px-1 mb-1 rounded-full leading-loose transition ease-in-out duration-100",
-        "text-center"
+        styles.day,
+        !disabled && selected && styles.selected,
+        !disabled && date.hasSame(DateTime.now(), "day") && styles.today,
+        disabled && styles.disabled
       )}
       onClick={handleClick}
     >
@@ -43,7 +41,7 @@ const Calender: React.FC<{
   onChange: (date: DateTime) => void;
 }> = ({ value, current, minDate, maxDate, onChange }) => {
   return (
-    <div className="grid grid-cols-7">
+    <div className={styles.calender}>
       {Interval.fromDateTimes(
         current.startOf("month").startOf("week"),
         current.endOf("month").endOf("week")
@@ -57,7 +55,7 @@ const Calender: React.FC<{
             disabled={
               date < minDate || date > maxDate || current.month !== date.month
             }
-            selected={value == date}
+            selected={!!value?.hasSame(date, "day")}
             onChange={onChange}
           />
         ))}
@@ -97,95 +95,90 @@ export const DatePicker: React.FC<{
   const prevMonthButtonDisabled = minDate > current.minus({ month: 1 });
   const nextMonthButtonDisabled = current.plus({ month: 1 }) > maxDate;
   return (
-    <Popover className="relative inline-block text-left">
+    <Popover className={styles.date_picker}>
       {({ open }) => (
         <>
-          <Popover.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 font-mono dark:bg-zinc-900 dark:border-zinc-700 dark:focus:ring-offset-gray-500 dark:focus:ring-indigo-800 dark:text-white dark:disabled:bg-zinc-700">
+          <Popover.Button className={clsx(form_styles.input, "font-mono")}>
             {value?.toFormat("yyyy/MM/dd") ?? "----/--/--"}
             <IoCalendarOutline
-              className="-mr-1 ml-2 h-5 w-5"
+              className={form_styles.append_icon}
               aria-hidden="true"
             />
           </Popover.Button>
 
           <Transition
             show={open}
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+            className={styles.date_picker_transition}
+            enter={styles.enter}
+            enterFrom={styles.enter_from}
+            enterTo={styles.enter_to}
+            leave={styles.leave}
+            leaveFrom={styles.leave_from}
+            leaveTo={styles.leave_to}
           >
-            <Popover.Panel className="w-72 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-zinc-800 z-auto">
-              <div className="flex items-center justify-between px-2 py-2">
-                <div className="space-x-2">
-                  <button
-                    onClick={decreaseMonth}
-                    disabled={prevMonthButtonDisabled}
-                    type="button"
-                    className={clsx(
-                      prevMonthButtonDisabled &&
-                        "cursor-not-allowed opacity-50",
-                      "inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
-                    )}
-                  >
-                    <HiChevronLeft className="w-5 h-5 text-gray-600" />
-                  </button>
-
-                  <span className="text-lg text-gray-700">
-                    <SelectBox
-                      value={current.year}
-                      options={Interval.fromDateTimes(minDate, maxDate)
-                        .splitBy({ year: 1 })
-                        .map((x) => x.start.startOf("year"))
-                        .map((date) => ({
-                          value: date.year,
-                          label: date.year,
-                        }))}
-                      onChange={changeYear}
-                    />
-                    <SelectBox
-                      value={current.month}
-                      options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
-                        (month) => ({
-                          value: month,
-                          label: month,
-                          disabled:
-                            (current.year === minDate.year &&
-                              current.month < minDate.month) ||
-                            (current.year === maxDate.year &&
-                              current.month > maxDate.month),
-                        })
-                      )}
-                      onChange={changeMonth}
-                    />
-                  </span>
-
-                  <button
-                    onClick={increaseMonth}
-                    disabled={nextMonthButtonDisabled}
-                    type="button"
-                    className={clsx(
-                      nextMonthButtonDisabled &&
-                        "cursor-not-allowed opacity-50",
-                      "inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
-                    )}
-                  >
-                    <HiChevronRight className="w-5 h-5 text-gray-600" />
-                  </button>
-                  {clearable && (
-                    <button
-                      onClick={clearDate}
-                      type="button"
-                      className={clsx(
-                        "inline-flex p-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-blue-500"
-                      )}
-                    >
-                      <IoClose className="w-5 h-5 text-gray-600" />
-                    </button>
+            <Popover.Panel className={styles.date_picker_panel}>
+              <div className={styles.header}>
+                <button
+                  onClick={decreaseMonth}
+                  disabled={prevMonthButtonDisabled}
+                  type="button"
+                  className={clsx(
+                    prevMonthButtonDisabled && styles.disabled,
+                    styles.button
                   )}
-                </div>
+                >
+                  <HiChevronLeft className={styles.icon} />
+                </button>
+
+                <span className={styles.date_selector}>
+                  <SelectBox
+                    value={current.year}
+                    options={Interval.fromDateTimes(minDate, maxDate)
+                      .splitBy({ year: 1 })
+                      .map((x) => x.start.startOf("year"))
+                      .map((date) => ({
+                        value: date.year,
+                        label: date.year,
+                      }))}
+                    onChange={changeYear}
+                  />
+                  <SelectBox
+                    value={current.month}
+                    options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+                      (month) => ({
+                        value: month,
+                        label: month,
+                        disabled:
+                          (current.year === minDate.year &&
+                            current.month < minDate.month) ||
+                          (current.year === maxDate.year &&
+                            current.month > maxDate.month),
+                      })
+                    )}
+                    onChange={changeMonth}
+                  />
+                </span>
+
+                <button
+                  onClick={increaseMonth}
+                  disabled={nextMonthButtonDisabled}
+                  type="button"
+                  className={clsx(
+                    nextMonthButtonDisabled && styles.disabled,
+                    styles.button
+                  )}
+                >
+                  <HiChevronRight className={styles.icon} />
+                </button>
+                {clearable && (
+                  <button
+                    onClick={clearDate}
+                    type="button"
+                    className={styles.button}
+                  >
+                    <IoClose className={styles.icon} />
+                  </button>
+                )}
               </div>
               <Calender
                 value={value}

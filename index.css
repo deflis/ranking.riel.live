@@ -4,19 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
-.layout {
-  @apply container mx-auto max-w-screen-2xl mt-4;
-}
-
 body {
   @apply font-sans;
-  @apply bg-neutral-50 text-gray-900;
-  @apply dark:bg-zinc-900 dark:text-white;
 }
 
-a:not(.link-reset) {
-  @apply text-blue-500 hover:underline dark:text-blue-400;
-}
 
 .tags {
   @apply items-center inline-flex flex-wrap justify-start;

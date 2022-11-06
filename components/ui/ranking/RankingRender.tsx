@@ -1,5 +1,11 @@
 import { NarouRankingResult } from "narou/src/index.browser";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import InfiniteScroll from "react-infinite-scroller";
 
 import { chunk } from "../../../modules/utils/chunk";
@@ -65,14 +71,41 @@ const InsideRender: React.FC<{
         )}
         hasMore={max < ranking.length}
         loader={
-          <>
+          <Fragment key="loader">
+            <div className="w-full p-auto">
+              <AdAmazonWidth />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
             <div className="w-full md:basis-1/2 box-border p-4">
               <FakeItem />
             </div>
             <div className="w-full md:basis-1/2 box-border p-4">
               <FakeItem />
             </div>
-          </>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+            <div className="w-full md:basis-1/2 box-border p-4">
+              <FakeItem />
+            </div>
+          </Fragment>
         }
         className="flex w-full flex-wrap flex-row"
       >

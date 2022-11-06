@@ -10,7 +10,6 @@ declare global {
 }
 
 export const AdSense: React.FC = () => {
-  return null;
   const adMode = useAtomValue(adModeAtom);
   return adMode ? <InnerAdSense /> : null;
 };
@@ -27,8 +26,7 @@ export const InnerAdSense = React.memo(() => {
   return (
     <div>
       <ins
-        className="adsbygoogle"
-        style={{ display: "block" }}
+        className="adsbygoogle block"
         data-ad-format="fluid"
         data-ad-layout-key="-fb+5w+4e-db+86"
         data-ad-client="ca-pub-6809573064811153"
