@@ -29,7 +29,7 @@ import {
   HiPencilAlt,
   HiThumbUp,
 } from "react-icons/hi";
-import { IoLanguage, IoTime, IoTimeOutline } from "react-icons/io5";
+import { IoLanguage, IoTime } from "react-icons/io5";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 function round(number: number, precision: number): number {
@@ -145,7 +145,7 @@ const DetailItem: React.FC<{ item: ItemDetail | NocItemDetail }> = ({
           <h2 className="text-xl">あらすじ</h2>
           <StoryRender
             story={item.story}
-            className="bg-white p-2 md:max-h-screen overflow-auto"
+            className="bg-white p-2 md:max-h-screen overflow-auto dark:bg-zinc-800"
           />
         </div>
         <div className="w-full md:w-1/2 xl:w-5/12 shrink-0 m-0 p-2 text-sm space-y-2">
@@ -248,14 +248,11 @@ const DetailItem: React.FC<{ item: ItemDetail | NocItemDetail }> = ({
             {Math.round(item.length / item.general_all_no).toLocaleString()}
             文字/話
           </DetailItemText>
-          {/*<Hidden lgDown>
-            <AdSense></AdSense>
-        </Hidden>*/}
+          <AdSense></AdSense>
         </div>
       </div>
-
       <AdRandomWidth />
-      <Paper className="p-2 bg-white">
+      <Paper className="p-2 bg-white dark:bg-zinc-800">
         <h2 className="text-xl">獲得ポイント</h2>
         <table className="w-full table-auto">
           <tr>
@@ -294,7 +291,6 @@ const DetailItem: React.FC<{ item: ItemDetail | NocItemDetail }> = ({
           </tbody>
         </table>
       </Paper>
-
       <p className="box-border my-4">
         <Button as="a" href={detail} target="_blank" rel="noopener noreferrer">
           小説情報

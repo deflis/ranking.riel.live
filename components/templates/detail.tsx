@@ -1,15 +1,16 @@
 import React from "react";
 import { useTitle } from "react-use";
 
+import { useMatch } from "@tanstack/react-location";
+
+import { useDetailForView } from "../../modules/data/item";
+import { ItemDetail, RankingHistories } from "../../modules/data/types";
+import { AdAmazonWidth } from "../ui/common/AdAmazon";
+import AdSense from "../ui/common/AdSense";
+import { SelfAd } from "../ui/common/SelfAd";
 import DetailItem from "../ui/detail/DetailItem";
 import FakeItem from "../ui/detail/FakeItem";
 import { RankingHistoryRender } from "../ui/detail/RankingHistoryRender";
-import { SelfAd } from "../ui/common/SelfAd";
-import { AdAmazonWidth } from "../ui/common/AdAmazon";
-import AdSense from "../ui/common/AdSense";
-import { useMatch } from "@tanstack/react-location";
-import { useDetailForView } from "../../modules/data/item";
-import { ItemDetail, RankingHistories } from "../../modules/data/types";
 
 type Result = {
   detail: ItemDetail;

@@ -100,7 +100,7 @@ export const DatePicker: React.FC<{
     <Popover className="relative inline-block text-left">
       {({ open }) => (
         <>
-          <Popover.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 font-mono dark:bg-slate-900 dark:border-slate-700 dark:focus:ring-offset-gray-500 dark:focus:ring-indigo-800 dark:text-white dark:disabled:bg-slate-700">
+          <Popover.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 font-mono dark:bg-zinc-900 dark:border-zinc-700 dark:focus:ring-offset-gray-500 dark:focus:ring-indigo-800 dark:text-white dark:disabled:bg-zinc-700">
             {value?.toFormat("yyyy/MM/dd") ?? "----/--/--"}
             <IoCalendarOutline
               className="-mr-1 ml-2 h-5 w-5"
@@ -117,7 +117,7 @@ export const DatePicker: React.FC<{
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Popover.Panel className="w-72 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-800">
+            <Popover.Panel className="w-72 origin-top-right absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-zinc-800 z-auto">
               <div className="flex items-center justify-between px-2 py-2">
                 <div className="space-x-2">
                   <button

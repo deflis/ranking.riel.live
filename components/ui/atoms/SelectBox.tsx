@@ -30,7 +30,7 @@ export const SelectBox = <T,>({
           <Listbox.Button
             className={clsx(
               "inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500",
-              "dark:bg-slate-900 dark:border-slate-700 focus:ring-offset-gray-500 focus:ring-indigo-800 dark:text-white dark:disabled:bg-slate-700",
+              "dark:bg-zinc-900 dark:border-zinc-700 focus:ring-offset-gray-500 focus:ring-indigo-800 dark:text-white dark:disabled:bg-zinc-700",
               buttonClassName
             )}
           >
@@ -42,7 +42,7 @@ export const SelectBox = <T,>({
             show={open}
             className={clsx(
               "origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none",
-              "dark:bg-slate-900 dark-text-white"
+              "dark:bg-zinc-900 dark-text-white"
             )}
             enter="transition ease-out duration-100"
             enterFrom="transform opacity-0 scale-95"
@@ -58,8 +58,8 @@ export const SelectBox = <T,>({
                   value={value}
                   className={clsx(
                     value === selectedValue
-                      ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
-                      : "text-gray-700 focus:bg-gray-50 dark:text-gray-100 dark:focus:bg-gray-800",
+                      ? "bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-white"
+                      : "text-gray-700 focus:bg-gray-50 dark:text-zinc-100 dark:focus:bg-zinc-800",
                     "block px-4 py-2 text-sm"
                   )}
                 >

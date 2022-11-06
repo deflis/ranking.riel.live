@@ -57,7 +57,7 @@ const RankingItemRender: React.FC<{
     : `/detail/${item?.ncode?.toLowerCase()}`;
 
   return (
-    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 space-y-2">
+    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 space-y-2">
       <p>
         第{rankingItem.rank}位{" "}
         <Tags>
@@ -131,7 +131,7 @@ const RankingItemRender: React.FC<{
           </p>
           <Paper
             className={clsx(
-              "p-2 space-2 bg-gray-50 dark:bg-gray-900",
+              "p-2 space-2 bg-gray-50 dark:bg-zinc-900",
               !showKeyword && "hidden"
             )}
           >
@@ -162,7 +162,7 @@ const RankingItemRender: React.FC<{
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-75 opacity-0"
             as={Paper}
-            className="bg-gray-100 p-2 whitespace-pre-wrap text-sm"
+            className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900"
           >
             {item.story}
           </Transition>

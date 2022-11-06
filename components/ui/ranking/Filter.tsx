@@ -127,7 +127,7 @@ export const FilterComponent: React.FC = () => {
   return (
     <Disclosure
       as="div"
-      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
+      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700"
     >
       {({ open }) => (
         <>
@@ -145,7 +145,7 @@ export const FilterComponent: React.FC = () => {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
               <InnterFilterComponent />
             </Disclosure.Panel>
           </Transition>
