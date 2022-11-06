@@ -18,6 +18,7 @@ import {
   formatCustomRankingRaw,
   RankingData,
 } from "./custom/utils";
+import { allGenres } from "../enum/Genre";
 
 const PAGE_ITEM_NUM = 10 as const;
 
@@ -185,7 +186,7 @@ const customRankingKey = (
     notKeyword,
     byTitle,
     byStory,
-    genres,
+    genres.length === 0 ? allGenres : genres,
     novelTypeParam,
     [...fields, ...newFields] as const,
     optionalFields,
