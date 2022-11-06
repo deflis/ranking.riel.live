@@ -22,6 +22,7 @@ declare const styles:
   & Readonly<{ "leave_to": string }>
   & Readonly<{ "panel": string }>
   & Readonly<{ "container": string }>
+  & Readonly<{ "container": string }>
 ;
 export default styles;
 //# sourceMappingURL=./Filter.module.css.d.ts.map

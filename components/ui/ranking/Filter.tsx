@@ -140,7 +140,7 @@ export const FilterComponent: React.FC = () => {
             leaveFrom={styles.leave_from}
             leaveTo={styles.leave_to}
           >
-            <Disclosure.Panel className="">
+            <Disclosure.Panel className={styles.panel}>
               <InnerFilterComponent />
             </Disclosure.Panel>
           </Transition>
