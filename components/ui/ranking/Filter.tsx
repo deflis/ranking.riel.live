@@ -19,8 +19,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { HiChevronDown } from "react-icons/hi";
 import clsx from "clsx";
 import { Genre, GenreNotation } from "narou/src/index.browser";
+import styles from "./Filter.module.css";
 
-const InnterFilterComponent: React.FC = () => {
+const InnerFilterComponent: React.FC = () => {
   const [genres, setGenres] = useAtom(genresAtom);
   const handleChangeGenre = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,15 +81,15 @@ const InnterFilterComponent: React.FC = () => {
 
   return (
     <form noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
-      <div className="pb-4 space-y-4">
+      <div className={styles.container}>
         <fieldset>
-          <legend className="font-bold text-sm text-slate-500">ジャンル</legend>
+          <legend className={styles.label}>ジャンル</legend>
           {genreFilter}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>
         </fieldset>
         <fieldset>
-          <legend className="font-bold text-sm text-slate-500">話数</legend>
+          <legend className={styles.label}>話数</legend>
           <StoryCount value={minNo} defaultValue={1} onUpdate={updateMin}>
             最小
           </StoryCount>
@@ -98,9 +99,7 @@ const InnterFilterComponent: React.FC = () => {
           </StoryCount>
         </fieldset>
         <fieldset>
-          <legend className="font-bold text-sm text-slate-500">
-            更新開始日
-          </legend>
+          <legend className={styles.label}>更新開始日</legend>
           <DatePicker
             minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
             maxDate={DateTime.now()}
@@ -110,7 +109,7 @@ const InnterFilterComponent: React.FC = () => {
           />
         </fieldset>
         <fieldset>
-          <legend className="font-bold text-sm text-slate-500">更新状態</legend>
+          <legend className={styles.label}>更新状態</legend>
           <Checkbox checked={enableRensai} onChange={toggleEnableRensai} />
           連載中
           <Checkbox checked={enableKanketsu} onChange={toggleEnableKanketsu} />
@@ -125,29 +124,24 @@ const InnterFilterComponent: React.FC = () => {
 
 export const FilterComponent: React.FC = () => {
   return (
-    <Disclosure
-      as="div"
-      className="border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 z-0"
-    >
+    <Disclosure as="div" className={styles.filter}>
       {({ open }) => (
         <>
-          <Disclosure.Button className="py-2 w-full flex p-2">
-            <span className="w-full">フィルター</span>
-            <HiChevronDown
-              className={clsx("", open && "transform rotate-180")}
-            />
+          <Disclosure.Button className={styles.button}>
+            <span className={styles.label}>フィルター</span>
+            <HiChevronDown className={clsx(styles.icon, open && styles.open)} />
           </Disclosure.Button>
           <Transition
-            className="relative z-0"
-            enter="transition duration-100 ease-out"
-            enterFrom="transform scale-95 opacity-0"
-            enterTo="transform scale-100 opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform scale-100 opacity-100"
-            leaveTo="transform scale-95 opacity-0"
+            className={styles.filter_transition}
+            enter={styles.enter}
+            enterFrom={styles.enter_from}
+            enterTo={styles.enter_to}
+            leave={styles.leave}
+            leaveFrom={styles.leave_from}
+            leaveTo={styles.leave_to}
           >
-            <Disclosure.Panel className="text-gray-500 border-t border-gray-200 margin-2 py-2 px-5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
-              <InnterFilterComponent />
+            <Disclosure.Panel className="">
+              <InnerFilterComponent />
             </Disclosure.Panel>
           </Transition>
         </>

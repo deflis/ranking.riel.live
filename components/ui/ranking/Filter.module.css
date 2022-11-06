@@ -1,0 +1,50 @@
+.filter {
+  @apply border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 z-0;
+}
+
+.button {
+  @apply py-2 w-full flex p-2;
+  & .label {
+    @apply w-full;
+  }
+  & .icon {
+    &.open {
+      @apply transform rotate-180;
+    }
+  }
+}
+
+.filter_transition {
+  @apply relative z-0;
+
+  &.enter {
+    @apply transition duration-100 ease-out;
+  }
+  &.enter_from {
+    @apply transform scale-95 opacity-0;
+  }
+  &.enter_to {
+    @apply transform scale-100 opacity-100;
+  }
+  &.leave {
+    @apply transition duration-75 ease-out;
+  }
+  &.leave_from {
+    @apply transform scale-100 opacity-100;
+  }
+  &.leave_to {
+    @apply transform scale-95 opacity-0;
+  }
+}
+
+.panel {
+  @apply text-gray-500 border-t border-gray-200 m-2 py-2 px-5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white;
+}
+
+.container {
+  @apply pb-4 space-y-4;
+}
+
+.label {
+  @apply font-bold text-sm text-slate-500;
+}
