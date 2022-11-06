@@ -7,17 +7,17 @@ import React, {
   ReactElement,
 } from "react";
 import clsx from "clsx";
+import styles from "./Tag.module.css";
 
 type ColorName = "cyan" | "lightGreen" | "red";
 
 export type TagProps<T extends ElementType = "span"> = {
   as?: T;
   tagColor?: ColorName;
-  light?: boolean;
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "light" | "tagColor">;
+} & Omit<ComponentPropsWithoutRef<T>, "as" | "tagColor">;
 
 function TagBase<T extends ElementType = "span">(
-  { as, tagColor, light, className, ...props }: TagProps<T>,
+  { as, tagColor, className, ...props }: TagProps<T>,
   ref?: ForwardedRef<T>
 ) {
   const Component = as ?? "span";
@@ -26,11 +26,10 @@ function TagBase<T extends ElementType = "span">(
       ref={ref as any}
       className={clsx(
         "link-reset",
-        "tag",
-        tagColor === "cyan" && "tag-cyan",
-        tagColor === "lightGreen" && "tag-light-green",
-        tagColor === "red" && "tag-red",
-        light && "tag-light",
+        styles.tag,
+        tagColor === "cyan" && styles.cyan,
+        tagColor === "lightGreen" && styles["light-green"],
+        tagColor === "red" && styles.red,
         className
       )}
       {...props}
