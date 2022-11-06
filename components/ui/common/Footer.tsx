@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as RouterLink } from "@tanstack/react-location";
+import { Link as RouterLink } from "react-router-dom";
 
 export const Footer: React.FC<{ className?: string }> = ({ className }) => {
   return (

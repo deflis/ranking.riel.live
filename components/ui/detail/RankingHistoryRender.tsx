@@ -22,7 +22,7 @@ import {
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
-import { Link as RouterLink } from "@tanstack/react-location";
+import { Link as RouterLink } from "react-router-dom";
 import { convertDate } from "../../../modules/utils/date";
 import colors from "tailwindcss/colors";
 import { FaTrophy } from "react-icons/fa";

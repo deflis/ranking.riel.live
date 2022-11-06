@@ -14,10 +14,11 @@ type ColorName = "cyan" | "lightGreen" | "red";
 export type TagProps<T extends ElementType = "span"> = {
   as?: T;
   tagColor?: ColorName;
+  light?: boolean;
 } & Omit<ComponentPropsWithoutRef<T>, "as" | "tagColor">;
 
 function TagBase<T extends ElementType = "span">(
-  { as, tagColor, className, ...props }: TagProps<T>,
+  { as, tagColor, className, light, ...props }: TagProps<T>,
   ref?: ForwardedRef<T>
 ) {
   const Component = as ?? "span";

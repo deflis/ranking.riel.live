@@ -107,7 +107,7 @@ export const CustomRankingRender: React.FC<{
         )}
         hasMore={page < maxPage}
         loader={
-          <>
+          <Fragment key="loading">
             <div className="w-full md:basis-1/2 box-border p-4">
               <FakeItem />
             </div>
@@ -138,7 +138,7 @@ export const CustomRankingRender: React.FC<{
             <div className="w-full md:basis-1/2 box-border p-4">
               <FakeItem />
             </div>
-          </>
+          </Fragment>
         }
         className="flex w-full flex-wrap flex-row"
       >

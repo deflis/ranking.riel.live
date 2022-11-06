@@ -1,6 +1,11 @@
 import { useAtom } from "jotai";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { FaHammer, FaTrophy } from "react-icons/fa";
+import { HiMenu } from "react-icons/hi";
 import { useToggle } from "react-use";
+
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+
 import {
   adModeAtom,
   darkModeAtom,
@@ -8,16 +13,12 @@ import {
   titleHeightAtom,
 } from "../../../modules/atoms/global";
 import { useHandleChange } from "../../../modules/utils/useHandleChange";
+import { Button } from "../atoms/Button";
+import { Checkbox } from "../atoms/Checkbox";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
-import { Link as RouterLink, useNavigate } from "@tanstack/react-location";
-
+import { TextField } from "../atoms/TextField";
 import { AdDialog } from "./AdDialog";
 import NumberTextField from "./NumberTextField";
-import { Checkbox } from "../atoms/Checkbox";
-import { Button } from "../atoms/Button";
-import { FaHammer, FaTrophy } from "react-icons/fa";
-import { TextField } from "../atoms/TextField";
-import { HiMenu } from "react-icons/hi";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -34,7 +35,7 @@ export const Header: React.FC = () => {
       if (!validate(ncode)) {
         return;
       }
-      navigate({ to: `/detail/${ncode}` });
+      navigate(`/detail/${ncode}`);
     },
     [navigate, ncode]
   );

@@ -1,9 +1,8 @@
 import { DateTime } from "luxon";
 import { Genre } from "narou/src/index.browser";
 import React, { useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSearchParam, useTitle } from "react-use";
-
-import { MakeGenerics, useMatch, useNavigate } from "@tanstack/react-location";
 
 import { allGenres } from "../../modules/enum/Genre";
 import { CustomRankingParams } from "../../modules/interfaces/CustomRankingParams";
@@ -94,9 +93,7 @@ function conventGenres(rawGenres: string | null): Genre[] {
 }
 
 export const CustomRanking: React.FC = () => {
-  const {
-    params: { type },
-  } = useMatch<MakeGenerics<{ Params: CustomRankingPathParams }>>();
+  const { type } = useParams<CustomRankingPathParams>();
 
   const params = parseQuery((type ?? RankingType.Daily) as RankingType);
 
@@ -110,9 +107,7 @@ export const CustomRanking: React.FC = () => {
 
   const handleSearch = useCallback<(e: CustomRankingParams) => void>(
     (params) => {
-      navigate({
-        to: `/custom/${params.rankingType}?${createSearchParams(params)}`,
-      });
+      navigate(`/custom/${params.rankingType}?${createSearchParams(params)}`);
     },
     [history]
   );

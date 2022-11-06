@@ -19,7 +19,7 @@ import { ItemDetail, NocItemDetail } from "../../../modules/data/types";
 import { Chip } from "../atoms/Chip";
 import { Paper } from "../atoms/Paper";
 import { Button } from "../atoms/Button";
-import { Link as RouterLink } from "@tanstack/react-location";
+import { Link as RouterLink } from "react-router-dom";
 import { FaPenNib } from "react-icons/fa";
 import {
   HiBookmark,

@@ -4,8 +4,7 @@ import styles from "./Layout.module.css";
 
 export const Layout: React.FC<{
   children: React.ReactNode;
-  isDark: boolean;
-}> = ({ children, isDark }) => (
+}> = ({ children }) => (
   <div className={styles.body}>
     <Header />
     <div className={styles.layout}>{children}</div>

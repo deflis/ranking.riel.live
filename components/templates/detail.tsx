@@ -1,7 +1,7 @@
 import React from "react";
 import { useTitle } from "react-use";
 
-import { useMatch } from "@tanstack/react-location";
+import { useParams } from "react-router-dom";
 
 import { useDetailForView } from "../../modules/data/item";
 import { ItemDetail, RankingHistories } from "../../modules/data/types";
@@ -30,11 +30,9 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 };
 
 const Detail: React.FC = () => {
-  const {
-    params: { ncode },
-  } = useMatch<{ Params: { ncode: string } }>();
+  const { ncode } = useParams<{ ncode: string }>();
 
-  const { item, ranking, isLoading } = useDetailForView(ncode);
+  const { item, ranking, isLoading } = useDetailForView(ncode!);
 
   useTitle(
     item

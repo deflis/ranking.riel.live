@@ -12,7 +12,7 @@ import { useItemForListing } from "../../../modules/data/item";
 import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
 import { Paper } from "../atoms/Paper";
-import { Link as RouterLink } from "@tanstack/react-location";
+import { Link as RouterLink } from "react-router-dom";
 import { Chip } from "../atoms/Chip";
 import { useAtomValue } from "jotai";
 import {

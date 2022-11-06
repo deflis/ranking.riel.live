@@ -1,6 +1,7 @@
 .body {
   @apply bg-neutral-50 text-gray-900;
   @apply dark:bg-zinc-900 dark:text-white;
+  @apply min-h-screen;
   & a:not(:global(.link-reset)) {
     @apply text-blue-500 hover:underline dark:text-blue-400;
   }
