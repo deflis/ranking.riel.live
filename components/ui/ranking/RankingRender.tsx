@@ -18,6 +18,8 @@ import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
 import { useQueryClient } from "@tanstack/react-query";
 import { prefetchRankingDetail } from "../../../modules/data/prefetch";
+import { Virtuoso, VirtuosoGrid } from "react-virtuoso";
+import Ranking from "../../templates/ranking";
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];
@@ -60,64 +62,25 @@ const InsideRender: React.FC<{
   }, [max, rankingConstants]);
 
   return (
-    <>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={useCallback(
-          (page) => {
-            setMax(page * 10);
-          },
-          [setMax]
-        )}
-        hasMore={max < ranking.length}
-        loader={
-          <Fragment key="loader">
-            <div className="w-full p-auto">
-              <AdAmazonWidth />
+    <VirtuosoGrid
+      useWindowScroll
+      listClassName="flex w-full flex-wrap flex-row"
+      itemClassName="w-full md:basis-1/2 box-border p-4 min-h-[400px]"
+      data={ranking}
+      itemContent={(i, item) => <RankingItem item={item} key={i} />}
+      components={{
+        Footer: () => (
+          <>
+            <div className="w-full">
+              <SelfAd />
             </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
+            <div className="w-full">
+              <AdSense />
             </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-          </Fragment>
-        }
-        className="flex w-full flex-wrap flex-row"
-      >
-        {renderItems}
-      </InfiniteScroll>
-      <div className="w-full">
-        <SelfAd />
-      </div>
-      <div className="w-full">
-        <AdSense />
-      </div>
-    </>
+          </>
+        ),
+      }}
+    />
   );
 };
 
