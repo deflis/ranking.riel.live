@@ -3,7 +3,6 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
-import FakeItem from "./FakeItem";
 import RankingItem from "./RankingItem";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
@@ -12,55 +11,32 @@ import {
   useCustomRanking,
   useCustomRankingMaxPage,
 } from "../../../modules/data/custom";
-import InfiniteScroll from "react-infinite-scroller";
+import { DotLoader } from "../atoms/Loader";
+import { Waypoint } from "react-waypoint";
+import { Button } from "../atoms/Button";
 
 const InsideRender: React.FC<{
   params: CustomRankingParams;
   page: number;
-}> = ({ params, page }) => {
+  isTail: boolean;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ params, page, isTail, setPage }) => {
+  const handleMore = useCallback(() => {
+    setPage((max) => (isTail ? max + 1 : max));
+  }, [setPage, isTail]);
   const { isLoading, data } = useCustomRanking(params, page);
+  const adMode = useAtomValue(adModeAtom);
+
   if (isLoading) {
     return (
-      <>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-        <div className="w-full md:basis-1/2 box-border p-4">
-          <FakeItem />
-        </div>
-      </>
+      <div className="w-full h-8 px-20 pt-10 pb-20">
+        <DotLoader />
+      </div>
     );
-  }
-  if (!data) {
-    return null;
   }
   return (
     <>
-      {data.map((item) => (
+      {data?.map((item) => (
         <div
           className="w-full md:basis-1/2 box-border p-4"
           key={`${item.rank}-${item.ncode}`}
@@ -68,6 +44,20 @@ const InsideRender: React.FC<{
           <RankingItem item={item} />
         </div>
       ))}
+      {adMode && (
+        <div className="w-full p-auto">
+          <AdAmazonWidth />
+        </div>
+      )}
+      {isTail && (
+        <Waypoint onEnter={handleMore}>
+          <div className="w-full px-20 pt-10 pb-20">
+            <Button onClick={handleMore} className="w-full h-20 text-3xl">
+              もっと見る
+            </Button>
+          </div>
+        </Waypoint>
+      )}
     </>
   );
 };
@@ -83,72 +73,26 @@ export const CustomRankingRender: React.FC<{
 
   const maxPage = useCustomRankingMaxPage(params);
   const pages = Array.from({ length: page }, (_, i) => i + 1);
-  const adMode = useAtomValue(adModeAtom);
-  const rankingItems = pages.map((page) => (
-    <Fragment key={page}>
-      <InsideRender params={params} page={page} />
-      {adMode && (
-        <div className="w-full p-auto">
-          <AdAmazonWidth />
-        </div>
-      )}
-    </Fragment>
+  const renderItems = pages.map((currentPage) => (
+    <InsideRender
+      key={currentPage}
+      params={params}
+      page={currentPage}
+      isTail={currentPage === page && page < maxPage}
+      setPage={setPage}
+    />
   ));
 
   return (
     <>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={useCallback(
-          (page) => {
-            setPage(page);
-          },
-          [setPage]
-        )}
-        hasMore={page < maxPage}
-        loader={
-          <Fragment key="loading">
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-          </Fragment>
-        }
-        className="flex w-full flex-wrap flex-row"
-      >
-        {rankingItems}
-      </InfiniteScroll>
-      <div className="w-full">
-        <SelfAd />
-      </div>
-      <div className="w-full">
-        <AdSense></AdSense>
+      <div className="flex w-full flex-wrap flex-row">
+        {renderItems}
+        <div className="w-full">
+          <SelfAd />
+        </div>
+        <div className="w-full">
+          <AdSense />
+        </div>
       </div>
     </>
   );

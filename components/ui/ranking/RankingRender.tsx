@@ -18,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 import { Button } from "../atoms/Button";
 import { Waypoint } from "react-waypoint";
+import { DotLoader } from "../atoms/Loader";
 
 const ChunkRender: React.FC<{
   chunk: React.ReactNode;
@@ -27,14 +28,14 @@ const ChunkRender: React.FC<{
 }> = ({ chunk, index, setMax, isTail }) => {
   const handleMore = useCallback(() => {
     setMax((max) => (isTail ? max + 10 : max));
-  }, [setMax, index, isTail]);
+  }, [setMax, isTail]);
   const adMode = useAtomValue(adModeAtom);
 
   return (
     <>
       {chunk}
       {adMode && (
-        <div className="w-full p-auto" key={index}>
+        <div className="w-full p-auto">
           <AdAmazonWidth />
         </div>
       )}
@@ -97,7 +98,7 @@ export const RankingRender: React.FC<{
 }> = ({ ranking, loading = false }) => {
   return (
     <>
-      {loading && <></>}
+      {loading && <DotLoader />}
       {!loading && ranking.length === 0 && <p>データがありません</p>}
       <InsideRender ranking={ranking} />
     </>

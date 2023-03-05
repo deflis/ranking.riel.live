@@ -13,3 +13,11 @@ export const PulseLoader: React.FC<
     {...props}
   />
 );
+
+export const DotLoader: React.FC<ComponentProps<"span">> = ({ ...props }) => (
+  <span className="flex justify-center w-full" {...props}>
+    <span className="animate-ping h-2 w-2 bg-blue-600 rounded-full" />
+    <span className="animate-ping h-2 w-2 bg-blue-600 rounded-full mx-4" />
+    <span className="animate-ping h-2 w-2 bg-blue-600 rounded-full" />
+  </span>
+);
