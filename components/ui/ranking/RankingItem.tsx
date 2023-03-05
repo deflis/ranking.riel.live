@@ -22,6 +22,7 @@ import {
 import clsx from "clsx";
 import { Button } from "../atoms/Button";
 import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
+import { PulseLoader } from "../atoms/PulseLoader";
 
 function checkR18(item: Item | NocItem | undefined): item is NocItem {
   return !!item && (item as NocItem).nocgenre !== undefined;
@@ -74,7 +75,7 @@ const RankingItemRender: React.FC<{
         </Tags>
       </p>
       <p>
-        {item && (
+        {item ? (
           <>
             <ItemBadge item={item} />
             {!isR18 && (
@@ -92,67 +93,85 @@ const RankingItemRender: React.FC<{
               文字/話
             </Tag>
           </>
+        ) : (
+          <PulseLoader disabled={isNotfound} />
         )}
       </p>
-      <h2 className="mb-2">
-        {item && (
+      <h2 className="mb-2 text-2xl">
+        {item ? (
           <RouterLink
             to={detail}
             title={decode(item.title)}
             className={clsx(
-              "link-reset text-2xl text-gray-800 dark:text-white hover:underline",
+              "link-reset text-gray-800 dark:text-white hover:underline",
               titleHeight > 0 && titleHeightCss
             )}
           >
             {decode(item.title)}
           </RouterLink>
+        ) : isNotfound ? (
+          `この小説は見つかりません`
+        ) : (
+          <PulseLoader className="h-6" disabled={isNotfound} />
         )}
-        {isNotfound && `この小説は見つかりません`}
       </h2>
 
-      {item && (
-        <>
-          <p>
-            作者:{" "}
-            {isR18 ? (
+      <>
+        <p>
+          作者:{" "}
+          {item ? (
+            isR18 ? (
               decode(item.writer)
             ) : (
               <a href={user} target="_blank" rel="noopener noreferrer">
                 {decode(item.writer)}
               </a>
-            )}
-          </p>
-          <p>
-            更新日時: {item.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss")}
-          </p>
-          <p>
-            掲載開始: {item.general_firstup.toRelative()} / 最終更新:{" "}
-            {item.general_lastup.toRelative()}
-          </p>
-          <Paper
-            className={clsx(
-              "p-2 space-2 bg-gray-50 dark:bg-zinc-900",
-              !showKeyword && "hidden"
-            )}
-          >
-            {item.keyword
-              .split(/\s/g)
-              .filter((keyword) => keyword)
-              .map((keyword, i) => (
-                <Chip
-                  as={RouterLink}
-                  key={i}
-                  to={
-                    isR18
-                      ? `/r18?keyword=${keyword}`
-                      : `/custom?keyword=${keyword}`
-                  }
-                >
-                  {keyword}
-                </Chip>
-              ))}
-          </Paper>
+            )
+          ) : (
+            <PulseLoader className="w-1/4" disabled={isNotfound} />
+          )}
+        </p>
+        <p>
+          更新日時:{" "}
+          {item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss") ?? (
+            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+          )}
+        </p>
+        <p>
+          掲載開始:{" "}
+          {item?.general_firstup.toRelative() ?? (
+            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+          )}{" "}
+          / 最終更新:{" "}
+          {item?.general_lastup.toRelative() ?? (
+            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+          )}
+        </p>
+        <Paper
+          className={clsx(
+            "p-2 space-2 bg-gray-50 dark:bg-zinc-900",
+            !showKeyword && "hidden"
+          )}
+        >
+          {item?.keyword
+            .split(/\s/g)
+            .filter((keyword) => keyword)
+            .map((keyword, i) => (
+              <Chip
+                as={RouterLink}
+                key={i}
+                to={
+                  isR18
+                    ? `/r18?keyword=${keyword}`
+                    : `/custom?keyword=${keyword}`
+                }
+              >
+                {keyword}
+              </Chip>
+            )) ?? <PulseLoader disabled={isNotfound} />}
+        </Paper>
 
+        {item && (
           <Transition
             show={openStory}
             enter="transition duration-100 origin-top ease-out"
@@ -166,24 +185,26 @@ const RankingItemRender: React.FC<{
           >
             {item.story}
           </Transition>
-          <div className="flex space-x-2 items-center">
+        )}
+        <div className="flex space-x-2 items-center">
+          {item && (
             <Button onClick={toggleStory}>
               あらすじを{openStory ? "隠す" : "表示"}
             </Button>
-            <div className="flex-grow" />
-            <RouterLink to={detail}>小説情報</RouterLink>
-            <Button
-              as="a"
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={decode(item?.title)}
-            >
-              読む
-            </Button>
-          </div>
-        </>
-      )}
+          )}
+          <div className="flex-grow" />
+          <RouterLink to={detail}>小説情報</RouterLink>
+          <Button
+            as="a"
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={decode(item?.title)}
+          >
+            読む
+          </Button>
+        </div>
+      </>
     </div>
   );
 };
