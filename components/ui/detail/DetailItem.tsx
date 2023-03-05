@@ -120,7 +120,7 @@ const DetailItem: React.FC<{
               </RouterLink>
             )
           ) : (
-            <PulseLoader className="w-1/4" />
+            <PulseLoader className="w-1/4" disabled={isNotFound} />
           )}
         </p>
         <h1 className="text-4xl">
@@ -140,7 +140,7 @@ const DetailItem: React.FC<{
           </a>
         </h1>
         <p className="text-sm">
-          <ItemBadge item={item} />{" "}
+          {item && <ItemBadge item={item} />}{" "}
           {!item || item.noveltype === NovelType.Tanpen ? (
             <a href={link} target="_blank" rel="noopener noreferrer">
               読む
@@ -363,37 +363,37 @@ const DetailItem: React.FC<{
           <tbody>
             <tr>
               <td className="text-center">
-                {detailItem?.global_point.toLocaleString() && (
+                {detailItem?.global_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.daily_point.toLocaleString() && (
+                {detailItem?.daily_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.weekly_point.toLocaleString() && (
+                {detailItem?.weekly_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.monthly_point.toLocaleString() && (
+                {detailItem?.monthly_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.quarter_point.toLocaleString() && (
+                {detailItem?.quarter_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.yearly_point.toLocaleString() && (
+                {detailItem?.yearly_point.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>
               <td className="text-center">
-                {detailItem?.weekly_unique.toLocaleString() && (
+                {detailItem?.weekly_unique.toLocaleString() ?? (
                   <PulseLoader disabled={isNotFound} />
                 )}
               </td>

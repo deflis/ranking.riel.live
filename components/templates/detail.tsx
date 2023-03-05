@@ -4,27 +4,49 @@ import { useTitle } from "react-use";
 import { useParams } from "react-router-dom";
 
 import { useDetailForView } from "../../modules/data/item";
-import { ItemDetail, RankingHistories } from "../../modules/data/types";
+import {
+  Detail as DetailType,
+  Item,
+  ItemDetail,
+  NocDetail,
+  NocItem,
+  RankingHistories,
+} from "../../modules/data/types";
 import { AdAmazonWidth } from "../ui/common/AdAmazon";
 import AdSense from "../ui/common/AdSense";
 import { SelfAd } from "../ui/common/SelfAd";
 import DetailItem from "../ui/detail/DetailItem";
 import FakeItem from "../ui/detail/FakeItem";
 import { RankingHistoryRender } from "../ui/detail/RankingHistoryRender";
+import { Paper } from "../ui/atoms/Paper";
 
 type Result = {
-  detail: ItemDetail;
-  ranking: RankingHistories;
+  ncode: string;
+  item: Item | NocItem | undefined;
+  detail: DetailType | NocDetail | undefined;
+  ranking: RankingHistories | undefined;
+  isNotFound: boolean;
 };
 
-const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
+const DetailRenderer: React.FC<Result> = ({
+  ncode,
+  item,
+  detail,
+  ranking,
+  isNotFound,
+}) => {
   return (
     <>
-      <DetailItem item={detail} />
-      <RankingHistoryRender ranking={ranking} />
-      {/*<Paper className={""}>
+      <DetailItem
+        ncode={ncode}
+        item={item}
+        detail={detail}
+        isNotFound={isNotFound}
+      />
+      {ranking && <RankingHistoryRender ranking={ranking} />}
+      <Paper>
         <SelfAd />
-  </Paper> */}
+      </Paper>
     </>
   );
 };
@@ -32,7 +54,7 @@ const DetailRenderer: React.FC<Result> = ({ detail, ranking }) => {
 const Detail: React.FC = () => {
   const { ncode } = useParams<{ ncode: string }>();
 
-  const { item, ranking, isLoading } = useDetailForView(ncode!);
+  const { item, detail, ranking, isLoading, error } = useDetailForView(ncode!);
 
   useTitle(
     item
@@ -40,17 +62,14 @@ const Detail: React.FC = () => {
       : "なろうランキングビューワ"
   );
 
-  if (isLoading) {
-    return <FakeItem />;
-  } else if (item && ranking) {
-    return <DetailRenderer detail={item} ranking={ranking} />;
-  }
   return (
-    <>
-      <AdAmazonWidth />
-      <div>情報が見つかりません。この小説は削除された可能性があります。</div>
-      <AdSense />
-    </>
+    <DetailRenderer
+      ncode={ncode!}
+      item={item}
+      detail={detail}
+      ranking={ranking}
+      isNotFound={(!item && !isLoading) || !!error}
+    />
   );
 };
 export default Detail;

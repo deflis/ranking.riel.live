@@ -59,10 +59,8 @@ export const useDetailForView = (ncode: string) => {
     ],
   });
   return {
-    item:
-      listing.data && others.data
-        ? ({ ...listing.data, ...others.data } as ItemDetail | undefined)
-        : undefined,
+    item: listing.data,
+    detail: others.data,
     ranking: ranking.data,
     isLoading: listing.isLoading || listing.isLoading || ranking.isLoading,
     error: listing.error || others.error || ranking.error,
