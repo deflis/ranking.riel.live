@@ -24,15 +24,29 @@ import { Button } from "../atoms/Button";
 import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
 import { PulseLoader } from "../atoms/PulseLoader";
 
-function checkR18(item: Item | NocItem | undefined): item is NocItem {
-  return !!item && (item as NocItem).nocgenre !== undefined;
+function checkR18(
+  isR18: boolean,
+  item: Item | NocItem | undefined
+): item is NocItem {
+  return (
+    isR18 && (item === undefined || (item as NocItem)?.nocgenre !== undefined)
+  );
 }
 const RankingItemRender: React.FC<{
+  ncode: string;
   rankingItem: RankingResultItem;
   item: Item | NocItem | undefined;
+  isR18?: true;
   isLoading: boolean;
   isError: boolean;
-}> = ({ rankingItem, item, isError, isLoading }) => {
+}> = ({
+  ncode,
+  rankingItem,
+  item,
+  isError,
+  isLoading,
+  isR18: rawR18 = false,
+}) => {
   const titleHeight = useAtomValue(titleHeightAtom);
   const titleHeightCss = useCss({
     display: "-webkit-box",
@@ -46,16 +60,16 @@ const RankingItemRender: React.FC<{
 
   const [openStory, toggleStory] = useToggle(false);
 
-  const isR18 = checkR18(item);
+  const isR18 = checkR18(rawR18, item);
   const isNotfound = (!item && !isLoading) || isError;
 
   const user = `https://mypage.syosetu.com/${item?.userid}/`;
   const link = isR18
-    ? `https://novel18.syosetu.com/${item?.ncode?.toLowerCase()}/`
-    : `https://ncode.syosetu.com/${item?.ncode?.toLowerCase()}/`;
+    ? `https://novel18.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`
+    : `https://ncode.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`;
   const detail = isR18
-    ? `/r18/detail/${item?.ncode?.toLowerCase()}`
-    : `/detail/${item?.ncode?.toLowerCase()}`;
+    ? `/r18/detail/${(item?.ncode ?? ncode)?.toLowerCase()}`
+    : `/detail/${(item?.ncode ?? ncode)?.toLowerCase()}`;
 
   return (
     <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 space-y-2">
@@ -98,22 +112,22 @@ const RankingItemRender: React.FC<{
         )}
       </p>
       <h2 className="mb-2 text-2xl">
-        {item ? (
-          <RouterLink
-            to={detail}
-            title={decode(item.title)}
-            className={clsx(
-              "link-reset text-gray-800 dark:text-white hover:underline",
-              titleHeight > 0 && titleHeightCss
-            )}
-          >
-            {decode(item.title)}
-          </RouterLink>
-        ) : isNotfound ? (
-          `この小説は見つかりません`
-        ) : (
-          <PulseLoader className="h-6" disabled={isNotfound} />
-        )}
+        <RouterLink
+          to={detail}
+          title={decode(item?.title)}
+          className={clsx(
+            "link-reset text-gray-800 dark:text-white hover:underline",
+            titleHeight > 0 && titleHeightCss
+          )}
+        >
+          {item ? (
+            decode(item.title)
+          ) : isNotfound ? (
+            `この小説は見つかりません`
+          ) : (
+            <PulseLoader className="h-6" disabled={isNotfound} />
+          )}
+        </RouterLink>
       </h2>
 
       <>
@@ -216,6 +230,7 @@ const RankingItem: React.FC<{ item: RankingResultItem }> = ({
   return (
     <>
       <RankingItemRender
+        ncode={rankingItem.ncode}
         item={item}
         rankingItem={rankingItem}
         isLoading={isLoading}
