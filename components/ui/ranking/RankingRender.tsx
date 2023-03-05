@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import InfiniteScroll from "react-infinite-scroller";
 
 import { chunk } from "../../../modules/utils/chunk";
 import { AdAmazonWidth } from "../common/AdAmazon";
@@ -18,6 +17,40 @@ import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
 import { useQueryClient } from "@tanstack/react-query";
 import { prefetchRankingDetail } from "../../../modules/data/prefetch";
+import { Button } from "../atoms/Button";
+import { Waypoint } from "react-waypoint";
+
+const ChunkRender: React.FC<{
+  chunk: React.ReactNode;
+  index: number;
+  isTail: boolean;
+  setMax: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ chunk, index, setMax, isTail }) => {
+  const handleMore = useCallback(() => {
+    setMax((max) => (isTail ? max + 10 : max));
+  }, [setMax, index, isTail]);
+  const adMode = useAtomValue(adModeAtom);
+
+  return (
+    <>
+      {chunk}
+      {adMode && (
+        <div className="w-full p-auto" key={index}>
+          <AdAmazonWidth />
+        </div>
+      )}
+      {isTail && (
+        <Waypoint onEnter={handleMore}>
+          <div className="w-full px-20 pt-10 pb-20">
+            <Button onClick={handleMore} className="w-full h-20 text-3xl">
+              もっと見る
+            </Button>
+          </div>
+        </Waypoint>
+      )}
+    </>
+  );
+};
 
 const InsideRender: React.FC<{
   ranking: NarouRankingResult[];
@@ -29,21 +62,15 @@ const InsideRender: React.FC<{
       <RankingItem item={item} />
     </div>
   ));
-  const adMode = useAtomValue(adModeAtom);
-  const renderItems = chunk(rankingItems, 10).reduce(
-    (previous, current, index) => (
-      <>
-        {previous}
-        {index !== 0 && adMode && (
-          <div className="w-full p-auto">
-            <AdAmazonWidth key={index} />
-          </div>
-        )}
-        {current}
-      </>
-    ),
-    <></>
-  );
+  const renderItems = chunk(rankingItems, 10).map((v, i) => (
+    <ChunkRender
+      chunk={v}
+      index={i}
+      setMax={setMax}
+      isTail={i * 10 + 10 === max}
+      key={i}
+    />
+  ));
   const rankingConstants = useMemo(
     () => ranking.map(({ ncode, pt }) => `${ncode}${pt}`).join(),
     [ranking]
@@ -51,73 +78,17 @@ const InsideRender: React.FC<{
   useEffect(() => {
     setMax(10);
   }, [rankingConstants]);
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    prefetchRankingDetail(
-      queryClient,
-      ranking.slice(max, max + 10).map((x) => x.ncode)
-    );
-  }, [max, rankingConstants]);
 
   return (
-    <>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={useCallback(
-          (page) => {
-            setMax(page * 10);
-          },
-          [setMax]
-        )}
-        hasMore={max < ranking.length}
-        loader={
-          <Fragment key="loader">
-            <div className="w-full p-auto">
-              <AdAmazonWidth />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-            <div className="w-full md:basis-1/2 box-border p-4">
-              <FakeItem />
-            </div>
-          </Fragment>
-        }
-        className="flex w-full flex-wrap flex-row"
-      >
-        {renderItems}
-      </InfiniteScroll>
+    <div className="flex w-full flex-wrap flex-row">
+      {renderItems}
       <div className="w-full">
         <SelfAd />
       </div>
       <div className="w-full">
         <AdSense />
       </div>
-    </>
+    </div>
   );
 };
 
