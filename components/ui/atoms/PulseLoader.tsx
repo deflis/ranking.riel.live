@@ -7,7 +7,7 @@ export const PulseLoader: React.FC<
   <span
     className={clsx(
       !disabled && "animate-pulse",
-      "w-full bg-slate-700 rounded h-4 inline-block",
+      "w-full bg-slate-300 dark:bg-slate-700 rounded h-4 inline-block",
       className
     )}
     {...props}
