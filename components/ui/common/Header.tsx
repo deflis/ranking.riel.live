@@ -107,96 +107,70 @@ export const Header: React.FC = () => {
         </div>
       </nav>
       <Sidebar open={expand} onClose={toggle}>
-        <RouterLink to="/ranking/d">
-          <SidebarItem as="a" hover>
-            日間
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/ranking/w">
-          <SidebarItem as="a" hover>
-            週間
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/ranking/m">
-          <SidebarItem as="a" hover>
-            月間
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/ranking/q">
-          <SidebarItem as="a" hover>
-            四半期
-          </SidebarItem>
-        </RouterLink>
+        <SidebarItem as={RouterLink} to="/ranking/d" hover>
+          日間
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/ranking/w" hover>
+          週間
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/ranking/m" hover>
+          月間
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/ranking/q" hover>
+          四半期
+        </SidebarItem>
         <Divider />
-        <RouterLink to="/custom">
-          <SidebarItem as="a" hover>
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
+        <SidebarItem as={RouterLink} to="/custom" hover>
+          カスタムランキング
+        </SidebarItem>
         <Divider />
-        <RouterLink to="/custom/y">
-          <SidebarItem as="a" hover>
-            年間
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/custom/a">
-          <SidebarItem as="a" hover>
-            全期間
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/custom/u">
-          <SidebarItem as="a" hover>
-            週間ユニークユーザー数
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/custom/d?genres=201">
-          <SidebarItem as="a" hover>
-            日間ハイファンタジー
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/custom/d?genres=101">
-          <SidebarItem as="a" hover>
-            日間異世界恋愛
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
-        <RouterLink to="/custom/d?genres=102">
-          <SidebarItem as="a" hover>
-            日間現実世界恋愛
-            <br />
-            カスタムランキング
-          </SidebarItem>
-        </RouterLink>
+        <SidebarItem as={RouterLink} to="/custom/y" hover>
+          年間
+          <br />
+          カスタムランキング
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/custom/a" hover>
+          全期間
+          <br />
+          カスタムランキング
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/custom/u" hover>
+          週間ユニークユーザー数
+          <br />
+          カスタムランキング
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/custom/d?genres=201" hover>
+          日間ハイファンタジー
+          <br />
+          カスタムランキング
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/custom/d?genres=101" hover>
+          日間異世界恋愛
+          <br />
+          カスタムランキング
+        </SidebarItem>
+        <SidebarItem as={RouterLink} to="/custom/d?genres=102" hover>
+          日間現実世界恋愛
+          <br />
+          カスタムランキング
+        </SidebarItem>
         <Divider />
-        <RouterLink to="/r18">
-          <SidebarItem as="a" hover>
-            R18ランキング
-          </SidebarItem>
-        </RouterLink>
+        <SidebarItem as={RouterLink} to="/r18" hover>
+          R18ランキング
+        </SidebarItem>
         <Divider />
-        <RouterLink to="/about">
-          <SidebarItem as="a" hover>
-            このサイトについて
-          </SidebarItem>
-        </RouterLink>
+        <SidebarItem as={RouterLink} to="/about" hover>
+          このサイトについて
+        </SidebarItem>
         <Divider />
         <SidebarItem as="label">
-          <Checkbox checked={darkmode} onClick={toggleDarkmode} />
+          <Checkbox checked={darkmode} onChange={toggleDarkmode} />
           ダークモード
         </SidebarItem>
         <SidebarItem as="label">
           <Checkbox
             checked={titleHeightStatus}
-            onClick={toggleTitleHeightStatus}
+            onChange={toggleTitleHeightStatus}
           />
           タイトルの高さを指定する
           {titleHeightStatus && (
@@ -208,17 +182,13 @@ export const Header: React.FC = () => {
             />
           )}
         </SidebarItem>
-        <SidebarItem>
-          <label>
-            <Checkbox checked={!showKeyword} onChange={toggleShowKeyword} />
-            キーワードを表示しない
-          </label>
+        <SidebarItem as="label">
+          <Checkbox checked={!showKeyword} onChange={toggleShowKeyword} />
+          キーワードを表示しない
         </SidebarItem>
-        <SidebarItem>
-          <label>
-            <Checkbox checked={!adMode} onChange={handleAdMode} />
-            広告を表示しない
-          </label>
+        <SidebarItem as="label">
+          <Checkbox checked={!adMode} onChange={handleAdMode} />
+          広告を表示しない
         </SidebarItem>
         <Divider />
         <SidebarItem as="form" className="flex" onSubmit={detail}>
