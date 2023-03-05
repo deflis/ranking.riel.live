@@ -22,7 +22,7 @@ import {
 import clsx from "clsx";
 import { Button } from "../atoms/Button";
 import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
-import { PulseLoader } from "../atoms/PulseLoader";
+import { PulseLoader } from "../atoms/Loader";
 
 function checkR18(
   isR18: boolean,

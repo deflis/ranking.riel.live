@@ -37,7 +37,7 @@ import {
   HiThumbUp,
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
-import { PulseLoader } from "../atoms/PulseLoader";
+import { PulseLoader } from "../atoms/Loader";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 function round(number: number, precision: number): number {
