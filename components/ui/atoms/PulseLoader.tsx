@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import React from "react";
+import { ComponentProps } from "react";
 
 export const PulseLoader: React.FC<
-  React.HTMLAttributes<HTMLDivElement> & { disabled?: boolean }
+  ComponentProps<"div"> & { disabled?: boolean }
 > = ({ className, disabled = false, ...props }) => (
   <div
     className={clsx(
