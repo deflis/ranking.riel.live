@@ -12,8 +12,8 @@ export const StoryCount: React.FC<
   }>
 > = ({ value: initValue, defaultValue, onUpdate, children }) => {
   const [disabled, toggle] = useBoolean(initValue === undefined);
-  const [value, setValue] = useState(
-    initValue ? initValue.toString() : defaultValue.toString()
+  const [value, setValue] = useState(() =>
+    (initValue ?? defaultValue).toString()
   );
   const handleChange = useHandleChange(setValue);
   useUpdateEffect(() => {
@@ -30,17 +30,18 @@ export const StoryCount: React.FC<
   }, [disabled, value, onUpdate]);
   return (
     <>
+      <Checkbox checked={!disabled} onChange={toggle} />
       <label>
-        <Checkbox checked={!disabled} onChange={toggle} />
         {children}
+        <TextField
+          type="number"
+          onChange={handleChange}
+          value={value}
+          disabled={disabled}
+          className="w-20"
+        />
+        話
       </label>
-      <TextField
-        onChange={handleChange}
-        value={value}
-        disabled={disabled}
-        className="w-20"
-      />
-      話
     </>
   );
 };
