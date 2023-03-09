@@ -8,7 +8,12 @@ import {
 } from "narou/src/index.browser";
 import { useCallback, useMemo } from "react";
 
-import { QueryFunction, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryFunction,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
@@ -19,86 +24,72 @@ import {
   RankingData,
 } from "./custom/utils";
 import { allGenres } from "../enum/Genre";
+import DataLoader from "dataloader";
+import { chunk } from "../utils/chunk";
+import { prefetchRankingDetail } from "./prefetch";
 
 const PAGE_ITEM_NUM = 10 as const;
-
-export const useCustomRankingMaxPage = (params: CustomRankingParams) => {
-  const fields = useMemo(() => {
-    const filterBuilder = new FilterBuilder();
-    if (params.max) filterBuilder.setMaxNo(params.max);
-    if (params.min) filterBuilder.setMaxNo(params.min);
-    if (params.firstUpdate) filterBuilder.setFirstUpdate(params.firstUpdate);
-    if (!params.tanpen) filterBuilder.disableTanpen();
-    if (!params.kanketsu) filterBuilder.disableKanketsu();
-    if (!params.rensai) filterBuilder.disableRensai();
-    return filterBuilder.fields();
-  }, [
-    params.max,
-    params.min,
-    params.firstUpdate,
-    params.tanpen,
-    params.kanketsu,
-    params.rensai,
-  ]);
-  const { data } = useQuery({
-    queryKey: customRankingKey(params, fields, 0),
-    queryFn: customRankingFetcher,
-  });
-  return data && data?.allcount < 2000
-    ? Math.floor(data.allcount / PAGE_ITEM_NUM)
-    : 200;
-};
+const CHUNK_ITEM_NUM = 100 as const;
 
 export const useCustomRanking = (params: CustomRankingParams, page: number) => {
-  const [filter, fields] = useMemo(() => {
-    const filterBuilder = new FilterBuilder();
-    if (params.max) filterBuilder.setMaxNo(params.max);
-    if (params.min) filterBuilder.setMaxNo(params.min);
-    if (params.firstUpdate) filterBuilder.setFirstUpdate(params.firstUpdate);
-    if (!params.tanpen) filterBuilder.disableTanpen();
-    if (!params.kanketsu) filterBuilder.disableKanketsu();
-    if (!params.rensai) filterBuilder.disableRensai();
-    return [filterBuilder.create(), filterBuilder.fields()] as const;
-  }, [
-    params.max,
-    params.min,
-    params.firstUpdate,
-    params.tanpen,
-    params.kanketsu,
-    params.rensai,
-  ]);
   const queryClient = useQueryClient();
-  const queryFn: QueryFunction<
-    RankingData[],
-    readonly [CustomRankingParams, number]
-  > = useCallback(
-    async ({ queryKey: [params, page] }) => {
-      const values: PickedNarouSearchResult<CustomRankingResultKeyNames>[] = [];
-      let fetchPage = 0;
-      while (values.length < page * PAGE_ITEM_NUM) {
-        const result = await queryClient.fetchQuery({
-          queryKey: customRankingKey(params, fields, fetchPage),
-          queryFn: customRankingFetcher,
-        });
-        const resultValues = result.values.filter(filter);
-        values.push(...resultValues);
-        fetchPage++;
-        if (result.allcount < fetchPage * PAGE_ITEM_NUM) {
-          break;
-        }
-      }
-      return formatCustomRankingRaw(params.rankingType, values).slice(
-        (page - 1) * 10,
-        page * 10
-      );
-    },
-    [queryClient, fields]
-  );
+
   const { isLoading, data } = useQuery({
-    queryKey: [params, page] as const,
-    queryFn,
+    queryKey: [params, page],
+    queryFn: useCallback(getCustomRankingQueryFn(params, queryClient), [
+      params,
+    ]),
   });
   return { isLoading, data };
+};
+
+export const prefetchCustomRanking = async (
+  queryClient: QueryClient,
+  params: CustomRankingParams,
+  page: number
+) => {
+  await queryClient.prefetchQuery(
+    [params, page],
+    getCustomRankingQueryFn(params, queryClient)
+  );
+  const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
+  await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
+};
+
+const getCustomRankingQueryFn = (
+  params: CustomRankingParams,
+  queryClient: QueryClient
+): QueryFunction<RankingData[], readonly [CustomRankingParams, number]> => {
+  const filterBuilder = new FilterBuilder();
+  if (params.max) filterBuilder.setMaxNo(params.max);
+  if (params.min) filterBuilder.setMaxNo(params.min);
+  if (params.firstUpdate) filterBuilder.setFirstUpdate(params.firstUpdate);
+  if (!params.tanpen) filterBuilder.disableTanpen();
+  if (!params.kanketsu) filterBuilder.disableKanketsu();
+  if (!params.rensai) filterBuilder.disableRensai();
+  const filter = filterBuilder.create();
+  const fields = filterBuilder.fields();
+
+  return async ({ queryKey: [params, page] }) => {
+    const values: PickedNarouSearchResult<CustomRankingResultKeyNames>[] = [];
+    let fetchPage = 0;
+    while (values.length < page * CHUNK_ITEM_NUM) {
+      const result = await queryClient.fetchQuery({
+        queryKey: customRankingKey(params, fields, fetchPage),
+        queryFn: customRankingFetcher,
+      });
+      const resultValues = result.values.filter(filter);
+      values.push(...resultValues);
+      fetchPage++;
+      if (result.allcount < fetchPage * CHUNK_ITEM_NUM) {
+        break;
+      }
+    }
+    return formatCustomRankingRaw(params.rankingType, values).slice(
+      (page - 1) * PAGE_ITEM_NUM,
+      page * PAGE_ITEM_NUM
+    );
+  };
 };
 
 type CustomRankingResultKeyNames =
@@ -193,11 +184,13 @@ const customRankingKey = (
     page,
   ] as const;
 };
+type CustomRankingKey = ReturnType<typeof customRankingKey>;
+
 type NarouCustomRankingSearchResults =
   NarouSearchResults<CustomRankingResultKeyNames>;
 const customRankingFetcher: QueryFunction<
   NarouCustomRankingSearchResults,
-  ReturnType<typeof customRankingKey>
+  CustomRankingKey
 > = async ({
   queryKey: [
     ,
@@ -213,48 +206,102 @@ const customRankingFetcher: QueryFunction<
     page,
   ],
 }) => {
-  const searchBuilder = search()
-    .order(order)
-    .page(page, 10)
-    .fields([
-      Fields.ncode,
-      Fields.general_all_no,
-      Fields.general_firstup,
-      Fields.noveltype,
-      Fields.end,
-      Fields.daily_point,
-      Fields.weekly_point,
-      Fields.monthly_point,
-      Fields.monthly_point,
-      Fields.quarter_point,
-      Fields.yearly_point,
-      Fields.all_hyoka_cnt,
-    ])
-    .opt("weekly");
+  const cacheKey = [
+    order,
+    keyword ?? "",
+    notKeyword ?? "",
+    byTitle ? "t" : "f",
+    byStory ? "t" : "f",
+    genres.join(),
+    novelTypeParam ?? "",
+    fields.join(),
+    optionalFields.join(),
+  ].join();
+  const dataloader =
+    dataLoaderCache.get(cacheKey) ??
+    new DataLoader<number, NarouCustomRankingSearchResults>(
+      async (pages) => {
+        const min = Math.min(...pages);
+        const max = Math.max(...pages);
+        const searchBuilder = search()
+          .order(order)
+          .start(min * CHUNK_ITEM_NUM + 1)
+          .limit((max - min + 1) * CHUNK_ITEM_NUM)
+          .fields([
+            Fields.ncode,
+            Fields.general_all_no,
+            Fields.general_firstup,
+            Fields.noveltype,
+            Fields.end,
+            Fields.daily_point,
+            Fields.weekly_point,
+            Fields.monthly_point,
+            Fields.monthly_point,
+            Fields.quarter_point,
+            Fields.yearly_point,
+            Fields.all_hyoka_cnt,
+          ])
+          .opt("weekly");
 
-  searchBuilder.fields(fields);
-  searchBuilder.opt(optionalFields);
+        searchBuilder.fields(fields);
+        searchBuilder.opt(optionalFields);
 
-  if (genres.length > 0) {
-    searchBuilder.genre(genres);
-  }
-  if (keyword) {
-    searchBuilder.word(keyword).byKeyword(true);
-  }
-  if (notKeyword) {
-    searchBuilder.notWord(notKeyword).byKeyword(true);
-  }
-  if (byTitle) {
-    searchBuilder.byTitle(byTitle);
-  }
-  if (byStory) {
-    searchBuilder.byOutline();
-  }
-  if (novelTypeParam) {
-    searchBuilder.type(novelTypeParam);
-  }
-  return await searchBuilder.execute();
+        if (genres.length > 0) {
+          searchBuilder.genre(genres);
+        }
+        if (keyword) {
+          searchBuilder.word(keyword).byKeyword(true);
+        }
+        if (notKeyword) {
+          searchBuilder.notWord(notKeyword).byKeyword(true);
+        }
+        if (byTitle) {
+          searchBuilder.byTitle(byTitle);
+        }
+        if (byStory) {
+          searchBuilder.byOutline();
+        }
+        if (novelTypeParam) {
+          searchBuilder.type(novelTypeParam);
+        }
+        const { allcount, values } = await searchBuilder.execute();
+
+        return zip(pages, chunk(values, PAGE_ITEM_NUM)).map(
+          ([, values], index) => ({
+            allcount,
+            values: values ?? [],
+            limit: 10,
+            start: 0,
+            length: 0,
+            page: index + min,
+          })
+        );
+      },
+      { cache: false }
+    );
+
+  dataLoaderCache.set(cacheKey, dataloader);
+
+  return dataloader.load(page);
 };
+
+function zip<S1, S2>(
+  firstCollection: readonly S1[],
+  lastCollection: readonly S2[]
+): [S1, S2 | undefined][] {
+  const zipped: [S1, S2][] = [];
+
+  for (let index = 0; index < firstCollection.length; index++) {
+    zipped.push([firstCollection[index], lastCollection[index]]);
+  }
+
+  return zipped;
+}
+
+const dataLoaderCache = new Map<
+  string,
+  DataLoader<number, NarouCustomRankingSearchResults>
+>();
 
 class FilterBuilder<
   T extends PickedNarouSearchResult<
