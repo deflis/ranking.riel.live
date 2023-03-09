@@ -22,10 +22,9 @@ import { DotLoader } from "../atoms/Loader";
 
 const ChunkRender: React.FC<{
   chunk: React.ReactNode;
-  index: number;
   isTail: boolean;
   setMax: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ chunk, index, setMax, isTail }) => {
+}> = ({ chunk, setMax, isTail }) => {
   const handleMore = useCallback(() => {
     setMax((max) => (isTail ? max + 10 : max));
   }, [setMax, isTail]);
@@ -65,7 +64,6 @@ const InsideRender: React.FC<{
   const renderItems = chunk(rankingItems, 10).map((v, i) => (
     <ChunkRender
       chunk={v}
-      index={i}
       setMax={setMax}
       isTail={i * 10 + 10 === max}
       key={i}
@@ -78,6 +76,14 @@ const InsideRender: React.FC<{
   useEffect(() => {
     setMax(10);
   }, [rankingConstants]);
+
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    prefetchRankingDetail(
+      queryClient,
+      ranking.slice(max + 1, max + 10).map((x) => x.ncode)
+    );
+  }, [ranking, max]);
 
   return (
     <div className="flex w-full flex-wrap flex-row">
@@ -98,7 +104,7 @@ export const RankingRender: React.FC<{
 }> = ({ ranking, loading = false }) => {
   return (
     <>
-      {loading && <DotLoader />}
+      {loading && ranking.length === 0 && <DotLoader />}
       {!loading && ranking.length === 0 && <p>データがありません</p>}
       <InsideRender ranking={ranking} />
     </>

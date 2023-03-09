@@ -8,12 +8,13 @@ import { adModeAtom } from "../../../modules/atoms/global";
 import { useAtomValue } from "jotai";
 import { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import {
+  prefetchCustomRanking,
   useCustomRanking,
-  useCustomRankingMaxPage,
 } from "../../../modules/data/custom";
 import { DotLoader } from "../atoms/Loader";
 import { Waypoint } from "react-waypoint";
 import { Button } from "../atoms/Button";
+import { useQueryClient } from "@tanstack/react-query";
 
 const InsideRender: React.FC<{
   params: CustomRankingParams;
@@ -34,9 +35,12 @@ const InsideRender: React.FC<{
       </div>
     );
   }
+  if (data?.length === 0 || !data) {
+    return page === 1 ? <div className="w-full">データがありません</div> : null;
+  }
   return (
     <>
-      {data?.map((item) => (
+      {data.map((item) => (
         <div
           className="w-full md:basis-1/2 box-border p-4"
           key={`${item.rank}-${item.ncode}`}
@@ -71,14 +75,18 @@ export const CustomRankingRender: React.FC<{
     setPage(1);
   }, [params]);
 
-  const maxPage = useCustomRankingMaxPage(params);
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    prefetchCustomRanking(queryClient, params, page + 1);
+  }, [params, page]);
+
   const pages = Array.from({ length: page }, (_, i) => i + 1);
   const renderItems = pages.map((currentPage) => (
     <InsideRender
       key={currentPage}
       params={params}
       page={currentPage}
-      isTail={currentPage === page && page < maxPage}
+      isTail={currentPage === page && page < 200}
       setPage={setPage}
     />
   ));
