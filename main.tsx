@@ -8,3 +8,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <App />
   </React.StrictMode>
 );
+
+navigator.serviceWorker.getRegistrations().then((registrations) => {
+  for (let registration of registrations) {
+    registration.unregister();
+  }
+});
