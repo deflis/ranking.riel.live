@@ -87,11 +87,12 @@ export const NumberTextField: React.FC<NumberTextFieldProps> = ({
 
   return (
     <TextField
+      {...props}
       className={clsx(className)}
       value={state}
       onChange={handleChange}
       onBlur={handleBlur}
-      {...props}
+      type="number"
     />
   );
 };
