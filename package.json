@@ -24,7 +24,7 @@
     "clsx": "^1.2.1",
     "dataloader": "^2.1.0",
     "html-entities": "^2.3.3",
-    "jotai": "^1.7.8",
+    "jotai": "^2.0.3",
     "luxon": "^3.1.0",
     "mabiki": "^1.0.1",
     "narou": "^0.7.6",
