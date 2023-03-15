@@ -15,7 +15,7 @@ type ButtonProps<T extends ElementType = "button"> = {
 } & Omit<ComponentPropsWithoutRef<T>, "as">;
 
 function ButtonBase<T extends ElementType = "button">(
-  { className, as, color, ...props }: ButtonProps<T>,
+  { className, as, color, type, ...props }: ButtonProps<T>,
   ref: ForwardedRef<T>
 ) {
   const Component = as ?? "button";
@@ -28,6 +28,7 @@ function ButtonBase<T extends ElementType = "button">(
         color === "primary" && styles.primary,
         className
       )}
+      type={type ?? "button"}
       {...props}
     />
   );
