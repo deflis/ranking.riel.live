@@ -1,121 +1,159 @@
 import React, { useCallback } from "react";
-import { StoryCount } from "../common/StoryCount";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
-  enableKanketsuAtom,
-  enableRensaiAtom,
-  enableTanpenAtom,
-  firstUpdateAtom,
-  genresAtom,
-  maxNoAtom,
-  minNoAtom,
+  FilterConfig,
+  filterConfigAtom,
+  isUseFilterAtom,
 } from "../../../modules/atoms/filter";
 import { allGenres } from "../../../modules/enum/Genre";
 import { DateTime } from "luxon";
 import { Button } from "../atoms/Button";
-import DatePicker from "../atoms/DatePicker";
 import { Checkbox } from "../atoms/Checkbox";
 import { Disclosure, Transition } from "@headlessui/react";
 import { HiChevronDown } from "react-icons/hi";
 import clsx from "clsx";
-import { Genre, GenreNotation } from "narou/src/index.browser";
+import { GenreNotation } from "narou/src/index.browser";
 import styles from "./Filter.module.css";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { TextField } from "../atoms/TextField";
+import { SelectBox } from "../atoms/SelectBox";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
-const InnerFilterComponent: React.FC = () => {
-  const [genres, setGenres] = useAtom(genresAtom);
-  const handleChangeGenre = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!e.target.value) return;
-      const id = parseInt(e.target.value) as Genre;
-      setGenres((genres) =>
-        genres.includes(id)
-          ? genres.filter((x) => x !== id)
-          : [...genres, id].sort()
-      );
-    },
-    [setGenres]
-  );
-  const genreFilter = allGenres.map((id) => (
-    <React.Fragment key={id}>
-      <label>
-        <Checkbox
-          checked={genres.includes(id)}
-          value={id}
-          onChange={handleChangeGenre}
-        />
-        {GenreNotation[id]}
-      </label>
-    </React.Fragment>
-  ));
-
-  const [maxNo, setMaxNo] = useAtom(maxNoAtom);
-  const updateMax = useCallback((max: number | undefined) => setMaxNo(max), []);
-  const [minNo, setMinNo] = useAtom(minNoAtom);
-  const updateMin = useCallback((min: number | undefined) => setMinNo(min), []);
-  const [firstUpdate, setFirstUpdate] = useAtom(firstUpdateAtom);
-  const updateFirstUpdate = useCallback(
-    (firstUpdate: DateTime | null) => setFirstUpdate(firstUpdate ?? undefined),
-    [setFirstUpdate]
-  );
-  const [enableRensai, setEnableRensai] = useAtom(enableRensaiAtom);
-  const toggleEnableRensai = useCallback(
-    () => setEnableRensai((x) => !x),
-    [setEnableRensai]
-  );
-  const [enableKanketsu, setEnableKanketsu] = useAtom(enableKanketsuAtom);
-  const toggleEnableKanketsu = useCallback(
-    () => setEnableKanketsu((x) => !x),
-    [setEnableKanketsu]
-  );
-  const [enableTanpen, setEnableTanpen] = useAtom(enableTanpenAtom);
-  const toggleEnableTanpen = useCallback(
-    () => setEnableTanpen((x) => !x),
-    [setEnableTanpen]
-  );
+const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
+  onClose,
+}) => {
+  const [filterCondig, setFilterConfig] = useAtom(filterConfigAtom);
+  const { handleSubmit, register, control, setValue } = useForm({
+    defaultValues: filterCondig,
+  });
 
   const selectAll = useCallback(
-    () => setGenres(allGenres as unknown as Genre[]),
-    [setGenres]
+    () => allGenres.forEach((id) => setValue(`genres.g${id}`, true)),
+    [setValue]
   );
-  const unselectAll = useCallback(() => setGenres([]), [setGenres]);
+  const unselectAll = useCallback(
+    () => allGenres.forEach((id) => setValue(`genres.g${id}`, false)),
+    [setValue]
+  );
+
+  const clear = useCallback(() => {
+    allGenres.forEach((id) => setValue(`genres.g${id}`, true));
+    setValue("firstUpdate.term", "none");
+    setValue("story.min.enable", false);
+    setValue("story.max.enable", false);
+    setValue("status.kanketsu", true);
+    setValue("status.rensai", true);
+    setValue("status.tanpen", true);
+  }, [setValue]);
+
+  const onSubmit = useCallback(
+    (config: FilterConfig) => {
+      setFilterConfig(config);
+      onClose();
+    },
+    [onClose, setFilterConfig]
+  );
 
   return (
-    <form noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
+    <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
       <div className={styles.container}>
         <fieldset>
           <legend className={styles.label}>ジャンル</legend>
-          {genreFilter}
+          {allGenres.map((id) => (
+            <React.Fragment key={id}>
+              <label>
+                <Checkbox {...register(`genres.g${id}`)} />
+                {GenreNotation[id]}
+              </label>
+            </React.Fragment>
+          ))}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>
         </fieldset>
         <fieldset>
           <legend className={styles.label}>話数</legend>
-          <StoryCount value={minNo} defaultValue={1} onUpdate={updateMin}>
+          <label>
+            <Checkbox {...register("story.min.enable")} />
             最小
-          </StoryCount>
+            <TextField
+              type="number"
+              min="1"
+              {...register("story.min.value", { valueAsNumber: true })}
+              disabled={!useWatch({ control, name: "story.min.enable" })}
+            />
+          </label>
           ～
-          <StoryCount value={maxNo} defaultValue={30} onUpdate={updateMax}>
+          <label>
+            <Checkbox {...register("story.max.enable")} />
             最大
-          </StoryCount>
+            <TextField
+              type="number"
+              min="1"
+              {...register("story.max.value", { valueAsNumber: true })}
+              disabled={!useWatch({ control, name: "story.max.enable" })}
+            />
+          </label>
         </fieldset>
         <fieldset>
           <legend className={styles.label}>更新開始日</legend>
-          <DatePicker
-            minDate={DateTime.fromObject({ year: 2013, month: 5, day: 1 })}
-            maxDate={DateTime.now()}
-            value={firstUpdate ?? null}
-            onChange={updateFirstUpdate}
-            clearable
+          <Controller
+            name="firstUpdate.term"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <SelectBox
+                value={value}
+                onChange={onChange}
+                options={[
+                  { value: "none", label: "指定しない" },
+                  { value: "2days", label: "2日より新しい" },
+                  { value: "7days", label: "1週間より新しい" },
+                  { value: "1months", label: "1ヶ月より新しい" },
+                  { value: "6months", label: "半年より新しい" },
+                  { value: "1years", label: "半年より新しい" },
+                  { value: "custom", label: "選択する" },
+                ]}
+                buttonClassName="w-52"
+              />
+            )}
+          />
+          <TextField
+            type="date"
+            {...register("firstUpdate.begin")}
+            min={DateTime.fromObject({
+              year: 2013,
+              month: 5,
+              day: 1,
+            }).toISODate()}
+            max={DateTime.now().toISODate()}
+            disabled={
+              useWatch({ control, name: "firstUpdate.term" }) !== "custom"
+            }
           />
         </fieldset>
         <fieldset>
           <legend className={styles.label}>更新状態</legend>
-          <Checkbox checked={enableRensai} onChange={toggleEnableRensai} />
-          連載中
-          <Checkbox checked={enableKanketsu} onChange={toggleEnableKanketsu} />
-          完結
-          <Checkbox checked={enableTanpen} onChange={toggleEnableTanpen} />
-          短編
+          <label>
+            <Checkbox {...register("status.rensai")} />
+            連載中
+          </label>
+          <label>
+            <Checkbox {...register("status.kanketsu")} />
+            完結
+          </label>
+          <label>
+            <Checkbox {...register("status.tanpen")} />
+            短編
+          </label>
+        </fieldset>
+        <fieldset className="space-x-4">
+          <Button type="submit" color="primary" className="font-bold">
+            <FaSearch className="w-5 h-5 pr-2 inline" />
+            適用
+          </Button>
+          <Button onClick={clear} className="font-bold">
+            <FaTimes className="w-5 h-5 pr-2 inline" />
+            クリア
+          </Button>
         </fieldset>
       </div>
     </form>
@@ -123,12 +161,15 @@ const InnerFilterComponent: React.FC = () => {
 };
 
 export const FilterComponent: React.FC = () => {
+  const enable = useAtomValue(isUseFilterAtom);
   return (
     <Disclosure as="div" className={styles.filter}>
-      {({ open }) => (
+      {({ open, close }) => (
         <>
           <Disclosure.Button className={styles.button}>
-            <span className={styles.label}>フィルター</span>
+            <span className={styles.label}>
+              フィルター : {enable ? "有効" : "無効"}
+            </span>
             <HiChevronDown className={clsx(styles.icon, open && styles.open)} />
           </Disclosure.Button>
           <Transition
@@ -141,7 +182,7 @@ export const FilterComponent: React.FC = () => {
             leaveTo={styles.leave_to}
           >
             <Disclosure.Panel className={styles.panel}>
-              <InnerFilterComponent />
+              <InnerFilterComponent onClose={close} />
             </Disclosure.Panel>
           </Transition>
         </>

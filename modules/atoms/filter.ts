@@ -6,29 +6,41 @@ import { Item } from "../data/types";
 import { allGenres } from "../enum/Genre";
 
 export const genresAtom = atomWithStorage("genres", Array.from(allGenres));
-export const maxNoAtom = atomWithStorage<number | undefined>(
+export const storyMaxAtom = atomWithStorage<number | undefined>(
   "maxNo",
   undefined
 );
-export const minNoAtom = atomWithStorage<number | undefined>(
+export const storyMinAtom = atomWithStorage<number | undefined>(
   "minNo",
   undefined
 );
-export const firstUpdateRawAtom = atomWithStorage<string | undefined>(
-  "firstUpdate",
-  undefined
-);
+export const firstUpdateRawAtom = atomWithStorage<
+  string | TermStrings | undefined
+>("firstUpdate", undefined);
 export const enableTanpenAtom = atomWithStorage("enableTanpen", true);
 export const enableRensaiAtom = atomWithStorage("enableRensai", true);
 export const enableKanketsuAtom = atomWithStorage("enableKanketsu", true);
-export const firstUpdateAtom = atom(
-  (get) => {
-    const raw = get(firstUpdateRawAtom);
-    return raw ? DateTime.fromISO(raw) : undefined;
-  },
-  (_, set, value: DateTime | undefined) =>
-    set(firstUpdateRawAtom, value?.toISODate())
+export const firstUpdateAtom = atom((get) =>
+  parseDateRange(get(firstUpdateRawAtom))
 );
+
+export function parseDateRange(raw: string | undefined): DateTime | undefined {
+  switch (raw as TermStrings) {
+    case "2days":
+      return DateTime.now().minus({ days: 2 });
+    case "7days":
+      return DateTime.now().minus({ days: 7 });
+    case "1months":
+      return DateTime.now().minus({ months: 1 });
+    case "6months":
+      return DateTime.now().minus({ months: 6 });
+    case "1years":
+      return DateTime.now().minus({ years: 1 });
+    default:
+      const date = raw ? DateTime.fromISO(raw) : undefined;
+      return date?.isValid ? date : undefined;
+  }
+}
 
 function checkAllGenres(genres: Genre[]): boolean {
   return allGenres.every((genre) => genres.includes(genre));
@@ -36,8 +48,8 @@ function checkAllGenres(genres: Genre[]): boolean {
 
 export const isUseFilterAtom: Atom<boolean> = atom((get) => {
   const genres = get(genresAtom);
-  const maxNo = get(maxNoAtom);
-  const minNo = get(minNoAtom);
+  const maxNo = get(storyMaxAtom);
+  const minNo = get(storyMinAtom);
   const firstUpdate = get(firstUpdateAtom);
   const enableTanpen = get(enableTanpenAtom);
   const enableRensai = get(enableRensaiAtom);
@@ -52,37 +64,120 @@ export const isUseFilterAtom: Atom<boolean> = atom((get) => {
     !enableKanketsu
   );
 });
-export const forLogAtom = atom((get) => {
-  const genres = get(genresAtom);
-  const maxNo = get(maxNoAtom);
-  const minNo = get(minNoAtom);
-  const firstUpdate = get(firstUpdateAtom);
-  const enableTanpen = get(enableTanpenAtom);
-  const enableRensai = get(enableRensaiAtom);
-  const enableKanketsu = get(enableKanketsuAtom);
-  return {
-    genres,
-    maxNo,
-    minNo,
-    firstUpdate,
-    enableTanpen,
-    enableRensai,
-    enableKanketsu,
+
+type NumberConfig = {
+  enable: boolean;
+  value: number;
+};
+
+type TermStrings = "2days" | "7days" | "1months" | "6months" | "1years";
+
+type TermConfig = {
+  term: TermStrings | "custom" | "none";
+  begin: string;
+  end: string;
+};
+
+export type FilterConfig = {
+  genres: Record<`g${typeof allGenres[number]}`, boolean>;
+  story: {
+    min: NumberConfig;
+    max: NumberConfig;
   };
-});
+  firstUpdate: TermConfig;
+  status: {
+    tanpen: boolean;
+    rensai: boolean;
+    kanketsu: boolean;
+  };
+};
+
+export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
+  (get) => {
+    const genres = get(genresAtom);
+    const storyMax = get(storyMaxAtom);
+    const storyMin = get(storyMinAtom);
+    const firstUpdate = get(firstUpdateAtom);
+    const firstUpdateRaw = get(firstUpdateRawAtom);
+    const enableTanpen = get(enableTanpenAtom);
+    const enableRensai = get(enableRensaiAtom);
+    const enableKanketsu = get(enableKanketsuAtom);
+    return {
+      genres: allGenres.reduce(
+        (accumulator, id) => ({
+          ...accumulator,
+          [`g${id}`]: genres.includes(id),
+        }),
+        {} as Record<`g${typeof allGenres[number]}`, boolean>
+      ),
+      story: {
+        min: {
+          enable: !!storyMax,
+          value: storyMin ?? 1,
+        },
+        max: {
+          enable: !!storyMax,
+          value: storyMax ?? 30,
+        },
+      },
+      firstUpdate: {
+        term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
+          ? "custom"
+          : (firstUpdateRaw as TermStrings) ?? "none",
+        begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate(),
+        end: "",
+      },
+      status: {
+        tanpen: enableTanpen,
+        rensai: enableRensai,
+        kanketsu: enableKanketsu,
+      },
+    };
+  },
+  (_, set, config) => {
+    set(
+      genresAtom,
+      allGenres.filter((id) => config.genres[`g${id}`])
+    );
+    set(
+      storyMinAtom,
+      config.story.min.enable ? config.story.min.value : undefined
+    );
+    set(
+      storyMaxAtom,
+      config.story.max.enable ? config.story.max.value : undefined
+    );
+    const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin);
+    set(
+      firstUpdateRawAtom,
+      config.firstUpdate.term === "custom" && firstUpdateBegin.isValid
+        ? firstUpdateBegin.startOf("day").toISO()
+        : config.firstUpdate.term !== "none"
+        ? config.firstUpdate.term
+        : undefined
+    );
+    set(enableTanpenAtom, config.status.tanpen);
+    set(enableRensaiAtom, config.status.rensai);
+    set(enableKanketsuAtom, config.status.kanketsu);
+  }
+);
 
 export const filterAtom = atom((get) => {
   const genres = get(genresAtom);
-  const maxNo = get(maxNoAtom);
-  const minNo = get(minNoAtom);
+  const storyMax = get(storyMaxAtom);
+  const storyMin = get(storyMinAtom);
   const firstUpdate = get(firstUpdateAtom);
   const enableTanpen = get(enableTanpenAtom);
   const enableRensai = get(enableRensaiAtom);
   const enableKanketsu = get(enableKanketsuAtom);
   return (item: Item): boolean =>
     (genres.length === 0 || genres.includes(item.genre)) &&
-    (maxNo === undefined || maxNo < 1 || item.general_all_no <= maxNo) &&
-    (minNo === undefined || minNo < 1 || item.general_all_no >= minNo) &&
+    (storyMax === undefined ||
+      storyMax < 1 ||
+      item.general_all_no <= storyMax) &&
+    (storyMin === undefined ||
+      storyMin < 1 ||
+      item.general_all_no >= storyMin) &&
     (!firstUpdate || firstUpdate < item.general_firstup) &&
     ((enableTanpen && item.noveltype === 2) ||
       (enableRensai && item.noveltype === 1 && item.end === 1) ||
