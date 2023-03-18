@@ -11,7 +11,7 @@ export interface CustomRankingParams {
   genres: Genre[];
   min?: number;
   max?: number;
-  firstUpdate?: DateTime;
+  firstUpdate?: string;
   rensai: boolean;
   kanketsu: boolean;
   tanpen: boolean;

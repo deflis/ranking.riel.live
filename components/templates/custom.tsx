@@ -52,7 +52,7 @@ function createSearchParams({
   if (genres.length !== 0) searchParams.set("genres", genres.join(","));
   if (max) searchParams.set("max", max.toString());
   if (min) searchParams.set("min", min.toString());
-  if (firstUpdate) searchParams.set("first_update", firstUpdate.toISODate());
+  if (firstUpdate) searchParams.set("first_update", firstUpdate);
   if (!rensai) searchParams.set("rensai", "0");
   if (!kanketsu) searchParams.set("kanketsu", "0");
   if (!tanpen) searchParams.set("tanpen", "0");
@@ -77,7 +77,7 @@ function parseQuery(rankingType: RankingType): CustomRankingParams {
     genres: conventGenres(useSearchParam("genres")),
     max: int(useSearchParam("max")),
     min: int(useSearchParam("min")),
-    firstUpdate: date(useSearchParam("first_update")),
+    firstUpdate: useSearchParam("first_update") ?? undefined,
     rensai: boolean(useSearchParam("rensai"), true),
     kanketsu: boolean(useSearchParam("kanketsu"), true),
     tanpen: boolean(useSearchParam("tanpen"), true),

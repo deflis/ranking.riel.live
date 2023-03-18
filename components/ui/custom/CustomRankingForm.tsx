@@ -1,9 +1,14 @@
 import { DateTime } from "luxon";
 import { Genre, GenreNotation } from "narou/src/index.browser";
-import React, { useCallback, useEffect } from "react";
-import { Controller, useController, useForm } from "react-hook-form";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { Controller, useController, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "react-use";
+import {
+  FilterConfig,
+  parseDateRange,
+  TermStrings,
+} from "../../../modules/atoms/filter";
 
 import { allGenres } from "../../../modules/enum/Genre";
 import { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -106,60 +111,125 @@ type InnerParams = Omit<CustomRankingParams, "firstUpdate"> & {
   firstUpdate: string | undefined;
 };
 
+type CustomRankingConfig = {
+  rankingType: RankingType;
+  keyword: string;
+  notKeyword: string;
+  byTitle: boolean;
+  byStory: boolean;
+} & FilterConfig;
+
+function getDefaultValues({
+  rankingType,
+  keyword,
+  notKeyword,
+  byTitle,
+  byStory,
+  genres,
+  min,
+  max,
+  firstUpdate: firstUpdateRaw,
+  kanketsu,
+  rensai,
+  tanpen,
+}: CustomRankingParams): CustomRankingConfig {
+  const firstUpdate = parseDateRange(firstUpdateRaw);
+  return {
+    rankingType,
+    keyword: keyword ?? "",
+    notKeyword: notKeyword ?? "",
+    byTitle,
+    byStory,
+    genres: allGenres.reduce(
+      (accumulator, id) => ({
+        ...accumulator,
+        [`g${id}`]: genres.includes(id),
+      }),
+      {} as Record<`g${typeof allGenres[number]}`, boolean>
+    ),
+    story: {
+      min: {
+        enable: !!min,
+        value: min ?? 1,
+      },
+      max: {
+        enable: !!max,
+        value: max ?? 1,
+      },
+    },
+    firstUpdate: {
+      term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
+        ? "custom"
+        : (firstUpdateRaw as TermStrings) ?? "none",
+      begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate(),
+      end: "",
+    },
+    status: {
+      kanketsu,
+      rensai,
+      tanpen,
+    },
+  };
+}
+
+function convertToParams({
+  rankingType,
+  keyword,
+  notKeyword,
+  byTitle,
+  byStory,
+  genres,
+  story,
+  firstUpdate,
+  status,
+}: CustomRankingConfig): CustomRankingParams {
+  return {
+    rankingType,
+    keyword,
+    notKeyword,
+    byTitle,
+    byStory,
+    genres: allGenres.filter((id) => genres[`g${id}`]),
+    min: story.min.enable ? story.min.value : undefined,
+    max: story.max.enable ? story.max.value : undefined,
+    firstUpdate:
+      firstUpdate.term === "custom"
+        ? firstUpdate.begin
+        : firstUpdate.term !== "none"
+        ? firstUpdate.term
+        : undefined,
+    ...status,
+  };
+}
+
 const EnableCustomRankingForm: React.FC<
   CustomRankingFormParams & InnterParams
 > = ({ params, onSearch, onClose }) => {
-  const { firstUpdate, ...otherParams } = params;
-  const { control, register, handleSubmit, reset } = useForm<InnerParams>({
+  const defaultValues = useMemo(() => getDefaultValues(params), [params]);
+  const { control, register, handleSubmit, setValue, reset } = useForm({
     mode: "onSubmit",
-    defaultValues: { firstUpdate: firstUpdate?.toISODate(), ...otherParams },
+    defaultValues,
   });
+
   useEffect(() => {
-    const { firstUpdate, ...otherParams } = params;
-    reset({ firstUpdate: firstUpdate?.toISODate(), ...otherParams });
-  }, [params]);
+    reset(defaultValues);
+  }, [defaultValues]);
+
   const handleSearch = useCallback(
-    ({ firstUpdate, ...params }: InnerParams) => {
-      onSearch({
-        firstUpdate: firstUpdate ? DateTime.fromISO(firstUpdate) : undefined,
-        ...params,
-      });
+    (config: CustomRankingConfig) => {
+      onSearch(convertToParams(config));
     },
     [onSearch]
   );
-  const {
-    field: { value: genres, onChange: setGenres },
-  } = useController({ name: "genres", control });
 
-  const handleChangeGenre = useCallback(
-    (e: React.ChangeEvent<{ value?: string }>) => {
-      if (!e.target.value) return;
-      const id = parseInt(e.target.value) as Genre;
-      if (genres.includes(id)) {
-        setGenres(genres.filter((x) => x !== id));
-        return;
-      } else {
-        setGenres([id].concat(genres).sort());
-      }
-    },
-    [genres]
+  const selectAll = useCallback(
+    () => allGenres.forEach((id) => setValue(`genres.g${id}`, true)),
+    [setValue]
   );
-
-  const genreFilter = allGenres.map((id) => (
-    <React.Fragment key={id}>
-      <label className="inline-block">
-        <Checkbox
-          checked={genres.includes(id)}
-          value={id}
-          onChange={handleChangeGenre}
-        />
-        {GenreNotation[id]}
-      </label>
-    </React.Fragment>
-  ));
-
-  const selectAll = useCallback(() => setGenres(allGenres), []);
-  const unselectAll = useCallback(() => setGenres([]), []);
+  const unselectAll = useCallback(
+    () => allGenres.forEach((id) => setValue(`genres.g${id}`, false)),
+    [setValue]
+  );
 
   return (
     <form onSubmit={handleSubmit(handleSearch)}>
@@ -207,46 +277,93 @@ const EnableCustomRankingForm: React.FC<
         </fieldset>
         <fieldset>
           <legend className="font-bold text-sm text-slate-500">ジャンル</legend>
-          {genreFilter}
+          {allGenres.map((id) => (
+            <React.Fragment key={id}>
+              <label>
+                <Checkbox {...register(`genres.g${id}`)} />
+                {GenreNotation[id]}
+              </label>
+            </React.Fragment>
+          ))}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>
         </fieldset>
         <fieldset>
           <legend className="font-bold text-sm text-slate-500">話数</legend>
-          <Controller
-            name="min"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <StoryCount value={value} defaultValue={1} onUpdate={onChange}>
-                最小
-              </StoryCount>
-            )}
-          />
+          <label>
+            <Checkbox {...register("story.min.enable")} />
+            最小
+            <TextField
+              type="number"
+              min="1"
+              {...register("story.min.value", { valueAsNumber: true })}
+              disabled={!useWatch({ control, name: "story.min.enable" })}
+            />
+          </label>
           ～
-          <Controller
-            name="max"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <StoryCount value={value} defaultValue={30} onUpdate={onChange}>
-                最大
-              </StoryCount>
-            )}
-          />
+          <label>
+            <Checkbox {...register("story.max.enable")} />
+            最大
+            <TextField
+              type="number"
+              min="1"
+              {...register("story.max.value", { valueAsNumber: true })}
+              disabled={!useWatch({ control, name: "story.max.enable" })}
+            />
+          </label>
         </fieldset>
         <fieldset>
           <legend className="font-bold text-sm text-slate-500">
             更新開始日
           </legend>
-          <FirstUpdateDatePicker control={control} />
+          <Controller
+            name="firstUpdate.term"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <SelectBox
+                value={value}
+                onChange={onChange}
+                options={[
+                  { value: "none", label: "指定しない" },
+                  { value: "1days", label: "1日より新しい" },
+                  { value: "7days", label: "1週間より新しい" },
+                  { value: "1months", label: "1ヶ月より新しい" },
+                  { value: "6months", label: "半年より新しい" },
+                  { value: "1years", label: "1年より新しい" },
+                  { value: "custom", label: "選択する" },
+                ]}
+                buttonClassName="w-52"
+              />
+            )}
+          />
+          <TextField
+            type="date"
+            {...register("firstUpdate.begin")}
+            min={DateTime.fromObject({
+              year: 2013,
+              month: 5,
+              day: 1,
+            }).toISODate()}
+            max={DateTime.now().toISODate()}
+            disabled={
+              useWatch({ control, name: "firstUpdate.term" }) !== "custom"
+            }
+          />
         </fieldset>
         <fieldset>
           <legend className="font-bold text-sm text-slate-500">更新状態</legend>
-          <Checkbox {...register("rensai")} />
-          連載中
-          <Checkbox {...register("kanketsu")} />
-          完結
-          <Checkbox {...register("tanpen")} />
-          短編
+          <label>
+            <Checkbox {...register("status.rensai")} />
+            連載中
+          </label>
+          <label>
+            <Checkbox {...register("status.kanketsu")} />
+            完結
+          </label>
+          <label>
+            <Checkbox {...register("status.tanpen")} />
+            短編
+          </label>
         </fieldset>
         <fieldset className="space-x-4">
           <Button type="submit" color="primary" className="font-bold">

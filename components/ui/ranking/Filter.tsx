@@ -109,7 +109,7 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
                   { value: "7days", label: "1週間より新しい" },
                   { value: "1months", label: "1ヶ月より新しい" },
                   { value: "6months", label: "半年より新しい" },
-                  { value: "1years", label: "半年より新しい" },
+                  { value: "1years", label: "1年より新しい" },
                   { value: "custom", label: "選択する" },
                 ]}
                 buttonClassName="w-52"

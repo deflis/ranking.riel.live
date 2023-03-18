@@ -27,6 +27,7 @@ import { allGenres } from "../enum/Genre";
 import DataLoader from "dataloader";
 import { chunk } from "../utils/chunk";
 import { prefetchRankingDetail } from "./prefetch";
+import { parseDateRange } from "../atoms/filter";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -61,9 +62,10 @@ const getCustomRankingQueryFn = (
   queryClient: QueryClient
 ): QueryFunction<RankingData[], readonly [CustomRankingParams, number]> => {
   const filterBuilder = new FilterBuilder();
+  const firstUpdate = parseDateRange(params.firstUpdate);
   if (params.max) filterBuilder.setMaxNo(params.max);
   if (params.min) filterBuilder.setMaxNo(params.min);
-  if (params.firstUpdate) filterBuilder.setFirstUpdate(params.firstUpdate);
+  if (firstUpdate) filterBuilder.setFirstUpdate(firstUpdate);
   if (!params.tanpen) filterBuilder.disableTanpen();
   if (!params.kanketsu) filterBuilder.disableKanketsu();
   if (!params.rensai) filterBuilder.disableRensai();

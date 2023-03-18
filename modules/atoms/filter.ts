@@ -25,21 +25,29 @@ export const firstUpdateAtom = atom((get) =>
 );
 
 export function parseDateRange(raw: string | undefined): DateTime | undefined {
-  switch (raw as TermStrings) {
-    case "2days":
-      return DateTime.now().minus({ days: 2 });
-    case "7days":
-      return DateTime.now().minus({ days: 7 });
-    case "1months":
-      return DateTime.now().minus({ months: 1 });
-    case "6months":
-      return DateTime.now().minus({ months: 6 });
-    case "1years":
-      return DateTime.now().minus({ years: 1 });
-    default:
-      const date = raw ? DateTime.fromISO(raw) : undefined;
-      return date?.isValid ? date : undefined;
+  if (!raw) {
+    return undefined;
   }
+  if (raw.endsWith("days")) {
+    const days = parseInt(raw.slice(0, -4));
+    if (days) {
+      return DateTime.now().startOf("day").minus({ days });
+    }
+  }
+  if (raw.endsWith("months")) {
+    const months = parseInt(raw.slice(0, -6));
+    if (months) {
+      return DateTime.now().startOf("day").minus({ months });
+    }
+  }
+  if (raw.endsWith("years")) {
+    const years = parseInt(raw.slice(0, -5));
+    if (years) {
+      return DateTime.now().startOf("day").minus({ months: years });
+    }
+  }
+  const date = raw ? DateTime.fromISO(raw) : undefined;
+  return date?.isValid ? date : undefined;
 }
 
 function checkAllGenres(genres: Genre[]): boolean {
@@ -70,7 +78,7 @@ type NumberConfig = {
   value: number;
 };
 
-type TermStrings = "2days" | "7days" | "1months" | "6months" | "1years";
+export type TermStrings = `${number}${"days" | "months" | "years"}`;
 
 type TermConfig = {
   term: TermStrings | "custom" | "none";
