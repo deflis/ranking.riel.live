@@ -40,7 +40,7 @@ type SearchResult = PickedNarouSearchResult<
 export function formatCustomRankingRaw(
   type: RankingType,
   searchResult: readonly SearchResult[],
-  start: number = 0
+  start = 0
 ): RankingData[] {
   return searchResult.map((value, index) => {
     return {

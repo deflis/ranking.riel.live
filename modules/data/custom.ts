@@ -313,9 +313,9 @@ class FilterBuilder<
   private maxNo?: number;
   private minNo?: number;
   private firstUpdate?: DateTime;
-  private tanpen: boolean = true;
-  private rensai: boolean = true;
-  private kanketsu: boolean = true;
+  private tanpen = true;
+  private rensai = true;
+  private kanketsu = true;
 
   private execute(item: T): boolean {
     if (this.maxNo && item.general_all_no > this.maxNo) {

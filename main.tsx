@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 );
 
 navigator.serviceWorker.getRegistrations().then((registrations) => {
-  for (let registration of registrations) {
+  for (const registration of registrations) {
     registration.unregister();
   }
 });

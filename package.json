@@ -13,7 +13,9 @@
     "dev:vite": "vite",
     "dev:hcm": "hcm \"**/*.module.css\" --watch",
     "build": "tsc && hcm \"**/*.module.css\" && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.13",
