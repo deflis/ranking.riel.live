@@ -23,6 +23,7 @@ import clsx from "clsx";
 import { Button } from "../atoms/Button";
 import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
 import { PulseLoader } from "../atoms/Loader";
+import { useR18ItemForListing } from "../../../modules/data/r18Item";
 
 function checkR18(
   isR18: boolean,
@@ -223,13 +224,35 @@ const RankingItemRender: React.FC<{
   );
 };
 
-const RankingItem: React.FC<{ item: RankingResultItem }> = ({
-  item: rankingItem,
-}) => {
+export const RankingItem: React.FC<{
+  item: RankingResultItem;
+}> = ({ item: rankingItem }) => {
   const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
   return (
     <>
       <RankingItemRender
+        ncode={rankingItem.ncode}
+        item={item}
+        rankingItem={rankingItem}
+        isLoading={isLoading}
+        isError={!!error}
+      />
+    </>
+  );
+};
+
+export const R18RankingItem: React.FC<{
+  item: RankingResultItem;
+}> = ({ item: rankingItem }) => {
+  const {
+    data: item,
+    isLoading,
+    error,
+  } = useR18ItemForListing(rankingItem.ncode);
+  return (
+    <>
+      <RankingItemRender
+        isR18={true}
         ncode={rankingItem.ncode}
         item={item}
         rankingItem={rankingItem}

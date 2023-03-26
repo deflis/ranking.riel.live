@@ -264,12 +264,10 @@ const EnableCustomRankingForm: React.FC<
         <fieldset>
           <legend className="font-bold text-sm text-slate-500">ジャンル</legend>
           {allGenres.map((id) => (
-            <React.Fragment key={id}>
-              <label>
-                <Checkbox {...register(`genres.g${id}`)} />
-                {GenreNotation[id]}
-              </label>
-            </React.Fragment>
+            <label key={id}>
+              <Checkbox {...register(`genres.g${id}`)} />
+              {GenreNotation[id]}
+            </label>
           ))}
           <Button onClick={selectAll}>全選択</Button>
           <Button onClick={unselectAll}>全解除</Button>

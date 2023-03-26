@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 import { Genre } from "narou/src/index.browser";
 import React, { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -65,9 +64,6 @@ function parseQuery(rankingType: RankingType): CustomRankingParams {
   }
   function int(str: string | null): number | undefined {
     return str !== null ? parseInt(str, 10) : undefined;
-  }
-  function date(str: string | null): DateTime | undefined {
-    return str !== null ? DateTime.fromISO(str) : undefined;
   }
   return {
     keyword: useSearchParam("keyword") ?? undefined,
