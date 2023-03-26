@@ -91,7 +91,7 @@ function conventSites(rawSites: string | null): R18Site[] {
   return (rawSites ?? "")
     .split(",")
     .map((x) => Number(x) as R18Site)
-    .filter((x) => allSites.includes(x));
+    .filter((x) => allSites.includes(x) !== undefined);
 }
 
 const R18Ranking: React.FC = () => {

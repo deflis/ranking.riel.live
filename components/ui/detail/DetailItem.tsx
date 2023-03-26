@@ -105,7 +105,7 @@ const DetailItem: React.FC<{
                 {GenreNotation[item.genre]}
               </RouterLink>
             ) : (
-              <RouterLink to={`/r18?genres=${item.nocgenre}`}>
+              <RouterLink to={`/r18?sites=${item.nocgenre}`}>
                 {R18SiteNotation[item.nocgenre]}
               </RouterLink>
             )
@@ -211,9 +211,12 @@ const DetailItem: React.FC<{
             </DetailItemText>
           )}
           {isR18 && (
-            <DetailItemText label="サイト">
+            <DetailItemText
+              label="サイト"
+              icon={<HiGlobeAlt className="w-3 h-3 inline" />}
+            >
               {item ? (
-                <RouterLink to={`/r18?genres=${item.nocgenre}`}>
+                <RouterLink to={`/r18?sites=${item.nocgenre}`}>
                   {R18SiteNotation[item.nocgenre]}
                 </RouterLink>
               ) : (

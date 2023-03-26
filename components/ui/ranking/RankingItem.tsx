@@ -99,7 +99,7 @@ const RankingItemRender: React.FC<{
               </RouterLink>
             )}
             {isR18 && (
-              <RouterLink to={`/r18?site=${item.nocgenre}`}>
+              <RouterLink to={`/r18?sites=${item.nocgenre}`}>
                 {R18SiteNotation[item.nocgenre]}
               </RouterLink>
             )}

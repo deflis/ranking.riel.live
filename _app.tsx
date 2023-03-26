@@ -6,10 +6,9 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 
 import { Layout } from "./components/Layout";
 import CustomRanking from "./components/templates/custom";
-import Detail from "./components/templates/detail";
+import { Detail, R18Detail } from "./components/templates/detail";
 import Ranking from "./components/templates/ranking";
 import R18Ranking from "./components/templates/r18";
-import R18Detail from "./components/templates/r18detail";
 import { useCustomTheme } from "./modules/theme/theme";
 import { persister } from "./modules/utils/persister";
 import { useSetAtom } from "jotai";
@@ -65,6 +64,7 @@ function App() {
             >
               <Route index element={<R18Ranking />} />
               <Route path=":type" element={<R18Ranking />} />
+              <Route path="detail/:ncode" element={<R18Detail />} />
             </Route>
           </Route>
         </Routes>
