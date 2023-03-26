@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
-import { Genre, GenreNotation } from "narou/src/index.browser";
+import { GenreNotation } from "narou/src/index.browser";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Controller, useController, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "react-use";
 import {
@@ -22,16 +22,13 @@ import { Paper } from "../atoms/Paper";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 import { Tag } from "../common/bulma/Tag";
-import { StoryCount } from "../common/StoryCount";
-import { TwitterShare } from "../common/TwitterShare";
-import { FirstUpdateDatePicker } from "./FirstUpdateDatePicker";
 
 export interface CustomRankingFormParams {
   params: CustomRankingParams;
   onSearch: (e: CustomRankingParams) => void;
 }
 
-interface InnterParams {
+interface InnerParams {
   onClose: () => void;
 }
 
@@ -45,13 +42,6 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
     <div className="p-4 space-y-4">
       <div className="flex flex-row space-y-4">
         <div className="flex-grow" />
-        <TwitterShare
-          title={`${params.keyword ? `${params.keyword}の` : "カスタム"}${
-            RankingTypeName[params.rankingType]
-          }ランキング`}
-        >
-          ランキングを共有
-        </TwitterShare>{" "}
         <Button onClick={toggleShow}>
           <FaCog className="w-5 h-5 pr-2 inline" />
           編集
@@ -107,10 +97,6 @@ const rankingTypeList = [
   RankingType.UniqueUser,
 ] as const;
 
-type InnerParams = Omit<CustomRankingParams, "firstUpdate"> & {
-  firstUpdate: string | undefined;
-};
-
 type CustomRankingConfig = {
   rankingType: RankingType;
   keyword: string;
@@ -145,7 +131,7 @@ function getDefaultValues({
         ...accumulator,
         [`g${id}`]: genres.includes(id),
       }),
-      {} as Record<`g${typeof allGenres[number]}`, boolean>
+      {} as Record<`g${(typeof allGenres)[number]}`, boolean>
     ),
     story: {
       min: {
@@ -203,7 +189,7 @@ function convertToParams({
 }
 
 const EnableCustomRankingForm: React.FC<
-  CustomRankingFormParams & InnterParams
+  CustomRankingFormParams & InnerParams
 > = ({ params, onSearch, onClose }) => {
   const defaultValues = useMemo(() => getDefaultValues(params), [params]);
   const { control, register, handleSubmit, setValue, reset } = useForm({
