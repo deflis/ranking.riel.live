@@ -18,7 +18,6 @@ import { Checkbox } from "../atoms/Checkbox";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
 import { TextField } from "../atoms/TextField";
 import { AdDialog } from "./AdDialog";
-import NumberTextField from "./NumberTextField";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -81,6 +80,16 @@ export const Header: React.FC = () => {
   const toggleShowKeyword = useCallback(
     () => setShowKeyword((x) => !x),
     [setShowKeyword]
+  );
+
+  const handleChangeHeight = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value, 10);
+      if (value > 0) {
+        setTitleHeight(value);
+      }
+    },
+    []
   );
 
   return (
@@ -174,9 +183,11 @@ export const Header: React.FC = () => {
           />
           タイトルの高さを指定する
           {titleHeightStatus && (
-            <NumberTextField
+            <TextField
+              min={1}
               value={titleHeight ?? 2}
-              onChange={setTitleHeight}
+              type="number"
+              onChange={handleChangeHeight}
               disabled={!titleHeightStatus}
               className="w-20 ml-2"
             />
