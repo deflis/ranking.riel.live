@@ -7,10 +7,10 @@ import { SelfAd } from "../ui/common/SelfAd";
 
 const About: React.FC = () => {
   return (
-    <>
-      <Paper>
-        <h2>このサイトについて</h2>
-        <section>
+    <div className="space-y-4">
+      <Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
+        <h2 className="text-2xl font-bold">このサイトについて</h2>
+        <section className="space-y-2">
           <p>
             本サービス「なろうランキングビューワ」は
             <Link to="https://twitter.com/narou_riel">
@@ -25,9 +25,9 @@ const About: React.FC = () => {
           </p>
         </section>
       </Paper>
-      <Paper>
-        <h2>おすすめの使い方</h2>
-        <section>
+      <Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
+        <h2 className="text-2xl font-bold">おすすめの使い方</h2>
+        <section className="space-y-2">
           <p>
             <Link to="/">ランキング</Link>
             ではフィルターをクリックし、最大話数を指定することができます。
@@ -37,11 +37,11 @@ const About: React.FC = () => {
           <p>
             <Link to="/custom">カスタムランキング</Link>
             では、右上の「
-            <FaCog />
+            <FaCog className="inline" />
             編集」ボタンをクリックすることによりランキングをカスタマイズすることができます。
             例えば、
             <Link to="/custom?keyword=悪役令嬢">悪役令嬢</Link>や
-            <Link to="/custom?keyword=VRMMO"></Link>
+            <Link to="/custom?keyword=VRMMO">VRMMO</Link>
             のランキングを作ったりすることができます。
             ぜひカスタマイズして、あなた好みのランキングを作ってみてください。
             いいランキングができれば共有ボタンで共有してもらえると嬉しいです。
@@ -51,13 +51,12 @@ const About: React.FC = () => {
           </p>
         </section>
       </Paper>
-      <Paper>
-        <section>
+      <Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
+        <section className="space-y-2">
           <p>
             データの取得には
             <Link to="https://dev.syosetu.com/">なろうデベロッパーAPI</Link>
             を利用しております。
-            表示を高速化するために最大で10分のキャッシュをしているため、データが遅れている可能性があります。ご注意ください。
           </p>
           <p>
             「なろう」および「小説家になろう」は株式会社ヒナプロジェクトの登録商標です。
@@ -68,10 +67,10 @@ const About: React.FC = () => {
           </p>
         </section>
       </Paper>
-      <Paper>
+      <Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
         <SelfAd />
       </Paper>
-    </>
+    </div>
   );
 };
 
