@@ -1,10 +1,9 @@
 import { DateTime } from "luxon";
-import { R18Site, R18SiteNotation } from "narou/src/index.browser";
+import { R18Site, R18SiteNotation } from "narou";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "react-use";
-
 
 import {
   FilterConfig,
@@ -22,7 +21,6 @@ import { Paper } from "../atoms/Paper";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 import { Tag } from "../common/bulma/Tag";
-
 
 export interface R18RankingFormParams {
   params: R18RankingParams;

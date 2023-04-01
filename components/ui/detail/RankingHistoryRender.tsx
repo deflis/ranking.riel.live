@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
-import { RankingType } from "narou/src/index.browser";
+import { RankingType } from "narou";
 import React from "react";
 import { FaTrophy } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
@@ -26,7 +26,6 @@ import {
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
-
 
 function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {
   if (!start) return;

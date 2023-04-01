@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
-import { GenreNotation, R18SiteNotation } from "narou/src/index.browser";
+import { GenreNotation, R18SiteNotation } from "narou";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useCss, useToggle } from "react-use";

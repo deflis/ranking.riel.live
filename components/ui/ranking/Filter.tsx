@@ -2,7 +2,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { DateTime } from "luxon";
-import { GenreNotation } from "narou/src/index.browser";
+import { GenreNotation } from "narou";
 import React, { useCallback } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaSearch, FaTimes } from "react-icons/fa";
@@ -20,7 +20,6 @@ import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 
 import styles from "./Filter.module.css";
-
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
   onClose,

@@ -1,7 +1,6 @@
 import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import DataLoader from "dataloader";
-import { searchR18 } from "narou/src/index.browser";
-import { R18Fields } from "narou/src/params";
+import { searchR18, R18Fields } from "narou";
 
 import { parseDate } from "../utils/date";
 

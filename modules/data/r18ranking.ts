@@ -12,10 +12,10 @@ import {
   PickedNarouSearchResult,
   R18Site,
   searchR18,
-} from "narou/src/index.browser";
-import { R18Fields } from "narou/src/params";
+  R18Fields,
+  NarouSearchResult,
+} from "narou";
 import { useCallback } from "react";
-
 
 import { parseDateRange } from "../atoms/filter";
 import { R18RankingParams } from "../interfaces/CustomRankingParams";
@@ -29,7 +29,6 @@ import {
   formatCustomRankingRaw,
 } from "./custom/utils";
 import { prefetchRankingDetail } from "./prefetch";
-
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -197,8 +196,10 @@ const customRankingKey = (
 };
 type CustomRankingKey = ReturnType<typeof customRankingKey>;
 
-type NarouCustomRankingSearchResults =
-  NarouSearchResults<CustomRankingResultKeyNames>;
+type NarouCustomRankingSearchResults = NarouSearchResults<
+  NarouSearchResult,
+  CustomRankingResultKeyNames
+>;
 const customRankingFetcher: QueryFunction<
   NarouCustomRankingSearchResults,
   CustomRankingKey

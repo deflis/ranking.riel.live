@@ -5,7 +5,7 @@ import {
   NarouRankingResult,
   RankingType as NarouRankingType,
   ranking,
-} from "narou/src/index.browser";
+} from "narou";
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 

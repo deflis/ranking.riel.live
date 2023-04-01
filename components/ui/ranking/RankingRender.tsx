@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { NarouRankingResult } from "narou/src/index.browser";
+import { NarouRankingResult } from "narou";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Waypoint } from "react-waypoint";
 

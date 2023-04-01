@@ -1,7 +1,4 @@
-import {
-  Order,
-  PickedNarouSearchResult,
-} from "narou/src/index.browser";
+import { Order, PickedNarouSearchResult } from "narou";
 
 import { RankingType } from "../../interfaces/RankingType";
 

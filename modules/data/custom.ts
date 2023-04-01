@@ -8,13 +8,13 @@ import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
   Fields,
+  NarouSearchResult,
   NarouSearchResults,
   NovelTypeParam,
   PickedNarouSearchResult,
   search,
-} from "narou/src/index.browser";
+} from "narou";
 import { useCallback } from "react";
-
 
 import { parseDateRange } from "../atoms/filter";
 import { allGenres } from "../enum/Genre";
@@ -29,7 +29,6 @@ import {
   formatCustomRankingRaw,
 } from "./custom/utils";
 import { prefetchRankingDetail } from "./prefetch";
-
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -190,8 +189,10 @@ const customRankingKey = (
 };
 type CustomRankingKey = ReturnType<typeof customRankingKey>;
 
-type NarouCustomRankingSearchResults =
-  NarouSearchResults<CustomRankingResultKeyNames>;
+type NarouCustomRankingSearchResults = NarouSearchResults<
+  NarouSearchResult,
+  CustomRankingResultKeyNames
+>;
 const customRankingFetcher: QueryFunction<
   NarouCustomRankingSearchResults,
   CustomRankingKey

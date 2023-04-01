@@ -1,9 +1,8 @@
 import { DateTime } from "luxon";
-import { RankingType } from "narou/src/index.browser";
+import { RankingType } from "narou";
 import React, { useCallback, useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTitle } from "react-use";
-
 
 import useRanking from "../../modules/data/ranking";
 import { RankingTypeName } from "../../modules/interfaces/RankingType";

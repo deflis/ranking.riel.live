@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType } from "narou/src/index.browser";
+import { RankingType } from "narou";
 
 import { formatDate } from "../utils/date";
 

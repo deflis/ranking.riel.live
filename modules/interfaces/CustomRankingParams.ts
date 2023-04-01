@@ -1,4 +1,4 @@
-import { Genre, R18Site } from "narou/src/index.browser";
+import { Genre, R18Site } from "narou";
 import { Except } from "type-fest";
 
 import { RankingType } from "./RankingType";
