@@ -1,15 +1,15 @@
-import { formatISO, parseISO } from "date-fns";
-import { Order, R18Site } from "narou/src/index.browser";
-import React, { useCallback, useMemo } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useTitle } from "react-use";
+import { R18Site } from "narou/src/index.browser";
+import React, { useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSearchParam, useTitle } from "react-use";
 
-import useR18Ranking from "../api/useR18Ranking";
-import { R18RankingForm } from "../components/custom/R18RankingForm";
-import { RankingRender } from "../components/ranking/RankingRender";
-import { R18RankingParams } from "../interface/CustomRankingParams";
-import { RankingType, RankingTypeName } from "../interface/RankingType";
-import { useQuery } from "../util/useQuery";
+import { R18RankingParams } from "../../modules/interfaces/CustomRankingParams";
+import {
+  RankingType,
+  RankingTypeName,
+} from "../../modules/interfaces/RankingType";
+import { R18RankingForm } from "../ui/custom/R18RankingForm";
+import { R18RankingRender } from "../ui/ranking/R18RankingRender";
 
 export type R18RankingPathParams = {
   type?: RankingType;
@@ -28,26 +28,6 @@ export type R18RankingQueryParams = {
   kanketsu?: string;
   tanpen?: string;
 };
-
-function convertOrder(type?: RankingType): Order {
-  switch (type) {
-    case RankingType.Daily:
-    default:
-      return Order.DailyPoint;
-    case RankingType.Weekly:
-      return Order.WeeklyPoint;
-    case RankingType.Monthly:
-      return Order.MonthlyPoint;
-    case RankingType.Quarter:
-      return Order.QuarterPoint;
-    case RankingType.Yearly:
-      return Order.YearlyPoint;
-    case RankingType.All:
-      return Order.HyokaDesc;
-    case RankingType.UniqueUser:
-      return Order.Weekly;
-  }
-}
 
 function createSearchParams({
   keyword,
@@ -70,98 +50,74 @@ function createSearchParams({
   if (sites.length !== 0) searchParams.set("sites", sites.join(","));
   if (max) searchParams.set("max", max.toString());
   if (min) searchParams.set("min", min.toString());
-  if (firstUpdate)
-    searchParams.set(
-      "first_update",
-      formatISO(firstUpdate, { representation: "complete" })
-    );
+  if (firstUpdate) searchParams.set("first_update", firstUpdate);
   if (!rensai) searchParams.set("rensai", "0");
   if (!kanketsu) searchParams.set("kanketsu", "0");
   if (!tanpen) searchParams.set("tanpen", "0");
   return searchParams;
 }
 
-function parseQuery(
-  {
-    keyword,
-    not_keyword,
-    by_story,
-    by_title,
-    sites,
-    max,
-    min,
-    first_update,
-    rensai,
-    kanketsu,
-    tanpen,
-  }: R18RankingQueryParams,
-  rankingType: RankingType
-): R18RankingParams {
-  function boolean(str: string | undefined, defaultValue: boolean): boolean {
-    return str === undefined ? defaultValue : str !== "0";
+function parseQuery(rankingType: RankingType): R18RankingParams {
+  function boolean(str: string | null, defaultValue: boolean): boolean {
+    return str === null ? defaultValue : str !== "0";
   }
-  function int(str: string | undefined): number | undefined {
-    return str !== undefined ? parseInt(str, 10) : undefined;
-  }
-  function date(str: string | undefined): Date | undefined {
-    return str !== undefined ? parseISO(str) : undefined;
+  function int(str: string | null): number | undefined {
+    return str !== null ? parseInt(str, 10) : undefined;
   }
   return {
-    keyword,
-    notKeyword: not_keyword,
-    byStory: boolean(by_story, false),
-    byTitle: boolean(by_title, false),
-    sites: conventSites(sites),
-    max: int(max),
-    min: int(min),
-    firstUpdate: date(first_update),
-    rensai: boolean(rensai, true),
-    kanketsu: boolean(kanketsu, true),
-    tanpen: boolean(tanpen, true),
+    keyword: useSearchParam("keyword") ?? undefined,
+    notKeyword: useSearchParam("not_keyword") ?? undefined,
+    byStory: boolean(useSearchParam("by_story"), false),
+    byTitle: boolean(useSearchParam("by_title"), false),
+    sites: conventSites(useSearchParam("sites")),
+    max: int(useSearchParam("max")),
+    min: int(useSearchParam("min")),
+    firstUpdate: useSearchParam("first_update") ?? undefined,
+    rensai: boolean(useSearchParam("rensai"), true),
+    kanketsu: boolean(useSearchParam("kanketsu"), true),
+    tanpen: boolean(useSearchParam("tanpen"), true),
     rankingType,
   };
 }
 
-function conventSites(rawGenres: string = "") {
-  return rawGenres
+const allSites = [
+  R18Site.Nocturne,
+  R18Site.MoonLight,
+  R18Site.MoonLightBL,
+  R18Site.Midnight,
+];
+
+function conventSites(rawSites: string | null): R18Site[] {
+  return (rawSites ?? "")
     .split(",")
-    .map((x) => Number(x))
-    .filter((x) => R18Site?.[x] !== undefined);
+    .map((x) => Number(x) as R18Site)
+    .filter((x) => allSites.includes(x) !== undefined);
 }
 
 const R18Ranking: React.FC = () => {
   const { type } = useParams<R18RankingPathParams>();
-  const query = useQuery<R18RankingQueryParams>();
-  const params = useMemo(
-    () => parseQuery(query, (type ?? RankingType.Daily) as RankingType),
-    [query, type]
-  );
-  const searchParams = useMemo(() => createSearchParams(params), [params]);
-  const order = convertOrder(params.rankingType);
 
-  const history = useHistory();
+  const params = parseQuery((type ?? RankingType.Daily) as RankingType);
+
+  const navigate = useNavigate();
 
   useTitle(
-    `【R18】${
-      params.keyword ? `${params.keyword}の` : "カスタム"
-    }${RankingTypeName.get(
-      params.rankingType
-    )}ランキング - なろうランキングビューワ`
+    `【R18】${params.keyword ? `${params.keyword}の` : "カスタム"}${
+      RankingTypeName[params.rankingType]
+    }ランキング - なろうランキングビューワ`
   );
 
   const handleSearch = useCallback<(e: R18RankingParams) => void>(
     (params) => {
-      history.push(`/r18/${params.rankingType}?${createSearchParams(params)}`);
+      navigate(`/r18/${params.rankingType}?${createSearchParams(params)}`);
     },
     [history]
   );
 
-  const { ranking, loading } = useR18Ranking(order, searchParams);
-
   return (
     <>
       <R18RankingForm params={params} onSearch={handleSearch} />
-      <RankingRender ranking={ranking} loading={loading} />
+      <R18RankingRender params={params} />
     </>
   );
 };

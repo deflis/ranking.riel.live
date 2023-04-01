@@ -1,10 +1,18 @@
-import { useHistory } from "react-router";
-import { useCount } from "../../util/globalState";
+import { useAtomValue } from "jotai";
 import AdSense from "./AdSense";
+import { countAtom } from "../../../modules/atoms/global";
 
-export const FirstAd: React.FC = ({ children }) => {
-  const history = useHistory();
-  const count = useCount();
-  const firstView = history.length < 2 && count < 100;
-  return <>{firstView && (children ? children : <AdSense />)}</>;
+let localCount = 0;
+
+export const FirstAd: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
+  // show ads only on first view
+  const count = useAtomValue(countAtom);
+
+  if (count > 0 && localCount === 0) {
+    localCount++;
+    return <>{children ?? <AdSense />}</>;
+  }
+  return null;
 };

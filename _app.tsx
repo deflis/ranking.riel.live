@@ -6,13 +6,15 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 
 import { Layout } from "./components/Layout";
 import CustomRanking from "./components/templates/custom";
-import Detail from "./components/templates/detail";
+import { Detail, R18Detail } from "./components/templates/detail";
 import Ranking from "./components/templates/ranking";
+import R18Ranking from "./components/templates/r18";
 import { useCustomTheme } from "./modules/theme/theme";
 import { persister } from "./modules/utils/persister";
 import { useSetAtom } from "jotai";
 import { countAtom } from "./modules/atoms/global";
 import { useEffect } from "react";
+import R18Dialog from "./components/ui/common/R18Dialog";
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
@@ -46,11 +48,24 @@ function App() {
             }
           >
             <Route index element={<Ranking />} />
-            <Route path="/ranking/:type" element={<Ranking />} />
-            <Route path="/ranking/:type/:date" element={<Ranking />} />
-            <Route path="/detail/:ncode" element={<Detail />} />
-            <Route path="/custom" element={<CustomRanking />} />
-            <Route path="/custom/:type" element={<CustomRanking />} />
+            <Route path="ranking/:type" element={<Ranking />} />
+            <Route path="ranking/:type/:date" element={<Ranking />} />
+            <Route path="detail/:ncode" element={<Detail />} />
+            <Route path="custom" element={<CustomRanking />} />
+            <Route path="custom/:type" element={<CustomRanking />} />
+            <Route
+              path="r18"
+              element={
+                <>
+                  <R18Dialog />
+                  <Outlet />
+                </>
+              }
+            >
+              <Route index element={<R18Ranking />} />
+              <Route path=":type" element={<R18Ranking />} />
+              <Route path="detail/:ncode" element={<R18Detail />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

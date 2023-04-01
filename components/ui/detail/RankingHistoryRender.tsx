@@ -4,7 +4,7 @@ import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
 import { RankingType } from "narou/src/index.browser";
-import React, { useMemo, useState } from "react";
+import React from "react";
 
 import {
   Brush,
@@ -23,7 +23,6 @@ import {
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
 import { Link as RouterLink } from "react-router-dom";
-import { convertDate } from "../../../modules/utils/date";
 import colors from "tailwindcss/colors";
 import { FaTrophy } from "react-icons/fa";
 import { darkModeAtom } from "../../../modules/atoms/global";
@@ -64,7 +63,7 @@ const graphColorAtom = atom((get) =>
         bg: colors.white,
       }
     : {
-        // darkmode
+        // dark mode
         rank: colors.blue[400],
         pt: colors.rose[400],
         text: colors.neutral[300],
@@ -222,16 +221,19 @@ const RankingTabs = [
   RankingType.Monthly,
   RankingType.Quarterly,
 ];
+
 const rankingHistoryTypeAtom = atomWithStorage<RankingType>(
   "HistoryRankingType",
   RankingType.Daily
 );
-const tabIndexAtom = atom<number, number>(
+
+const tabIndexAtom = atom<number, [number], void>(
   (get) => RankingTabs.findIndex((x) => x === get(rankingHistoryTypeAtom)),
   (_, set, index) => {
     set(rankingHistoryTypeAtom, RankingTabs[index]);
   }
 );
+
 export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
   ranking,
 }) => {

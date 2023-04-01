@@ -1,28 +1,18 @@
 import React from "react";
 import {
-  NarouSearchResult,
   NovelType,
   R18SiteNotation,
-  Genre,
   GenreNotation,
 } from "narou/src/index.browser";
 import { decode } from "html-entities";
-import { TwitterShare } from "../common/TwitterShare";
 import AdSense from "../common/AdSense";
-import { Tag, Tags } from "../common/bulma/Tag";
+import { Tag } from "../common/bulma/Tag";
 import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 import ItemBadge from "../common/badges/ItemBadge";
-// import { FirstAd } from "../common/FirstAd";
+import { FirstAd } from "../common/FirstAd";
 import { AdRandomWidth } from "../common/AdRandom";
-import {
-  Detail,
-  Item,
-  ItemDetail,
-  NocDetail,
-  NocItem,
-  NocItemDetail,
-} from "../../../modules/data/types";
+import { Detail, Item, NocDetail, NocItem } from "../../../modules/data/types";
 import { Chip } from "../atoms/Chip";
 import { Paper } from "../atoms/Paper";
 import { Button } from "../atoms/Button";
@@ -115,7 +105,7 @@ const DetailItem: React.FC<{
                 {GenreNotation[item.genre]}
               </RouterLink>
             ) : (
-              <RouterLink to={`/r18?genres=${item.nocgenre}`}>
+              <RouterLink to={`/r18?sites=${item.nocgenre}`}>
                 {R18SiteNotation[item.nocgenre]}
               </RouterLink>
             )
@@ -174,7 +164,7 @@ const DetailItem: React.FC<{
           )}
         </p>
       </div>
-      {/*<FirstAd />*/}
+      <FirstAd />
       <div className="flex space-x-2 flex-col md:flex-row">
         <div className="w-full md:w-1/2 xl:w-7/12">
           <h2 className="text-xl">あらすじ</h2>
@@ -221,9 +211,12 @@ const DetailItem: React.FC<{
             </DetailItemText>
           )}
           {isR18 && (
-            <DetailItemText label="サイト">
+            <DetailItemText
+              label="サイト"
+              icon={<HiGlobeAlt className="w-3 h-3 inline" />}
+            >
               {item ? (
-                <RouterLink to={`/r18?genres=${item.nocgenre}`}>
+                <RouterLink to={`/r18?sites=${item.nocgenre}`}>
                   {R18SiteNotation[item.nocgenre]}
                 </RouterLink>
               ) : (
@@ -407,10 +400,7 @@ const DetailItem: React.FC<{
         </Button>{" "}
         <Button as="a" href={link} target="_blank" rel="noopener noreferrer">
           読む
-        </Button>{" "}
-        <TwitterShare title={`${item?.title}のランキング履歴`}>
-          ランキング履歴を共有
-        </TwitterShare>
+        </Button>
       </p>
       <AdSense></AdSense>
     </>
