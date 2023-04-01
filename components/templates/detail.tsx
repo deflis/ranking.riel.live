@@ -98,3 +98,5 @@ export const R18Detail: React.FC = () => {
     />
   );
 };
+
+export default Detail;

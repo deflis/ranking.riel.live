@@ -2,22 +2,22 @@ import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useSetAtom } from "jotai";
 import { Settings } from "luxon";
-import { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 import { Layout } from "./components/Layout";
-import CustomRanking from "./components/templates/custom";
-import { Detail, R18Detail } from "./components/templates/detail";
-import R18Ranking from "./components/templates/r18";
-import Ranking from "./components/templates/ranking";
-import R18Dialog from "./components/ui/common/R18Dialog";
+import { DotLoader } from "./components/ui/atoms/Loader";
 import { countAtom } from "./modules/atoms/global";
 import { useCustomTheme } from "./modules/theme/theme";
 import { persister } from "./modules/utils/persister";
 
-
-
-
+const About = React.lazy(() => import("./components/templates/about"));
+const CustomRanking = React.lazy(() => import("./components/templates/custom"));
+const Detail = React.lazy(() => import("./components/templates/detail"));
+const Ranking = React.lazy(() => import("./components/templates/ranking"));
+const R18Detail = React.lazy(() => import("./components/templates/r18Detail"));
+const R18Dialog = React.lazy(() => import("./components/ui/common/R18Dialog"));
+const R18Ranking = React.lazy(() => import("./components/templates/r18"));
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
@@ -46,7 +46,9 @@ function App() {
           <Route
             element={
               <Layout>
-                <Outlet />
+                <Suspense fallback={<DotLoader />}>
+                  <Outlet />
+                </Suspense>
               </Layout>
             }
           >
@@ -54,6 +56,7 @@ function App() {
             <Route path="ranking/:type" element={<Ranking />} />
             <Route path="ranking/:type/:date" element={<Ranking />} />
             <Route path="detail/:ncode" element={<Detail />} />
+            <Route path="about" element={<About />} />
             <Route path="custom" element={<CustomRanking />} />
             <Route path="custom/:type" element={<CustomRanking />} />
             <Route
