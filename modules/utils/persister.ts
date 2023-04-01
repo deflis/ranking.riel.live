@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 /**
  * キャッシュからパースするときに日付ならLuxonでパースする
  */
-function reviver(key: string, value: any) {
+function reviver(key: string, value: unknown): unknown {
   if (typeof value === "string") {
     const date = DateTime.fromISO(value);
     if (date.isValid) {

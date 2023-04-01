@@ -1,15 +1,11 @@
 import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import DataLoader from "dataloader";
-import {
-  searchR18,
-} from "narou/src/index.browser";
-import { DateTime } from "luxon";
-import {
-  NocItem,
-  NocDetail,
-} from "./types";
-import { parseDate } from "../utils/date";
+import { searchR18 } from "narou/src/index.browser";
 import { R18Fields } from "narou/src/params";
+
+import { parseDate } from "../utils/date";
+
+import { NocDetail, NocItem } from "./types";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;
@@ -85,12 +81,12 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
               general_firstup,
               general_lastup,
               novelupdated_at,
-              ...ohters
+              ...others
             }) => ({
               general_firstup: parseDate(general_firstup),
               general_lastup: parseDate(general_lastup),
               novelupdated_at: parseDate(novelupdated_at),
-              ...ohters,
+              ...others,
             })
           )
           .find((x) => x.ncode.toLowerCase() === ncode)

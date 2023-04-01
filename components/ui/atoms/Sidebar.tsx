@@ -4,11 +4,11 @@ import {
   ComponentPropsWithoutRef,
   ElementType,
   ForwardedRef,
-  forwardRef,
   Fragment,
   PropsWithChildren,
   PropsWithRef,
   ReactElement,
+  forwardRef,
 } from "react";
 
 type SidebarItemProps<T extends ElementType> = {
@@ -24,6 +24,7 @@ function SidebarItemBase<T extends ElementType = "span">(
   return (
     <li className="relative">
       <Component
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ref={ref as any}
         className={clsx(
           "link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 dark:text-gray-300 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
@@ -43,18 +44,23 @@ interface SidebarItem {
   ): ReactElement | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SidebarItem: SidebarItem = forwardRef(SidebarItemBase) as any;
 
 export const Divider = () => (
   <hr className="my-2 border-stone-200 dark:border-stone-700" />
 );
 
-export const Sidebar: React.FC<
-  PropsWithChildren<{
-    open: boolean;
-    onClose: (value: boolean) => void;
-  }>
-> = ({ open, onClose, children }) => (
+type SidebarProps = PropsWithChildren<{
+  open: boolean;
+  onClose: (value: boolean) => void;
+}>;
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  open,
+  onClose,
+  children,
+}: SidebarProps) => (
   <Transition appear show={open} as={Fragment}>
     <Dialog onClose={onClose}>
       <Transition.Child

@@ -1,29 +1,26 @@
-import React from "react";
-import {
-  GenreNotation,
-  NarouRankingResult,
-  R18SiteNotation,
-} from "narou/src/index.browser";
-import { Tag, Tags } from "../common/bulma/Tag";
-import { useCss, useToggle } from "react-use";
-import ItemBadge from "../common/badges/ItemBadge";
-import { Item, NocItem } from "../../../modules/data/types";
-import { useItemForListing } from "../../../modules/data/item";
-import { decode } from "html-entities";
 import { Transition } from "@headlessui/react";
-import { Paper } from "../atoms/Paper";
-import { Link as RouterLink } from "react-router-dom";
-import { Chip } from "../atoms/Chip";
+import clsx from "clsx";
+import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
+import { GenreNotation, R18SiteNotation } from "narou/src/index.browser";
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
+import { useCss, useToggle } from "react-use";
+
 import {
   showKeywordAtom,
   titleHeightAtom,
 } from "../../../modules/atoms/global";
-import clsx from "clsx";
-import { Button } from "../atoms/Button";
+import { useItemForListing } from "../../../modules/data/item";
+import { useR18ItemForListing } from "../../../modules/data/r18item";
+import { Item, NocItem } from "../../../modules/data/types";
 import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
+import { Button } from "../atoms/Button";
+import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
-import { useR18ItemForListing } from "../../../modules/data/r18Item";
+import { Paper } from "../atoms/Paper";
+import ItemBadge from "../common/badges/ItemBadge";
+import { Tag, Tags } from "../common/bulma/Tag";
 
 function checkR18(
   isR18: boolean,

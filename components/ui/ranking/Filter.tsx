@@ -1,23 +1,26 @@
-import React, { useCallback } from "react";
+import { Disclosure, Transition } from "@headlessui/react";
+import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
+import { DateTime } from "luxon";
+import { GenreNotation } from "narou/src/index.browser";
+import React, { useCallback } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { FaSearch, FaTimes } from "react-icons/fa";
+import { HiChevronDown } from "react-icons/hi";
+
 import {
   FilterConfig,
   filterConfigAtom,
   isUseFilterAtom,
 } from "../../../modules/atoms/filter";
 import { allGenres } from "../../../modules/enum/Genre";
-import { DateTime } from "luxon";
 import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
-import { Disclosure, Transition } from "@headlessui/react";
-import { HiChevronDown } from "react-icons/hi";
-import clsx from "clsx";
-import { GenreNotation } from "narou/src/index.browser";
-import styles from "./Filter.module.css";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { TextField } from "../atoms/TextField";
 import { SelectBox } from "../atoms/SelectBox";
-import { FaSearch, FaTimes } from "react-icons/fa";
+import { TextField } from "../atoms/TextField";
+
+import styles from "./Filter.module.css";
+
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
   onClose,

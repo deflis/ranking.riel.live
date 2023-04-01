@@ -3,10 +3,11 @@ import {
   ComponentPropsWithoutRef,
   ElementType,
   ForwardedRef,
-  forwardRef,
   PropsWithRef,
   ReactElement,
+  forwardRef,
 } from "react";
+
 import styles from "./form.module.css";
 
 type ButtonProps<T extends ElementType = "button"> = {
@@ -21,6 +22,7 @@ function ButtonBase<T extends ElementType = "button">(
   const Component = as ?? "button";
   return (
     <Component
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ref={ref as any}
       className={clsx(
         "link-reset",
@@ -40,4 +42,5 @@ interface ButtonType {
   ): ReactElement | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Button: ButtonType = forwardRef(ButtonBase) as any;

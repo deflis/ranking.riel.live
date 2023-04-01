@@ -1,8 +1,8 @@
 import {
-  NarouSearchResults,
   Order,
   PickedNarouSearchResult,
 } from "narou/src/index.browser";
+
 import { RankingType } from "../../interfaces/RankingType";
 
 export function convertOrder(type: RankingType): Order {

@@ -1,11 +1,12 @@
 import { useAtomValue } from "jotai";
 import React from "react";
 import { useMount } from "react-use";
+
 import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
   interface Window {
-    adsbygoogle: Array<any>;
+    adsbygoogle: Array<unknown>;
   }
 }
 

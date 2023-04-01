@@ -1,24 +1,20 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { useTitle } from "react-use";
 
-import { useParams } from "react-router-dom";
-
 import { useDetailForView } from "../../modules/data/item";
+import { useR18DetailForView } from "../../modules/data/r18item";
 import {
-  Detail as DetailType,
   Item,
   ItemDetail,
   NocDetail,
   NocItem,
   RankingHistories,
 } from "../../modules/data/types";
-import { AdAmazonWidth } from "../ui/common/AdAmazon";
-import AdSense from "../ui/common/AdSense";
+import { Paper } from "../ui/atoms/Paper";
 import { SelfAd } from "../ui/common/SelfAd";
 import DetailItem from "../ui/detail/DetailItem";
 import { RankingHistoryRender } from "../ui/detail/RankingHistoryRender";
-import { Paper } from "../ui/atoms/Paper";
-import { useR18DetailForView } from "../../modules/data/r18Item";
 
 type Result = {
   ncode: string;
@@ -55,9 +51,11 @@ const DetailRenderer: React.FC<Result> = ({
 };
 
 export const Detail: React.FC = () => {
-  const { ncode } = useParams<{ ncode: string }>();
+  const params = useParams<{ ncode: string }>();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ncode = params.ncode!;
 
-  const { item, detail, ranking, isLoading, error } = useDetailForView(ncode!);
+  const { item, detail, ranking, isLoading, error } = useDetailForView(ncode);
 
   useTitle(
     item
@@ -67,7 +65,7 @@ export const Detail: React.FC = () => {
 
   return (
     <DetailRenderer
-      ncode={ncode!}
+      ncode={ncode}
       item={item}
       detail={detail}
       ranking={ranking}
@@ -77,9 +75,11 @@ export const Detail: React.FC = () => {
 };
 
 export const R18Detail: React.FC = () => {
-  const { ncode } = useParams<{ ncode: string }>();
+  const params = useParams<{ ncode: string }>();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ncode = params.ncode!;
 
-  const { item, detail, isLoading, error } = useR18DetailForView(ncode!);
+  const { item, detail, isLoading, error } = useR18DetailForView(ncode);
 
   useTitle(
     item
@@ -89,7 +89,7 @@ export const R18Detail: React.FC = () => {
 
   return (
     <DetailRenderer
-      ncode={ncode!}
+      ncode={ncode}
       item={item}
       detail={detail}
       ranking={undefined}

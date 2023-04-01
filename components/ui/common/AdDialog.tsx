@@ -1,7 +1,9 @@
-import React, { Fragment } from "react";
-import AdSense from "./AdSense";
 import { Dialog, Transition } from "@headlessui/react";
+import React, { Fragment } from "react";
+
 import { Button } from "../atoms/Button";
+
+import AdSense from "./AdSense";
 
 export const AdDialog: React.FC<{
   open: boolean;

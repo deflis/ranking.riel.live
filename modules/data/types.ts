@@ -1,5 +1,5 @@
-import { PickedNarouSearchResult, RankingType } from "narou/src/index.browser";
 import { DateTime } from "luxon";
+import { PickedNarouSearchResult, RankingType } from "narou/src/index.browser";
 
 type ResultConvertDate<T, TDateProps extends keyof T> = Omit<T, TDateProps> & {
   [key in TDateProps]: DateTime;

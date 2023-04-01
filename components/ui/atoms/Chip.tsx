@@ -3,10 +3,10 @@ import {
   ComponentPropsWithoutRef,
   ElementType,
   ForwardedRef,
-  forwardRef,
   PropsWithChildren,
   PropsWithRef,
   ReactElement,
+  forwardRef,
 } from "react";
 
 type ChipProps<T extends ElementType = "a"> = {
@@ -15,12 +15,13 @@ type ChipProps<T extends ElementType = "a"> = {
 } & PropsWithChildren<Omit<ComponentPropsWithoutRef<T>, "as" | "color">>;
 
 function ChipBase<T extends ElementType = "a">(
-  { className, as, color, children, ...props }: ChipProps<T>,
+  { className, as, children, ...props }: ChipProps<T>,
   ref: ForwardedRef<T>
 ) {
   const Component = as ?? "a";
   return (
     <Component
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ref={ref as any}
       className={clsx(
         "link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center dark:bg-zinc-700",
@@ -39,4 +40,5 @@ interface Chip {
   ): ReactElement | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Chip: Chip = forwardRef(ChipBase) as any;

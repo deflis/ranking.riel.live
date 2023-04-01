@@ -1,3 +1,10 @@
+import {
+  QueryClient,
+  QueryFunction,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
   NarouSearchResults,
@@ -6,28 +13,23 @@ import {
   R18Site,
   searchR18,
 } from "narou/src/index.browser";
+import { R18Fields } from "narou/src/params";
 import { useCallback } from "react";
 
-import {
-  QueryClient,
-  QueryFunction,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
 
+import { parseDateRange } from "../atoms/filter";
 import { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
+import { chunk } from "../utils/chunk";
+
 import {
+  RankingData,
   convertOrder,
   formatCustomRankingRaw,
-  RankingData,
 } from "./custom/utils";
-import DataLoader from "dataloader";
-import { chunk } from "../utils/chunk";
 import { prefetchRankingDetail } from "./prefetch";
-import { parseDateRange } from "../atoms/filter";
-import { R18Fields } from "narou/src/params";
+
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -320,9 +322,9 @@ class FilterBuilder<
   private maxNo?: number;
   private minNo?: number;
   private firstUpdate?: DateTime;
-  private tanpen: boolean = true;
-  private rensai: boolean = true;
-  private kanketsu: boolean = true;
+  private tanpen = true;
+  private rensai = true;
+  private kanketsu = true;
 
   private execute(item: T): boolean {
     if (this.maxNo && item.general_all_no > this.maxNo) {
@@ -331,6 +333,7 @@ class FilterBuilder<
     if (this.minNo && item.general_all_no < this.minNo) {
       return false;
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
       return false;
     }

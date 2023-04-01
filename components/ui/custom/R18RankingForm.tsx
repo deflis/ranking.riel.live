@@ -1,9 +1,16 @@
+import { DateTime } from "luxon";
 import { R18Site, R18SiteNotation } from "narou/src/index.browser";
 import React, { useCallback, useEffect, useMemo } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "react-use";
 
-import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
+import {
+  FilterConfig,
+  TermStrings,
+  parseDateRange,
+} from "../../../modules/atoms/filter";
 import { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import {
   RankingType,
@@ -15,14 +22,7 @@ import { Paper } from "../atoms/Paper";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 import { Tag } from "../common/bulma/Tag";
-import {
-  FilterConfig,
-  parseDateRange,
-  TermStrings,
-} from "../../../modules/atoms/filter";
-import { DateTime } from "luxon";
 
-import { Controller, useForm, useWatch } from "react-hook-form";
 
 export interface R18RankingFormParams {
   params: R18RankingParams;
@@ -62,11 +62,15 @@ export const R18RankingForm: React.FC<R18RankingFormParams> = ({
 
 const DisableCustomRankingForm: React.FC<{
   params: R18RankingParams;
-}> = React.memo(({ params: { keyword, rankingType, sites } }) => {
+}> = React.memo(function DisableCustomRankingFormBase({
+  params: { keyword, rankingType, sites },
+}: {
+  params: R18RankingParams;
+}) {
   const genre =
     sites.length > 0
       ? sites
-          .map((site) => <Tag>{R18SiteNotation[site]}</Tag>)
+          .map((site) => <Tag key={site}>{R18SiteNotation[site]}</Tag>)
           .reduce(
             (previous, current) => (
               <>

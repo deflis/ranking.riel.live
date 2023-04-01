@@ -1,4 +1,5 @@
 import React from "react";
+
 import Ad from "./ad.jpg";
 
 export const SelfAd: React.FC = () => {
