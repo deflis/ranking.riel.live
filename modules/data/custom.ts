@@ -211,103 +211,48 @@ const customRankingFetcher: QueryFunction<
     page,
   ],
 }) => {
-  const cacheKey = [
-    order,
-    keyword ?? "",
-    notKeyword ?? "",
-    byTitle ? "t" : "f",
-    byStory ? "t" : "f",
-    genres.join(),
-    novelTypeParam ?? "",
-    fields.join(),
-    optionalFields.join(),
-  ].join();
-  const dataloader =
-    dataLoaderCache.get(cacheKey) ??
-    new DataLoader<number, NarouCustomRankingSearchResults>(
-      async (pages) => {
-        const min = Math.min(...pages);
-        const max = Math.max(...pages);
-        const searchBuilder = search()
-          .order(order)
-          .start(min * CHUNK_ITEM_NUM + 1)
-          .limit((max - min + 1) * CHUNK_ITEM_NUM)
-          .fields([
-            Fields.ncode,
-            Fields.general_all_no,
-            Fields.general_firstup,
-            Fields.noveltype,
-            Fields.end,
-            Fields.daily_point,
-            Fields.weekly_point,
-            Fields.monthly_point,
-            Fields.monthly_point,
-            Fields.quarter_point,
-            Fields.yearly_point,
-            Fields.all_hyoka_cnt,
-          ])
-          .opt("weekly");
+  const searchBuilder = search()
+    .order(order)
+    .page(page, CHUNK_ITEM_NUM)
+    .fields([
+      Fields.ncode,
+      Fields.general_all_no,
+      Fields.general_firstup,
+      Fields.noveltype,
+      Fields.end,
+      Fields.daily_point,
+      Fields.weekly_point,
+      Fields.monthly_point,
+      Fields.monthly_point,
+      Fields.quarter_point,
+      Fields.yearly_point,
+      Fields.all_hyoka_cnt,
+    ])
+    .opt("weekly");
 
-        searchBuilder.fields(fields);
-        searchBuilder.opt(optionalFields);
+  searchBuilder.fields(fields);
+  searchBuilder.opt(optionalFields);
 
-        if (genres.length > 0) {
-          searchBuilder.genre(genres);
-        }
-        if (keyword) {
-          searchBuilder.word(keyword).byKeyword(true);
-        }
-        if (notKeyword) {
-          searchBuilder.notWord(notKeyword).byKeyword(true);
-        }
-        if (byTitle) {
-          searchBuilder.byTitle(byTitle);
-        }
-        if (byStory) {
-          searchBuilder.byOutline();
-        }
-        if (novelTypeParam) {
-          searchBuilder.type(novelTypeParam);
-        }
-        const { allcount, values } = await searchBuilder.execute();
-
-        return zip(pages, chunk(values, PAGE_ITEM_NUM)).map(
-          ([, values], index) => ({
-            allcount,
-            values: values ?? [],
-            limit: 10,
-            start: 0,
-            length: 0,
-            page: index + min,
-          })
-        );
-      },
-      { cache: false }
-    );
-
-  dataLoaderCache.set(cacheKey, dataloader);
-
-  return dataloader.load(page);
-};
-
-function zip<S1, S2>(
-  firstCollection: readonly S1[],
-  lastCollection: readonly S2[]
-): [S1, S2 | undefined][] {
-  const zipped: [S1, S2][] = [];
-
-  for (let index = 0; index < firstCollection.length; index++) {
-    zipped.push([firstCollection[index], lastCollection[index]]);
+  if (genres.length > 0) {
+    searchBuilder.genre(genres);
   }
-
-  return zipped;
-}
-
-const dataLoaderCache = new Map<
-  string,
-  DataLoader<number, NarouCustomRankingSearchResults>
->();
-
+  if (keyword) {
+    searchBuilder.word(keyword).byKeyword(true);
+  }
+  if (notKeyword) {
+    searchBuilder.notWord(notKeyword).byKeyword(true);
+  }
+  if (byTitle) {
+    searchBuilder.byTitle(byTitle);
+  }
+  if (byStory) {
+    searchBuilder.byOutline();
+  }
+  if (novelTypeParam) {
+    searchBuilder.type(novelTypeParam);
+  }
+  return await searchBuilder.execute();
+};
 class FilterBuilder<
   T extends PickedNarouSearchResult<
     "general_all_no" | "general_firstup" | "noveltype" | "end"
