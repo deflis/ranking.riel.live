@@ -1,15 +1,15 @@
 import { DateTime } from "luxon";
-import { GenreNotation } from "narou/src/index.browser";
+import { GenreNotation } from "narou";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "react-use";
+
 import {
   FilterConfig,
-  parseDateRange,
   TermStrings,
+  parseDateRange,
 } from "../../../modules/atoms/filter";
-
 import { allGenres } from "../../../modules/enum/Genre";
 import { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import {
@@ -62,11 +62,15 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
 
 const DisableCustomRankingForm: React.FC<{
   params: CustomRankingParams;
-}> = React.memo(({ params: { keyword, rankingType, genres } }) => {
+}> = React.memo(function DisableCustomRankingFormBase({
+  params: { keyword, rankingType, genres },
+}: {
+  params: CustomRankingParams;
+}) {
   const genre =
     genres.length > 0
       ? genres
-          .map((genre) => <Tag>{GenreNotation[genre]}</Tag>)
+          .map((genre) => <Tag key={genre}>{GenreNotation[genre]}</Tag>)
           .reduce(
             (previous, current) => (
               <>

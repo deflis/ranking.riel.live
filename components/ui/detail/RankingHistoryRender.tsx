@@ -3,9 +3,10 @@ import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
-import { RankingType } from "narou/src/index.browser";
+import { RankingType } from "narou";
 import React from "react";
-
+import { FaTrophy } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";
 import {
   Brush,
   CartesianGrid,
@@ -16,16 +17,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import colors from "tailwindcss/colors";
+
+import { darkModeAtom } from "../../../modules/atoms/global";
 import {
   RankingHistories,
   RankingHistoryItem,
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
-import { Link as RouterLink } from "react-router-dom";
-import colors from "tailwindcss/colors";
-import { FaTrophy } from "react-icons/fa";
-import { darkModeAtom } from "../../../modules/atoms/global";
 
 function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {
   if (!start) return;

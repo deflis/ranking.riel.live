@@ -1,33 +1,34 @@
-import { DateTime } from "luxon";
-import {
-  Fields,
-  NarouSearchResults,
-  NovelTypeParam,
-  PickedNarouSearchResult,
-  search,
-} from "narou/src/index.browser";
-import { useCallback, useMemo } from "react";
-
 import {
   QueryClient,
   QueryFunction,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import DataLoader from "dataloader";
+import { DateTime } from "luxon";
+import {
+  Fields,
+  NarouSearchResult,
+  NarouSearchResults,
+  NovelTypeParam,
+  PickedNarouSearchResult,
+  search,
+} from "narou";
+import { useCallback } from "react";
 
+import { parseDateRange } from "../atoms/filter";
+import { allGenres } from "../enum/Genre";
 import { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
+import { chunk } from "../utils/chunk";
+
 import {
+  RankingData,
   convertOrder,
   formatCustomRankingRaw,
-  RankingData,
 } from "./custom/utils";
-import { allGenres } from "../enum/Genre";
-import DataLoader from "dataloader";
-import { chunk } from "../utils/chunk";
 import { prefetchRankingDetail } from "./prefetch";
-import { parseDateRange } from "../atoms/filter";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -188,8 +189,10 @@ const customRankingKey = (
 };
 type CustomRankingKey = ReturnType<typeof customRankingKey>;
 
-type NarouCustomRankingSearchResults =
-  NarouSearchResults<CustomRankingResultKeyNames>;
+type NarouCustomRankingSearchResults = NarouSearchResults<
+  NarouSearchResult,
+  CustomRankingResultKeyNames
+>;
 const customRankingFetcher: QueryFunction<
   NarouCustomRankingSearchResults,
   CustomRankingKey
@@ -313,9 +316,9 @@ class FilterBuilder<
   private maxNo?: number;
   private minNo?: number;
   private firstUpdate?: DateTime;
-  private tanpen: boolean = true;
-  private rensai: boolean = true;
-  private kanketsu: boolean = true;
+  private tanpen = true;
+  private rensai = true;
+  private kanketsu = true;
 
   private execute(item: T): boolean {
     if (this.maxNo && item.general_all_no > this.maxNo) {
@@ -324,6 +327,7 @@ class FilterBuilder<
     if (this.minNo && item.general_all_no < this.minNo) {
       return false;
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
       return false;
     }

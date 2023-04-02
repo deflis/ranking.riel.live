@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import { forwardRef, InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, forwardRef } from "react";
+
 import styles from "./form.module.css";
 
 export const TextField: React.FC<InputHTMLAttributes<HTMLInputElement>> =

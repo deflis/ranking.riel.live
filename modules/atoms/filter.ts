@@ -1,7 +1,8 @@
 import { Atom, atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
-import { Genre } from "narou/src/index.browser";
+import { Genre } from "narou";
+
 import { Item } from "../data/types";
 import { allGenres } from "../enum/Genre";
 
@@ -87,7 +88,7 @@ type TermConfig = {
 };
 
 export type FilterConfig = {
-  genres: Record<`g${typeof allGenres[number]}`, boolean>;
+  genres: Record<`g${(typeof allGenres)[number]}`, boolean>;
   story: {
     min: NumberConfig;
     max: NumberConfig;
@@ -116,7 +117,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
           ...accumulator,
           [`g${id}`]: genres.includes(id),
         }),
-        {} as Record<`g${typeof allGenres[number]}`, boolean>
+        {} as Record<`g${(typeof allGenres)[number]}`, boolean>
       ),
       story: {
         min: {

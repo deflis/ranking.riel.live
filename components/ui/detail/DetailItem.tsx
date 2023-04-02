@@ -1,22 +1,6 @@
-import React from "react";
-import {
-  NovelType,
-  R18SiteNotation,
-  GenreNotation,
-} from "narou/src/index.browser";
 import { decode } from "html-entities";
-import AdSense from "../common/AdSense";
-import { Tag } from "../common/bulma/Tag";
-import StoryRender from "../common/StoryRender";
-import DetailItemText from "./DetailItemText";
-import ItemBadge from "../common/badges/ItemBadge";
-import { FirstAd } from "../common/FirstAd";
-import { AdRandomWidth } from "../common/AdRandom";
-import { Detail, Item, NocDetail, NocItem } from "../../../modules/data/types";
-import { Chip } from "../atoms/Chip";
-import { Paper } from "../atoms/Paper";
-import { Button } from "../atoms/Button";
-import { Link as RouterLink } from "react-router-dom";
+import { GenreNotation, NovelType, R18SiteNotation } from "narou";
+import React from "react";
 import { FaPenNib } from "react-icons/fa";
 import {
   HiBookmark,
@@ -27,7 +11,21 @@ import {
   HiThumbUp,
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
+import { Link as RouterLink } from "react-router-dom";
+
+import { Detail, Item, NocDetail, NocItem } from "../../../modules/data/types";
+import { Button } from "../atoms/Button";
+import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
+import { Paper } from "../atoms/Paper";
+import { AdRandomWidth } from "../common/AdRandom";
+import AdSense from "../common/AdSense";
+import { FirstAd } from "../common/FirstAd";
+import StoryRender from "../common/StoryRender";
+import ItemBadge from "../common/badges/ItemBadge";
+import { Tag } from "../common/bulma/Tag";
+
+import DetailItemText from "./DetailItemText";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 function round(number: number, precision: number): number {

@@ -1,10 +1,12 @@
-import React, { Fragment, useCallback, useState } from "react";
-import AdSense from "./AdSense";
 import { Dialog, Transition } from "@headlessui/react";
-import { Button } from "../atoms/Button";
 import { useAtom } from "jotai";
-import { r18Atom } from "../../../modules/atoms/global";
+import React, { Fragment, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { r18Atom } from "../../../modules/atoms/global";
+import { Button } from "../atoms/Button";
+
+import AdSense from "./AdSense";
 
 export const R18Dialog: React.FC<{
   open: boolean;

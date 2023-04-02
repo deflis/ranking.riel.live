@@ -1,24 +1,19 @@
-import { NarouRankingResult } from "narou/src/index.browser";
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { NarouRankingResult } from "narou";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Waypoint } from "react-waypoint";
 
+import { adModeAtom } from "../../../modules/atoms/global";
+import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 import { chunk } from "../../../modules/utils/chunk";
+import { Button } from "../atoms/Button";
+import { DotLoader } from "../atoms/Loader";
 import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
+
 import RankingItem from "./RankingItem";
-import { adModeAtom } from "../../../modules/atoms/global";
-import { useAtomValue } from "jotai";
-import { useQueryClient } from "@tanstack/react-query";
-import { prefetchRankingDetail } from "../../../modules/data/prefetch";
-import { Button } from "../atoms/Button";
-import { Waypoint } from "react-waypoint";
-import { DotLoader } from "../atoms/Loader";
 
 const ChunkRender: React.FC<{
   chunk: React.ReactNode;

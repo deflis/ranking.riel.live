@@ -1,8 +1,5 @@
-import {
-  NarouSearchResults,
-  Order,
-  PickedNarouSearchResult,
-} from "narou/src/index.browser";
+import { Order, PickedNarouSearchResult } from "narou";
+
 import { RankingType } from "../../interfaces/RankingType";
 
 export function convertOrder(type: RankingType): Order {
@@ -40,7 +37,7 @@ type SearchResult = PickedNarouSearchResult<
 export function formatCustomRankingRaw(
   type: RankingType,
   searchResult: readonly SearchResult[],
-  start: number = 0
+  start = 0
 ): RankingData[] {
   return searchResult.map((value, index) => {
     return {

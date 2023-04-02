@@ -1,7 +1,8 @@
 import clsx from "clsx";
-import { forwardRef, InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, forwardRef } from "react";
 
 export const Checkbox: React.FC<InputHTMLAttributes<HTMLInputElement>> =
+  // eslint-disable-next-line react/display-name
   forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
     ({ className, ...props }, ref) => (
       <input

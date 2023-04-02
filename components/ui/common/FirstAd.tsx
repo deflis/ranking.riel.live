@@ -1,12 +1,15 @@
 import { useAtomValue } from "jotai";
-import AdSense from "./AdSense";
+import React from "react";
+
 import { countAtom } from "../../../modules/atoms/global";
+
+import AdSense from "./AdSense";
 
 let localCount = 0;
 
-export const FirstAd: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
+type FirstAdProps = { children?: React.ReactNode };
+
+export const FirstAd: React.FC<FirstAdProps> = ({ children }: FirstAdProps) => {
   // show ads only on first view
   const count = useAtomValue(countAtom);
 

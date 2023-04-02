@@ -1,12 +1,14 @@
+import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import {
   NarouRankingResult,
-  ranking,
   RankingType as NarouRankingType,
-} from "narou/src/index.browser";
-import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
+  ranking,
+} from "narou";
+
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
+
 import { itemFetcher, itemKey } from "./item";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>
@@ -38,6 +40,7 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
   const isLoading = isLoadingQuery || items.some((x) => x.isLoading);
   const filteredItems = items
     .filter((x) => x.data && filter(x.data))
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     .map((x) => x.data!);
 
   return {

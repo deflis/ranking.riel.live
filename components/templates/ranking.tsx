@@ -1,9 +1,8 @@
 import { DateTime } from "luxon";
-import { RankingType } from "narou/src/index.browser";
+import { RankingType } from "narou";
 import React, { useCallback, useMemo } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTitle } from "react-use";
-
-import { Link, useParams, useNavigate } from "react-router-dom";
 
 import useRanking from "../../modules/data/ranking";
 import { RankingTypeName } from "../../modules/interfaces/RankingType";
@@ -12,9 +11,9 @@ import { addDate, convertDate } from "../../modules/utils/date";
 import { Button } from "../ui/atoms/Button";
 import { Paper } from "../ui/atoms/Paper";
 import { SelectBox } from "../ui/atoms/SelectBox";
+import { TextField } from "../ui/atoms/TextField";
 import { FilterComponent } from "../ui/ranking/Filter";
 import { RankingRender } from "../ui/ranking/RankingRender";
-import { TextField } from "../ui/atoms/TextField";
 
 const rankingTypeList = [
   RankingType.Daily,

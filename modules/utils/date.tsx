@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType as NarouRankingType } from "narou/src/index.browser";
+import { RankingType as NarouRankingType } from "narou";
 
 export const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
 
@@ -21,9 +21,10 @@ export function convertDate(date: DateTime, type: NarouRankingType): DateTime {
     case NarouRankingType.Daily:
     default:
       return date.startOf("day");
-    case NarouRankingType.Weekly:
+    case NarouRankingType.Weekly: {
       const newDate = date.startOf("week").plus({ day: 1 });
       return newDate <= date ? newDate : newDate.minus({ week: 1 });
+    }
     case NarouRankingType.Monthly:
     case NarouRankingType.Quarterly:
       return date.startOf("month");

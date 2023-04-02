@@ -1,7 +1,7 @@
-import React from "react";
-
-import { useEffectOnce, useMedia } from "react-use";
 import { useAtomValue } from "jotai";
+import React from "react";
+import { useEffectOnce, useMedia } from "react-use";
+
 import { adModeAtom } from "../../../modules/atoms/global";
 
 const AdAmazon728x90: React.FC = () => {
@@ -60,16 +60,26 @@ export const AdAmazonWidth: React.FC = () => {
   );
 };
 
+declare global {
+  interface Window {
+    amzn_assoc_tracking_id: string;
+    amzn_assoc_ad_type: string;
+    amzn_assoc_linkid: string;
+    amzn_assoc_placement: string;
+    amzn_assoc_marketplace: string;
+    amzn_assoc_region: string;
+  }
+}
 export const PropOver: React.FC = () => {
   const adMode = useAtomValue(adModeAtom);
   useEffectOnce(() => {
     if (adMode) {
-      (window as any).amzn_assoc_ad_type = "link_enhancement_widget";
-      (window as any).amzn_assoc_tracking_id = "riel011-22";
-      (window as any).amzn_assoc_linkid = "77015d67c4bcdd9353d9c9f7dcec22fb";
-      (window as any).amzn_assoc_placement = "";
-      (window as any).amzn_assoc_marketplace = "amazon";
-      (window as any).amzn_assoc_region = "JP";
+      window.amzn_assoc_ad_type = "link_enhancement_widget";
+      window.amzn_assoc_tracking_id = "riel011-22";
+      window.amzn_assoc_linkid = "77015d67c4bcdd9353d9c9f7dcec22fb";
+      window.amzn_assoc_placement = "";
+      window.amzn_assoc_marketplace = "amazon";
+      window.amzn_assoc_region = "JP";
       const head = document.querySelector("head");
 
       if (!head?.querySelector("#amazon-ad")) {

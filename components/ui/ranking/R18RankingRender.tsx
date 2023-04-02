@@ -1,20 +1,21 @@
-import React, { useCallback, useEffect, useState } from "react";
-
-import { AdAmazonWidth } from "../common/AdAmazon";
-import AdSense from "../common/AdSense";
-import { SelfAd } from "../common/SelfAd";
-import RankingItem, { R18RankingItem } from "./RankingItem";
-import { adModeAtom } from "../../../modules/atoms/global";
-import { useAtomValue } from "jotai";
-import { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
-import { DotLoader } from "../atoms/Loader";
-import { Waypoint } from "react-waypoint";
-import { Button } from "../atoms/Button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import React, { useCallback, useEffect, useState } from "react";
+import { Waypoint } from "react-waypoint";
+
+import { adModeAtom } from "../../../modules/atoms/global";
 import {
   prefetchR18Ranking,
   useR18Ranking,
 } from "../../../modules/data/r18ranking";
+import { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
+import { Button } from "../atoms/Button";
+import { DotLoader } from "../atoms/Loader";
+import { AdAmazonWidth } from "../common/AdAmazon";
+import AdSense from "../common/AdSense";
+import { SelfAd } from "../common/SelfAd";
+
+import { R18RankingItem } from "./RankingItem";
 
 const InsideRender: React.FC<{
   params: R18RankingParams;

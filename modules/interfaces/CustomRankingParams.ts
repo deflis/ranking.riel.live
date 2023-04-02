@@ -1,7 +1,7 @@
-import { Genre, R18Site } from "narou/src/index.browser";
-import { RankingType } from "./RankingType";
+import { Genre, R18Site } from "narou";
 import { Except } from "type-fest";
-import { DateTime } from "luxon";
+
+import { RankingType } from "./RankingType";
 
 export interface CustomRankingParams {
   keyword?: string;

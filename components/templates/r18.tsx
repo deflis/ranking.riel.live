@@ -1,4 +1,4 @@
-import { R18Site } from "narou/src/index.browser";
+import { R18Site } from "narou";
 import React, { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSearchParam, useTitle } from "react-use";
