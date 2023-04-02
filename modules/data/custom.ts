@@ -4,7 +4,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
   Fields,
@@ -21,7 +20,6 @@ import { allGenres } from "../enum/Genre";
 import { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-import { chunk } from "../utils/chunk";
 
 import {
   RankingData,
