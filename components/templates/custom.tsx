@@ -84,7 +84,7 @@ function parseQuery(rankingType: RankingType): CustomRankingParams {
 function conventGenres(rawGenres: string | null): Genre[] {
   return (rawGenres ?? "")
     .split(",")
-    .map((x) => Number(x) as Genre)
+    .map((x) => parseInt(x, 10) as Genre)
     .filter((x) => allGenres.includes(x));
 }
 
