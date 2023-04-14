@@ -4,7 +4,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
   NarouSearchResults,
@@ -21,7 +20,6 @@ import { parseDateRange } from "../atoms/filter";
 import { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-import { chunk } from "../utils/chunk";
 
 import {
   RankingData,
@@ -218,102 +216,48 @@ const customRankingFetcher: QueryFunction<
     page,
   ],
 }) => {
-  const cacheKey = [
-    order,
-    keyword ?? "",
-    notKeyword ?? "",
-    byTitle ? "t" : "f",
-    byStory ? "t" : "f",
-    sites.join(),
-    novelTypeParam ?? "",
-    fields.join(),
-    optionalFields.join(),
-  ].join();
-  const dataloader =
-    dataLoaderCache.get(cacheKey) ??
-    new DataLoader<number, NarouCustomRankingSearchResults>(
-      async (pages) => {
-        const min = Math.min(...pages);
-        const max = Math.max(...pages);
-        const searchBuilder = searchR18()
-          .order(order)
-          .start(min * CHUNK_ITEM_NUM + 1)
-          .limit((max - min + 1) * CHUNK_ITEM_NUM)
-          .fields([
-            R18Fields.ncode,
-            R18Fields.general_all_no,
-            R18Fields.general_firstup,
-            R18Fields.noveltype,
-            R18Fields.end,
-            R18Fields.daily_point,
-            R18Fields.weekly_point,
-            R18Fields.monthly_point,
-            R18Fields.monthly_point,
-            R18Fields.quarter_point,
-            R18Fields.yearly_point,
-            R18Fields.all_hyoka_cnt,
-          ])
-          .opt("weekly");
+  const searchBuilder = searchR18()
+    .order(order)
+    .page(page, CHUNK_ITEM_NUM)
+    .fields([
+      R18Fields.ncode,
+      R18Fields.general_all_no,
+      R18Fields.general_firstup,
+      R18Fields.noveltype,
+      R18Fields.end,
+      R18Fields.daily_point,
+      R18Fields.weekly_point,
+      R18Fields.monthly_point,
+      R18Fields.monthly_point,
+      R18Fields.quarter_point,
+      R18Fields.yearly_point,
+      R18Fields.all_hyoka_cnt,
+    ])
+    .opt("weekly");
 
-        searchBuilder.fields(fields);
-        searchBuilder.opt(optionalFields);
+  searchBuilder.fields(fields);
+  searchBuilder.opt(optionalFields);
 
-        if (sites.length > 0) {
-          searchBuilder.r18Site(sites);
-        }
-        if (keyword) {
-          searchBuilder.word(keyword).byKeyword(true);
-        }
-        if (notKeyword) {
-          searchBuilder.notWord(notKeyword).byKeyword(true);
-        }
-        if (byTitle) {
-          searchBuilder.byTitle(byTitle);
-        }
-        if (byStory) {
-          searchBuilder.byOutline();
-        }
-        if (novelTypeParam) {
-          searchBuilder.type(novelTypeParam);
-        }
-        const { allcount, values } = await searchBuilder.execute();
-
-        return zip(pages, chunk(values, PAGE_ITEM_NUM)).map(
-          ([, values], index) => ({
-            allcount,
-            values: values ?? [],
-            limit: 10,
-            start: 0,
-            length: 0,
-            page: index + min,
-          })
-        );
-      },
-      { cache: false }
-    );
-
-  dataLoaderCache.set(cacheKey, dataloader);
-
-  return dataloader.load(page);
-};
-
-function zip<S1, S2>(
-  firstCollection: readonly S1[],
-  lastCollection: readonly S2[]
-): [S1, S2 | undefined][] {
-  const zipped: [S1, S2][] = [];
-
-  for (let index = 0; index < firstCollection.length; index++) {
-    zipped.push([firstCollection[index], lastCollection[index]]);
+  if (sites.length > 0) {
+    searchBuilder.r18Site(sites);
   }
-
-  return zipped;
-}
-
-const dataLoaderCache = new Map<
-  string,
-  DataLoader<number, NarouCustomRankingSearchResults>
->();
+  if (keyword) {
+    searchBuilder.word(keyword).byKeyword(true);
+  }
+  if (notKeyword) {
+    searchBuilder.notWord(notKeyword).byKeyword(true);
+  }
+  if (byTitle) {
+    searchBuilder.byTitle(byTitle);
+  }
+  if (byStory) {
+    searchBuilder.byOutline();
+  }
+  if (novelTypeParam) {
+    searchBuilder.type(novelTypeParam);
+  }
+  return await searchBuilder.execute();
+};
 
 class FilterBuilder<
   T extends PickedNarouSearchResult<

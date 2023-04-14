@@ -76,7 +76,7 @@ const InsideRender: React.FC<{
   useEffect(() => {
     prefetchRankingDetail(
       queryClient,
-      ranking.slice(max + 1, max + 10).map((x) => x.ncode)
+      ranking.slice(max, max + 10).map((x) => x.ncode)
     );
   }, [ranking, max]);
 

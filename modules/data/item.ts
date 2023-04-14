@@ -100,12 +100,12 @@ const itemLoader = new DataLoader<string, Item | undefined>(
               general_firstup,
               general_lastup,
               novelupdated_at,
-              ...ohters
+              ...others
             }) => ({
               general_firstup: parseDate(general_firstup),
               general_lastup: parseDate(general_lastup),
               novelupdated_at: parseDate(novelupdated_at),
-              ...ohters,
+              ...others,
             })
           )
           .find((x) => x.ncode.toLowerCase() === ncode)
