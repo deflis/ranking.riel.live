@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ import { Checkbox } from "../atoms/Checkbox";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
 import { TextField } from "../atoms/TextField";
 
-import { AdDialog } from "./AdDialog";
+const AdDialog = React.lazy(() => import("./AdDialog"));
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -217,11 +217,13 @@ export const Header: React.FC = () => {
           </Button>
         </SidebarItem>
       </Sidebar>
-      <AdDialog
-        open={showAdDialog}
-        handleCancel={toggleAdDialog}
-        handleOk={removeAd}
-      />
+      <Suspense>
+        <AdDialog
+          open={showAdDialog}
+          handleCancel={toggleAdDialog}
+          handleOk={removeAd}
+        />
+      </Suspense>
     </header>
   );
 };

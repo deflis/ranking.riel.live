@@ -66,3 +66,5 @@ export const AdDialog: React.FC<{
     </Transition>
   );
 };
+
+export default AdDialog;
