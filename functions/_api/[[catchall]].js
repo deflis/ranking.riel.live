@@ -1,5 +1,6 @@
 export function onRequest(context) {
-  const pathname = new URL( context.request.url).pathname;
-  return fetch(`https://narou-ranking.web.app${pathname}`);
+  const origin = new URL( context.request.url);
+  origin.hostname = "narou-ranking.web.app";
+  return fetch(origin.toString(), context.request);
 
 }
