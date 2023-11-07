@@ -92,9 +92,9 @@ export const Ranking: React.FC = () => {
             前
           </Button>
           <TextField
-            min={minDate.toISODate()}
-            max={maxDate.toISODate()}
-            value={date.toISODate()}
+            min={minDate.toISODate() ?? ""}
+            max={maxDate.toISODate() ?? ""}
+            value={date.toISODate() ?? ""}
             type="date"
             step={rankingTypeSteps[type]}
             onChange={handleDateChange}

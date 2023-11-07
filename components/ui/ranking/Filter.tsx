@@ -125,8 +125,8 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
               year: 2013,
               month: 5,
               day: 1,
-            }).toISODate()}
-            max={DateTime.now().toISODate()}
+            }).toISODate() ?? ""}
+            max={DateTime.now().toISODate() ?? ""}
             disabled={
               useWatch({ control, name: "firstUpdate.term" }) !== "custom"
             }

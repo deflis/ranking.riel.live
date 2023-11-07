@@ -49,9 +49,10 @@ export const prefetchR18Ranking = async (
   page: number
 ) => {
   await queryClient.prefetchQuery(
-    [params, page],
-    getCustomRankingQueryFn(params, queryClient)
-  );
+    {
+      queryKey: [params, page],
+      queryFn: getCustomRankingQueryFn(params, queryClient)
+    });
   const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
   await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
 };
@@ -180,11 +181,11 @@ const customRankingKey = (
     byStory,
     sites.length === 0
       ? [
-          R18Site.Nocturne,
-          R18Site.MoonLight,
-          R18Site.MoonLightBL,
-          R18Site.Midnight,
-        ]
+        R18Site.Nocturne,
+        R18Site.MoonLight,
+        R18Site.MoonLightBL,
+        R18Site.Midnight,
+      ]
       : sites,
     novelTypeParam,
     [...fields, ...newFields] as const,
@@ -216,48 +217,48 @@ const customRankingFetcher: QueryFunction<
     page,
   ],
 }) => {
-  const searchBuilder = searchR18()
-    .order(order)
-    .page(page, CHUNK_ITEM_NUM)
-    .fields([
-      R18Fields.ncode,
-      R18Fields.general_all_no,
-      R18Fields.general_firstup,
-      R18Fields.noveltype,
-      R18Fields.end,
-      R18Fields.daily_point,
-      R18Fields.weekly_point,
-      R18Fields.monthly_point,
-      R18Fields.monthly_point,
-      R18Fields.quarter_point,
-      R18Fields.yearly_point,
-      R18Fields.all_hyoka_cnt,
-    ])
-    .opt("weekly");
+    const searchBuilder = searchR18()
+      .order(order)
+      .page(page, CHUNK_ITEM_NUM)
+      .fields([
+        R18Fields.ncode,
+        R18Fields.general_all_no,
+        R18Fields.general_firstup,
+        R18Fields.noveltype,
+        R18Fields.end,
+        R18Fields.daily_point,
+        R18Fields.weekly_point,
+        R18Fields.monthly_point,
+        R18Fields.monthly_point,
+        R18Fields.quarter_point,
+        R18Fields.yearly_point,
+        R18Fields.all_hyoka_cnt,
+      ])
+      .opt("weekly");
 
-  searchBuilder.fields(fields);
-  searchBuilder.opt(optionalFields);
+    searchBuilder.fields(fields);
+    searchBuilder.opt(optionalFields);
 
-  if (sites.length > 0) {
-    searchBuilder.r18Site(sites);
-  }
-  if (keyword) {
-    searchBuilder.word(keyword).byKeyword(true);
-  }
-  if (notKeyword) {
-    searchBuilder.notWord(notKeyword).byKeyword(true);
-  }
-  if (byTitle) {
-    searchBuilder.byTitle(byTitle);
-  }
-  if (byStory) {
-    searchBuilder.byOutline();
-  }
-  if (novelTypeParam) {
-    searchBuilder.type(novelTypeParam);
-  }
-  return await searchBuilder.execute();
-};
+    if (sites.length > 0) {
+      searchBuilder.r18Site(sites);
+    }
+    if (keyword) {
+      searchBuilder.word(keyword).byKeyword(true);
+    }
+    if (notKeyword) {
+      searchBuilder.notWord(notKeyword).byKeyword(true);
+    }
+    if (byTitle) {
+      searchBuilder.byTitle(byTitle);
+    }
+    if (byStory) {
+      searchBuilder.byOutline();
+    }
+    if (novelTypeParam) {
+      searchBuilder.type(novelTypeParam);
+    }
+    return await searchBuilder.execute();
+  };
 
 class FilterBuilder<
   T extends PickedNarouSearchResult<

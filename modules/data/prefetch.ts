@@ -14,8 +14,10 @@ export const prefetchRanking = async (
   date: DateTime
 ) => {
   await queryClient.prefetchQuery(
-    rankingKey(type, convertDate(date, type)),
-    rankingFetcher
+    {
+      queryKey: rankingKey(type, convertDate(date, type)),
+      queryFn: rankingFetcher,
+    }
   );
   const ranking = queryClient.getQueryData<NarouRankingResult[]>(
     rankingKey(type, convertDate(date, type))
@@ -32,7 +34,10 @@ export const prefetchRankingDetail = async (
 ) => {
   await Promise.all(
     ncodes.map(async (ncode) =>
-      queryClient.prefetchQuery(itemKey(ncode), itemFetcher)
+      queryClient.prefetchQuery({
+        queryKey: itemKey(ncode),
+        queryFn: itemFetcher,
+      })
     )
   );
 };
@@ -42,7 +47,13 @@ export const prefetchDetail = async (
   ncode: string
 ) => {
   await Promise.all([
-    queryClient.prefetchQuery(itemKey(ncode), itemFetcher),
-    queryClient.prefetchQuery(itemDetailKey(ncode), itemDetailFetcher),
+    queryClient.prefetchQuery({
+      queryKey: itemKey(ncode),
+      queryFn: itemFetcher,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: itemDetailKey(ncode),
+      queryFn: itemDetailFetcher,
+    }),
   ]);
 };

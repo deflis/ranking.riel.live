@@ -154,7 +154,7 @@ function getDefaultValues({
       term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
         ? "custom"
         : (firstUpdateRaw as TermStrings) ?? "none",
-      begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate(),
+      begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate() ?? "",
       end: "",
     },
     status: {
@@ -355,8 +355,8 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
               year: 2013,
               month: 5,
               day: 1,
-            }).toISODate()}
-            max={DateTime.now().toISODate()}
+            }).toISODate()??""}
+            max={DateTime.now().toISODate()??""}
             disabled={
               useWatch({ control, name: "firstUpdate.term" }) !== "custom"
             }

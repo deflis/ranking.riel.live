@@ -133,7 +133,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
         term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
           ? "custom"
           : (firstUpdateRaw as TermStrings) ?? "none",
-        begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate(),
+        begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate() ?? "",
         end: "",
       },
       status: {
@@ -160,10 +160,10 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
     set(
       firstUpdateRawAtom,
       config.firstUpdate.term === "custom" && firstUpdateBegin.isValid
-        ? firstUpdateBegin.startOf("day").toISO()
+        ? (firstUpdateBegin.startOf("day").toISO() ?? "")
         : config.firstUpdate.term !== "none"
-        ? config.firstUpdate.term
-        : undefined
+          ? config.firstUpdate.term
+          : undefined
     );
     set(enableTanpenAtom, config.status.tanpen);
     set(enableRensaiAtom, config.status.rensai);
