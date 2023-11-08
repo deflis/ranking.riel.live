@@ -1,9 +1,8 @@
 import React from "react";
 import { FaCog } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { Paper } from "../ui/atoms/Paper";
-
-import { SelfAd } from "../ui/common/SelfAd";
+import { Paper } from "@/components/ui/atoms/Paper";
+import { SelfAd } from "@/components/ui/common/SelfAd";
+import { Link } from "@/router";
 
 const About: React.FC = () => {
   return (
@@ -13,9 +12,7 @@ const About: React.FC = () => {
         <section className="space-y-2">
           <p>
             本サービス「なろうランキングビューワ」は
-            <Link to="https://twitter.com/narou_riel">
-              なろう系VTuberリイエル
-            </Link>
+            <a href="https://twitter.com/narou_riel">なろう系VTuberリイエル</a>
             が運営しております。
             （本サービスは小説家になろうとは直接的には無関係であり、本サービスは株式会社ヒナプロジェクトが提供するものではありません。）
           </p>
@@ -35,13 +32,29 @@ const About: React.FC = () => {
             こちらのフィルターはブラウザごとに記録されており、次の閲覧時に再度反映されるようになっています。
           </p>
           <p>
-            <Link to="/custom">カスタムランキング</Link>
+            <Link to="/custom/:type?" params={{}}>
+              カスタムランキング
+            </Link>
             では、右上の「
             <FaCog className="inline" />
             編集」ボタンをクリックすることによりランキングをカスタマイズすることができます。
             例えば、
-            <Link to="/custom?keyword=悪役令嬢">悪役令嬢</Link>や
-            <Link to="/custom?keyword=VRMMO">VRMMO</Link>
+            <Link
+              to={{
+                pathname: "/custom/:type?",
+                query: { keyword: "悪役令嬢" },
+              }}
+              params={{}}
+            >
+              悪役令嬢
+            </Link>
+            や
+            <Link
+              to={{ pathname: "/custom/:type?", query: { keyword: "VRMMO" } }}
+              params={{}}
+            >
+              VRMMO
+            </Link>
             のランキングを作ったりすることができます。
             ぜひカスタマイズして、あなた好みのランキングを作ってみてください。
             いいランキングができれば共有ボタンで共有してもらえると嬉しいです。
@@ -55,7 +68,7 @@ const About: React.FC = () => {
         <section className="space-y-2">
           <p>
             データの取得には
-            <Link to="https://dev.syosetu.com/">なろうデベロッパーAPI</Link>
+            <a href="https://dev.syosetu.com/">なろうデベロッパーAPI</a>
             を利用しております。
           </p>
           <p>

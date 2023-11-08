@@ -15,5 +15,9 @@
     "tanpen",
     "tanstack",
     "userid"
-  ]
+  ],
+  "path-autocomplete.pathMappings": {
+    "@": "${folder}/src",
+    "~": "${folder}/public"
+  }
 }

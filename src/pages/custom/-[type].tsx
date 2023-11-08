@@ -1,16 +1,13 @@
 import { Genre } from "narou";
 import React, { useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useSearchParam, useTitle } from "react-use";
 
-import { allGenres } from "../../modules/enum/Genre";
-import { CustomRankingParams } from "../../modules/interfaces/CustomRankingParams";
-import {
-  RankingType,
-  RankingTypeName,
-} from "../../modules/interfaces/RankingType";
-import { CustomRankingForm } from "../ui/custom/CustomRankingForm";
-import { CustomRankingRender } from "../ui/ranking/CustomRankingRender";
+import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
+import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
+import { allGenres } from "@/modules/enum/Genre";
+import { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
+import { useNavigate, useParams } from "@/router";
 
 export type CustomRankingPathParams = {
   type?: RankingType;
@@ -52,9 +49,9 @@ function createSearchParams({
   if (max) searchParams.set("max", max.toString());
   if (min) searchParams.set("min", min.toString());
   if (firstUpdate) searchParams.set("first_update", firstUpdate);
-  if (!rensai) searchParams.set("rensai", "0");
-  if (!kanketsu) searchParams.set("kanketsu", "0");
-  if (!tanpen) searchParams.set("tanpen", "0");
+  if (rensai === false) searchParams.set("rensai", "0");
+  if (kanketsu === false) searchParams.set("kanketsu", "0");
+  if (tanpen === false) searchParams.set("tanpen", "0");
   return searchParams;
 }
 
@@ -89,7 +86,7 @@ function conventGenres(rawGenres: string | null): Genre[] {
 }
 
 export const CustomRanking: React.FC = () => {
-  const { type } = useParams<CustomRankingPathParams>();
+  const { type } = useParams("/custom/:type?");
 
   const params = parseQuery((type ?? RankingType.Daily) as RankingType);
 
@@ -103,7 +100,15 @@ export const CustomRanking: React.FC = () => {
 
   const handleSearch = useCallback<(e: CustomRankingParams) => void>(
     (params) => {
-      navigate(`/custom/${params.rankingType}?${createSearchParams(params)}`);
+      navigate(
+        {
+          pathname: "/custom/:type?",
+          search: createSearchParams(params).toString(),
+        },
+        {
+          params: { type: params.rankingType },
+        }
+      );
     },
     [history]
   );

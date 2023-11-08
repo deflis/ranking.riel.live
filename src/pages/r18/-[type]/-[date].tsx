@@ -3,13 +3,10 @@ import React, { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSearchParam, useTitle } from "react-use";
 
-import { R18RankingParams } from "../../modules/interfaces/CustomRankingParams";
-import {
-  RankingType,
-  RankingTypeName,
-} from "../../modules/interfaces/RankingType";
-import { R18RankingForm } from "../ui/custom/R18RankingForm";
-import { R18RankingRender } from "../ui/ranking/R18RankingRender";
+import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
+import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
+import { R18RankingParams } from "@/modules/interfaces/CustomRankingParams";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
 
 export type R18RankingPathParams = {
   type?: RankingType;

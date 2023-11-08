@@ -8,18 +8,18 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 
-import {
-  FilterConfig,
-  filterConfigAtom,
-  isUseFilterAtom,
-} from "../../../modules/atoms/filter";
-import { allGenres } from "../../../modules/enum/Genre";
 import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 
 import styles from "./Filter.module.css";
+import {
+  FilterConfig,
+  filterConfigAtom,
+  isUseFilterAtom,
+} from "@/modules/atoms/filter";
+import { allGenres } from "@/modules/enum/Genre";
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
   onClose,
@@ -121,11 +121,13 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
           <TextField
             type="date"
             {...register("firstUpdate.begin")}
-            min={DateTime.fromObject({
-              year: 2013,
-              month: 5,
-              day: 1,
-            }).toISODate() ?? ""}
+            min={
+              DateTime.fromObject({
+                year: 2013,
+                month: 5,
+                day: 1,
+              }).toISODate() ?? ""
+            }
             max={DateTime.now().toISODate() ?? ""}
             disabled={
               useWatch({ control, name: "firstUpdate.term" }) !== "custom"
