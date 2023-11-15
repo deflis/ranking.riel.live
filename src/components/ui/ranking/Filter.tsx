@@ -2,7 +2,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { DateTime } from "luxon";
-import { GenreNotation } from "narou";
+import { GenreNotation } from "narou/browser";
 import React, { useCallback } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaSearch, FaTimes } from "react-icons/fa";

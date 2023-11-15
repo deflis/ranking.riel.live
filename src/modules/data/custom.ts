@@ -12,7 +12,7 @@ import {
   NovelTypeParam,
   PickedNarouSearchResult,
   search,
-} from "narou";
+} from "narou/browser";
 import { useCallback } from "react";
 
 import { parseDateRange } from "../atoms/filter";

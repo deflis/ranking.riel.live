@@ -1,4 +1,4 @@
-import { Order, PickedNarouSearchResult } from "narou";
+import { Order, PickedNarouSearchResult } from "narou/browser";
 
 import { RankingType } from "../../interfaces/RankingType";
 

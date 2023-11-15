@@ -13,7 +13,7 @@ import {
   searchR18,
   R18Fields,
   NarouSearchResult,
-} from "narou";
+} from "narou/browser";
 import { useCallback } from "react";
 
 import { parseDateRange } from "../atoms/filter";

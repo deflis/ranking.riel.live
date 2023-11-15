@@ -2,25 +2,22 @@ import { Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
-import { GenreNotation, R18SiteNotation } from "narou";
+import { GenreNotation, R18SiteNotation } from "narou/browser";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { useCss, useToggle } from "react-use";
+import { useToggle } from "react-use";
 
-import {
-  showKeywordAtom,
-  titleHeightAtom,
-} from "../../../modules/atoms/global";
-import { useItemForListing } from "../../../modules/data/item";
-import { useR18ItemForListing } from "../../../modules/data/r18item";
-import { Item, NocItem } from "../../../modules/data/types";
-import { RankingResultItem } from "../../../modules/interfaces/RankingResultItem";
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag, Tags } from "../common/bulma/Tag";
+import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
+import { useItemForListing } from "@/modules/data/item";
+import { useR18ItemForListing } from "@/modules/data/r18item";
+import { Item, NocItem } from "@/modules/data/types";
+import { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 
 function checkR18(
   isR18: boolean,
@@ -31,6 +28,7 @@ function checkR18(
   );
 }
 const RankingItemRender: React.FC<{
+  className?: string;
   ncode: string;
   rankingItem: RankingResultItem;
   item: Item | NocItem | undefined;
@@ -38,6 +36,7 @@ const RankingItemRender: React.FC<{
   isLoading: boolean;
   isError: boolean;
 }> = ({
+  className,
   ncode,
   rankingItem,
   item,
@@ -46,14 +45,6 @@ const RankingItemRender: React.FC<{
   isR18: rawR18 = false,
 }) => {
   const titleHeight = useAtomValue(titleHeightAtom);
-  const titleHeightCss = useCss({
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: titleHeight,
-    lineClamp: titleHeight,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  });
   const showKeyword = useAtomValue(showKeywordAtom);
 
   const [openStory, toggleStory] = useToggle(false);
@@ -70,7 +61,14 @@ const RankingItemRender: React.FC<{
     : `/detail/${(item?.ncode ?? ncode)?.toLowerCase()}`;
 
   return (
-    <div className="p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 space-y-2">
+    <div
+      className={clsx(
+        className,
+        "box-border grid grid-rows-subgrid gap-2",
+        "row-span-8",
+        "p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700"
+      )}
+    >
       <p>
         第{rankingItem.rank}位{" "}
         <Tags>
@@ -115,7 +113,7 @@ const RankingItemRender: React.FC<{
           title={decode(item?.title)}
           className={clsx(
             "link-reset text-gray-800 dark:text-white hover:underline",
-            titleHeight > 0 && titleHeightCss
+            titleHeight > 0 && `line-clamp-${titleHeight} overflow-ellipsis`
           )}
         >
           {item ? (
@@ -128,61 +126,59 @@ const RankingItemRender: React.FC<{
         </RouterLink>
       </h2>
 
-      <>
-        <p>
-          作者:{" "}
-          {item ? (
-            isR18 ? (
-              decode(item.writer)
-            ) : (
-              <a href={user} target="_blank" rel="noopener noreferrer">
-                {decode(item.writer)}
-              </a>
-            )
+      <p>
+        作者:{" "}
+        {item ? (
+          isR18 ? (
+            decode(item.writer)
           ) : (
-            <PulseLoader className="w-1/4" disabled={isNotfound} />
-          )}
-        </p>
-        <p>
-          更新日時:{" "}
-          {item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss") ?? (
-            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
-          )}
-        </p>
-        <p>
-          掲載開始:{" "}
-          {item?.general_firstup.toRelative() ?? (
-            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
-          )}{" "}
-          / 最終更新:{" "}
-          {item?.general_lastup.toRelative() ?? (
-            <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
-          )}
-        </p>
-        <Paper
-          className={clsx(
-            "p-2 space-2 bg-gray-50 dark:bg-zinc-900",
-            !showKeyword && "hidden"
-          )}
-        >
-          {item?.keyword
-            .split(/\s/g)
-            .filter((keyword) => keyword)
-            .map((keyword, i) => (
-              <Chip
-                as={RouterLink}
-                key={i}
-                to={
-                  isR18
-                    ? `/r18?keyword=${keyword}`
-                    : `/custom?keyword=${keyword}`
-                }
-              >
-                {keyword}
-              </Chip>
-            )) ?? <PulseLoader disabled={isNotfound} />}
-        </Paper>
+            <a href={user} target="_blank" rel="noopener noreferrer">
+              {decode(item.writer)}
+            </a>
+          )
+        ) : (
+          <PulseLoader className="w-1/4" disabled={isNotfound} />
+        )}
+      </p>
+      <p>
+        更新日時:{" "}
+        {item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss") ?? (
+          <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+        )}
+      </p>
+      <p>
+        掲載開始:{" "}
+        {item?.general_firstup.toRelative() ?? (
+          <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+        )}{" "}
+        / 最終更新:{" "}
+        {item?.general_lastup.toRelative() ?? (
+          <PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+        )}
+      </p>
+      <Paper
+        className={clsx(
+          "p-2 space-2 bg-gray-50 dark:bg-zinc-900",
+          !showKeyword && "hidden"
+        )}
+      >
+        {item?.keyword
+          .split(/\s/g)
+          .filter((keyword) => keyword)
+          .map((keyword, i) => (
+            <Chip
+              as={RouterLink}
+              key={i}
+              to={
+                isR18 ? `/r18?keyword=${keyword}` : `/custom?keyword=${keyword}`
+              }
+            >
+              {keyword}
+            </Chip>
+          )) ?? <PulseLoader disabled={isNotfound} />}
+      </Paper>
 
+      <div className="space-y-2">
         {item && (
           <Transition
             show={openStory}
@@ -193,7 +189,7 @@ const RankingItemRender: React.FC<{
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-75 opacity-0"
             as={Paper}
-            className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900"
+            className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900 box-content"
           >
             {item.story}
           </Transition>
@@ -216,18 +212,20 @@ const RankingItemRender: React.FC<{
             読む
           </Button>
         </div>
-      </>
+      </div>
     </div>
   );
 };
 
 export const RankingItem: React.FC<{
   item: RankingResultItem;
-}> = ({ item: rankingItem }) => {
+  className?: string;
+}> = ({ item: rankingItem, className }) => {
   const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
   return (
     <>
       <RankingItemRender
+        className={className}
         ncode={rankingItem.ncode}
         item={item}
         rankingItem={rankingItem}
@@ -240,7 +238,8 @@ export const RankingItem: React.FC<{
 
 export const R18RankingItem: React.FC<{
   item: RankingResultItem;
-}> = ({ item: rankingItem }) => {
+  className?: string;
+}> = ({ item: rankingItem, className }) => {
   const {
     data: item,
     isLoading,
@@ -249,6 +248,7 @@ export const R18RankingItem: React.FC<{
   return (
     <>
       <RankingItemRender
+        className={className}
         isR18={true}
         ncode={rankingItem.ncode}
         item={item}

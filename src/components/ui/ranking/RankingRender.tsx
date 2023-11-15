@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { NarouRankingResult } from "narou";
+import { NarouRankingResult } from "narou/browser";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Waypoint } from "react-waypoint";
 
@@ -29,13 +29,13 @@ const ChunkRender: React.FC<{
     <>
       {chunk}
       {adMode && (
-        <div className="w-full p-auto">
+        <div className="col-span-full	p-auto">
           <AdAmazonWidth />
         </div>
       )}
       {isTail && (
         <Waypoint onEnter={handleMore}>
-          <div className="w-full px-20 pt-10 pb-20">
+          <div className="col-span-full px-20 pt-10 pb-20">
             <Button onClick={handleMore} className="w-full h-20 text-3xl">
               もっと見る
             </Button>
@@ -51,11 +51,11 @@ const InsideRender: React.FC<{
 }> = ({ ranking }) => {
   const [max, setMax] = useState(10);
 
-  const rankingItems = ranking.slice(0, max).map((item) => (
-    <div className="w-full md:basis-1/2 box-border p-4" key={item.ncode}>
-      <RankingItem item={item} />
-    </div>
-  ));
+  const rankingItems = ranking
+    .slice(0, max)
+    .map((item) => (
+      <RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
+    ));
   const renderItems = chunk(rankingItems, 10).map((v, i) => (
     <ChunkRender
       chunk={v}
@@ -81,12 +81,12 @@ const InsideRender: React.FC<{
   }, [ranking, max]);
 
   return (
-    <div className="flex w-full flex-wrap flex-row">
+    <div className="w-full grid md:grid-cols-2 p-4 gap-4">
       {renderItems}
-      <div className="w-full">
+      <div className="col-span-full">
         <SelfAd />
       </div>
-      <div className="w-full">
+      <div className="col-span-full">
         <AdSense />
       </div>
     </div>

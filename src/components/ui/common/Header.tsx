@@ -16,8 +16,7 @@ import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
 import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
 import { TextField } from "../atoms/TextField";
-
-const AdDialog = React.lazy(() => import("./AdDialog"));
+import { AdDialog } from "../common/AdDialog";
 
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 

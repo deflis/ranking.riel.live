@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
-import { RankingType } from "narou";
+import { RankingType } from "narou/browser";
 import React from "react";
 import { FaTrophy } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";

@@ -1,4 +1,4 @@
-import { Genre } from "narou";
+import { Genre } from "narou/browser";
 import React, { useCallback } from "react";
 import { useSearchParam, useTitle } from "react-use";
 

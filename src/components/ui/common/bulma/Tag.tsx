@@ -19,7 +19,8 @@ export type TagProps<T extends ElementType = "span"> = {
 } & Omit<ComponentPropsWithoutRef<T>, "as" | "tagColor">;
 
 function TagBase<T extends ElementType = "span">(
-  { as, tagColor, className, ...props }: TagProps<T>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  { as, tagColor, className, light, ...props }: TagProps<T>,
   ref?: ForwardedRef<T>
 ) {
   const Component = as ?? "span";

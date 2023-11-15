@@ -1,5 +1,5 @@
 import { decode } from "html-entities";
-import { GenreNotation, NovelType, R18SiteNotation } from "narou";
+import { GenreNotation, NovelType, R18SiteNotation } from "narou/browser";
 import React from "react";
 import { FaPenNib } from "react-icons/fa";
 import {

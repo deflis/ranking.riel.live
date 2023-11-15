@@ -1,4 +1,4 @@
-import { End, NovelType } from "narou";
+import { End, NovelType } from "narou/browser";
 import React from "react";
 
 import { Item, NocItem } from "../../../../modules/data/types";

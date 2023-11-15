@@ -7,7 +7,7 @@ import {
   RankingType,
   rankingHistory,
   search,
-} from "narou";
+} from "narou/browser";
 
 import { parseDate } from "../utils/date";
 
@@ -33,7 +33,7 @@ export const itemRankingHistoryFetcher: QueryFunction<
   RankingHistories,
   ReturnType<typeof itemRankingHistoryKey>
 > = async ({ queryKey: [, ncode] }) =>
-  formatRankingHistory(await rankingHistory(ncode));
+    formatRankingHistory(await rankingHistory(ncode));
 
 export const useItemForListing = (ncode: string) => {
   const { data, isLoading, error } = useQuery({

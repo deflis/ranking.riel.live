@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType as NarouRankingType } from "narou";
+import { RankingType as NarouRankingType } from "narou/browser";
 
 export const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
 

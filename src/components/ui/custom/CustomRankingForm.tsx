@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { GenreNotation } from "narou";
+import { GenreNotation } from "narou/browser";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
@@ -327,11 +327,13 @@ const EnableCustomRankingForm: React.FC<
           <TextField
             type="date"
             {...register("firstUpdate.begin")}
-            min={DateTime.fromObject({
-              year: 2013,
-              month: 5,
-              day: 1,
-            }).toISODate() ?? ""}
+            min={
+              DateTime.fromObject({
+                year: 2013,
+                month: 5,
+                day: 1,
+              }).toISODate() ?? ""
+            }
             max={DateTime.now().toISODate() ?? ""}
             disabled={
               useWatch({ control, name: "firstUpdate.term" }) !== "custom"

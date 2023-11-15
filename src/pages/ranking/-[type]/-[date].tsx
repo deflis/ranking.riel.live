@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType } from "narou";
+import { RankingType } from "narou/browser";
 import React, { useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTitle } from "react-use";
