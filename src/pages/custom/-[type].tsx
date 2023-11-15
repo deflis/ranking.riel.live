@@ -1,6 +1,7 @@
 import { Genre } from "narou/browser";
-import React, { useCallback } from "react";
-import { useSearchParam, useTitle } from "react-use";
+import React, { useCallback, useMemo } from "react";
+import { useLocation } from "react-router-dom";
+import { useTitle } from "react-use";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
@@ -55,27 +56,34 @@ function createSearchParams({
   return searchParams;
 }
 
-function parseQuery(rankingType: RankingType): CustomRankingParams {
+function useParseQuery(rankingType: RankingType): CustomRankingParams {
   function boolean(str: string | null, defaultValue: boolean): boolean {
     return str === null ? defaultValue : str !== "0";
   }
   function int(str: string | null): number | undefined {
     return str !== null ? parseInt(str, 10) : undefined;
   }
-  return {
-    keyword: useSearchParam("keyword") ?? undefined,
-    notKeyword: useSearchParam("not_keyword") ?? undefined,
-    byStory: boolean(useSearchParam("by_story"), false),
-    byTitle: boolean(useSearchParam("by_title"), false),
-    genres: conventGenres(useSearchParam("genres")),
-    max: int(useSearchParam("max")),
-    min: int(useSearchParam("min")),
-    firstUpdate: useSearchParam("first_update") ?? undefined,
-    rensai: boolean(useSearchParam("rensai"), true),
-    kanketsu: boolean(useSearchParam("kanketsu"), true),
-    tanpen: boolean(useSearchParam("tanpen"), true),
-    rankingType,
-  };
+
+  const { search } = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(search), [search]);
+
+  return useMemo(
+    () => ({
+      keyword: searchParams.get("keyword") ?? undefined,
+      notKeyword: searchParams.get("not_keyword") ?? undefined,
+      byStory: boolean(searchParams.get("by_story"), false),
+      byTitle: boolean(searchParams.get("by_title"), false),
+      genres: conventGenres(searchParams.get("genres")),
+      max: int(searchParams.get("max")),
+      min: int(searchParams.get("min")),
+      firstUpdate: searchParams.get("first_update") ?? undefined,
+      rensai: boolean(searchParams.get("rensai"), true),
+      kanketsu: boolean(searchParams.get("kanketsu"), true),
+      tanpen: boolean(searchParams.get("tanpen"), true),
+      rankingType,
+    }),
+    [searchParams, rankingType]
+  );
 }
 
 function conventGenres(rawGenres: string | null): Genre[] {
@@ -88,7 +96,7 @@ function conventGenres(rawGenres: string | null): Genre[] {
 export const CustomRanking: React.FC = () => {
   const { type } = useParams("/custom/:type?");
 
-  const params = parseQuery((type ?? RankingType.Daily) as RankingType);
+  const params = useParseQuery((type ?? RankingType.Daily) as RankingType);
 
   const navigate = useNavigate();
 

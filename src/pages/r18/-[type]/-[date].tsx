@@ -1,6 +1,6 @@
 import { R18Site } from "narou/browser";
-import React, { useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useMemo } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSearchParam, useTitle } from "react-use";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
@@ -54,27 +54,33 @@ function createSearchParams({
   return searchParams;
 }
 
-function parseQuery(rankingType: RankingType): R18RankingParams {
+function useParseQuery(rankingType: RankingType): R18RankingParams {
   function boolean(str: string | null, defaultValue: boolean): boolean {
     return str === null ? defaultValue : str !== "0";
   }
   function int(str: string | null): number | undefined {
     return str !== null ? parseInt(str, 10) : undefined;
   }
-  return {
-    keyword: useSearchParam("keyword") ?? undefined,
-    notKeyword: useSearchParam("not_keyword") ?? undefined,
-    byStory: boolean(useSearchParam("by_story"), false),
-    byTitle: boolean(useSearchParam("by_title"), false),
-    sites: conventSites(useSearchParam("sites")),
-    max: int(useSearchParam("max")),
-    min: int(useSearchParam("min")),
-    firstUpdate: useSearchParam("first_update") ?? undefined,
-    rensai: boolean(useSearchParam("rensai"), true),
-    kanketsu: boolean(useSearchParam("kanketsu"), true),
-    tanpen: boolean(useSearchParam("tanpen"), true),
-    rankingType,
-  };
+  const { search } = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(search), [search]);
+
+  return useMemo(
+    () => ({
+      keyword: searchParams.get("keyword") ?? undefined,
+      notKeyword: searchParams.get("not_keyword") ?? undefined,
+      byStory: boolean(searchParams.get("by_story"), false),
+      byTitle: boolean(searchParams.get("by_title"), false),
+      sites: conventSites(searchParams.get("sites")),
+      max: int(searchParams.get("max")),
+      min: int(searchParams.get("min")),
+      firstUpdate: searchParams.get("first_update") ?? undefined,
+      rensai: boolean(searchParams.get("rensai"), true),
+      kanketsu: boolean(searchParams.get("kanketsu"), true),
+      tanpen: boolean(searchParams.get("tanpen"), true),
+      rankingType,
+    }),
+    [searchParams, rankingType]
+  );
 }
 
 const allSites = [
@@ -94,7 +100,7 @@ function conventSites(rawSites: string | null): R18Site[] {
 const R18Ranking: React.FC = () => {
   const { type } = useParams<R18RankingPathParams>();
 
-  const params = parseQuery((type ?? RankingType.Daily) as RankingType);
+  const params = useParseQuery((type ?? RankingType.Daily) as RankingType);
 
   const navigate = useNavigate();
 
