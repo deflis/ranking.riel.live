@@ -2,6 +2,7 @@ import { useAtomValue } from "jotai";
 import React, { useEffect } from "react";
 
 import { adModeAtom } from "../../../modules/atoms/global";
+import { useLocation } from "react-router-dom";
 
 declare global {
   interface Window {
@@ -23,9 +24,10 @@ export const InnerAdSense: React.FC = () => {
       console.error(e);
     }
   }, []);
+  const location = useLocation();
 
   return (
-    <div className="text-center">
+    <div className="text-center" key={location.key}>
       <ins
         className="adsbygoogle block"
         data-ad-format="fluid"
