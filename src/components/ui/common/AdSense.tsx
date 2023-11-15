@@ -1,6 +1,5 @@
 import { useAtomValue } from "jotai";
-import React from "react";
-import { useMount } from "react-use";
+import React, { useEffect } from "react";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 
@@ -15,15 +14,16 @@ export const AdSense: React.FC = () => {
   return adMode ? <InnerAdSense /> : null;
 };
 
-// eslint-disable-next-line react/display-name
-export const InnerAdSense = React.memo(() => {
-  useMount(() => {
+export const InnerAdSense: React.FC = () => {
+  useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
     } catch (e) {
       console.error(e);
     }
-  });
+  }, []);
+
   return (
     <div className="text-center">
       <ins
@@ -35,6 +35,6 @@ export const InnerAdSense = React.memo(() => {
       />
     </div>
   );
-});
+};
 
 export default AdSense;
