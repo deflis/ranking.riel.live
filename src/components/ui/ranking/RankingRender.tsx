@@ -79,9 +79,15 @@ const InsideRender: React.FC<{
       ranking.slice(max, max + 10).map((x) => x.ncode)
     );
   }, [ranking, max]);
+  const adMode = useAtomValue(adModeAtom);
 
   return (
     <div className="w-full grid md:grid-cols-2 p-4 gap-4">
+      {adMode && (
+        <div className="col-span-full">
+          <AdSense />
+        </div>
+      )}
       {renderItems}
       <div className="col-span-full">
         <SelfAd />
