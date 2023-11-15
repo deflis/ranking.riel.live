@@ -1,7 +1,7 @@
 import { R18Site } from "narou/browser";
 import React, { useCallback, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useSearchParam, useTitle } from "react-use";
+import { useTitle } from "react-use";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
