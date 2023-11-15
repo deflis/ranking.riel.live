@@ -65,7 +65,7 @@ const getCustomRankingQueryFn = (
   const filterBuilder = new FilterBuilder();
   const firstUpdate = parseDateRange(params.firstUpdate);
   if (params.max) filterBuilder.setMaxNo(params.max);
-  if (params.min) filterBuilder.setMaxNo(params.min);
+  if (params.min) filterBuilder.setMinNo(params.min);
   if (firstUpdate) filterBuilder.setFirstUpdate(firstUpdate);
   if (!params.tanpen) filterBuilder.disableTanpen();
   if (!params.kanketsu) filterBuilder.disableKanketsu();
@@ -253,7 +253,7 @@ const customRankingFetcher: QueryFunction<
     }
     return await searchBuilder.execute();
   };
-class FilterBuilder<
+export class FilterBuilder<
   T extends PickedNarouSearchResult<
     "general_all_no" | "general_firstup" | "noveltype" | "end"
   >
