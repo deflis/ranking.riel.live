@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useSetAtom } from "jotai";
 import { Settings } from "luxon";
-import React, { Suspense, useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
 import { Layout } from "@/components/Layout";
