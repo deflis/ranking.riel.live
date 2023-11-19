@@ -72,6 +72,8 @@ const graphColorAtom = atom((get) =>
       }
 );
 
+const DEFAULT_MAX_RANGE = 365;
+
 const RankingHistoryCharts: React.FC<{
   ranking: RankingHistoryItem[];
   type: RankingType;
@@ -150,6 +152,11 @@ const RankingHistoryCharts: React.FC<{
               height={30}
               stroke={graphColor.text}
               fill={graphColor.bg}
+              endIndex={
+                data.length < DEFAULT_MAX_RANGE
+                  ? data.length - 1
+                  : DEFAULT_MAX_RANGE
+              }
             >
               <LineChart>
                 <Line
