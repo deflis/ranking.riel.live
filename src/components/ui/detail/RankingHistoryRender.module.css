@@ -1,0 +1,4 @@
+.tableRow {
+  content-visibility: auto;
+  contain-intrinsic-height: 1em;
+}

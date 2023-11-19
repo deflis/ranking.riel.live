@@ -26,6 +26,7 @@ import {
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
+import styles from "./RankingHistoryRender.module.css";
 
 function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {
   if (!start) return;
@@ -176,7 +177,7 @@ const RankingHistoryCharts: React.FC<{
       <div className="w-full lg:w-1/3 lg:h-96 lg:overflow-auto">
         <table className="w-full table-auto">
           <thead>
-            <tr>
+            <tr className={styles.tableRow}>
               <th>日付</th>
               <th>順位</th>
               <th>ポイント</th>
@@ -184,7 +185,7 @@ const RankingHistoryCharts: React.FC<{
           </thead>
           <tbody>
             {ranking.map(({ date, rank, pt }) => (
-              <tr key={date.toUnixInteger()}>
+              <tr key={date.toUnixInteger()} className={styles.tableRow}>
                 <td className="text-center">
                   <RouterLink
                     to={`/ranking/${type}/${date.toISODate()}`}
