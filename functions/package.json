@@ -18,7 +18,7 @@
     "date-fns-timezone": "^0.1.4",
     "ejs": "^3.1.3",
     "express": "^4.17.1",
-    "firebase-admin": "^9.4.2",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.13.0",
     "narou": "^0.5.0"
   },
