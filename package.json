@@ -9,8 +9,8 @@
     "dev:hcm": "hcm \"**/*.module.css\" --watch",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "biome check .",
+    "lint:fix": "biome check --apply ."
   },
   "dependencies": {
     "@generouted/react-router": "^1.20.0",
@@ -36,6 +36,7 @@
     "type-fest": "^4.40.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@hookform/devtools": "^4.4.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.4",
