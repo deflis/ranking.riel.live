@@ -124,6 +124,7 @@ const customRankingKey = (
     kanketsu,
     tanpen,
     genres,
+    firstUpdate,
   } = params;
   let novelTypeParam: NovelTypeParam | null = null;
   if (!tanpen) {
@@ -180,6 +181,7 @@ const customRankingKey = (
     notKeyword,
     byTitle,
     byStory,
+    parse(firstUpdate),
     genres.length === 0 ? allGenres : genres,
     novelTypeParam,
     [...fields, ...newFields] as const,
@@ -204,6 +206,7 @@ const customRankingFetcher: QueryFunction<
     notKeyword,
     byTitle,
     byStory,
+    firstUpdate,
     genres,
     novelTypeParam,
     fields,
@@ -248,6 +251,9 @@ const customRankingFetcher: QueryFunction<
     if (byStory) {
       searchBuilder.byOutline();
     }
+    if (firstUpdate) {
+      searchBuilder.lastUpdate(firstUpdate.toJSDate(), new Date());
+    }
     if (novelTypeParam) {
       searchBuilder.type(novelTypeParam);
     }
@@ -272,9 +278,11 @@ export class FilterBuilder<
     if (this.minNo && item.general_all_no < this.minNo) {
       return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
-      return false;
+    if (this.firstUpdate) {
+      const parsedDate = parse(item.general_firstup);
+      if (parsedDate && parsedDate < this.firstUpdate) {
+        return false;
+      }
     }
     switch (item.noveltype) {
       case 1:
