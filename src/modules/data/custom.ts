@@ -181,7 +181,7 @@ const customRankingKey = (
     notKeyword,
     byTitle,
     byStory,
-    parse(firstUpdate),
+    parse(firstUpdate)?.toJSDate(),
     genres.length === 0 ? allGenres : genres,
     novelTypeParam,
     [...fields, ...newFields] as const,
@@ -252,7 +252,8 @@ const customRankingFetcher: QueryFunction<
       searchBuilder.byOutline();
     }
     if (firstUpdate) {
-      searchBuilder.lastUpdate(firstUpdate.toJSDate(), new Date());
+      // firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
+      searchBuilder.lastUpdate(firstUpdate, new Date());
     }
     if (novelTypeParam) {
       searchBuilder.type(novelTypeParam);
