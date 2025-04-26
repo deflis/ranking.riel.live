@@ -13,7 +13,7 @@ const StoryRender: React.FC<StoryRenderProps> = React.memo(
     return (
       <Paper className={className}>
         <p>
-          {story.split("\n").reduce<JSX.Element | null>(
+          {story.split("\n").reduce<React.ReactNode | null>(
             (prev, line) => (
               <>
                 {prev}

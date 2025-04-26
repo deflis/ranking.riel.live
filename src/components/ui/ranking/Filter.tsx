@@ -177,6 +177,7 @@ export const FilterComponent: React.FC = () => {
             <HiChevronDown className={clsx(styles.icon, open && styles.open)} />
           </Disclosure.Button>
           <Transition
+            as="div"
             className={styles.filter_transition}
             enter={styles.enter}
             enterFrom={styles.enter_from}

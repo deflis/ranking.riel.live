@@ -35,6 +35,7 @@ export const SelectBox = <T,>({
             <HiChevronDown className={styles.append_icon} aria-hidden="true" />
           </Listbox.Button>
           <Transition
+            as="div"
             show={open}
             className={styles.select_box_transition}
             enter={styles.enter}

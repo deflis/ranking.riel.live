@@ -3,6 +3,7 @@ import { FaCog } from "react-icons/fa";
 import { Paper } from "@/components/ui/atoms/Paper";
 import { SelfAd } from "@/components/ui/common/SelfAd";
 import { Link } from "@/router";
+import { createSearchParams } from "react-router-dom";
 
 const About: React.FC = () => {
   return (
@@ -42,7 +43,7 @@ const About: React.FC = () => {
             <Link
               to={{
                 pathname: "/custom/:type?",
-                query: { keyword: "悪役令嬢" },
+                search: createSearchParams({ keyword: "悪役令嬢" }).toString(),
               }}
               params={{}}
             >
@@ -50,7 +51,7 @@ const About: React.FC = () => {
             </Link>
             や
             <Link
-              to={{ pathname: "/custom/:type?", query: { keyword: "VRMMO" } }}
+              to={{ pathname: "/custom/:type?", search: createSearchParams({ keyword: "VRMMO" }).toString() }}
               params={{}}
             >
               VRMMO

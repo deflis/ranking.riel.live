@@ -7,7 +7,7 @@
     "dev": "npm-run-all -p dev:*",
     "dev:vite": "vite",
     "dev:hcm": "hcm \"**/*.module.css\" --watch",
-    "build": "tsc && hcm \"**/*.module.css\" && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
