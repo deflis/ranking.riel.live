@@ -19,6 +19,20 @@ import { useR18ItemForListing } from "@/modules/data/r18item";
 import { Item, NocItem } from "@/modules/data/types";
 import { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 
+const lineClamp = [
+  "",
+  "line-clamp-1",
+  "line-clamp-2",
+  "line-clamp-3",
+  "line-clamp-4",
+  "line-clamp-5",
+  "line-clamp-6",
+  "line-clamp-7",
+  "line-clamp-8",
+  "line-clamp-9",
+  "line-clamp-10",
+];
+
 function checkR18(
   isR18: boolean,
   item: Item | NocItem | undefined
@@ -113,7 +127,7 @@ const RankingItemRender: React.FC<{
           title={decode(item?.title)}
           className={clsx(
             "link-reset text-gray-800 dark:text-white hover:underline",
-            titleHeight > 0 && `line-clamp-${titleHeight} overflow-ellipsis`
+            titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`
           )}
         >
           {item ? (

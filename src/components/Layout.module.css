@@ -1,3 +1,5 @@
+@reference "../../index.css";
+
 .body {
   @apply bg-neutral-50 text-gray-900;
   @apply dark:bg-zinc-900 dark:text-white;

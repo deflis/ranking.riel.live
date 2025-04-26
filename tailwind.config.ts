@@ -1,9 +1,8 @@
 import type { Config } from 'tailwindcss'
 
 export default {
-  content: [],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: ["class", '[data-mode="dark"]'],
-  purge: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -21,10 +20,5 @@ export default {
       }
     },
   },
-  safelist: [
-    {
-      pattern: /^line-clamp-/
-    }
-  ],
   plugins: [require("@tailwindcss/forms")],
 } satisfies Config;
