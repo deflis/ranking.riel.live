@@ -28,7 +28,7 @@ export const SelectBox = <T,>({
   <div className={clsx(styles.select_box, className)}>
     <Listbox value={selectedValue} onChange={onChange}>
       {({ open }) => (
-        <>
+        <div className="relative w-full">
           <Listbox.Button className={clsx(styles.input, buttonClassName)}>
             {options.find(({ value }) => value === selectedValue)?.label}
             <div className="flex-grow"></div>
@@ -60,7 +60,7 @@ export const SelectBox = <T,>({
               ))}
             </Listbox.Options>
           </Transition>
-        </>
+        </div>
       )}
     </Listbox>
   </div>
