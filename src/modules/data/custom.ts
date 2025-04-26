@@ -181,7 +181,7 @@ const customRankingKey = (
     notKeyword,
     byTitle,
     byStory,
-    parse(firstUpdate)?.toJSDate(),
+    parseDateRange(firstUpdate)?.toJSDate(),
     genres.length === 0 ? allGenres : genres,
     novelTypeParam,
     [...fields, ...newFields] as const,
