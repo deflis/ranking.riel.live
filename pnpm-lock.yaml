@@ -42,8 +42,8 @@ importers:
         specifier: ^3.6.1
         version: 3.6.1
       narou:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.2.0
+        version: 1.2.0
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -1145,9 +1145,6 @@ packages:
   dataloader@2.2.3:
     resolution: {integrity: sha512-y2krtASINtPFS1rSDjacrFgn1dcUuoREVabwlOGOe4SdxenREqwjwjElAdwvbGM7kgZz9a3KVicWR7vcz8rnzA==}
 
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
-
   debug@4.4.0:
     resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
     engines: {node: '>=6.0'}
@@ -1760,8 +1757,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  narou@1.1.0:
-    resolution: {integrity: sha512-UwYk9x+5cidHwqiKiklEdsQy4tID0pn6HYYweah+7bamze2hDE7gnFdjaqRCrp2INzptdp3mCiauKV49trTVFg==}
+  narou@1.2.0:
+    resolution: {integrity: sha512-J9ju4O3hsTa+TcP4BEYEJ3ED8dNt5ktCwCb+E/zp0EMvmMsagqQ+uJLNtgSvPZBgJZPqB2bfos5AYPeahvEdEA==}
     engines: {node: '>=16.0.0', pnpm: '>=8'}
 
   nice-try@1.0.5:
@@ -3596,8 +3593,6 @@ snapshots:
 
   dataloader@2.2.3: {}
 
-  date-fns@4.1.0: {}
-
   debug@4.4.0:
     dependencies:
       ms: 2.1.3
@@ -4238,9 +4233,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  narou@1.1.0:
-    dependencies:
-      date-fns: 4.1.0
+  narou@1.2.0: {}
 
   nice-try@1.0.5: {}
 
