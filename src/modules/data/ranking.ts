@@ -1,11 +1,11 @@
-import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
+import { type QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import {
-  NarouRankingResult,
-  RankingType as NarouRankingType,
+  type NarouRankingResult,
+  type RankingType as NarouRankingType,
   ranking,
-} from "narou/browser";
+} from "narou";
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
@@ -23,7 +23,7 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
   const { data, isLoading: isLoadingQuery } = useQuery({
     queryKey: rankingKey(type, date),
     queryFn: rankingFetcher,
-    staleTime: Infinity, // ランキングデータは不変なはず
+    staleTime: Number.POSITIVE_INFINITY, // ランキングデータは不変なはず
   });
 
   const isUseFilter = useAtomValue(isUseFilterAtom);

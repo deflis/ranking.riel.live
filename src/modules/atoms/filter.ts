@@ -1,7 +1,7 @@
 import { Atom, atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { DateTime } from "luxon";
-import { Genre } from "narou/browser";
+import { Genre } from "narou";
 
 import { Item } from "../data/types";
 import { allGenres } from "../enum/Genre";

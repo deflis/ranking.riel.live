@@ -1,4 +1,4 @@
-import { NarouRankingResult } from "narou/browser";
+import { NarouRankingResult } from "narou";
 
 import { RankingData } from "../data/custom/utils";
 

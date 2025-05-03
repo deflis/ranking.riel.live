@@ -1,10 +1,10 @@
-import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
+import { type QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import DataLoader from "dataloader";
-import { searchR18, R18Fields } from "narou/browser";
+import { searchR18, R18Fields } from "narou";
 
 import { parseDate } from "../utils/date";
 
-import { NocDetail, NocItem } from "./types";
+import type { NocDetail, NocItem } from "./types";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;

@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { RankingType } from "narou/browser";
+import { RankingType } from "narou";
 import { generatePath } from "react-router-dom";
 
 import { formatDate } from "../utils/date";

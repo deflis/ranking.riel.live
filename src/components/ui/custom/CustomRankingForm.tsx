@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { GenreNotation } from "narou/browser";
+import { GenreNotation } from "narou";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";

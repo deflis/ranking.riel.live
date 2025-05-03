@@ -1,17 +1,17 @@
-import { QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
+import { type QueryFunction, useQueries, useQuery } from "@tanstack/react-query";
 import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
   Fields,
-  RankingHistoryResult,
+  type RankingHistoryResult,
   RankingType,
   rankingHistory,
   search,
-} from "narou/browser";
+} from "narou";
 
 import { parseDate } from "../utils/date";
 
-import { Detail, Item, RankingHistories } from "./types";
+import type { Detail, Item, RankingHistories } from "./types";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;

@@ -1,28 +1,28 @@
 import {
-  QueryClient,
-  QueryFunction,
+  type QueryClient,
+  type QueryFunction,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 import {
-  NarouSearchResults,
+  type NarouSearchResults,
   NovelTypeParam,
-  PickedNarouSearchResult,
+  type PickedNarouSearchResult,
   R18Site,
   searchR18,
   R18Fields,
-  NarouSearchResult,
-} from "narou/browser";
+  type NarouSearchResult,
+} from "narou";
 import { useCallback } from "react";
 
 import { parseDateRange } from "../atoms/filter";
-import { R18RankingParams } from "../interfaces/CustomRankingParams";
+import type { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
 
 import {
-  RankingData,
+  type RankingData,
   convertOrder,
   formatCustomRankingRaw,
 } from "./custom/utils";
@@ -280,7 +280,8 @@ class FilterBuilder<
       return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
       return false;
     }
     switch (item.noveltype) {
