@@ -1,6 +1,9 @@
 import type { QueryClient } from "@tanstack/react-query";
+import {
+	QueryClientProvider,
+	QueryErrorResetBoundary,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 /// <reference types="vite/client" />
 import { createRootRouteWithContext } from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
@@ -10,14 +13,12 @@ import { Settings } from "luxon";
 import type React from "react";
 import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
+import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 import { countAtom } from "@/modules/atoms/global";
 import { useCustomTheme } from "@/modules/theme/theme";
-import { persister } from "@/modules/utils/persister";
-import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 
 import "@/index.css";
 
@@ -37,10 +38,7 @@ function RootComponent() {
 
 	return (
 		<RootDocument>
-			<PersistQueryClientProvider
-				client={Route.useRouteContext().queryClient}
-				persistOptions={{ persister }}
-			>
+			<QueryClientProvider client={Route.useRouteContext().queryClient}>
 				<Layout>
 					<QueryErrorResetBoundary>
 						{({ reset }) => (
@@ -53,7 +51,7 @@ function RootComponent() {
 					</QueryErrorResetBoundary>
 				</Layout>
 				<ReactQueryDevtools buttonPosition="bottom-left" />
-			</PersistQueryClientProvider>
+			</QueryClientProvider>
 		</RootDocument>
 	);
 }
