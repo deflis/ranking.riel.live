@@ -85,6 +85,7 @@ const RankingItemRender: React.FC<{
 				"row-span-8",
 				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",
 			)}
+			suppressHydrationWarning
 		>
 			<p>
 				第{rankingItem.rank}位{" "}
