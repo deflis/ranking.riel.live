@@ -12,6 +12,7 @@ import {
 import { parseDate } from "../utils/date";
 
 import type { Detail, Item, RankingHistories } from "./types";
+import { fetchOptions } from "./custom/utils";
 
 export const itemKey = (ncode: string) =>
   ["item", ncode.toLowerCase(), "listing"] as const;
@@ -33,7 +34,7 @@ export const itemRankingHistoryFetcher: QueryFunction<
   RankingHistories,
   ReturnType<typeof itemRankingHistoryKey>
 > = async ({ queryKey: [, ncode] }) =>
-    formatRankingHistory(await rankingHistory(ncode));
+    formatRankingHistory(await rankingHistory(ncode, { fetchOptions }));
 
 export const useItemForListing = (ncode: string) => {
   const { data, isLoading, error } = useQuery({
@@ -90,7 +91,7 @@ const itemLoader = new DataLoader<string, Item | undefined>(
         Fields.keyword,
         Fields.story,
       ])
-      .execute();
+      .execute({fetchOptions});
     return ncodes
       .map((x) => x.toLowerCase())
       .map((ncode) =>
@@ -137,7 +138,7 @@ const itemDetailLoader = new DataLoader<string, Detail | undefined>(
         Fields.yearly_point,
       ])
       .opt("weekly")
-      .execute();
+      .execute({fetchOptions});
     return ncodes
       .map((x) => x.toLowerCase())
       .map((ncode) => values.find((x) => x.ncode.toLowerCase() === ncode));

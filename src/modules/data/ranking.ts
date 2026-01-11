@@ -10,6 +10,7 @@ import {
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
 import { itemFetcher, itemKey } from "./item";
+import { fetchOptions } from "./custom/utils";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>
   ["ranking", type, date.toISODate() ?? ""] as const;
@@ -17,7 +18,7 @@ export const rankingFetcher: QueryFunction<
   NarouRankingResult[],
   ReturnType<typeof rankingKey>
 > = async ({ queryKey: [, type, date] }) =>
-    await ranking().date(DateTime.fromISO(date).toJSDate()).type(type).execute();
+    await ranking().date(DateTime.fromISO(date).toJSDate()).type(type).execute({ fetchOptions });
 
 export function useRanking(type: NarouRankingType, date: DateTime) {
   const { data, isLoading: isLoadingQuery } = useQuery({

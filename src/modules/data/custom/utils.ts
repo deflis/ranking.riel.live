@@ -66,3 +66,8 @@ function point(type: RankingType, value: SearchResult) {
       return value.weekly_unique;
   }
 }
+export const fetchOptions = {
+  headers: {
+    "User-Agent": "RankingRielLive/1.0 (https://ranking.riel.live/)",
+  },
+} satisfies RequestInit;

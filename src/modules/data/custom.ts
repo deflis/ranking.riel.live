@@ -27,6 +27,7 @@ import {
   formatCustomRankingRaw,
 } from "./custom/utils";
 import { prefetchRankingDetail } from "./prefetch";
+import { fetchOptions } from "./custom/utils";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -258,7 +259,7 @@ const customRankingFetcher: QueryFunction<
     if (novelTypeParam) {
       searchBuilder.type(novelTypeParam);
     }
-    return await searchBuilder.execute();
+    return await searchBuilder.execute({ fetchOptions });
   };
 export class FilterBuilder<
   T extends PickedNarouSearchResult<
