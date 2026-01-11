@@ -1,9 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/custom/")({
 	beforeLoad: () => {
 		throw redirect({
-			to: "/ranking/{-$type}/{-$date}",
+			to: "/custom/$type",
+			params: {
+				type: "d",
+			},
 		});
 	},
 });

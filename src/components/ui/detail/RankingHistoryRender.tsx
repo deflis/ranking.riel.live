@@ -2,9 +2,8 @@ import { Tab } from "@headlessui/react";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 import { RankingType } from "narou";
-import React from "react";
 import { FaTrophy } from "react-icons/fa";
 import { Link as RouterLink } from "@tanstack/react-router";
 import {
@@ -20,7 +19,7 @@ import {
 import colors from "tailwindcss/colors";
 
 import { darkModeAtom } from "../../../modules/atoms/global";
-import {
+import type {
 	RankingHistories,
 	RankingHistoryItem,
 } from "../../../modules/data/types";
@@ -195,7 +194,8 @@ const RankingHistoryCharts: React.FC<{
 							<tr key={date.toUnixInteger()} className={styles.tableRow}>
 								<td className="text-center">
 									<RouterLink
-										to={`/ranking/${type}/${date.toISODate()}`}
+										to="/ranking/{-$type}/{-$date}"
+										params={{ type: type, date: date.toISODate() ?? undefined }}
 										className="text-blue-500 hover:underline dark:text-blue-400"
 									>
 										{date.toFormat("yyyy年MM月dd日(EEE)")}
@@ -269,12 +269,12 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 											"w-48 py-2.5 text-md leading-5",
 											selected
 												? "text-blue-500 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
-												: ranking[type].length != 0
-													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/[0.12] hover:text-blue-700 dark:hover:text-blue-300 "
+												: ranking[type].length !== 0
+													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/12 hover:text-blue-700 dark:hover:text-blue-300 "
 													: "text-gray-300 dark:text-neutral-700",
 										)
 									}
-									disabled={ranking[type].length == 0}
+									disabled={ranking[type].length === 0}
 								>
 									{RankingTypeName[type]}
 								</Tab>

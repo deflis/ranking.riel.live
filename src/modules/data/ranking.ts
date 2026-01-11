@@ -40,7 +40,7 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
   const isLoading = isLoadingQuery || items.some((x) => x.isLoading);
   const filteredItems = items
     .filter((x) => x.data && filter(x.data))
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // biome-ignore lint/style/noNonNullAssertion: filterによってデータは必ず含まれる
     .map((x) => x.data!);
 
   return {

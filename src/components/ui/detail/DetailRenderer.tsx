@@ -2,7 +2,7 @@ import { Paper } from "../atoms/Paper";
 import { SelfAd } from "../common/SelfAd";
 import DetailItem from "./DetailItem";
 import { RankingHistoryRender } from "./RankingHistoryRender";
-import {
+import type {
   Item,
   ItemDetail,
   NocDetail,

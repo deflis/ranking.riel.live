@@ -1,5 +1,5 @@
-import { NarouRankingResult } from "narou";
+import type { NarouRankingResult } from "narou";
 
-import { RankingData } from "../data/custom/utils";
+import type { RankingData } from "../data/custom/utils";
 
 export type RankingResultItem = RankingData | NarouRankingResult;

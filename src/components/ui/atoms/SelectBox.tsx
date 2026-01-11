@@ -37,7 +37,7 @@ export const SelectBox = <T,>({
 				<div className="relative w-full">
 					<ListboxButton className={clsx(styles.input, buttonClassName)}>
 						{options.find(({ value }) => value === selectedValue)?.label}
-						<div className="flex-grow" />
+						<div className="grow" />
 						<HiChevronDown className={styles.append_icon} aria-hidden="true" />
 					</ListboxButton>
 					<Transition

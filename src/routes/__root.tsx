@@ -1,11 +1,6 @@
 /// <reference types="vite/client" />
 import { createRootRouteWithContext } from "@tanstack/react-router";
-import {
-	Outlet,
-	ScrollRestoration,
-	HeadContent,
-	Scripts,
-} from "@tanstack/react-router";
+import { Outlet, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";

@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { R18Site, R18SiteNotation } from "narou";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import { useToggle } from "@/hooks/useToggle";
@@ -39,7 +39,7 @@ export const R18RankingForm: React.FC<R18RankingFormParams> = ({
 	return (
 		<div className="p-4 space-y-4">
 			<div className="flex flex-row space-y-4">
-				<div className="flex-grow" />
+				<div className="grow" />
 				<Button onClick={toggleShow}>
 					<FaCog className="w-5 h-5 pr-2 inline" />
 					編集
@@ -66,18 +66,19 @@ const DisableCustomRankingForm: React.FC<{
 	params: R18RankingParams;
 }) {
 	const genre =
-		sites.length > 0
-			? sites
-					.map((site) => <Tag key={site}>{R18SiteNotation[site]}</Tag>)
-					.reduce(
-						(previous, current) => (
-							<>
-								{previous} {current}
-							</>
-						),
-						<>サイト: </>,
-					)
-			: "サイト設定なし";
+		sites.length > 0 ? (
+			<>
+				サイト:
+				{sites.map((site) => (
+					<Fragment key={site}>
+						{" "}
+						<Tag>{R18SiteNotation[site]}</Tag>
+					</Fragment>
+				))}
+			</>
+		) : (
+			"サイト設定なし"
+		);
 	return (
 		<>
 			<h1 className="text-4xl md:text-6xl my-8">
@@ -211,6 +212,7 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 		defaultValues,
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		reset(defaultValues);
 	}, [defaultValues]);
@@ -222,12 +224,14 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 		[onSearch],
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const selectAll = useCallback(() => {
 		setValue("sites.nocturne", true);
 		setValue("sites.moonLight", true);
 		setValue("sites.moonLightBL", true);
 		setValue("sites.midnight", true);
 	}, []);
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const unselectAll = useCallback(() => {
 		setValue("sites.nocturne", false);
 		setValue("sites.moonLight", false);
@@ -282,19 +286,19 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 				<fieldset>
 					<legend className="font-bold text-sm text-slate-500">サイト</legend>
 					<label>
-						<Checkbox {...register(`sites.nocturne`)} />
+						<Checkbox {...register("sites.nocturne")} />
 						{R18SiteNotation[R18Site.Nocturne]}
 					</label>
 					<label>
-						<Checkbox {...register(`sites.moonLight`)} />
+						<Checkbox {...register("sites.moonLight")} />
 						{R18SiteNotation[R18Site.MoonLight]}
 					</label>
 					<label>
-						<Checkbox {...register(`sites.moonLightBL`)} />
+						<Checkbox {...register("sites.moonLightBL")} />
 						{R18SiteNotation[R18Site.MoonLightBL]}
 					</label>
 					<label>
-						<Checkbox {...register(`sites.midnight`)} />
+						<Checkbox {...register("sites.midnight")} />
 						{R18SiteNotation[R18Site.Midnight]}
 					</label>
 					<Button onClick={selectAll}>全選択</Button>

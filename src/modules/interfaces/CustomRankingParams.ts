@@ -1,7 +1,7 @@
-import { Genre, R18Site } from "narou";
-import { Except } from "type-fest";
+import type { Genre, R18Site } from "narou";
+import type { Except } from "type-fest";
 
-import { RankingType } from "./RankingType";
+import type { RankingType } from "./RankingType";
 
 export interface CustomRankingParams {
   keyword?: string;

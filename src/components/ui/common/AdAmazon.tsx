@@ -1,5 +1,4 @@
 import { useAtomValue } from "jotai";
-import React from "react";
 import { useEffectOnce } from "@/hooks/useEffectOnce";
 import { useMedia } from "@/hooks/useMedia";
 

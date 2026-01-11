@@ -1,5 +1,4 @@
-import React from "react";
-import { Link as RouterLink } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export const Footer: React.FC<{ className?: string }> = ({ className }) => {
 	return (
@@ -27,7 +26,7 @@ export const Footer: React.FC<{ className?: string }> = ({ className }) => {
 					運営者は、本サービスの利用による利用者の不利益・損害に関して一切の責任を負わないものとします。
 				</p>
 				<p>
-					<RouterLink to="/about">このサイトについて</RouterLink>
+					<Link to="/about">このサイトについて</Link>
 				</p>
 			</div>
 		</footer>

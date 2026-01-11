@@ -41,7 +41,7 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
 	return (
 		<div className="p-4 space-y-4">
 			<div className="flex flex-row space-y-4">
-				<div className="flex-grow" />
+				<div className="grow" />
 				<Button onClick={toggleShow}>
 					<FaCog className="w-5 h-5 pr-2 inline" />
 					編集

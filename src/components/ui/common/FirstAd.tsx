@@ -1,5 +1,4 @@
 import { useAtomValue } from "jotai";
-import React from "react";
 
 import { countAtom } from "../../../modules/atoms/global";
 

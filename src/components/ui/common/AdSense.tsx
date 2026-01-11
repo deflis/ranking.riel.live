@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useLocation } from "@tanstack/react-router";

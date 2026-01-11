@@ -1,11 +1,11 @@
 import { R18Site } from "narou";
-import React, { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
-import { R18RankingParams } from "@/modules/interfaces/CustomRankingParams";
-import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
+import type { R18RankingParams } from "@/modules/interfaces/CustomRankingParams";
+import { RankingType } from "@/modules/interfaces/RankingType";
 
 type R18RankingSearch = {
 	keyword?: string;
@@ -58,12 +58,12 @@ function R18RankingPage() {
 		return str === undefined ? defaultValue : str !== "0";
 	};
 	const int = (str: string | undefined): number | undefined => {
-		return str !== undefined ? parseInt(str, 10) : undefined;
+		return str !== undefined ? Number.parseInt(str, 10) : undefined;
 	};
 	const conventSites = (rawSites: string | undefined): R18Site[] => {
 		return (rawSites ?? "")
 			.split(",")
-			.map((x) => parseInt(x, 10) as R18Site)
+			.map((x) => Number.parseInt(x, 10) as R18Site)
 			.filter((x) => allSites.includes(x));
 	};
 

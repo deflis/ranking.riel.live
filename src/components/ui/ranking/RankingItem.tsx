@@ -3,8 +3,7 @@ import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
-import React from "react";
-import { Link as RouterLink } from "@tanstack/react-router";
+import { createLink, Link } from "@tanstack/react-router";
 import { useToggle } from "@/hooks/useToggle";
 
 import { Button } from "../atoms/Button";
@@ -16,8 +15,11 @@ import { Tag, Tags } from "../common/bulma/Tag";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
 import { useItemForListing } from "@/modules/data/item";
 import { useR18ItemForListing } from "@/modules/data/r18item";
-import { Item, NocItem } from "@/modules/data/types";
-import { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
+import type { Item, NocItem } from "@/modules/data/types";
+import type { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
+import { RankingType } from "@/modules/interfaces/RankingType";
+
+const ChipLink = createLink(Chip);
 
 const lineClamp = [
 	"",
@@ -70,9 +72,10 @@ const RankingItemRender: React.FC<{
 	const link = isR18
 		? `https://novel18.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`
 		: `https://ncode.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`;
-	const detail = isR18
-		? `/r18/detail/${(item?.ncode ?? ncode)?.toLowerCase()}`
-		: `/detail/${(item?.ncode ?? ncode)?.toLowerCase()}`;
+	const detail = isR18 ? "/r18/detail/$ncode" : "/detail/$ncode";
+	const detailParams = {
+		ncode: item?.ncode ?? ncode,
+	} as const;
 
 	return (
 		<div
@@ -103,14 +106,22 @@ const RankingItemRender: React.FC<{
 					<>
 						<ItemBadge item={item} />
 						{!isR18 && (
-							<RouterLink to={`/custom?genres=${item.genre}`}>
+							<Link
+								to="/custom/$type"
+								params={{ type: RankingType.Daily }}
+								search={{ genres: String(item.genre) }}
+							>
 								{GenreNotation[item.genre]}
-							</RouterLink>
+							</Link>
 						)}
 						{isR18 && (
-							<RouterLink to={`/r18?sites=${item.nocgenre}`}>
+							<Link
+								to="/r18/ranking/$type"
+								params={{ type: RankingType.Daily }}
+								search={{ sites: String(item.nocgenre) }}
+							>
 								{R18SiteNotation[item.nocgenre]}
-							</RouterLink>
+							</Link>
 						)}
 						<Tag>
 							{Math.round(item.length / item.general_all_no).toLocaleString()}
@@ -122,8 +133,9 @@ const RankingItemRender: React.FC<{
 				)}
 			</p>
 			<h2 className="mb-2 text-2xl">
-				<RouterLink
+				<Link
 					to={detail}
+					params={detailParams}
 					title={decode(item?.title)}
 					className={clsx(
 						"link-reset text-gray-800 dark:text-white hover:underline",
@@ -133,11 +145,11 @@ const RankingItemRender: React.FC<{
 					{item ? (
 						decode(item.title)
 					) : isNotfound ? (
-						`この小説は見つかりません`
+						"この小説は見つかりません"
 					) : (
 						<PulseLoader className="h-6" disabled={isNotfound} />
 					)}
-				</RouterLink>
+				</Link>
 			</h2>
 
 			<p>
@@ -180,15 +192,14 @@ const RankingItemRender: React.FC<{
 					.split(/\s/g)
 					.filter((keyword) => keyword)
 					.map((keyword, i) => (
-						<Chip
-							as={RouterLink}
-							key={i}
-							to={
-								isR18 ? `/r18?keyword=${keyword}` : `/custom?keyword=${keyword}`
-							}
+						<ChipLink
+							key={keyword}
+							to={isR18 ? "/r18/ranking/$type" : "/custom/$type"}
+							params={{ type: RankingType.Daily }}
+							search={{ keyword }}
 						>
 							{keyword}
-						</Chip>
+						</ChipLink>
 					)) ?? <PulseLoader disabled={isNotfound} />}
 			</Paper>
 
@@ -214,8 +225,10 @@ const RankingItemRender: React.FC<{
 							あらすじを{openStory ? "隠す" : "表示"}
 						</Button>
 					)}
-					<div className="flex-grow" />
-					<RouterLink to={detail}>小説情報</RouterLink>
+					<div className="grow" />
+					<Link to={detail} params={detailParams}>
+						小説情報
+					</Link>
 					<Button
 						as="a"
 						href={link}

@@ -1,8 +1,8 @@
 import { useAtom } from "jotai";
-import React, { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
-import { Link as RouterLink, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, createLink } from "@tanstack/react-router";
 import { useToggle } from "@/hooks/useToggle";
 
 import {
@@ -18,6 +18,7 @@ import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
 import { TextField } from "../atoms/TextField";
 import { AdDialog } from "../common/AdDialog";
 
+const SidebarItemLink = createLink(SidebarItem);
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
 function validate(ncode: string): boolean {
@@ -33,7 +34,7 @@ export const Header: React.FC = () => {
 			if (!validate(ncode)) {
 				return;
 			}
-			navigate(`/detail/${ncode}`);
+			navigate({ to: "/detail/$ncode", params: { ncode } });
 		},
 		[navigate, ncode],
 	);
@@ -83,7 +84,7 @@ export const Header: React.FC = () => {
 
 	const handleChangeHeight = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const value = parseInt(e.target.value, 10);
+			const value = Number.parseInt(e.target.value, 10);
 			if (value > 0) {
 				setTitleHeight(value);
 			}
@@ -95,81 +96,121 @@ export const Header: React.FC = () => {
 		<header>
 			<nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between dark:bg-neutral-900">
 				<button
+					type="button"
 					className="rounded-full hover:bg-stone-300 dark:hover:bg-neutral-800  w-10 h-10"
 					onClick={toggle}
 				>
 					<HiMenu className="w-5 h-5 m-auto" />
 				</button>
 				<h6>
-					<RouterLink to="/" className="link-reset hover:underline">
+					<Link to="/" className="link-reset hover:underline">
 						<FaTrophy className="w-5 h-5 inline" />
 						なろうランキング
-					</RouterLink>
+					</Link>
 				</h6>
 				<div className="grow" />
 				<div className="space-x-4 mx-2 hidden sm:block">
-					<RouterLink to="/ranking/d">日間</RouterLink>
-					<RouterLink to="/ranking/w">週間</RouterLink>
-					<RouterLink to="/ranking/m">月間</RouterLink>
-					<RouterLink to="/custom">カスタムランキング</RouterLink>
+					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "d" }}>
+						日間
+					</Link>
+					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "w" }}>
+						週間
+					</Link>
+					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "m" }}>
+						月間
+					</Link>
+					<Link to="/custom/$type" params={{ type: "daily" }}>
+						カスタムランキング
+					</Link>
 				</div>
 			</nav>
 			<Sidebar open={expand} onClose={toggle}>
-				<SidebarItem as={RouterLink} to="/ranking/d" hover>
+				<SidebarItemLink
+					to="/ranking/{-$type}/{-$date}"
+					params={{ type: "d" }}
+					hover
+				>
 					日間
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/ranking/w" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/ranking/{-$type}/{-$date}"
+					params={{ type: "w" }}
+					hover
+				>
 					週間
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/ranking/m" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/ranking/{-$type}/{-$date}"
+					params={{ type: "m" }}
+					hover
+				>
 					月間
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/ranking/q" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/ranking/{-$type}/{-$date}"
+					params={{ type: "q" }}
+					hover
+				>
 					四半期
-				</SidebarItem>
+				</SidebarItemLink>
 				<Divider />
-				<SidebarItem as={RouterLink} to="/custom" hover>
+				<SidebarItemLink to="/custom/$type" params={{ type: "daily" }} hover>
 					カスタムランキング
-				</SidebarItem>
+				</SidebarItemLink>
 				<Divider />
-				<SidebarItem as={RouterLink} to="/custom/y" hover>
+				<SidebarItemLink to="/custom/$type" params={{ type: "yearly" }} hover>
 					年間
 					<br />
 					カスタムランキング
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/custom/a" hover>
+				</SidebarItemLink>
+				<SidebarItemLink to="/custom/$type" params={{ type: "all" }} hover>
 					全期間
 					<br />
 					カスタムランキング
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/custom/u" hover>
+				</SidebarItemLink>
+				<SidebarItemLink to="/custom/$type" params={{ type: "unique" }} hover>
 					週間ユニークユーザー数
 					<br />
 					カスタムランキング
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/custom/d?genres=201" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/custom/$type"
+					params={{ type: "daily" }}
+					search={{ genres: "201" }}
+					hover
+				>
 					日間ハイファンタジー
 					<br />
 					カスタムランキング
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/custom/d?genres=101" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/custom/$type"
+					params={{ type: "daily" }}
+					search={{ genres: "101" }}
+					hover
+				>
 					日間異世界恋愛
 					<br />
 					カスタムランキング
-				</SidebarItem>
-				<SidebarItem as={RouterLink} to="/custom/d?genres=102" hover>
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/custom/$type"
+					params={{ type: "daily" }}
+					search={{ genres: "102" }}
+					hover
+				>
 					日間現実世界恋愛
 					<br />
 					カスタムランキング
-				</SidebarItem>
+				</SidebarItemLink>
 				<Divider />
-				<SidebarItem as={RouterLink} to="/r18" hover>
+				<SidebarItemLink to="/r18" hover>
 					R18ランキング
-				</SidebarItem>
+				</SidebarItemLink>
 				<Divider />
-				<SidebarItem as={RouterLink} to="/about" hover>
+				<SidebarItemLink to="/about" hover>
 					このサイトについて
-				</SidebarItem>
+				</SidebarItemLink>
 				<Divider />
 				<SidebarItem as="label">
 					<Checkbox checked={darkmode} onChange={toggleDarkmode} />
