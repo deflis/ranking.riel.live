@@ -122,10 +122,10 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 		const enableKanketsu = get(enableKanketsuAtom);
 		return {
 			genres: allGenres.reduce(
-				(accumulator, id) => ({
-					...accumulator,
-					[`g${id}`]: genres.includes(id),
-				}),
+				(accumulator, id) => {
+					accumulator[`g${id}`] = genres.includes(id);
+					return accumulator;
+				},
 				{} as Record<`g${(typeof allGenres)[number]}`, boolean>,
 			),
 			story: {
