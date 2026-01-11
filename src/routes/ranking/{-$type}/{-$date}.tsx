@@ -1,7 +1,11 @@
-import { useNavigate, createFileRoute, createLink } from "@tanstack/react-router";
+import {
+	useNavigate,
+	createFileRoute,
+	createLink,
+} from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { RankingType } from "narou";
-import { Suspense, useCallback, useMemo } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
@@ -54,21 +58,43 @@ function RankingPage() {
 	const isNow = !dateParam;
 	const navigate = useNavigate();
 
-	const handleDateChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const newDate = DateTime.fromISO(e.target.value);
-			if (newDate) {
+	const [inputValue, setInputValue] = useState(date.toISODate() ?? "");
+
+	useEffect(() => {
+		setInputValue(date.toISODate() ?? "");
+	}, [date]);
+
+	const handleDateCommit = useCallback(
+		(value: string) => {
+			const newDate = DateTime.fromISO(value);
+			if (newDate.isValid) {
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",
 					params: {
 						type: type ?? undefined,
 						date: newDate.toISODate() ?? undefined,
 					},
-				})
+				});
 			}
 		},
 		[type, navigate],
-	)
+	);
+
+	const handleKeyDown = useCallback(
+		(e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.key === "Enter") {
+				handleDateCommit(e.currentTarget.value);
+			}
+		},
+		[handleDateCommit],
+	);
+
+	const handleBlur = useCallback(
+		(e: React.FocusEvent<HTMLInputElement>) => {
+			handleDateCommit(e.target.value);
+		},
+		[handleDateCommit],
+	);
 
 	return (
 		<>
@@ -105,10 +131,12 @@ function RankingPage() {
 					<TextField
 						min={minDate.toISODate() ?? ""}
 						max={maxDate.toISODate() ?? ""}
-						value={date.toISODate() ?? ""}
+						value={inputValue}
 						type="date"
 						step={rankingTypeSteps[type]}
-						onChange={handleDateChange}
+						onChange={(e) => setInputValue(e.target.value)}
+						onBlur={handleBlur}
+						onKeyDown={handleKeyDown}
 					/>
 					{date < maxDate && (
 						<ButtonLink
@@ -145,7 +173,7 @@ function RankingPage() {
 				)}
 			</QueryErrorResetBoundary>
 		</>
-	)
+	);
 }
 
 function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
