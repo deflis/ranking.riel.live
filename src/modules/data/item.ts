@@ -193,7 +193,7 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
 		rankingData[type] = history
 			.filter((x) => x.type === type)
 			.map(({ date, pt, rank }) => ({
-				date: DateTime.fromJSDate(date),
+				date: DateTime.fromJSDate(date, { zone: "Asia/Tokyo" }),
 				pt,
 				rank,
 			}));

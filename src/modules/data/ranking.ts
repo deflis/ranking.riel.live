@@ -33,7 +33,7 @@ const rankingServerFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data: { type, date } }) => {
 		return await ranking()
-			.date(DateTime.fromISO(date).toJSDate())
+			.date(DateTime.fromISO(date, { zone: "Asia/Tokyo" }).toJSDate())
 			.type(type)
 			.execute({ fetchOptions });
 	});

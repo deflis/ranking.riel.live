@@ -122,13 +122,16 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 						type="date"
 						{...register("firstUpdate.begin")}
 						min={
-							DateTime.fromObject({
-								year: 2013,
-								month: 5,
-								day: 1,
-							}).toISODate() ?? ""
+							DateTime.fromObject(
+								{
+									year: 2013,
+									month: 5,
+									day: 1,
+								},
+								{ zone: "Asia/Tokyo" },
+							).toISODate() ?? ""
 						}
-						max={DateTime.now().toISODate() ?? ""}
+						max={DateTime.now().setZone("Asia/Tokyo").toISODate() ?? ""}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}

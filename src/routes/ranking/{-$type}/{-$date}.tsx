@@ -33,7 +33,10 @@ const rankingTypeSteps = {
 	[RankingType.Quarterly]: "",
 } as const;
 
-const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
+const minDate = DateTime.fromObject(
+	{ year: 2013, month: 5, day: 1 },
+	{ zone: "Asia/Tokyo" },
+);
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
 function parseDate(dateString: string | undefined): string {
@@ -42,7 +45,7 @@ function parseDate(dateString: string | undefined): string {
 			DateTime.now().setZone("Asia/Tokyo").startOf("day").toISODate() ?? ""
 		);
 	}
-	const date = DateTime.fromISO(dateString);
+	const date = DateTime.fromISO(dateString, { zone: "Asia/Tokyo" });
 	if (!date.isValid) {
 		return (
 			DateTime.now().setZone("Asia/Tokyo").startOf("day").toISODate() ?? ""
@@ -62,7 +65,7 @@ function RankingPage() {
 	const date = useMemo(() => {
 		const dt = !dateParam
 			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam);
+			: DateTime.fromISO(dateParam, { zone: "Asia/Tokyo" });
 		return convertDate(dt, type);
 	}, [dateParam, type]);
 
@@ -72,7 +75,7 @@ function RankingPage() {
 
 	const handleDateChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const newDate = DateTime.fromISO(e.target.value);
+			const newDate = DateTime.fromISO(e.target.value, { zone: "Asia/Tokyo" });
 			if (newDate) {
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",
