@@ -1,15 +1,18 @@
-import path from 'path';
-import generouted from '@generouted/react-router/plugin'
-import react from "@vitejs/plugin-react";
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), generouted()],
-
-  resolve: {
-    alias: {
-      "@/": path.join(__dirname, "src/")
-    },
-  }
+  plugins: [
+    tailwindcss(),
+    tanstackStart({
+      ssr: {
+        platform: 'cloudflare'
+      },
+      srcDirectory: 'src',
+    }),
+    tsconfigPaths(),
+  ],
 });

@@ -1,4 +1,4 @@
-@reference "../../../../../index.css";
+@reference "../../../../index.css";
 
 .tags {
   @apply items-center inline-flex flex-wrap justify-start;

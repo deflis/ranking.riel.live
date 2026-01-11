@@ -1,4 +1,4 @@
-@reference "../../../../index.css";
+@reference "../../../index.css";
 
 .filter {
   @apply border rounded-lg my-4 bg-white border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700 z-0;
