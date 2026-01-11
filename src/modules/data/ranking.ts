@@ -64,7 +64,10 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
 		data: data.filter(
 			(rank) =>
 				!isUseFilter ||
-				(filteredItems.some((item) => item != null && item.ncode === rank.ncode) ?? false),
+				(filteredItems.some(
+					(item) => item != null && item.ncode === rank.ncode,
+				) ??
+					false),
 		),
 	};
 }
