@@ -74,13 +74,11 @@ function RankingPage() {
 	const isNow = !dateParam;
 	const navigate = useNavigate();
 
-
 	const dateInputRef = useRef<HTMLInputElement>(null);
 
 	if (dateInputRef.current) {
 		dateInputRef.current.value = date.toISODate() ?? "";
 	}
-
 
 	const handleDateCommit = useCallback(
 		(value: string) => {
