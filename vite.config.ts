@@ -16,10 +16,10 @@ export default defineConfig({
 		react(),
 		tsconfigPaths(),
 	],
-  
-  environments: {
-    ssr: {
-      resolve: { conditions: ['workerd', 'worker', 'node', 'default'] }
-    }
-  }
+
+	environments: {
+		ssr: {
+			resolve: { conditions: ["workerd", "worker", "node", "default"] },
+		},
+	},
 });
