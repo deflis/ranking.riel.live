@@ -31,9 +31,18 @@ export function cacheMiddleware(options: CacheOptions = {}) {
         )}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`
 
   return createMiddleware().server(async ({ next }) => {
-    // キャッシュを設定する
-    setResponseHeader('Cache-Control', headerValue)
-    return next()
+    try {
+      const res = await next()
+
+      if (res instanceof Response && res.status >= 400) {
+        return res
+      }
+
+      // キャッシュを設定する
+      setResponseHeader('Cache-Control', headerValue)
+      return res
+    } catch (err) {
+      throw err
+    }
   })
 }
-
