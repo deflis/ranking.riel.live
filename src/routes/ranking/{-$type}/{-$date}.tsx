@@ -20,6 +20,7 @@ import { RankingRender } from "@/components/ui/ranking/RankingRender";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
 import { addDate, convertDate } from "@/modules/utils/date";
+import { prefetchRanking } from "@/modules/data/prefetch";
 
 const ButtonLink = createLink(Button);
 
@@ -37,10 +38,12 @@ const rankingTypeSteps = {
 	[RankingType.Quarterly]: "",
 } as const;
 
-const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
+const minDate = DateTime.fromObject(
+	{ year: 2013, month: 5, day: 1 },
+	{ zone: "Asia/Tokyo" },
+);
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
-import { prefetchRanking } from "@/modules/data/prefetch";
 
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	loader: async ({
@@ -65,7 +68,7 @@ function RankingPage() {
 	const date = useMemo(() => {
 		const dt = !dateParam
 			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam);
+			: DateTime.fromISO(dateParam, { zone: "Asia/Tokyo" });
 		return convertDate(dt, type);
 	}, [dateParam, type]);
 
@@ -80,7 +83,7 @@ function RankingPage() {
 
 	const handleDateCommit = useCallback(
 		(value: string) => {
-			const newDate = DateTime.fromISO(value);
+			const newDate = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
 			if (newDate.isValid) {
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",

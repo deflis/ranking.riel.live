@@ -32,22 +32,28 @@ export function parseDateRange(raw: string | undefined): DateTime | undefined {
 	if (raw.endsWith("days")) {
 		const days = Number.parseInt(raw.slice(0, -4));
 		if (days) {
-			return DateTime.now().startOf("day").minus({ days });
+			return DateTime.now().setZone("Asia/Tokyo").startOf("day").minus({ days });
 		}
 	}
 	if (raw.endsWith("months")) {
 		const months = Number.parseInt(raw.slice(0, -6));
 		if (months) {
-			return DateTime.now().startOf("day").minus({ months });
+			return DateTime.now()
+				.setZone("Asia/Tokyo")
+				.startOf("day")
+				.minus({ months });
 		}
 	}
 	if (raw.endsWith("years")) {
 		const years = Number.parseInt(raw.slice(0, -5));
 		if (years) {
-			return DateTime.now().startOf("day").minus({ months: years });
+			return DateTime.now()
+				.setZone("Asia/Tokyo")
+				.startOf("day")
+				.minus({ months: years });
 		}
 	}
-	const date = raw ? DateTime.fromISO(raw) : undefined;
+	const date = raw ? DateTime.fromISO(raw, { zone: "Asia/Tokyo" }) : undefined;
 	return date?.isValid ? date : undefined;
 }
 
@@ -130,10 +136,14 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 				},
 			},
 			firstUpdate: {
-				term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
+				term: DateTime.fromISO(firstUpdateRaw ?? "", { zone: "Asia/Tokyo" })
+					.isValid
 					? "custom"
 					: ((firstUpdateRaw as TermStrings) ?? "none"),
-				begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate() ?? "",
+				begin:
+					firstUpdate?.toISODate() ??
+					DateTime.now().setZone("Asia/Tokyo").toISODate() ??
+					"",
 				end: "",
 			},
 			status: {
@@ -156,7 +166,9 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 			storyMaxAtom,
 			config.story.max.enable ? config.story.max.value : undefined,
 		);
-		const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin);
+		const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin, {
+			zone: "Asia/Tokyo",
+		});
 		set(
 			firstUpdateRawAtom,
 			config.firstUpdate.term === "custom" && firstUpdateBegin.isValid

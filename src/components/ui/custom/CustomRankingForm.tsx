@@ -117,10 +117,14 @@ function getDefaultValues({
 			},
 		},
 		firstUpdate: {
-			term: DateTime.fromISO(firstUpdateRaw ?? "").isValid
+			term: DateTime.fromISO(firstUpdateRaw ?? "", { zone: "Asia/Tokyo" })
+				.isValid
 				? "custom"
 				: ((firstUpdateRaw as TermStrings) ?? "none"),
-			begin: firstUpdate?.toISODate() ?? DateTime.now().toISODate() ?? "",
+			begin:
+				firstUpdate?.toISODate() ??
+				DateTime.now().setZone("Asia/Tokyo").toISODate() ??
+				"",
 			end: "",
 		},
 		status: {
@@ -187,7 +191,7 @@ function formatDateRange(raw: string | TermStrings | undefined): string {
 	}
 
 	// ISO日付形式の処理
-	const date = DateTime.fromISO(raw);
+	const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
 	if (!date.isValid) {
 		return "";
 	}
@@ -394,13 +398,16 @@ const EnableCustomRankingForm: React.FC<
 						type="date"
 						{...register("firstUpdate.begin")}
 						min={
-							DateTime.fromObject({
-								year: 2013,
-								month: 5,
-								day: 1,
-							}).toISODate() ?? ""
+							DateTime.fromObject(
+								{
+									year: 2013,
+									month: 5,
+									day: 1,
+								},
+								{ zone: "Asia/Tokyo" },
+							).toISODate() ?? ""
 						}
-						max={DateTime.now().toISODate() ?? ""}
+						max={DateTime.now().setZone("Asia/Tokyo").toISODate() ?? ""}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}
