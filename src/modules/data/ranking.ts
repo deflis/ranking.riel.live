@@ -63,7 +63,8 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
 	return {
 		data: data.filter(
 			(rank) =>
-				!isUseFilter || filteredItems.some((item) => item != null && item.ncode === rank.ncode),
+				!isUseFilter ||
+				(filteredItems.some((item) => item != null && item.ncode === rank.ncode) ?? false),
 		),
 	};
 }
