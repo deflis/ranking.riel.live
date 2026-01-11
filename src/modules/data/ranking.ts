@@ -32,8 +32,11 @@ const rankingServerFn = createServerFn({ method: "GET" })
 		(data: { type: NarouRankingType; date: string }) => data,
 	)
 	.handler(async ({ data: { type, date } }) => {
+		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
+			.setZone("UTC", { keepLocalTime: true })
+			.toJSDate();
 		return await ranking()
-			.date(DateTime.fromISO(date, { zone: "Asia/Tokyo" }).toJSDate())
+			.date(dateValue)
 			.type(type)
 			.execute({ fetchOptions });
 	});
