@@ -5,6 +5,9 @@ import {
 } from "../../components/ui/ranking/R18RankingPage";
 import { RankingType } from "../../modules/interfaces/RankingType";
 
+import { prefetchR18Ranking } from "@/modules/data/r18ranking";
+import { parseR18RankingParams } from "@/modules/utils/parseSearch";
+
 export const Route = createFileRoute("/r18/")({
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
 		return {
@@ -20,6 +23,11 @@ export const Route = createFileRoute("/r18/")({
 			kanketsu: search.kanketsu as string | undefined,
 			tanpen: search.tanpen as string | undefined,
 		};
+	},
+	loaderDeps: ({ search }) => ({ search }),
+	loader: async ({ context: { queryClient }, deps: { search } }) => {
+		const params = parseR18RankingParams(undefined, search);
+		await prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
 });

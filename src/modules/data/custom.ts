@@ -44,7 +44,6 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
 		queryFn: useCallback(getCustomRankingQueryFn(params, queryClient), [
 			params,
 		]),
-		placeholderData: keepPreviousData,
 	});
 	return { data };
 };

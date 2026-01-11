@@ -4,7 +4,14 @@ import type { NarouRankingResult, RankingType } from "narou";
 
 import { convertDate } from "../utils/date";
 
-import { itemDetailFetcher, itemDetailKey, itemFetcher, itemKey } from "./item";
+import {
+	itemDetailFetcher,
+	itemDetailKey,
+	itemFetcher,
+	itemKey,
+	itemRankingHistoryFetcher,
+	itemRankingHistoryKey,
+} from "./item";
 import { rankingFetcher, rankingKey } from "./ranking";
 
 export const prefetchRanking = async (
@@ -51,6 +58,10 @@ export const prefetchDetail = async (
 		queryClient.prefetchQuery({
 			queryKey: itemDetailKey(ncode),
 			queryFn: itemDetailFetcher,
+		}),
+		queryClient.prefetchQuery({
+			queryKey: itemRankingHistoryKey(ncode),
+			queryFn: itemRankingHistoryFetcher,
 		}),
 	]);
 };

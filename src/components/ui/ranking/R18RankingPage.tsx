@@ -28,39 +28,15 @@ const allSites = [
 	R18Site.Midnight,
 ];
 
+import { parseR18RankingParams } from "@/modules/utils/parseSearch";
+
 export const R18RankingPage: React.FC<{
 	rankingType: RankingType;
 	search: R18RankingSearch;
 }> = ({ rankingType, search }) => {
 	const navigate = useNavigate();
 
-	const boolean = (str: string | undefined, defaultValue: boolean): boolean => {
-		return str === undefined ? defaultValue : str !== "0";
-	};
-	const int = (str: string | undefined): number | undefined => {
-		return str !== undefined ? Number.parseInt(str, 10) : undefined;
-	};
-	const conventSites = (rawSites: string | undefined): R18Site[] => {
-		return (rawSites ?? "")
-			.split(",")
-			.map((x) => Number.parseInt(x, 10) as R18Site)
-			.filter((x) => allSites.includes(x));
-	};
-
-	const params: R18RankingParams = {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
-		byStory: boolean(search.by_story, false),
-		byTitle: boolean(search.by_title, false),
-		sites: conventSites(search.sites),
-		max: int(search.max),
-		min: int(search.min),
-		firstUpdate: search.first_update,
-		rensai: boolean(search.rensai, true),
-		kanketsu: boolean(search.kanketsu, true),
-		tanpen: boolean(search.tanpen, true),
-		rankingType,
-	};
+	const params = parseR18RankingParams(rankingType, search);
 
 	const handleSearch = useCallback(
 		(newParams: R18RankingParams) => {

@@ -22,6 +22,9 @@ type CustomRankingSearch = {
 	tanpen?: string;
 };
 
+import { prefetchCustomRanking } from "@/modules/data/custom";
+import { parseCustomRankingParams } from "@/modules/utils/parseSearch";
+
 export const Route = createFileRoute("/custom/{-$type}")({
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
 		return {
@@ -38,6 +41,15 @@ export const Route = createFileRoute("/custom/{-$type}")({
 			tanpen: search.tanpen as string | undefined,
 		};
 	},
+	loaderDeps: ({ search }) => ({ search }),
+	loader: async ({
+		context: { queryClient },
+		params: { type },
+		deps: { search },
+	}) => {
+		const params = parseCustomRankingParams(type, search);
+		await prefetchCustomRanking(queryClient, params, 1);
+	},
 	component: CustomRankingPage,
 });
 
@@ -46,35 +58,7 @@ function CustomRankingPage() {
 	const search = Route.useSearch();
 	const navigate = useNavigate();
 
-	const rankingType = (type ?? RankingType.Daily) as RankingType;
-
-	const boolean = (str: string | undefined, defaultValue: boolean): boolean => {
-		return str === undefined ? defaultValue : str !== "0";
-	};
-	const int = (str: string | undefined): number | undefined => {
-		return str !== undefined ? Number.parseInt(str, 10) : undefined;
-	};
-	const conventGenres = (rawGenres: string | undefined): Genre[] => {
-		return (rawGenres ?? "")
-			.split(",")
-			.map((x) => Number.parseInt(x, 10) as Genre)
-			.filter((x) => allGenres.includes(x));
-	};
-
-	const params: CustomRankingParams = {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
-		byStory: boolean(search.by_story, false),
-		byTitle: boolean(search.by_title, false),
-		genres: conventGenres(search.genres),
-		max: int(search.max),
-		min: int(search.min),
-		firstUpdate: search.first_update,
-		rensai: boolean(search.rensai, true),
-		kanketsu: boolean(search.kanketsu, true),
-		tanpen: boolean(search.tanpen, true),
-		rankingType,
-	};
+	const params = parseCustomRankingParams(type, search);
 
 	const handleSearch = useCallback(
 		(newParams: CustomRankingParams) => {

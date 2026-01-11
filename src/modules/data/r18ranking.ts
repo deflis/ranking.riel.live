@@ -43,7 +43,6 @@ export const useR18Ranking = (params: R18RankingParams, page: number) => {
 		queryFn: useCallback(getCustomRankingQueryFn(params, queryClient), [
 			params,
 		]),
-		placeholderData: keepPreviousData,
 	});
 	return { data };
 };

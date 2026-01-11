@@ -82,7 +82,7 @@ export const R18DialogForm: React.FC = () => {
 		setShowDialog(false);
 	}, [setOk]);
 	const handleCancel = useCallback(() => {
-		navigate("/");
+		navigate({ to: "/" });
 	}, [navigate]);
 	return (
 		<R18Dialog

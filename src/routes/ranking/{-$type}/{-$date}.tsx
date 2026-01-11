@@ -40,7 +40,21 @@ const rankingTypeSteps = {
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
+import { prefetchRanking } from "@/modules/data/prefetch";
+
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
+	loader: async ({
+		context: { queryClient },
+		params: { type: typeParam, date: dateParam },
+	}) => {
+		const type = (typeParam as RankingType) ?? RankingType.Daily;
+		const dt = !dateParam
+			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
+			: DateTime.fromISO(dateParam);
+		const date = convertDate(dt, type);
+
+		await prefetchRanking(queryClient, type, date);
+	},
 	component: RankingPage,
 });
 

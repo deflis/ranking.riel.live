@@ -1,4 +1,5 @@
 import {
+	type QueryClient,
 	type QueryFunction,
 	useSuspenseQueries,
 	useSuspenseQuery,
@@ -43,6 +44,22 @@ export const useR18DetailForItem = (ncode: string) => {
 		queryFn: itemDetailFetcher,
 	});
 	return { data, error };
+};
+
+export const prefetchR18Detail = async (
+	queryClient: QueryClient,
+	ncode: string,
+) => {
+	await Promise.all([
+		queryClient.prefetchQuery({
+			queryKey: itemKey(ncode),
+			queryFn: itemFetcher,
+		}),
+		queryClient.prefetchQuery({
+			queryKey: itemDetailKey(ncode),
+			queryFn: itemDetailFetcher,
+		}),
+	]);
 };
 
 export const useR18DetailForView = (ncode: string) => {
