@@ -32,6 +32,19 @@
 						]
 					}
 				}
+			},
+			"correctness": {
+				"useExhaustiveDependencies": {
+					"level": "error",
+					"options": {
+						"hooks": [
+							{
+								"name": "useQueryClient",
+								"stableResult": true
+							}
+						]
+					}
+				}
 			}
 		}
 	},
