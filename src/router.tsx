@@ -18,6 +18,7 @@ export function getRouter() {
 			queryClient,
 		},
 		defaultPreload: "intent",
+		scrollRestoration: true,
 	});
 
 	return router;

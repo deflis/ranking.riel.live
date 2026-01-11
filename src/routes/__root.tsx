@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { createRootRouteWithContext } from "@tanstack/react-router";
 import {
 	Outlet,
@@ -8,6 +9,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import type React from "react";
 import { Suspense, useEffect } from "react";
 import { Settings } from "luxon";
 import { useSetAtom } from "jotai";
@@ -58,7 +60,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
-				<ScrollRestoration />
 				<TanStackRouterDevtools position="bottom-right" />
 				<Scripts />
 			</body>
