@@ -119,7 +119,7 @@ export const Header: React.FC = () => {
 					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "m" }}>
 						月間
 					</Link>
-					<Link to="/custom/$type" params={{ type: "daily" }}>
+					<Link to="/custom/{-$type}" params={{ type: "daily" }}>
 						カスタムランキング
 					</Link>
 				</div>
@@ -154,27 +154,35 @@ export const Header: React.FC = () => {
 					四半期
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/custom/$type" params={{ type: "daily" }} hover>
+				<SidebarItemLink to="/custom/{-$type}" params={{ type: "daily" }} hover>
 					カスタムランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/custom/$type" params={{ type: "yearly" }} hover>
+				<SidebarItemLink
+					to="/custom/{-$type}"
+					params={{ type: "yearly" }}
+					hover
+				>
 					年間
 					<br />
 					カスタムランキング
 				</SidebarItemLink>
-				<SidebarItemLink to="/custom/$type" params={{ type: "all" }} hover>
+				<SidebarItemLink to="/custom/{-$type}" params={{ type: "all" }} hover>
 					全期間
 					<br />
 					カスタムランキング
 				</SidebarItemLink>
-				<SidebarItemLink to="/custom/$type" params={{ type: "unique" }} hover>
+				<SidebarItemLink
+					to="/custom/{-$type}"
+					params={{ type: "unique" }}
+					hover
+				>
 					週間ユニークユーザー数
 					<br />
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
-					to="/custom/$type"
+					to="/custom/{-$type}"
 					params={{ type: "daily" }}
 					search={{ genres: "201" }}
 					hover
@@ -184,7 +192,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
-					to="/custom/$type"
+					to="/custom/{-$type}"
 					params={{ type: "daily" }}
 					search={{ genres: "101" }}
 					hover
@@ -194,7 +202,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
-					to="/custom/$type"
+					to="/custom/{-$type}"
 					params={{ type: "daily" }}
 					search={{ genres: "102" }}
 					hover
@@ -204,7 +212,10 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/r18" hover>
+				<SidebarItemLink
+					to="/r18"
+					hover
+				>
 					R18ランキング
 				</SidebarItemLink>
 				<Divider />

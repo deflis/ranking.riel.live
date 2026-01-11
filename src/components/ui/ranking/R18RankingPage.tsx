@@ -1,13 +1,13 @@
 import { R18Site } from "narou";
 import { useCallback } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
 import type { R18RankingParams } from "@/modules/interfaces/CustomRankingParams";
-import { RankingType } from "@/modules/interfaces/RankingType";
+import type { RankingType } from "@/modules/interfaces/RankingType";
 
-type R18RankingSearch = {
+export type R18RankingSearch = {
 	keyword?: string;
 	not_keyword?: string;
 	by_title?: string;
@@ -21,25 +21,6 @@ type R18RankingSearch = {
 	tanpen?: string;
 };
 
-export const Route = createFileRoute("/r18/ranking/$type")({
-	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
-		return {
-			keyword: search.keyword as string | undefined,
-			not_keyword: search.not_keyword as string | undefined,
-			by_title: search.by_title as string | undefined,
-			by_story: search.by_story as string | undefined,
-			sites: search.sites as string | undefined,
-			min: search.min as string | undefined,
-			max: search.max as string | undefined,
-			first_update: search.first_update as string | undefined,
-			rensai: search.rensai as string | undefined,
-			kanketsu: search.kanketsu as string | undefined,
-			tanpen: search.tanpen as string | undefined,
-		};
-	},
-	component: R18RankingPage,
-});
-
 const allSites = [
 	R18Site.Nocturne,
 	R18Site.MoonLight,
@@ -47,12 +28,11 @@ const allSites = [
 	R18Site.Midnight,
 ];
 
-function R18RankingPage() {
-	const { type } = Route.useParams();
-	const search = Route.useSearch();
+export const R18RankingPage: React.FC<{
+	rankingType: RankingType;
+	search: R18RankingSearch;
+}> = ({ rankingType, search }) => {
 	const navigate = useNavigate();
-
-	const rankingType = (type ?? RankingType.Daily) as RankingType;
 
 	const boolean = (str: string | undefined, defaultValue: boolean): boolean => {
 		return str === undefined ? defaultValue : str !== "0";
@@ -100,7 +80,7 @@ function R18RankingPage() {
 			if (newParams.tanpen === false) nextSearch.tanpen = "0";
 
 			navigate({
-				to: "/r18/ranking/$type",
+				to: "/r18/ranking/{-$type}",
 				params: { type: newParams.rankingType },
 				search: nextSearch,
 			});
@@ -114,4 +94,4 @@ function R18RankingPage() {
 			<R18RankingRender params={params} />
 		</>
 	);
-}
+};

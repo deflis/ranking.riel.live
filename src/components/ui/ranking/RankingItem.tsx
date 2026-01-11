@@ -107,7 +107,7 @@ const RankingItemRender: React.FC<{
 						<ItemBadge item={item} />
 						{!isR18 && (
 							<Link
-								to="/custom/$type"
+								to="/custom/{-$type}"
 								params={{ type: RankingType.Daily }}
 								search={{ genres: String(item.genre) }}
 							>
@@ -116,7 +116,7 @@ const RankingItemRender: React.FC<{
 						)}
 						{isR18 && (
 							<Link
-								to="/r18/ranking/$type"
+								to="/r18/ranking/{-$type}"
 								params={{ type: RankingType.Daily }}
 								search={{ sites: String(item.nocgenre) }}
 							>
@@ -194,7 +194,7 @@ const RankingItemRender: React.FC<{
 					.map((keyword, i) => (
 						<ChipLink
 							key={keyword}
-							to={isR18 ? "/r18/ranking/$type" : "/custom/$type"}
+							to={isR18 ? "/r18/ranking/{-$type}" : "/custom/{-$type}"}
 							params={{ type: RankingType.Daily }}
 							search={{ keyword }}
 						>

@@ -12,11 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as R18IndexRouteImport } from './routes/r18/index'
-import { Route as CustomIndexRouteImport } from './routes/custom/index'
 import { Route as DetailNcodeRouteImport } from './routes/detail/$ncode'
-import { Route as CustomTypeRouteImport } from './routes/custom/$type'
+import { Route as CustomChar123TypeChar125RouteImport } from './routes/custom/{-$type}'
 import { Route as RankingChar123TypeChar125Char123DateChar125RouteImport } from './routes/ranking/{-$type}/{-$date}'
-import { Route as R18RankingTypeRouteImport } from './routes/r18/ranking/$type'
+import { Route as R18RankingChar123TypeChar125RouteImport } from './routes/r18/ranking/{-$type}'
 import { Route as R18DetailNcodeRouteImport } from './routes/r18/detail/$ncode'
 
 const AboutRoute = AboutRouteImport.update({
@@ -34,32 +33,29 @@ const R18IndexRoute = R18IndexRouteImport.update({
   path: '/r18/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomIndexRoute = CustomIndexRouteImport.update({
-  id: '/custom/',
-  path: '/custom/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DetailNcodeRoute = DetailNcodeRouteImport.update({
   id: '/detail/$ncode',
   path: '/detail/$ncode',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomTypeRoute = CustomTypeRouteImport.update({
-  id: '/custom/$type',
-  path: '/custom/$type',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const CustomChar123TypeChar125Route =
+  CustomChar123TypeChar125RouteImport.update({
+    id: '/custom/{-$type}',
+    path: '/custom/{-$type}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const RankingChar123TypeChar125Char123DateChar125Route =
   RankingChar123TypeChar125Char123DateChar125RouteImport.update({
     id: '/ranking/{-$type}/{-$date}',
     path: '/ranking/{-$type}/{-$date}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const R18RankingTypeRoute = R18RankingTypeRouteImport.update({
-  id: '/r18/ranking/$type',
-  path: '/r18/ranking/$type',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const R18RankingChar123TypeChar125Route =
+  R18RankingChar123TypeChar125RouteImport.update({
+    id: '/r18/ranking/{-$type}',
+    path: '/r18/ranking/{-$type}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const R18DetailNcodeRoute = R18DetailNcodeRouteImport.update({
   id: '/r18/detail/$ncode',
   path: '/r18/detail/$ncode',
@@ -69,35 +65,32 @@ const R18DetailNcodeRoute = R18DetailNcodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/custom/$type': typeof CustomTypeRoute
+  '/custom/{-$type}': typeof CustomChar123TypeChar125Route
   '/detail/$ncode': typeof DetailNcodeRoute
-  '/custom': typeof CustomIndexRoute
   '/r18': typeof R18IndexRoute
   '/r18/detail/$ncode': typeof R18DetailNcodeRoute
-  '/r18/ranking/$type': typeof R18RankingTypeRoute
+  '/r18/ranking/{-$type}': typeof R18RankingChar123TypeChar125Route
   '/ranking/{-$type}/{-$date}': typeof RankingChar123TypeChar125Char123DateChar125Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/custom/$type': typeof CustomTypeRoute
+  '/custom/{-$type}': typeof CustomChar123TypeChar125Route
   '/detail/$ncode': typeof DetailNcodeRoute
-  '/custom': typeof CustomIndexRoute
   '/r18': typeof R18IndexRoute
   '/r18/detail/$ncode': typeof R18DetailNcodeRoute
-  '/r18/ranking/$type': typeof R18RankingTypeRoute
+  '/r18/ranking/{-$type}': typeof R18RankingChar123TypeChar125Route
   '/ranking/{-$type}/{-$date}': typeof RankingChar123TypeChar125Char123DateChar125Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/custom/$type': typeof CustomTypeRoute
+  '/custom/{-$type}': typeof CustomChar123TypeChar125Route
   '/detail/$ncode': typeof DetailNcodeRoute
-  '/custom/': typeof CustomIndexRoute
   '/r18/': typeof R18IndexRoute
   '/r18/detail/$ncode': typeof R18DetailNcodeRoute
-  '/r18/ranking/$type': typeof R18RankingTypeRoute
+  '/r18/ranking/{-$type}': typeof R18RankingChar123TypeChar125Route
   '/ranking/{-$type}/{-$date}': typeof RankingChar123TypeChar125Char123DateChar125Route
 }
 export interface FileRouteTypes {
@@ -105,46 +98,42 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/custom/$type'
+    | '/custom/{-$type}'
     | '/detail/$ncode'
-    | '/custom'
     | '/r18'
     | '/r18/detail/$ncode'
-    | '/r18/ranking/$type'
+    | '/r18/ranking/{-$type}'
     | '/ranking/{-$type}/{-$date}'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/custom/$type'
+    | '/custom/{-$type}'
     | '/detail/$ncode'
-    | '/custom'
     | '/r18'
     | '/r18/detail/$ncode'
-    | '/r18/ranking/$type'
+    | '/r18/ranking/{-$type}'
     | '/ranking/{-$type}/{-$date}'
   id:
     | '__root__'
     | '/'
     | '/about'
-    | '/custom/$type'
+    | '/custom/{-$type}'
     | '/detail/$ncode'
-    | '/custom/'
     | '/r18/'
     | '/r18/detail/$ncode'
-    | '/r18/ranking/$type'
+    | '/r18/ranking/{-$type}'
     | '/ranking/{-$type}/{-$date}'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  CustomTypeRoute: typeof CustomTypeRoute
+  CustomChar123TypeChar125Route: typeof CustomChar123TypeChar125Route
   DetailNcodeRoute: typeof DetailNcodeRoute
-  CustomIndexRoute: typeof CustomIndexRoute
   R18IndexRoute: typeof R18IndexRoute
   R18DetailNcodeRoute: typeof R18DetailNcodeRoute
-  R18RankingTypeRoute: typeof R18RankingTypeRoute
+  R18RankingChar123TypeChar125Route: typeof R18RankingChar123TypeChar125Route
   RankingChar123TypeChar125Char123DateChar125Route: typeof RankingChar123TypeChar125Char123DateChar125Route
 }
 
@@ -171,13 +160,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R18IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/custom/': {
-      id: '/custom/'
-      path: '/custom'
-      fullPath: '/custom'
-      preLoaderRoute: typeof CustomIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/detail/$ncode': {
       id: '/detail/$ncode'
       path: '/detail/$ncode'
@@ -185,11 +167,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DetailNcodeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/custom/$type': {
-      id: '/custom/$type'
-      path: '/custom/$type'
-      fullPath: '/custom/$type'
-      preLoaderRoute: typeof CustomTypeRouteImport
+    '/custom/{-$type}': {
+      id: '/custom/{-$type}'
+      path: '/custom/{-$type}'
+      fullPath: '/custom/{-$type}'
+      preLoaderRoute: typeof CustomChar123TypeChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ranking/{-$type}/{-$date}': {
@@ -199,11 +181,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RankingChar123TypeChar125Char123DateChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/r18/ranking/$type': {
-      id: '/r18/ranking/$type'
-      path: '/r18/ranking/$type'
-      fullPath: '/r18/ranking/$type'
-      preLoaderRoute: typeof R18RankingTypeRouteImport
+    '/r18/ranking/{-$type}': {
+      id: '/r18/ranking/{-$type}'
+      path: '/r18/ranking/{-$type}'
+      fullPath: '/r18/ranking/{-$type}'
+      preLoaderRoute: typeof R18RankingChar123TypeChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r18/detail/$ncode': {
@@ -219,12 +201,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  CustomTypeRoute: CustomTypeRoute,
+  CustomChar123TypeChar125Route: CustomChar123TypeChar125Route,
   DetailNcodeRoute: DetailNcodeRoute,
-  CustomIndexRoute: CustomIndexRoute,
   R18IndexRoute: R18IndexRoute,
   R18DetailNcodeRoute: R18DetailNcodeRoute,
-  R18RankingTypeRoute: R18RankingTypeRoute,
+  R18RankingChar123TypeChar125Route: R18RankingChar123TypeChar125Route,
   RankingChar123TypeChar125Char123DateChar125Route:
     RankingChar123TypeChar125Char123DateChar125Route,
 }

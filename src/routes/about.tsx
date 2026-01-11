@@ -36,7 +36,7 @@ function AboutPage() {
 						こちらのフィルターはブラウザごとに記録されており、次の閲覧時に再度反映されるようになっています。
 					</p>
 					<p>
-						<Link to="/custom/$type" params={{ type: "all" }}>
+						<Link to="/custom/{-$type}" params={{ type: "all" }}>
 							カスタムランキング
 						</Link>
 						では、右上の「
@@ -44,7 +44,7 @@ function AboutPage() {
 						編集」ボタンをクリックすることによりランキングをカスタマイズすることができます。
 						例えば、
 						<Link
-							to="/custom/$type"
+							to="/custom/{-$type}"
 							params={{ type: "all" }}
 							search={{ keyword: "悪役令嬢" }}
 						>
@@ -52,7 +52,7 @@ function AboutPage() {
 						</Link>
 						や
 						<Link
-							to="/custom/$type"
+							to="/custom/{-$type}"
 							params={{ type: "all" }}
 							search={{ keyword: "VRMMO" }}
 						>
