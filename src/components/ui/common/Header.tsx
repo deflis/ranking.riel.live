@@ -2,6 +2,7 @@ import { useToggle } from "@/hooks/useToggle";
 import { Link, createLink, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Suspense, useCallback, useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 
@@ -286,13 +287,15 @@ export const Header: React.FC = () => {
 					</Button>
 				</SidebarItem>
 			</Sidebar>
-			<Suspense>
-				<AdDialog
-					open={showAdDialog}
-					handleCancel={toggleAdDialog}
-					handleOk={removeAd}
-				/>
-			</Suspense>
+			<ErrorBoundary fallback={null}>
+				<Suspense>
+					<AdDialog
+						open={showAdDialog}
+						handleCancel={toggleAdDialog}
+						handleOk={removeAd}
+					/>
+				</Suspense>
+			</ErrorBoundary>
 		</header>
 	);
 };

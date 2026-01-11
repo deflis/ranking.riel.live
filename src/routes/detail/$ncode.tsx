@@ -11,15 +11,5 @@ export const Route = createFileRoute("/detail/$ncode")({
 function DetailPage() {
 	const { ncode } = Route.useParams();
 
-	const { item, detail, ranking, isPending, error } = useDetailForView(ncode);
-
-	return (
-		<DetailRenderer
-			ncode={ncode}
-			item={item}
-			detail={detail}
-			ranking={ranking}
-			isNotFound={(!item && !isPending) || !!error}
-		/>
-	);
+	return <DetailRenderer ncode={ncode} />;
 }

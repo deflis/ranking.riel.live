@@ -1,16 +1,16 @@
-import {
-	createFileRoute,
-	createLink,
-	useNavigate,
-} from "@tanstack/react-router";
+import { useNavigate, createFileRoute, createLink } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { RankingType } from "narou";
-import { useCallback, useMemo } from "react";
+import { Suspense, useCallback, useMemo } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/atoms/Button";
+import { DotLoader } from "@/components/ui/atoms/Loader";
 import { Paper } from "@/components/ui/atoms/Paper";
 import { SelectBox } from "@/components/ui/atoms/SelectBox";
 import { TextField } from "@/components/ui/atoms/TextField";
+import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 import { FilterComponent } from "@/components/ui/ranking/Filter";
 import { RankingRender } from "@/components/ui/ranking/RankingRender";
 import useRanking from "@/modules/data/ranking";
@@ -52,7 +52,6 @@ function RankingPage() {
 	}, [dateParam, type]);
 
 	const isNow = !dateParam;
-	const { data, isPending } = useRanking(type, date);
 	const navigate = useNavigate();
 
 	const handleDateChange = useCallback(
@@ -65,11 +64,11 @@ function RankingPage() {
 						type: type ?? undefined,
 						date: newDate.toISODate() ?? undefined,
 					},
-				});
+				})
 			}
 		},
 		[type, navigate],
-	);
+	)
 
 	return (
 		<>
@@ -136,7 +135,20 @@ function RankingPage() {
 				</Paper>
 				<FilterComponent />
 			</div>
-			<RankingRender ranking={data} loading={isPending} />
+			<QueryErrorResetBoundary>
+				{({ reset }) => (
+					<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+						<Suspense fallback={<DotLoader />}>
+							<RankingList type={type} date={date} />
+						</Suspense>
+					</ErrorBoundary>
+				)}
+			</QueryErrorResetBoundary>
 		</>
-	);
+	)
+}
+
+function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
+	const { data } = useRanking(type, date);
+	return <RankingRender ranking={data} />;
 }

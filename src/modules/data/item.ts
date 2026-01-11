@@ -1,8 +1,9 @@
 import {
 	type QueryFunction,
-	useQueries,
-	useQuery,
+	useSuspenseQueries,
+	useSuspenseQuery,
 } from "@tanstack/react-query";
+import { createServerFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
@@ -12,27 +13,28 @@ import {
 	rankingHistory,
 	search,
 } from "narou";
-import { createServerFn } from '@tanstack/react-start';
 
 import { parseDate } from "../utils/date";
 
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 export const itemKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "listing"] as const;
 export const itemFetcher: QueryFunction<
-	Item | undefined,
+	Item | null,
 	ReturnType<typeof itemKey>
-> = async ({ queryKey: [, ncode] }) => await itemLoader.load(ncode);
+> = async ({ queryKey: [, ncode] }) =>
+	(await itemLoader.load(ncode)) ?? null;
 
 export const itemDetailKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "detail"] as const;
 export const itemDetailFetcher: QueryFunction<
-	Detail | undefined,
+	Detail | null,
 	ReturnType<typeof itemDetailKey>
-> = async ({ queryKey: [, ncode] }) => await itemDetailLoader.load(ncode);
+> = async ({ queryKey: [, ncode] }) =>
+	(await itemDetailLoader.load(ncode)) ?? null;
 
 export const itemRankingHistoryKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "ranking"] as const;
@@ -45,15 +47,31 @@ export const itemRankingHistoryFetcher: QueryFunction<
 };
 
 export const useItemForListing = (ncode: string) => {
-	const { data, isPending, error } = useQuery({
+	const { data, error } = useSuspenseQuery({
 		queryKey: itemKey(ncode),
 		queryFn: itemFetcher,
 	});
-	return { data, isPending, error };
+	return { data, error };
+};
+
+export const useDetailForItem = (ncode: string) => {
+	const { data, error } = useSuspenseQuery({
+		queryKey: itemDetailKey(ncode),
+		queryFn: itemDetailFetcher,
+	});
+	return { data, error };
+};
+
+export const useRankingHistory = (ncode: string) => {
+	const { data, error } = useSuspenseQuery({
+		queryKey: itemRankingHistoryKey(ncode),
+		queryFn: itemRankingHistoryFetcher,
+	});
+	return { data, error };
 };
 
 export const useDetailForView = (ncode: string) => {
-	const [listing, others, ranking] = useQueries({
+	const [listing, others, ranking] = useSuspenseQueries({
 		queries: [
 			{
 				queryKey: itemKey(ncode),
@@ -73,16 +91,15 @@ export const useDetailForView = (ncode: string) => {
 		item: listing.data,
 		detail: others.data,
 		ranking: ranking.data,
-		isPending: listing.isPending || listing.isPending || ranking.isPending,
 		error: listing.error || others.error || ranking.error,
 	};
 };
 
-const itemLoaderServerFn = createServerFn({ method: 'GET' })
-  .middleware([cacheMiddleware()])
-  .inputValidator((data: {ncodes: readonly string[]}) => data)
-  .handler(async ({data: {ncodes}}) => {
-		const { values} = await search()
+const itemLoaderServerFn = createServerFn({ method: "GET" })
+	.middleware([cacheMiddleware()])
+	.inputValidator((data: { ncodes: readonly string[] }) => data)
+	.handler(async ({ data: { ncodes } }) => {
+		const { values } = await search()
 			.ncode(ncodes)
 			.limit(ncodes.length)
 			.fields([
@@ -102,12 +119,12 @@ const itemLoaderServerFn = createServerFn({ method: 'GET' })
 				Fields.story,
 			])
 			.execute({ fetchOptions });
-      return values;
-    });
+		return values;
+	});
 
 const itemLoader = new DataLoader<string, Item | undefined>(
 	async (ncodes) => {
-		const values = await itemLoaderServerFn({data: {ncodes}});
+		const values = await itemLoaderServerFn({ data: { ncodes } });
 		return ncodes
 			.map((x) => x.toLowerCase())
 			.map((ncode) =>
@@ -134,8 +151,8 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 	},
 );
 
-const itemDetailLoaderServerFn = createServerFn({ method: 'GET' })
-  .middleware([cacheMiddleware()])
+const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
+	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
 		const { values } = await search()
@@ -160,8 +177,8 @@ const itemDetailLoaderServerFn = createServerFn({ method: 'GET' })
 		return values;
 	});
 
-const itemRankingHistoryServerFn = createServerFn({ method: 'GET' })
-  .middleware([cacheMiddleware()])
+const itemRankingHistoryServerFn = createServerFn({ method: "GET" })
+	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncode: string }) => data)
 	.handler(async ({ data: { ncode } }) => {
 		return await rankingHistory(ncode, { fetchOptions });

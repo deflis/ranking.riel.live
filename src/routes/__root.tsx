@@ -1,4 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 /// <reference types="vite/client" />
 import { createRootRouteWithContext } from "@tanstack/react-router";
@@ -8,13 +9,15 @@ import { useSetAtom } from "jotai";
 import { Settings } from "luxon";
 import type React from "react";
 import { Suspense, useEffect } from "react";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ErrorBoundary } from "react-error-boundary";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
 import { countAtom } from "@/modules/atoms/global";
 import { useCustomTheme } from "@/modules/theme/theme";
 import { persister } from "@/modules/utils/persister";
+import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 
 import "@/index.css";
 
@@ -39,11 +42,17 @@ function RootComponent() {
 				persistOptions={{ persister }}
 			>
 				<Layout>
-					<Suspense fallback={<DotLoader />}>
-						<Outlet />
-					</Suspense>
+					<QueryErrorResetBoundary>
+						{({ reset }) => (
+							<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+								<Suspense fallback={<DotLoader />}>
+									<Outlet />
+								</Suspense>
+							</ErrorBoundary>
+						)}
+					</QueryErrorResetBoundary>
 				</Layout>
-        <ReactQueryDevtools buttonPosition="bottom-left" />
+				<ReactQueryDevtools buttonPosition="bottom-left" />
 			</PersistQueryClientProvider>
 		</RootDocument>
 	);

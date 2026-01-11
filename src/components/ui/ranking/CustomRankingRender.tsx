@@ -1,8 +1,10 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 import {
@@ -16,6 +18,7 @@ import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
 
+import { ErrorFallback } from "../common/ErrorFallback";
 import RankingItem from "./RankingItem";
 
 const InsideRender: React.FC<{
@@ -27,16 +30,9 @@ const InsideRender: React.FC<{
 	const handleMore = useCallback(() => {
 		setPage((max) => (isTail ? max + 1 : max));
 	}, [setPage, isTail]);
-	const { isPending, data } = useCustomRanking(params, page);
+	const { data } = useCustomRanking(params, page);
 	const adMode = useAtomValue(adModeAtom);
 
-	if (isPending) {
-		return (
-			<div className="col-span-full">
-				<DotLoader />
-			</div>
-		);
-	}
 	if (data?.length === 0 || !data) {
 		return page === 1 ? <div className="w-full">データがありません</div> : null;
 	}
@@ -79,13 +75,20 @@ export const CustomRankingRender: React.FC<{
 
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (
-		<InsideRender
-			key={currentPage}
-			params={params}
-			page={currentPage}
-			isTail={currentPage === page && page < 200}
-			setPage={setPage}
-		/>
+		<QueryErrorResetBoundary key={currentPage}>
+			{({ reset }) => (
+				<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+					<Suspense fallback={<DotLoader />}>
+						<InsideRender
+							params={params}
+							page={currentPage}
+							isTail={currentPage === page && page < 200}
+							setPage={setPage}
+						/>
+					</Suspense>
+				</ErrorBoundary>
+			)}
+		</QueryErrorResetBoundary>
 	));
 
 	return (

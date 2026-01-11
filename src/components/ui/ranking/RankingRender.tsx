@@ -107,12 +107,10 @@ const InsideRender: React.FC<{
 
 export const RankingRender: React.FC<{
 	ranking: NarouRankingResult[];
-	loading?: boolean;
-}> = ({ ranking, loading = false }) => {
+}> = ({ ranking }) => {
 	return (
 		<>
-			{loading && ranking.length === 0 && <DotLoader />}
-			{!loading && ranking.length === 0 && <p>データがありません</p>}
+			{ranking.length === 0 && <p>データがありません</p>}
 			<InsideRender ranking={ranking} />
 		</>
 	);

@@ -1,42 +1,52 @@
 import {
 	type QueryFunction,
-	useQueries,
-	useQuery,
+	useSuspenseQueries,
+	useSuspenseQuery,
 } from "@tanstack/react-query";
+import { createServerFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
-import { createServerFn } from "@tanstack/react-start";
 
 import { parseDate } from "../utils/date";
 
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 export const itemKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "listing"] as const;
 export const itemFetcher: QueryFunction<
-	NocItem | undefined,
+	NocItem | null,
 	ReturnType<typeof itemKey>
-> = async ({ queryKey: [, ncode] }) => await itemLoader.load(ncode);
+> = async ({ queryKey: [, ncode] }) =>
+	(await itemLoader.load(ncode)) ?? null;
 
 export const itemDetailKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "detail"] as const;
 export const itemDetailFetcher: QueryFunction<
-	NocDetail | undefined,
+	NocDetail | null,
 	ReturnType<typeof itemDetailKey>
-> = async ({ queryKey: [, ncode] }) => await itemDetailLoader.load(ncode);
+> = async ({ queryKey: [, ncode] }) =>
+	(await itemDetailLoader.load(ncode)) ?? null;
 
 export const useR18ItemForListing = (ncode: string) => {
-	const { data, isPending, error } = useQuery({
+	const { data, error } = useSuspenseQuery({
 		queryKey: itemKey(ncode),
 		queryFn: itemFetcher,
 	});
-	return { data, isPending, error };
+	return { data, error };
+};
+
+export const useR18DetailForItem = (ncode: string) => {
+	const { data, error } = useSuspenseQuery({
+		queryKey: itemDetailKey(ncode),
+		queryFn: itemDetailFetcher,
+	});
+	return { data, error };
 };
 
 export const useR18DetailForView = (ncode: string) => {
-	const [listing, others] = useQueries({
+	const [listing, others] = useSuspenseQueries({
 		queries: [
 			{
 				queryKey: itemKey(ncode),
@@ -51,7 +61,6 @@ export const useR18DetailForView = (ncode: string) => {
 	return {
 		item: listing.data,
 		detail: others.data,
-		isPending: listing.isPending || listing.isPending,
 		error: listing.error || others.error,
 	};
 };
@@ -86,7 +95,7 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 );
 
 const itemLoaderServerFn = createServerFn({ method: "GET" })
-  .middleware([cacheMiddleware()])
+	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
 		const { values } = await searchR18()
@@ -113,7 +122,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 	});
 
 const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
-  .middleware([cacheMiddleware()])
+	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
 		const { values } = await searchR18()

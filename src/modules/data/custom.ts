@@ -2,13 +2,14 @@ import {
 	type QueryClient,
 	type QueryFunction,
 	keepPreviousData,
-	useQuery,
 	useQueryClient,
+	useSuspenseQuery,
 } from "@tanstack/react-query";
+import { createServerFn } from "@tanstack/react-start";
 import type { DateTime } from "luxon";
 import {
 	Fields,
-	Genre,
+	type Genre,
 	type NarouSearchResult,
 	type NarouSearchResults,
 	NovelTypeParam,
@@ -16,7 +17,6 @@ import {
 	search,
 } from "narou";
 import { useCallback } from "react";
-import { createServerFn } from "@tanstack/react-start";
 
 import { parseDateRange } from "../atoms/filter";
 import { allGenres } from "../enum/Genre";
@@ -24,6 +24,7 @@ import type { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
 
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 import {
 	type RankingData,
 	convertOrder,
@@ -31,7 +32,6 @@ import {
 } from "./custom/utils";
 import { fetchOptions } from "./custom/utils";
 import { prefetchRankingDetail } from "./prefetch";
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -39,14 +39,14 @@ const CHUNK_ITEM_NUM = 100 as const;
 export const useCustomRanking = (params: CustomRankingParams, page: number) => {
 	const queryClient = useQueryClient();
 
-	const { isPending, data } = useQuery({
+	const { data } = useSuspenseQuery({
 		queryKey: [params, page],
 		queryFn: useCallback(getCustomRankingQueryFn(params, queryClient), [
 			params,
 		]),
 		placeholderData: keepPreviousData,
 	});
-	return { isPending, data };
+	return { data };
 };
 
 export const prefetchCustomRanking = async (
@@ -213,7 +213,7 @@ type CustomRankingServerParams = {
 	page: number;
 };
 const customRankingServerFn = createServerFn({ method: "GET" })
-  .middleware([cacheMiddleware()])
+	.middleware([cacheMiddleware()])
 	.inputValidator((data: CustomRankingServerParams) => data)
 	.handler(
 		async ({

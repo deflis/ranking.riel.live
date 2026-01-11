@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
 import { useItemForListing } from "@/modules/data/item";
@@ -12,6 +13,7 @@ import { useR18ItemForListing } from "@/modules/data/r18item";
 import type { Item, NocItem } from "@/modules/data/types";
 import type { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 import { RankingType } from "@/modules/interfaces/RankingType";
+import { Suspense } from "react";
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
@@ -37,17 +39,17 @@ const lineClamp = [
 
 function checkR18(
 	isR18: boolean,
-	item: Item | NocItem | undefined,
+	item: Item | NocItem | null | undefined,
 ): item is NocItem {
 	return (
-		isR18 && (item === undefined || (item as NocItem)?.nocgenre !== undefined)
+		isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined)
 	);
 }
 const RankingItemRender: React.FC<{
 	className?: string;
 	ncode: string;
 	rankingItem: RankingResultItem;
-	item: Item | NocItem | undefined;
+	item: Item | NocItem | null | undefined;
 	isR18?: true;
 	isPending: boolean;
 	isError: boolean;
@@ -244,22 +246,73 @@ const RankingItemRender: React.FC<{
 	);
 };
 
+const RankingItemContent: React.FC<{
+	rankingItem: RankingResultItem;
+	className?: string;
+}> = ({ rankingItem, className }) => {
+	const { data: item } = useItemForListing(rankingItem.ncode);
+	return (
+		<RankingItemRender
+			className={className}
+			ncode={rankingItem.ncode}
+			item={item}
+			rankingItem={rankingItem}
+			isPending={false}
+			isError={false}
+		/>
+	);
+};
+
 export const RankingItem: React.FC<{
 	item: RankingResultItem;
 	className?: string;
 }> = ({ item: rankingItem, className }) => {
-	const { data: item, isPending, error } = useItemForListing(rankingItem.ncode);
 	return (
-		<>
-			<RankingItemRender
-				className={className}
-				ncode={rankingItem.ncode}
-				item={item}
-				rankingItem={rankingItem}
-				isPending={isPending}
-				isError={!!error}
-			/>
-		</>
+		<ErrorBoundary
+			fallback={
+				<RankingItemRender
+					className={className}
+					ncode={rankingItem.ncode}
+					item={undefined}
+					rankingItem={rankingItem}
+					isPending={false}
+					isError={true}
+				/>
+			}
+		>
+			<Suspense
+				fallback={
+					<RankingItemRender
+						className={className}
+						ncode={rankingItem.ncode}
+						item={undefined}
+						rankingItem={rankingItem}
+						isPending={true}
+						isError={false}
+					/>
+				}
+			>
+				<RankingItemContent rankingItem={rankingItem} className={className} />
+			</Suspense>
+		</ErrorBoundary>
+	);
+};
+
+const R18RankingItemContent: React.FC<{
+	rankingItem: RankingResultItem;
+	className?: string;
+}> = ({ rankingItem, className }) => {
+	const { data: item } = useR18ItemForListing(rankingItem.ncode);
+	return (
+		<RankingItemRender
+			className={className}
+			isR18={true}
+			ncode={rankingItem.ncode}
+			item={item}
+			rankingItem={rankingItem}
+			isPending={false}
+			isError={false}
+		/>
 	);
 };
 
@@ -267,23 +320,39 @@ export const R18RankingItem: React.FC<{
 	item: RankingResultItem;
 	className?: string;
 }> = ({ item: rankingItem, className }) => {
-	const {
-		data: item,
-		isPending,
-		error,
-	} = useR18ItemForListing(rankingItem.ncode);
 	return (
-		<>
-			<RankingItemRender
-				className={className}
-				isR18={true}
-				ncode={rankingItem.ncode}
-				item={item}
-				rankingItem={rankingItem}
-				isPending={isPending}
-				isError={!!error}
-			/>
-		</>
+		<ErrorBoundary
+			fallback={
+				<RankingItemRender
+					className={className}
+					isR18={true}
+					ncode={rankingItem.ncode}
+					item={undefined}
+					rankingItem={rankingItem}
+					isPending={false}
+					isError={true}
+				/>
+			}
+		>
+			<Suspense
+				fallback={
+					<RankingItemRender
+						className={className}
+						isR18={true}
+						ncode={rankingItem.ncode}
+						item={undefined}
+						rankingItem={rankingItem}
+						isPending={true}
+						isError={false}
+					/>
+				}
+			>
+				<R18RankingItemContent
+					rankingItem={rankingItem}
+					className={className}
+				/>
+			</Suspense>
+		</ErrorBoundary>
 	);
 };
 

@@ -51,17 +51,17 @@ function round(number: number, precision: number): number {
 
 function checkR18(
 	isR18: boolean,
-	item: Item | NocItem | undefined,
+	item: Item | NocItem | null | undefined,
 ): item is NocItem {
 	return (
-		isR18 && (item === undefined || (item as NocItem)?.nocgenre !== undefined)
+		isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined)
 	);
 }
 
 const DetailItem: React.FC<{
 	ncode: string;
-	item: Item | NocItem | undefined;
-	detail: Detail | NocDetail | undefined;
+	item: Item | NocItem | null | undefined;
+	detail: Detail | NocDetail | null | undefined;
 	isNotFound: boolean;
 	isR18?: true;
 }> = ({
