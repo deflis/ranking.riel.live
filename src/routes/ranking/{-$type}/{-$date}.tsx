@@ -36,21 +36,6 @@ const rankingTypeSteps = {
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
-function parseDate(dateString: string | undefined): string {
-	if (!dateString) {
-		return (
-			DateTime.now().setZone("Asia/Tokyo").startOf("day").toISODate() ?? ""
-		);
-	}
-	const date = DateTime.fromISO(dateString);
-	if (!date.isValid) {
-		return (
-			DateTime.now().setZone("Asia/Tokyo").startOf("day").toISODate() ?? ""
-		);
-	}
-	return date.toISODate() ?? "";
-}
-
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	component: RankingPage,
 });
