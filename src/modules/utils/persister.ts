@@ -18,7 +18,9 @@ function deserialize<T>(data: string): T {
   return JSON.parse(data, reviver);
 }
 
-export const persister = createSyncStoragePersister({
+export const persister = typeof window !== "undefined" ? createSyncStoragePersister({
   storage: window.localStorage,
   deserialize,
+}) : createSyncStoragePersister({
+  storage: undefined, // Returns no-op functions
 });

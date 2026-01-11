@@ -4,8 +4,8 @@ import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { useToggle } from "react-use";
+import { Link as RouterLink } from "@tanstack/react-router";
+import { useToggle } from "@/hooks/useToggle";
 
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";

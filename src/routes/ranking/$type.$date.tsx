@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import React, { useCallback, useMemo } from "react";
@@ -31,43 +31,40 @@ const rankingTypeSteps = {
 const minDate = DateTime.fromObject({ year: 2013, month: 5, day: 1 });
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
-export const Route = createFileRoute('/ranking/$type/$date')({
-  component: RankingPage,
-})
+export const Route = createFileRoute("/ranking/$type/$date")({
+	component: RankingPage,
+});
 
 function RankingPage() {
 	const { type: typeParam, date: dateParam } = Route.useParams();
-    const type = typeParam as RankingType;
-    
-	const date = useMemo(
-		() => {
-            const dt = dateParam === 'now' 
-                ? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-                : DateTime.fromISO(dateParam);
-			return convertDate(dt, type ?? RankingType.Daily);
-        },
-		[dateParam, type],
-	);
+	const type = typeParam as RankingType;
 
-    const isNow = dateParam === 'now';
+	const date = useMemo(() => {
+		const dt =
+			dateParam === "now"
+				? DateTime.now()
+						.minus({ hour: 12 })
+						.setZone("Asia/Tokyo")
+						.startOf("day")
+				: DateTime.fromISO(dateParam);
+		return convertDate(dt, type ?? RankingType.Daily);
+	}, [dateParam, type]);
+
+	const isNow = dateParam === "now";
 	const { data, isLoading } = useRanking(type, date);
 	const navigate = useNavigate();
-
-    // Note: useTitle from react-use can still be used if it's kept
-    // But TanStack Router has its own search/meta handling.
-    // For now I'll just keep the component logic similar.
 
 	const handleDateChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const newDate = DateTime.fromISO(e.target.value);
 			if (newDate) {
 				navigate({
-                    to: '/ranking/$type/$date',
-                    params: {
-                        type,
-                        date: newDate.toISODate() ?? 'now',
-                    }
-                });
+					to: "/ranking/$type/$date",
+					params: {
+						type,
+						date: newDate.toISODate() ?? "now",
+					},
+				});
 			}
 		},
 		[type, navigate],
@@ -81,12 +78,12 @@ function RankingPage() {
 						value={type}
 						onChange={(newType: RankingType) =>
 							navigate({
-                                to: '/ranking/$type/$date',
-                                params: {
-                                    type: newType,
-                                    date: isNow ? 'now' : date.toISODate() ?? 'now',
-                                }
-                            })
+								to: "/ranking/$type/$date",
+								params: {
+									type: newType,
+									date: isNow ? "now" : (date.toISODate() ?? "now"),
+								},
+							})
 						}
 						options={rankingTypeList.map((value) => ({
 							value,
@@ -94,7 +91,14 @@ function RankingPage() {
 						}))}
 					/>
 					{date > minDate && (
-						<Button as={Link} to='/ranking/$type/$date' params={{ type, date: addDate(date, type, -1).toISODate() ?? 'now' }}>
+						<Button
+							as={Link}
+							to="/ranking/$type/$date"
+							params={{
+								type,
+								date: addDate(date, type, -1).toISODate() ?? "now",
+							}}
+						>
 							前
 						</Button>
 					)}
@@ -107,17 +111,24 @@ function RankingPage() {
 						onChange={handleDateChange}
 					/>
 					{date < maxDate && (
-						<Button as={Link} to='/ranking/$type/$date' params={{ type, date: addDate(date, type, 1).toISODate() ?? 'now' }}>
+						<Button
+							as={Link}
+							to="/ranking/$type/$date"
+							params={{
+								type,
+								date: addDate(date, type, 1).toISODate() ?? "now",
+							}}
+						>
 							次
 						</Button>
 					)}
 					<Button
 						as={Link}
-						to='/ranking/$type/$date'
-                        params={{
-                            type,
-                            date: 'now',
-                        }}
+						to="/ranking/$type/$date"
+						params={{
+							type,
+							date: "now",
+						}}
 						color="primary"
 					>
 						最新

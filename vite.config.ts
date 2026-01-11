@@ -8,9 +8,6 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tanstackStart({
-      ssr: {
-        platform: 'cloudflare'
-      },
       srcDirectory: 'src',
     }),
     tsconfigPaths(),

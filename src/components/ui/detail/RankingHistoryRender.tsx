@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import React from "react";
 import { FaTrophy } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "@tanstack/react-router";
 import {
 	Brush,
 	CartesianGrid,

@@ -11,7 +11,7 @@ import {
 	HiThumbUp,
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "@tanstack/react-router";
 
 import { Detail, Item, NocDetail, NocItem } from "../../../modules/data/types";
 import { Button } from "../atoms/Button";

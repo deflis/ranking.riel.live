@@ -3,7 +3,7 @@ import { R18Site, R18SiteNotation } from "narou";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
-import { useToggle } from "react-use";
+import { useToggle } from "@/hooks/useToggle";
 
 import {
 	type FilterConfig,
