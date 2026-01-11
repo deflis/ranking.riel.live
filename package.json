@@ -25,7 +25,7 @@
     "html-entities": "^2.6.0",
     "jotai": "^2.12.3",
     "luxon": "^3.6.1",
-    "narou": "^1.2.0",
+    "narou": "^2.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.1",
