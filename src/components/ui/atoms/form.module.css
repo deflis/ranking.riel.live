@@ -1,59 +1,59 @@
 @reference "../../../index.css";
 
 .input {
-  @apply inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 disabled:bg-gray-50;
-  @apply dark:bg-zinc-900 dark:border-zinc-700 dark:focus:ring-offset-zinc-500 dark:focus:ring-gray-800 dark:text-white dark:disabled:bg-zinc-700;
+	@apply inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 disabled:bg-gray-50;
+	@apply dark:bg-zinc-900 dark:border-zinc-700 dark:focus:ring-offset-zinc-500 dark:focus:ring-gray-800 dark:text-white dark:disabled:bg-zinc-700;
 
-  & .append_icon {
-    @apply -mr-1 ml-2 h-5 w-5;
-  }
+	& .append_icon {
+		@apply -mr-1 ml-2 h-5 w-5;
+	}
 }
 
 .button {
-  @apply focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-3 py-2 text-center;
-  &.primary {
-    @apply border-none bg-blue-700 text-white  hover:bg-blue-800;
-    @apply dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
-  }
-  &:not(.primary) {
-    @apply bg-white text-black border-gray-300 border focus:ring-blue-300;
-    @apply dark:bg-gray-200 dark:border-slate-300 dark:text-black;
-  }
+	@apply focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-3 py-2 text-center;
+	&.primary {
+		@apply border-none bg-blue-700 text-white  hover:bg-blue-800;
+		@apply dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800;
+	}
+	&:not(.primary) {
+		@apply bg-white text-black border-gray-300 border focus:ring-blue-300;
+		@apply dark:bg-gray-200 dark:border-slate-300 dark:text-black;
+	}
 }
 .select_box {
-  @apply relative inline-block text-left;
+	@apply relative inline-block text-left;
 }
 .select_box_transition {
-  @apply origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black/5 focus:outline-none;
-  @apply dark:bg-zinc-900 dark:text-white;
-  &.enter {
-    @apply transition ease-out duration-100;
-  }
-  &.enter_from {
-    @apply transform opacity-0 scale-95;
-  }
-  &.enter_to {
-    @apply transform opacity-100 scale-100;
-  }
-  &.leave {
-    @apply transition ease-in duration-75;
-  }
-  &.leave_from {
-    @apply transform opacity-100 scale-100;
-  }
-  &.leave_to {
-    @apply transform opacity-0 scale-95;
-  }
+	@apply origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black/5 focus:outline-none;
+	@apply dark:bg-zinc-900 dark:text-white;
+	&.enter {
+		@apply transition ease-out duration-100;
+	}
+	&.enter_from {
+		@apply transform opacity-0 scale-95;
+	}
+	&.enter_to {
+		@apply transform opacity-100 scale-100;
+	}
+	&.leave {
+		@apply transition ease-in duration-75;
+	}
+	&.leave_from {
+		@apply transform opacity-100 scale-100;
+	}
+	&.leave_to {
+		@apply transform opacity-0 scale-95;
+	}
 }
 .select_box_options {
-  @apply z-50 py-1;
-  & .option {
-    @apply block px-4 py-2 text-sm;
-    &:not(.selected) {
-      @apply text-gray-700 hover:bg-gray-50 dark:text-zinc-100 dark:hover:bg-zinc-800;
-    }
-    &.selected {
-      @apply bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-white;
-    }
-  }
+	@apply z-50 py-1;
+	& .option {
+		@apply block px-4 py-2 text-sm;
+		&:not(.selected) {
+			@apply text-gray-700 hover:bg-gray-50 dark:text-zinc-100 dark:hover:bg-zinc-800;
+		}
+		&.selected {
+			@apply bg-gray-100 text-gray-900 dark:bg-zinc-700 dark:text-white;
+		}
+	}
 }

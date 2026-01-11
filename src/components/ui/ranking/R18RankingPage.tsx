@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { R18Site } from "narou";
 import { useCallback } from "react";
-import { useNavigate } from "@tanstack/react-router";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";

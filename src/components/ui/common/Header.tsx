@@ -1,9 +1,9 @@
+import { useToggle } from "@/hooks/useToggle";
+import { Link, createLink, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
-import { Link, useNavigate, createLink } from "@tanstack/react-router";
-import { useToggle } from "@/hooks/useToggle";
 
 import {
 	adModeAtom,

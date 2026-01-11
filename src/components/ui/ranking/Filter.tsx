@@ -13,13 +13,13 @@ import { Checkbox } from "../atoms/Checkbox";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 
-import styles from "./Filter.module.css";
 import {
-	FilterConfig,
+	type FilterConfig,
 	filterConfigAtom,
 	isUseFilterAtom,
 } from "@/modules/atoms/filter";
 import { allGenres } from "@/modules/enum/Genre";
+import styles from "./Filter.module.css";
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 	onClose,

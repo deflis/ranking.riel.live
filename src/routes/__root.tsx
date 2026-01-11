@@ -1,13 +1,14 @@
-/// <reference types="vite/client" />
-import { createRootRouteWithContext } from "@tanstack/react-router";
-import { Outlet, HeadContent, Scripts } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+/// <reference types="vite/client" />
+import { createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { useSetAtom } from "jotai";
+import { Settings } from "luxon";
 import type React from "react";
 import { Suspense, useEffect } from "react";
-import { Settings } from "luxon";
-import { useSetAtom } from "jotai";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -42,6 +43,7 @@ function RootComponent() {
 						<Outlet />
 					</Suspense>
 				</Layout>
+        <ReactQueryDevtools buttonPosition="bottom-left" />
 			</PersistQueryClientProvider>
 		</RootDocument>
 	);

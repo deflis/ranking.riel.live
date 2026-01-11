@@ -6,35 +6,33 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 import {
-	type ComponentPropsWithoutRef,
+	type ComponentProps,
 	type ElementType,
-	type ForwardedRef,
 	Fragment,
 	type PropsWithChildren,
-	type PropsWithRef,
-	type ReactElement,
-	forwardRef,
 } from "react";
 
-type SidebarItemProps<T extends ElementType> = {
+export type SidebarItemProps<T extends ElementType = "span"> = {
 	as?: T;
 	hover?: boolean;
-} & Omit<ComponentPropsWithoutRef<T>, "as">;
+} & ComponentProps<T>;
 
-function SidebarItemBase<T extends ElementType = "span">(
-	{ className, as, hover, ...props }: SidebarItemProps<T>,
-	ref: ForwardedRef<T>,
-) {
+export function SidebarItem<T extends ElementType = "span">({
+	className,
+	as,
+	hover,
+	ref,
+	...props
+}: SidebarItemProps<T>) {
 	const Component = as ?? "span";
 	return (
 		<li className="relative">
 			<Component
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				ref={ref as any}
+				ref={ref}
 				className={clsx(
 					"link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 dark:text-gray-300 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
 					hover &&
-						"hover:text-gray-900 hover:bg-gray-100 darl:hover:text-gray-100 dark:hover:bg-gray-700",
+						"hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-700",
 					className,
 				)}
 				{...props}
@@ -42,12 +40,6 @@ function SidebarItemBase<T extends ElementType = "span">(
 		</li>
 	);
 }
-
-type SidebarItem = <T extends ElementType = "span">(
-	x: PropsWithRef<SidebarItemProps<T>>,
-) => ReactElement | null;
-
-export const SidebarItem = forwardRef(SidebarItemBase) as SidebarItem;
 
 export const Divider = () => (
 	<hr className="my-2 border-stone-200 dark:border-stone-700" />

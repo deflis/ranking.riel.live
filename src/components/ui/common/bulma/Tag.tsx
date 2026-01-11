@@ -1,33 +1,30 @@
 import clsx from "clsx";
 import type React from "react";
-import {
-	type ComponentPropsWithoutRef,
-	type ElementType,
-	type ForwardedRef,
-	type PropsWithRef,
-	type ReactElement,
-	forwardRef,
-} from "react";
+import type { ComponentProps, ElementType } from "react";
 
 import styles from "./Tag.module.css";
 
+// Polymorphic component types
 type ColorName = "cyan" | "lightGreen" | "red";
 
-export type TagProps<T extends ElementType = "span"> = {
-	as?: T;
+export type TagProps<C extends ElementType = "span"> = {
+	as?: C;
 	tagColor?: ColorName;
 	light?: boolean;
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "tagColor">;
+} & ComponentProps<C>;
 
-function TagBase<T extends ElementType = "span">(
-	{ as, tagColor, className, light, ...props }: TagProps<T>,
-	ref?: ForwardedRef<T>,
-) {
+export function Tag<C extends ElementType = "span">({
+	as,
+	tagColor,
+	className,
+	light,
+	ref,
+	...props
+}: TagProps<C>) {
 	const Component = as ?? "span";
 	return (
 		<Component
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      ref={ref as any}
+			ref={ref}
 			className={clsx(
 				"link-reset",
 				styles.tag,
@@ -40,12 +37,6 @@ function TagBase<T extends ElementType = "span">(
 		/>
 	);
 }
-
-type Tag = <T extends ElementType = "a">(
-	x: PropsWithRef<TagProps<T>>,
-) => ReactElement | null;
-
-export const Tag = forwardRef(TagBase) as Tag;
 
 export const Tags: React.FC<{
 	addons?: boolean;

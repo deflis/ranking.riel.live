@@ -1,5 +1,5 @@
-import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import React from "react";
 
 import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
 import { useR18DetailForView } from "@/modules/data/r18item";
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/r18/detail/$ncode")({
 function R18DetailPage() {
 	const { ncode } = Route.useParams();
 
-	const { item, detail, isLoading, error } = useR18DetailForView(ncode);
+	const { item, detail, isPending, error } = useR18DetailForView(ncode);
 
 	return (
 		<DetailRenderer
@@ -19,7 +19,7 @@ function R18DetailPage() {
 			item={item}
 			detail={detail}
 			ranking={undefined}
-			isNotFound={(!item && !isLoading) || !!error}
+			isNotFound={(!item && !isPending) || !!error}
 			isR18={true}
 		/>
 	);

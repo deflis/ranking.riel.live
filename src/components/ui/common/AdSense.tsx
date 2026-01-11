@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
-import { adModeAtom } from "../../../modules/atoms/global";
 import { useLocation } from "@tanstack/react-router";
+import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
 	interface Window {

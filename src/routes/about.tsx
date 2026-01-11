@@ -1,8 +1,8 @@
-import React from "react";
-import { FaCog } from "react-icons/fa";
 import { Paper } from "@/components/ui/atoms/Paper";
 import { SelfAd } from "@/components/ui/common/SelfAd";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import React from "react";
+import { FaCog } from "react-icons/fa";
 
 export const Route = createFileRoute("/about")({
 	component: AboutPage,

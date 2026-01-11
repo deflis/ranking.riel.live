@@ -1,6 +1,7 @@
+import { Link as RouterLink, createLink } from "@tanstack/react-router";
 import { decode } from "html-entities";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
-import React from "react";
+import type React from "react";
 import { FaPenNib } from "react-icons/fa";
 import {
 	HiBookmark,
@@ -11,9 +12,13 @@ import {
 	HiThumbUp,
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
-import { Link as RouterLink } from "@tanstack/react-router";
 
-import { Detail, Item, NocDetail, NocItem } from "../../../modules/data/types";
+import type {
+	Detail,
+	Item,
+	NocDetail,
+	NocItem,
+} from "../../../modules/data/types";
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
@@ -24,16 +29,13 @@ import { FirstAd } from "../common/FirstAd";
 import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag } from "../common/bulma/Tag";
+const ChipLink = createLink(Chip);
 
 import DetailItemText from "./DetailItemText";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 function round(number: number, precision: number): number {
-	const shift = function (
-		number: number,
-		precision: number,
-		reverseShift: boolean,
-	) {
+	const shift = (number: number, precision: number, reverseShift: boolean) => {
 		if (reverseShift) {
 			precision = -precision;
 		}
@@ -96,14 +98,22 @@ const DetailItem: React.FC<{
 					{item ? (
 						!isR18 ? (
 							<RouterLink
-								to={`/custom?genres=${item.genre}`}
+								to="/custom/{-$type}"
+								search={{
+									genres: item.genre.toString(),
+								}}
 								rel="noopener noreferrer"
-								className=""
 							>
 								{GenreNotation[item.genre]}
 							</RouterLink>
 						) : (
-							<RouterLink to={`/r18?sites=${item.nocgenre}`}>
+							<RouterLink
+								to="/r18"
+								search={{
+									sites: item.nocgenre.toString(),
+								}}
+								rel="noopener noreferrer"
+							>
 								{R18SiteNotation[item.nocgenre]}
 							</RouterLink>
 						)
@@ -200,7 +210,10 @@ const DetailItem: React.FC<{
 							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
 						>
 							{item ? (
-								<RouterLink to={`/custom?genres=${item.genre}`}>
+								<RouterLink
+									to="/custom/{-$type}"
+									search={{ genres: item.genre.toString() }}
+								>
 									{GenreNotation[item.genre]}
 								</RouterLink>
 							) : (
@@ -214,7 +227,10 @@ const DetailItem: React.FC<{
 							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
 						>
 							{item ? (
-								<RouterLink to={`/r18?sites=${item.nocgenre}`}>
+								<RouterLink
+									to="/r18"
+									search={{ sites: item.nocgenre.toString() }}
+								>
 									{R18SiteNotation[item.nocgenre]}
 								</RouterLink>
 							) : (
@@ -228,18 +244,15 @@ const DetailItem: React.FC<{
 								{item.keyword
 									.split(/\s/g)
 									.filter((keyword) => keyword)
-									.map((keyword, i) => (
-										<Chip
-											as={RouterLink}
-											key={i}
-											to={
-												isR18
-													? `/r18?keyword=${keyword}`
-													: `/custom?keyword=${keyword}`
-											}
+									.map((keyword) => (
+										<ChipLink
+											as="a"
+											key={keyword}
+											to={isR18 ? "/r18" : "/custom/{-$type}"}
+											search={{ keyword }}
 										>
 											{keyword}
-										</Chip>
+										</ChipLink>
 									))}
 							</div>
 						) : (
@@ -335,22 +348,24 @@ const DetailItem: React.FC<{
 							<PulseLoader disabled={isNotFound} />
 						)}
 					</DetailItemText>
-					<AdSense></AdSense>
+					<AdSense />
 				</div>
 			</div>
 			<AdRandomWidth />
 			<Paper className="p-2 bg-white dark:bg-zinc-800">
 				<h2 className="text-xl">獲得ポイント</h2>
-				<table className="w-full table-auto">
-					<tr>
-						<th>総合評価ポイント</th>
-						<th>日間</th>
-						<th>週間</th>
-						<th>月間</th>
-						<th>四半期</th>
-						<th>年間</th>
-						<th>週間UU</th>
-					</tr>
+				<table className="w-full table-auto text-left whitespace-nowrap">
+					<thead>
+						<tr>
+							<th>総合評価ポイント</th>
+							<th>日間</th>
+							<th>週間</th>
+							<th>月間</th>
+							<th>四半期</th>
+							<th>年間</th>
+							<th>週間UU</th>
+						</tr>
+					</thead>
 					<tbody>
 						<tr>
 							<td className="text-center">
@@ -400,7 +415,7 @@ const DetailItem: React.FC<{
 					読む
 				</Button>
 			</p>
-			<AdSense></AdSense>
+			<AdSense />
 		</>
 	);
 };

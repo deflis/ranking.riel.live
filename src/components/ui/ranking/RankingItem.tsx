@@ -1,23 +1,23 @@
+import { useToggle } from "@/hooks/useToggle";
 import { Transition } from "@headlessui/react";
+import { Link, createLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
-import { createLink, Link } from "@tanstack/react-router";
-import { useToggle } from "@/hooks/useToggle";
 
-import { Button } from "../atoms/Button";
-import { Chip } from "../atoms/Chip";
-import { PulseLoader } from "../atoms/Loader";
-import { Paper } from "../atoms/Paper";
-import ItemBadge from "../common/badges/ItemBadge";
-import { Tag, Tags } from "../common/bulma/Tag";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
 import { useItemForListing } from "@/modules/data/item";
 import { useR18ItemForListing } from "@/modules/data/r18item";
 import type { Item, NocItem } from "@/modules/data/types";
 import type { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 import { RankingType } from "@/modules/interfaces/RankingType";
+import { Button } from "../atoms/Button";
+import { Chip } from "../atoms/Chip";
+import { PulseLoader } from "../atoms/Loader";
+import { Paper } from "../atoms/Paper";
+import ItemBadge from "../common/badges/ItemBadge";
+import { Tag, Tags } from "../common/bulma/Tag";
 
 const ChipLink = createLink(Chip);
 
@@ -49,7 +49,7 @@ const RankingItemRender: React.FC<{
 	rankingItem: RankingResultItem;
 	item: Item | NocItem | undefined;
 	isR18?: true;
-	isLoading: boolean;
+	isPending: boolean;
 	isError: boolean;
 }> = ({
 	className,
@@ -57,7 +57,7 @@ const RankingItemRender: React.FC<{
 	rankingItem,
 	item,
 	isError,
-	isLoading,
+	isPending,
 	isR18: rawR18 = false,
 }) => {
 	const titleHeight = useAtomValue(titleHeightAtom);
@@ -66,7 +66,7 @@ const RankingItemRender: React.FC<{
 	const [openStory, toggleStory] = useToggle(false);
 
 	const isR18 = checkR18(rawR18, item);
-	const isNotfound = (!item && !isLoading) || isError;
+	const isNotfound = (!item && !isPending) || isError;
 
 	const user = `https://mypage.syosetu.com/${item?.userid}/`;
 	const link = isR18
@@ -248,7 +248,7 @@ export const RankingItem: React.FC<{
 	item: RankingResultItem;
 	className?: string;
 }> = ({ item: rankingItem, className }) => {
-	const { data: item, isLoading, error } = useItemForListing(rankingItem.ncode);
+	const { data: item, isPending, error } = useItemForListing(rankingItem.ncode);
 	return (
 		<>
 			<RankingItemRender
@@ -256,7 +256,7 @@ export const RankingItem: React.FC<{
 				ncode={rankingItem.ncode}
 				item={item}
 				rankingItem={rankingItem}
-				isLoading={isLoading}
+				isPending={isPending}
 				isError={!!error}
 			/>
 		</>
@@ -269,7 +269,7 @@ export const R18RankingItem: React.FC<{
 }> = ({ item: rankingItem, className }) => {
 	const {
 		data: item,
-		isLoading,
+		isPending,
 		error,
 	} = useR18ItemForListing(rankingItem.ncode);
 	return (
@@ -280,7 +280,7 @@ export const R18RankingItem: React.FC<{
 				ncode={rankingItem.ncode}
 				item={item}
 				rankingItem={rankingItem}
-				isLoading={isLoading}
+				isPending={isPending}
 				isError={!!error}
 			/>
 		</>

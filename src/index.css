@@ -3,31 +3,32 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-  --font-sans: "Noto Sans JP", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-sans: "Noto Sans JP", ui-sans-serif, system-ui, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  --grid-template-rows-subgrid: subgrid;
-  --grid-template-columns-subgrid: subgrid;
+	--grid-template-rows-subgrid: subgrid;
+	--grid-template-columns-subgrid: subgrid;
 
-  --grid-row-span-8: span 8 / span 8;
-  --grid-row-span-9: span 9 / span 9;
+	--grid-row-span-8: span 8 / span 8;
+	--grid-row-span-9: span 9 / span 9;
 }
 
 @variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
 }
 
 body {
-  @apply font-sans;
+	@apply font-sans;
 }
 
 [data-mode="dark"] {
-  color-scheme: dark;
+	color-scheme: dark;
 }

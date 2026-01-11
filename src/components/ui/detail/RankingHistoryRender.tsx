@@ -1,11 +1,11 @@
-import { Tab } from "@headlessui/react";
+import { Tab, TabGroup, TabList, TabPanels } from "@headlessui/react";
+import { Link as RouterLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import type { DateTime } from "luxon";
 import { RankingType } from "narou";
 import { FaTrophy } from "react-icons/fa";
-import { Link as RouterLink } from "@tanstack/react-router";
 import {
 	Brush,
 	CartesianGrid,
@@ -258,8 +258,8 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 		<Paper className="p-2 space-y-2 bg-white dark:bg-zinc-800">
 			<h2 className="text-xl font-medium">ランキング履歴</h2>
 			<div>
-				<Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-					<Tab.List className="w-full inline-block relative whitespace-nowrap">
+				<TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+					<TabList className="w-full inline-block relative whitespace-nowrap">
 						<div className="flex space-x-1 justify-center items-center">
 							{RankingTabs.map((type) => (
 								<Tab
@@ -280,15 +280,15 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 								</Tab>
 							))}
 						</div>
-					</Tab.List>
-					<Tab.Panels className="mt-2">
+					</TabList>
+					<TabPanels className="mt-2">
 						{RankingTabs.map((type) => (
 							<Tab.Panel key={type}>
 								<RankingHistoryCharts ranking={ranking[type]} type={type} />
 							</Tab.Panel>
 						))}
-					</Tab.Panels>
-				</Tab.Group>
+					</TabPanels>
+				</TabGroup>
 			</div>
 		</Paper>
 	);

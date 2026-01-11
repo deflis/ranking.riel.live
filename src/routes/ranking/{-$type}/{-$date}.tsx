@@ -1,6 +1,6 @@
 import {
-	createLink,
 	createFileRoute,
+	createLink,
 	useNavigate,
 } from "@tanstack/react-router";
 import { DateTime } from "luxon";
@@ -67,7 +67,7 @@ function RankingPage() {
 	}, [dateParam, type]);
 
 	const isNow = !dateParam;
-	const { data, isLoading } = useRanking(type, date);
+	const { data, isPending } = useRanking(type, date);
 	const navigate = useNavigate();
 
 	const handleDateChange = useCallback(
@@ -151,7 +151,7 @@ function RankingPage() {
 				</Paper>
 				<FilterComponent />
 			</div>
-			<RankingRender ranking={data} loading={isLoading} />
+			<RankingRender ranking={data} loading={isPending} />
 		</>
 	);
 }

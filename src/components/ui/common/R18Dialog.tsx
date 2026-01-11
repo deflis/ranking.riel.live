@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { useAtom } from "jotai";
-import React, { Fragment, useCallback, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useAtom } from "jotai";
+import type React from "react";
+import { Fragment, useCallback, useState } from "react";
 
 import { r18Atom } from "../../../modules/atoms/global";
 import { Button } from "../atoms/Button";

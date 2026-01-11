@@ -85,7 +85,10 @@ const InsideRender: React.FC<{
 	const adMode = useAtomValue(adModeAtom);
 
 	return (
-		<div className="w-full grid md:grid-cols-2 p-4 gap-4">
+		<div
+			className="w-full grid md:grid-cols-2 p-4 gap-4"
+			suppressHydrationWarning
+		>
 			{adMode && (
 				<div className="col-span-full">
 					<AdSense />

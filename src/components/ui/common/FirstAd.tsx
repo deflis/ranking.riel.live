@@ -9,12 +9,12 @@ let localCount = 0;
 type FirstAdProps = { children?: React.ReactNode };
 
 export const FirstAd: React.FC<FirstAdProps> = ({ children }: FirstAdProps) => {
-  // show ads only on first view
-  const count = useAtomValue(countAtom);
+	// show ads only on first view
+	const count = useAtomValue(countAtom);
 
-  if (count > 0 && localCount === 0) {
-    localCount++;
-    return <>{children ?? <AdSense />}</>;
-  }
-  return null;
+	if (count > 0 && localCount === 0) {
+		localCount++;
+		return <>{children ?? <AdSense />}</>;
+	}
+	return null;
 };

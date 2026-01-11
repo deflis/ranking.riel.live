@@ -26,10 +26,10 @@ const InsideRender: React.FC<{
 	const handleMore = useCallback(() => {
 		setPage((max) => (isTail ? max + 1 : max));
 	}, [setPage, isTail]);
-	const { isLoading, data } = useR18Ranking(params, page);
+	const { isPending, data } = useR18Ranking(params, page);
 	const adMode = useAtomValue(adModeAtom);
 
-	if (isLoading) {
+	if (isPending) {
 		return (
 			<div className="col-span-full">
 				<DotLoader />

@@ -1,6 +1,6 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { Genre } from "narou";
 import { useCallback } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/custom/{-$type}")({
 			rensai: search.rensai as string | undefined,
 			kanketsu: search.kanketsu as string | undefined,
 			tanpen: search.tanpen as string | undefined,
-		}
+		};
 	},
 	component: CustomRankingPage,
 });
@@ -50,16 +50,16 @@ function CustomRankingPage() {
 
 	const boolean = (str: string | undefined, defaultValue: boolean): boolean => {
 		return str === undefined ? defaultValue : str !== "0";
-	}
+	};
 	const int = (str: string | undefined): number | undefined => {
 		return str !== undefined ? Number.parseInt(str, 10) : undefined;
-	}
+	};
 	const conventGenres = (rawGenres: string | undefined): Genre[] => {
 		return (rawGenres ?? "")
 			.split(",")
 			.map((x) => Number.parseInt(x, 10) as Genre)
 			.filter((x) => allGenres.includes(x));
-	}
+	};
 
 	const params: CustomRankingParams = {
 		keyword: search.keyword,
@@ -74,7 +74,7 @@ function CustomRankingPage() {
 		kanketsu: boolean(search.kanketsu, true),
 		tanpen: boolean(search.tanpen, true),
 		rankingType,
-	}
+	};
 
 	const handleSearch = useCallback(
 		(newParams: CustomRankingParams) => {
@@ -97,15 +97,15 @@ function CustomRankingPage() {
 				to: "/custom/{-$type}",
 				params: { type: newParams.rankingType },
 				search: nextSearch,
-			})
+			});
 		},
 		[navigate],
-	)
+	);
 
 	return (
 		<>
 			<CustomRankingForm params={params} onSearch={handleSearch} />
 			<CustomRankingRender params={params} />
 		</>
-	)
+	);
 }

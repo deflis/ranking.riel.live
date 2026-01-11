@@ -1,28 +1,22 @@
 import clsx from "clsx";
-import {
-	type ComponentPropsWithoutRef,
-	type ElementType,
-	type ForwardedRef,
-	type PropsWithChildren,
-	type PropsWithRef,
-	type ReactElement,
-	forwardRef,
-} from "react";
+import type { ComponentProps, ElementType } from "react";
 
-type ChipProps<T extends ElementType = "a"> = {
+export type ChipProps<T extends ElementType = "a"> = {
 	as?: T;
 	color?: "primary";
-} & PropsWithChildren<Omit<ComponentPropsWithoutRef<T>, "as" | "color">>;
+} & ComponentProps<T>;
 
-function ChipBase<T extends ElementType = "a">(
-	{ className, as, children, ...props }: ChipProps<T>,
-	ref: ForwardedRef<T>,
-) {
+export function Chip<T extends ElementType = "a">({
+	className,
+	as,
+	children,
+	ref,
+	...props
+}: ChipProps<T>) {
 	const Component = as ?? "a";
 	return (
 		<Component
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			ref={ref as any}
+			ref={ref}
 			className={clsx(
 				"link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center dark:bg-zinc-700",
 				className,
@@ -33,9 +27,3 @@ function ChipBase<T extends ElementType = "a">(
 		</Component>
 	);
 }
-
-type Chip = <T extends ElementType = "a">(
-	x: PropsWithRef<ChipProps<T>>,
-) => ReactElement | null;
-
-export const Chip = forwardRef(ChipBase) as Chip;
