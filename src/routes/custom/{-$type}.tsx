@@ -1,45 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import type { Genre } from "narou";
 import { useCallback } from "react";
+import { parse } from "valibot";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
-import { allGenres } from "@/modules/enum/Genre";
 import type { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
-import { RankingType } from "@/modules/interfaces/RankingType";
-
-type CustomRankingSearch = {
-	keyword?: string;
-	not_keyword?: string;
-	by_title?: string;
-	by_story?: string;
-	genres?: string;
-	min?: string;
-	max?: string;
-	first_update?: string;
-	rensai?: string;
-	kanketsu?: string;
-	tanpen?: string;
-};
+import { CustomRankingSearchSchema } from "@/modules/validations/ranking";
 
 import { prefetchCustomRanking } from "@/modules/data/custom";
 import { parseCustomRankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/custom/{-$type}")({
-	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
-		return {
-			keyword: search.keyword as string | undefined,
-			not_keyword: search.not_keyword as string | undefined,
-			by_title: search.by_title as string | undefined,
-			by_story: search.by_story as string | undefined,
-			genres: search.genres as string | undefined,
-			min: search.min as string | undefined,
-			max: search.max as string | undefined,
-			first_update: search.first_update as string | undefined,
-			rensai: search.rensai as string | undefined,
-			kanketsu: search.kanketsu as string | undefined,
-			tanpen: search.tanpen as string | undefined,
-		};
+	validateSearch: (search: Record<string, unknown>) => {
+		// Use Valibot schema to validate and transform search params
+		return parse(CustomRankingSearchSchema, search);
 	},
 	loaderDeps: ({ search }) => ({ search }),
 	loader: async ({
@@ -47,6 +21,7 @@ export const Route = createFileRoute("/custom/{-$type}")({
 		params: { type },
 		deps: { search },
 	}) => {
+		// search is now fully typed and transformed
 		const params = parseCustomRankingParams(type, search);
 		await prefetchCustomRanking(queryClient, params, 1);
 	},
@@ -62,15 +37,16 @@ function CustomRankingPage() {
 
 	const handleSearch = useCallback(
 		(newParams: CustomRankingParams) => {
-			const nextSearch: CustomRankingSearch = {};
+			const nextSearch: Record<string, unknown> = {};
+
 			if (newParams.keyword) nextSearch.keyword = newParams.keyword;
 			if (newParams.notKeyword) nextSearch.not_keyword = newParams.notKeyword;
 			if (newParams.byStory) nextSearch.by_story = "1";
 			if (newParams.byTitle) nextSearch.by_title = "1";
 			if (newParams.genres.length !== 0)
 				nextSearch.genres = newParams.genres.join(",");
-			if (newParams.max) nextSearch.max = newParams.max.toString();
-			if (newParams.min) nextSearch.min = newParams.min.toString();
+			if (newParams.max) nextSearch.max = newParams.max;
+			if (newParams.min) nextSearch.min = newParams.min;
 			if (newParams.firstUpdate)
 				nextSearch.first_update = newParams.firstUpdate;
 			if (newParams.rensai === false) nextSearch.rensai = "0";
