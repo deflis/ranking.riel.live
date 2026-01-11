@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ranking-riel-live",
   "main": "@tanstack/react-start/server-entry",
-  "compatibility_date": "2026-01-10",
+  "compatibility_date": "2026-01-07",
   "compatibility_flags": [
     "nodejs_compat"
   ],
