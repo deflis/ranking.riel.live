@@ -11,6 +11,10 @@ import {
 	showKeywordAtom,
 	titleHeightAtom,
 } from "../../../modules/atoms/global";
+import {
+	RankingType,
+	RankingTypeName,
+} from "../../../modules/interfaces/RankingType";
 import { useHandleChange } from "../../../modules/utils/useHandleChange";
 import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
@@ -110,16 +114,25 @@ export const Header: React.FC = () => {
 				</h6>
 				<div className="grow" />
 				<div className="space-x-4 mx-2 hidden sm:block">
-					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "d" }}>
-						日間
+					<Link
+						to="/ranking/{-$type}/{-$date}"
+						params={{ type: RankingType.Daily }}
+					>
+						{RankingTypeName[RankingType.Daily]}
 					</Link>
-					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "w" }}>
-						週間
+					<Link
+						to="/ranking/{-$type}/{-$date}"
+						params={{ type: RankingType.Weekly }}
+					>
+						{RankingTypeName[RankingType.Weekly]}
 					</Link>
-					<Link to="/ranking/{-$type}/{-$date}" params={{ type: "m" }}>
-						月間
+					<Link
+						to="/ranking/{-$type}/{-$date}"
+						params={{ type: RankingType.Monthly }}
+					>
+						{RankingTypeName[RankingType.Monthly]}
 					</Link>
-					<Link to="/custom/{-$type}" params={{ type: "daily" }}>
+					<Link to="/custom/{-$type}" params={{ type: RankingType.Daily }}>
 						カスタムランキング
 					</Link>
 				</div>
@@ -127,63 +140,71 @@ export const Header: React.FC = () => {
 			<Sidebar open={expand} onClose={toggle}>
 				<SidebarItemLink
 					to="/ranking/{-$type}/{-$date}"
-					params={{ type: "d" }}
+					params={{ type: RankingType.Daily }}
 					hover
 				>
-					日間
+					{RankingTypeName[RankingType.Daily]}
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/ranking/{-$type}/{-$date}"
-					params={{ type: "w" }}
+					params={{ type: RankingType.Weekly }}
 					hover
 				>
-					週間
+					{RankingTypeName[RankingType.Weekly]}
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/ranking/{-$type}/{-$date}"
-					params={{ type: "m" }}
+					params={{ type: RankingType.Monthly }}
 					hover
 				>
-					月間
+					{RankingTypeName[RankingType.Monthly]}
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/ranking/{-$type}/{-$date}"
-					params={{ type: "q" }}
+					params={{ type: RankingType.Quarter }}
 					hover
 				>
-					四半期
-				</SidebarItemLink>
-				<Divider />
-				<SidebarItemLink to="/custom/{-$type}" params={{ type: "daily" }} hover>
-					カスタムランキング
+					{RankingTypeName[RankingType.Quarter]}
 				</SidebarItemLink>
 				<Divider />
 				<SidebarItemLink
 					to="/custom/{-$type}"
-					params={{ type: "yearly" }}
+					params={{ type: RankingType.Daily }}
 					hover
 				>
-					年間
-					<br />
 					カスタムランキング
 				</SidebarItemLink>
-				<SidebarItemLink to="/custom/{-$type}" params={{ type: "all" }} hover>
-					全期間
+				<Divider />
+				<SidebarItemLink
+					to="/custom/{-$type}"
+					params={{ type: RankingType.Yearly }}
+					hover
+				>
+					{RankingTypeName[RankingType.Yearly]}
 					<br />
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/custom/{-$type}"
-					params={{ type: "unique" }}
+					params={{ type: RankingType.All }}
 					hover
 				>
-					週間ユニークユーザー数
+					{RankingTypeName[RankingType.All]}
 					<br />
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/custom/{-$type}"
-					params={{ type: "daily" }}
+					params={{ type: RankingType.UniqueUser }}
+					hover
+				>
+					{RankingTypeName[RankingType.UniqueUser]}
+					<br />
+					カスタムランキング
+				</SidebarItemLink>
+				<SidebarItemLink
+					to="/custom/{-$type}"
+					params={{ type: RankingType.Daily }}
 					search={{ genres: "201" }}
 					hover
 				>
@@ -193,7 +214,7 @@ export const Header: React.FC = () => {
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/custom/{-$type}"
-					params={{ type: "daily" }}
+					params={{ type: RankingType.Daily }}
 					search={{ genres: "101" }}
 					hover
 				>
@@ -203,7 +224,7 @@ export const Header: React.FC = () => {
 				</SidebarItemLink>
 				<SidebarItemLink
 					to="/custom/{-$type}"
-					params={{ type: "daily" }}
+					params={{ type: RankingType.Daily }}
 					search={{ genres: "102" }}
 					hover
 				>
@@ -212,10 +233,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink
-					to="/r18"
-					hover
-				>
+				<SidebarItemLink to="/r18" hover>
 					R18ランキング
 				</SidebarItemLink>
 				<Divider />
