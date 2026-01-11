@@ -12,11 +12,13 @@ import {
 	rankingHistory,
 	search,
 } from "narou";
+import { createServerFn } from '@tanstack/react-start';
 
 import { parseDate } from "../utils/date";
 
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 export const itemKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "listing"] as const;
@@ -38,8 +40,8 @@ export const itemRankingHistoryFetcher: QueryFunction<
 	RankingHistories,
 	ReturnType<typeof itemRankingHistoryKey>
 > = async ({ queryKey: [, ncode] }) => {
-	console.log("fetch ranking history", ncode);
-	return formatRankingHistory(await rankingHistory(ncode, { fetchOptions }));
+	const history = await itemRankingHistoryServerFn({ data: { ncode } });
+	return formatRankingHistory(history);
 };
 
 export const useItemForListing = (ncode: string) => {
@@ -76,9 +78,11 @@ export const useDetailForView = (ncode: string) => {
 	};
 };
 
-const itemLoader = new DataLoader<string, Item | undefined>(
-	async (ncodes) => {
-		const { values } = await search()
+const itemLoaderServerFn = createServerFn({ method: 'GET' })
+  .middleware([cacheMiddleware()])
+  .inputValidator((data: {ncodes: readonly string[]}) => data)
+  .handler(async ({data: {ncodes}}) => {
+		const { values} = await search()
 			.ncode(ncodes)
 			.limit(ncodes.length)
 			.fields([
@@ -98,6 +102,12 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 				Fields.story,
 			])
 			.execute({ fetchOptions });
+      return values;
+    });
+
+const itemLoader = new DataLoader<string, Item | undefined>(
+	async (ncodes) => {
+		const values = await itemLoaderServerFn({data: {ncodes}});
 		return ncodes
 			.map((x) => x.toLowerCase())
 			.map((ncode) =>
@@ -124,8 +134,10 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 	},
 );
 
-const itemDetailLoader = new DataLoader<string, Detail | undefined>(
-	async (ncodes) => {
+const itemDetailLoaderServerFn = createServerFn({ method: 'GET' })
+  .middleware([cacheMiddleware()])
+	.inputValidator((data: { ncodes: readonly string[] }) => data)
+	.handler(async ({ data: { ncodes } }) => {
 		const { values } = await search()
 			.ncode(ncodes)
 			.limit(ncodes.length)
@@ -145,6 +157,19 @@ const itemDetailLoader = new DataLoader<string, Detail | undefined>(
 			])
 			.opt("weekly")
 			.execute({ fetchOptions });
+		return values;
+	});
+
+const itemRankingHistoryServerFn = createServerFn({ method: 'GET' })
+  .middleware([cacheMiddleware()])
+	.inputValidator((data: { ncode: string }) => data)
+	.handler(async ({ data: { ncode } }) => {
+		return await rankingHistory(ncode, { fetchOptions });
+	});
+
+const itemDetailLoader = new DataLoader<string, Detail | undefined>(
+	async (ncodes) => {
+		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
 		return ncodes
 			.map((x) => x.toLowerCase())
 			.map((ncode) => values.find((x) => x.ncode.toLowerCase() === ncode));

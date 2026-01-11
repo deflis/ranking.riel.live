@@ -5,11 +5,13 @@ import {
 } from "@tanstack/react-query";
 import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
+import { createServerFn } from "@tanstack/react-start";
 
 import { parseDate } from "../utils/date";
 
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 export const itemKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "listing"] as const;
@@ -56,26 +58,7 @@ export const useR18DetailForView = (ncode: string) => {
 
 const itemLoader = new DataLoader<string, NocItem | undefined>(
 	async (ncodes) => {
-		const { values } = await searchR18()
-			.ncode(ncodes)
-			.limit(ncodes.length)
-			.fields([
-				R18Fields.ncode,
-				R18Fields.title,
-				R18Fields.userid,
-				R18Fields.writer,
-				R18Fields.nocgenre,
-				R18Fields.noveltype,
-				R18Fields.end,
-				R18Fields.general_firstup,
-				R18Fields.length,
-				R18Fields.general_all_no,
-				R18Fields.novelupdated_at,
-				R18Fields.general_lastup,
-				R18Fields.keyword,
-				R18Fields.story,
-			])
-			.execute({ fetchOptions });
+		const values = await itemLoaderServerFn({ data: { ncodes } });
 		return ncodes
 			.map((x) => x.toLowerCase())
 			.map((ncode) =>
@@ -102,8 +85,37 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 	},
 );
 
-const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
-	async (ncodes) => {
+const itemLoaderServerFn = createServerFn({ method: "GET" })
+  .middleware([cacheMiddleware()])
+	.inputValidator((data: { ncodes: readonly string[] }) => data)
+	.handler(async ({ data: { ncodes } }) => {
+		const { values } = await searchR18()
+			.ncode(ncodes)
+			.limit(ncodes.length)
+			.fields([
+				R18Fields.ncode,
+				R18Fields.title,
+				R18Fields.userid,
+				R18Fields.writer,
+				R18Fields.nocgenre,
+				R18Fields.noveltype,
+				R18Fields.end,
+				R18Fields.general_firstup,
+				R18Fields.length,
+				R18Fields.general_all_no,
+				R18Fields.novelupdated_at,
+				R18Fields.general_lastup,
+				R18Fields.keyword,
+				R18Fields.story,
+			])
+			.execute({ fetchOptions });
+		return values;
+	});
+
+const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
+  .middleware([cacheMiddleware()])
+	.inputValidator((data: { ncodes: readonly string[] }) => data)
+	.handler(async ({ data: { ncodes } }) => {
 		const { values } = await searchR18()
 			.ncode(ncodes)
 			.limit(ncodes.length)
@@ -123,6 +135,12 @@ const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
 			])
 			.opt("weekly")
 			.execute({ fetchOptions });
+		return values;
+	});
+
+const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
+	async (ncodes) => {
+		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
 		return ncodes
 			.map((x) => x.toLowerCase())
 			.map((ncode) => values.find((x) => x.ncode.toLowerCase() === ncode));

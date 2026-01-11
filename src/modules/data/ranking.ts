@@ -10,11 +10,13 @@ import {
 	type RankingType as NarouRankingType,
 	ranking,
 } from "narou";
+import { createServerFn } from "@tanstack/react-start";
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
+import { cacheMiddleware } from "../utils/cacheMiddleware";
 
 export const rankingKey = (type: NarouRankingType, date: DateTime) =>
 	["ranking", type, date.toISODate() ?? ""] as const;
@@ -22,10 +24,19 @@ export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
 > = async ({ queryKey: [, type, date] }) =>
-	await ranking()
-		.date(DateTime.fromISO(date).toJSDate())
-		.type(type)
-		.execute({ fetchOptions });
+	await rankingServerFn({ data: { type, date } });
+
+const rankingServerFn = createServerFn({ method: "GET" })
+  .middleware([cacheMiddleware()])
+	.inputValidator(
+		(data: { type: NarouRankingType; date: string }) => data,
+	)
+	.handler(async ({ data: { type, date } }) => {
+		return await ranking()
+			.date(DateTime.fromISO(date).toJSDate())
+			.type(type)
+			.execute({ fetchOptions });
+	});
 
 export function useRanking(type: NarouRankingType, date: DateTime) {
 	const { data, isPending: isPendingQuery } = useQuery({
