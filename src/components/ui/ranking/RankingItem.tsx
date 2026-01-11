@@ -109,7 +109,7 @@ const RankingItemRender: React.FC<{
 						{!isR18 && (
 							<Link
 								to="/custom/{-$type}"
-								params={{ type: RankingType.Daily }}
+								params={(prev) => ({ ...prev, type: RankingType.Daily })}
 								search={{ genres: String(item.genre) }}
 							>
 								{GenreNotation[item.genre]}
@@ -118,7 +118,7 @@ const RankingItemRender: React.FC<{
 						{isR18 && (
 							<Link
 								to="/r18/ranking/{-$type}"
-								params={{ type: RankingType.Daily }}
+								params={(prev) => ({ ...prev, type: RankingType.Daily })}
 								search={{ sites: String(item.nocgenre) }}
 							>
 								{R18SiteNotation[item.nocgenre]}
@@ -196,7 +196,7 @@ const RankingItemRender: React.FC<{
 						<ChipLink
 							key={keyword}
 							to={isR18 ? "/r18/ranking/{-$type}" : "/custom/{-$type}"}
-							params={{ type: RankingType.Daily }}
+							params={(prev) => ({ ...prev, type: RankingType.Daily })}
 							search={{ keyword }}
 						>
 							{keyword}

@@ -86,10 +86,11 @@ function RankingPage() {
 			if (newDate.isValid) {
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",
-					params: {
+					params: (prev) => ({
+						...prev,
 						type: type ?? undefined,
 						date: newDate.toISODate() ?? undefined,
-					},
+					}),
 				});
 			}
 		},
@@ -121,10 +122,11 @@ function RankingPage() {
 						onChange={(newType: RankingType) =>
 							navigate({
 								to: "/ranking/{-$type}/{-$date}",
-								params: {
+								params: (prev) => ({
+									...prev,
 									type: newType,
 									date: isNow ? undefined : (date.toISODate() ?? undefined),
-								},
+								}),
 							})
 						}
 						options={rankingTypeList.map((value) => ({
@@ -136,10 +138,11 @@ function RankingPage() {
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
-							params={{
+							params={(prev) => ({
+								...prev,
 								type,
 								date: addDate(date, type, -1).toISODate() ?? undefined,
-							}}
+							})}
 						>
 							前
 						</ButtonLink>

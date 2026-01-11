@@ -195,7 +195,11 @@ const RankingHistoryCharts: React.FC<{
 								<td className="text-center">
 									<RouterLink
 										to="/ranking/{-$type}/{-$date}"
-										params={{ type: type, date: date.toISODate() ?? undefined }}
+										params={(prev) => ({
+											...prev,
+											type: type,
+											date: date.toISODate() ?? undefined,
+										})}
 										className="text-blue-500 hover:underline dark:text-blue-400"
 									>
 										{date.toFormat("yyyy年MM月dd日(EEE)")}
