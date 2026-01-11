@@ -51,8 +51,8 @@ importers:
         specifier: ^3.7.2
         version: 3.7.2
       narou:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -2425,8 +2425,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  narou@2.0.0:
-    resolution: {integrity: sha512-4JXcSUUa02IlEFBGfb9I4RNIVAFAGWgPjIgvBtYrZfbGRZs5GVuob1UKpuYRL6wQGbqDUG4u5eBzhgJGZmyZ/Q==}
+  narou@2.0.1:
+    resolution: {integrity: sha512-0r4oi944Q5G8zoGLsodpfZglz8l878jlb1jbe23z8d04j7ne83NK89L3D/KPbcGfJ5q/1X31g97KT9Z2racv4Q==}
     engines: {node: '>=16.0.0', pnpm: '>=8'}
 
   nice-try@1.0.5:
@@ -5639,7 +5639,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  narou@2.0.0: {}
+  narou@2.0.1: {}
 
   nice-try@1.0.5: {}
 
