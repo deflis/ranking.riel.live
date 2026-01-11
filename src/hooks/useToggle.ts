@@ -1,15 +1,16 @@
 import { useCallback, useState } from "react";
 
-export const useToggle = (
+export function useToggle(
 	initialValue: boolean,
-): [boolean, (nextValue?: any) => void] => {
+): [boolean, (nextValue?: unknown) => void] {
 	const [value, setValue] = useState(initialValue);
-	const toggle = useCallback((nextValue?: any) => {
+	const toggle = useCallback((nextValue?: boolean | unknown) => {
 		if (typeof nextValue === "boolean") {
 			setValue(nextValue);
 		} else {
 			setValue((v) => !v);
 		}
 	}, []);
+
 	return [value, toggle];
-};
+}
