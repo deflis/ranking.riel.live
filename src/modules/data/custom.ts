@@ -41,7 +41,7 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
 
 	const { data } = useSuspenseQuery({
 		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient)
+		queryFn: getCustomRankingQueryFn(queryClient),
 	});
 	return { data };
 };

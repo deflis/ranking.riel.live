@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { RankingType } from "narou";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Button } from "@/components/ui/atoms/Button";
@@ -74,11 +74,13 @@ function RankingPage() {
 	const isNow = !dateParam;
 	const navigate = useNavigate();
 
-	const [inputValue, setInputValue] = useState(date.toISODate() ?? "");
 
-	useEffect(() => {
-		setInputValue(date.toISODate() ?? "");
-	}, [date]);
+	const dateInputRef = useRef<HTMLInputElement>(null);
+
+	if (dateInputRef.current) {
+		dateInputRef.current.value = date.toISODate() ?? "";
+	}
+
 
 	const handleDateCommit = useCallback(
 		(value: string) => {
@@ -145,12 +147,12 @@ function RankingPage() {
 						</ButtonLink>
 					)}
 					<TextField
+						ref={dateInputRef}
 						min={minDate.toISODate() ?? ""}
 						max={maxDate.toISODate() ?? ""}
-						value={inputValue}
+						defaultValue={date.toISODate() ?? ""}
 						type="date"
 						step={rankingTypeSteps[type]}
-						onChange={(e) => setInputValue(e.target.value)}
 						onBlur={handleBlur}
 						onKeyDown={handleKeyDown}
 					/>
@@ -158,10 +160,11 @@ function RankingPage() {
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
-							params={{
+							params={(prev) => ({
+								...prev,
 								type,
 								date: addDate(date, type, 1).toISODate() ?? undefined,
-							}}
+							})}
 						>
 							次
 						</ButtonLink>
@@ -169,9 +172,11 @@ function RankingPage() {
 					<ButtonLink
 						as="a"
 						to="/ranking/{-$type}/{-$date}"
-						params={{
+						params={(prev) => ({
+							...prev,
 							type: type,
-						}}
+							date: undefined,
+						})}
 						color="primary"
 					>
 						最新

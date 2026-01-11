@@ -332,10 +332,11 @@ class FilterBuilder<
 		if (this.minNo && item.general_all_no < this.minNo) {
 			return false;
 		}
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		if (this.firstUpdate && this.firstUpdate < parse(item.general_firstup)!) {
-			return false;
+		if (this.firstUpdate) {
+			const parsedDate = parse(item.general_firstup);
+			if (parsedDate && parsedDate < this.firstUpdate) {
+				return false;
+			}
 		}
 		switch (item.noveltype) {
 			case 1:

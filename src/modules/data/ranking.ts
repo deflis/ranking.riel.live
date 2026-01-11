@@ -57,13 +57,13 @@ export function useRanking(type: NarouRankingType, date: DateTime) {
 
 	const filter = useAtomValue(filterAtom);
 	const filteredItems = items
-		.filter((x) => x.data && (!isUseFilter || filter(x.data)))
-		.map((x) => x.data!);
+		.map((x) => x.data)
+		.filter((data) => data != null && (!isUseFilter || filter(data)));
 
 	return {
 		data: data.filter(
 			(rank) =>
-				!isUseFilter || filteredItems.some((item) => item.ncode === rank.ncode),
+				!isUseFilter || filteredItems.some((item) => item != null && item.ncode === rank.ncode),
 		),
 	};
 }

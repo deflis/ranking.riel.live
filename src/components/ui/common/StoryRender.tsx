@@ -12,18 +12,7 @@ const StoryRender: React.FC<StoryRenderProps> = React.memo(
 	function StoryRenderBase({ className, story }: StoryRenderProps) {
 		return (
 			<Paper className={className}>
-				<p>
-					{story.split("\n").reduce<React.ReactNode | null>(
-						(prev, line) => (
-							<>
-								{prev}
-								{prev && <br />}
-								{line}
-							</>
-						),
-						null,
-					)}
-				</p>
+				<p className="whitespace-pre-wrap">{story}</p>
 			</Paper>
 		);
 	},
