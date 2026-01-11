@@ -69,7 +69,6 @@ export const R18RankingRender: React.FC<{
 	}, [params]);
 
 	const queryClient = useQueryClient();
-	// biome-ignore lint/correctness/useExhaustiveDependencies: queryClientは変わらないので入れない
 	useEffect(() => {
 		prefetchR18Ranking(queryClient, params, page + 1);
 	}, [params, page]);

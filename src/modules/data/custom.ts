@@ -41,9 +41,7 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
 
 	const { data } = useSuspenseQuery({
 		queryKey: [params, page],
-		queryFn: useCallback(getCustomRankingQueryFn(params, queryClient), [
-			params,
-		]),
+		queryFn: getCustomRankingQueryFn(queryClient)
 	});
 	return { data };
 };
@@ -55,28 +53,27 @@ export const prefetchCustomRanking = async (
 ) => {
 	await queryClient.prefetchQuery({
 		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(params, queryClient),
+		queryFn: getCustomRankingQueryFn(queryClient),
 	});
 	const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
 	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
 };
 
 const getCustomRankingQueryFn = (
-	params: CustomRankingParams,
 	queryClient: QueryClient,
 ): QueryFunction<RankingData[], readonly [CustomRankingParams, number]> => {
-	const filterBuilder = new FilterBuilder();
-	const firstUpdate = parseDateRange(params.firstUpdate);
-	if (params.max) filterBuilder.setMaxNo(params.max);
-	if (params.min) filterBuilder.setMinNo(params.min);
-	if (firstUpdate) filterBuilder.setFirstUpdate(firstUpdate);
-	if (!params.tanpen) filterBuilder.disableTanpen();
-	if (!params.kanketsu) filterBuilder.disableKanketsu();
-	if (!params.rensai) filterBuilder.disableRensai();
-	const filter = filterBuilder.create();
-	const fields = filterBuilder.fields();
-
 	return async ({ queryKey: [params, page] }) => {
+		const filterBuilder = new FilterBuilder();
+		const firstUpdate = parseDateRange(params.firstUpdate);
+		if (params.max) filterBuilder.setMaxNo(params.max);
+		if (params.min) filterBuilder.setMinNo(params.min);
+		if (firstUpdate) filterBuilder.setFirstUpdate(firstUpdate);
+		if (!params.tanpen) filterBuilder.disableTanpen();
+		if (!params.kanketsu) filterBuilder.disableKanketsu();
+		if (!params.rensai) filterBuilder.disableRensai();
+		const filter = filterBuilder.create();
+		const fields = filterBuilder.fields();
+
 		const values: PickedNarouSearchResult<CustomRankingResultKeyNames>[] = [];
 		let fetchPage = 0;
 		while (values.length < page * CHUNK_ITEM_NUM) {
@@ -352,11 +349,9 @@ export class FilterBuilder<
 					case 1:
 						return this.rensai;
 					default:
-					case 0:
 						return this.kanketsu;
 				}
 			default:
-			case 2:
 				return this.tanpen;
 		}
 	}

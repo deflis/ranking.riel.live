@@ -75,7 +75,6 @@ const InsideRender: React.FC<{
 	}, [rankingConstants]);
 
 	const queryClient = useQueryClient();
-	// biome-ignore lint/correctness/useExhaustiveDependencies: queryClientは変わらないので入れない
 	useEffect(() => {
 		prefetchRankingDetail(
 			queryClient,

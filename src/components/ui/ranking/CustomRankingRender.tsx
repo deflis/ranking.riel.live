@@ -64,6 +64,7 @@ export const CustomRankingRender: React.FC<{
 }> = ({ params }) => {
 	const [page, setPage] = useState(1);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: paramsが変わったときにリセットする
 	useEffect(() => {
 		setPage(1);
 	}, [params]);
