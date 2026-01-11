@@ -34,18 +34,28 @@ const ChipLink = createLink(Chip);
 import DetailItemText from "./DetailItemText";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
+/**
+ * JavaScript の計算誤差（0.615 が内部で 0.61499... になる等）を避け、
+ * 期待通りに四捨五入を行うヘルパー。
+ *
+ * @example round(0.615, 2) // => 0.62 (通常の Math.round だと 0.61 になる場合がある)
+ */
 function round(number: number, precision: number): number {
-	const shift = (number: number, precision: number, reverseShift: boolean) => {
-		if (reverseShift) {
-			precision = -precision;
-		}
-		const numArray = ("" + number).split("e");
-		return +(
-			numArray[0] +
-			"e" +
-			(numArray[1] ? +numArray[1] + precision : precision)
-		);
+	/**
+	 * @param n 対象の数値
+	 * @param p シフトする桁数 (精度)
+	 * @param isReverse 反転フラグ (false: 整数側へシフト, true: 小数側へ戻す)
+	 */
+	const shift = (n: number, p: number, isReverse: boolean) => {
+		const adj = isReverse ? -p : p;
+		const [base, exp] = `${n}`.split("e");
+		// 指数部を加減して桁をずらす (例: 0.615 -> "0.615e2" -> 61.5)
+		return +`${base}e${exp ? +exp + adj : adj}`;
 	};
+
+	// 1. 小数点を右にずらして整数化 (0.615 -> 61.5)
+	// 2. Math.round で四捨五入 (61.5 -> 62)
+	// 3. 小数点を左に戻して元のスケールへ (62 -> 0.62)
 	return shift(Math.round(shift(number, precision, false)), precision, true);
 }
 
