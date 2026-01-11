@@ -1,13 +1,13 @@
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import {
-	useNavigate,
 	createFileRoute,
 	createLink,
+	useNavigate,
 } from "@tanstack/react-router";
 import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/atoms/Button";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -17,10 +17,10 @@ import { TextField } from "@/components/ui/atoms/TextField";
 import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 import { FilterComponent } from "@/components/ui/ranking/Filter";
 import { RankingRender } from "@/components/ui/ranking/RankingRender";
+import { prefetchRanking } from "@/modules/data/prefetch";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
 import { addDate, convertDate } from "@/modules/utils/date";
-import { prefetchRanking } from "@/modules/data/prefetch";
 
 const ButtonLink = createLink(Button);
 
@@ -43,7 +43,6 @@ const minDate = DateTime.fromObject(
 	{ zone: "Asia/Tokyo" },
 );
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
-
 
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	loader: async ({

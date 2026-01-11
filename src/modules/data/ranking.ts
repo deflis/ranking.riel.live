@@ -33,10 +33,7 @@ const rankingServerFn = createServerFn({ method: "GET" })
 		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
 			.setZone("UTC", { keepLocalTime: true })
 			.toJSDate();
-		return await ranking()
-			.date(dateValue)
-			.type(type)
-			.execute({ fetchOptions });
+		return await ranking().date(dateValue).type(type).execute({ fetchOptions });
 	});
 
 export function useRanking(type: NarouRankingType, date: DateTime) {

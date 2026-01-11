@@ -29,22 +29,16 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 		defaultValues: filterCondig,
 	});
 
-	const selectAll = useCallback(
-		() => {
-			for (const id of allGenres) {
-				setValue(`genres.g${id}`, true);
-			}
-		},
-		[setValue],
-	);
-	const unselectAll = useCallback(
-		() => {
-			for (const id of allGenres) {
-				setValue(`genres.g${id}`, false);
-			}
-		},
-		[setValue],
-	);
+	const selectAll = useCallback(() => {
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, true);
+		}
+	}, [setValue]);
+	const unselectAll = useCallback(() => {
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, false);
+		}
+	}, [setValue]);
 
 	const clear = useCallback(() => {
 		for (const id of allGenres) {

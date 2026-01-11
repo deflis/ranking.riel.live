@@ -32,7 +32,10 @@ export function parseDateRange(raw: string | undefined): DateTime | undefined {
 	if (raw.endsWith("days")) {
 		const days = Number.parseInt(raw.slice(0, -4));
 		if (days) {
-			return DateTime.now().setZone("Asia/Tokyo").startOf("day").minus({ days });
+			return DateTime.now()
+				.setZone("Asia/Tokyo")
+				.startOf("day")
+				.minus({ days });
 		}
 	}
 	if (raw.endsWith("months")) {

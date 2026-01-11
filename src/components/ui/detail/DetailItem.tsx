@@ -53,9 +53,7 @@ function checkR18(
 	isR18: boolean,
 	item: Item | NocItem | null | undefined,
 ): item is NocItem {
-	return (
-		isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined)
-	);
+	return isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined);
 }
 
 const DetailItem: React.FC<{

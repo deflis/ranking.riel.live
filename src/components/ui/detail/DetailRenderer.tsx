@@ -1,6 +1,3 @@
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import {
 	useDetailForItem,
 	useItemForListing,
@@ -10,6 +7,9 @@ import {
 	useR18DetailForItem,
 	useR18ItemForListing,
 } from "@/modules/data/r18item";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { DotLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import { ErrorFallback } from "../common/ErrorFallback";

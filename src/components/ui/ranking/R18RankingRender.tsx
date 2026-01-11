@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 import {

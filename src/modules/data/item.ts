@@ -25,8 +25,7 @@ export const itemKey = (ncode: string) =>
 export const itemFetcher: QueryFunction<
 	Item | null,
 	ReturnType<typeof itemKey>
-> = async ({ queryKey: [, ncode] }) =>
-	(await itemLoader.load(ncode)) ?? null;
+> = async ({ queryKey: [, ncode] }) => (await itemLoader.load(ncode)) ?? null;
 
 export const itemDetailKey = (ncode: string) =>
 	["item", ncode.toLowerCase(), "detail"] as const;
