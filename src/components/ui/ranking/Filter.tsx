@@ -30,16 +30,26 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 	});
 
 	const selectAll = useCallback(
-		() => allGenres.forEach((id) => setValue(`genres.g${id}`, true)),
+		() => {
+			for (const id of allGenres) {
+				setValue(`genres.g${id}`, true);
+			}
+		},
 		[setValue],
 	);
 	const unselectAll = useCallback(
-		() => allGenres.forEach((id) => setValue(`genres.g${id}`, false)),
+		() => {
+			for (const id of allGenres) {
+				setValue(`genres.g${id}`, false);
+			}
+		},
 		[setValue],
 	);
 
 	const clear = useCallback(() => {
-		allGenres.forEach((id) => setValue(`genres.g${id}`, true));
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, true);
+		}
 		setValue("firstUpdate.term", "none");
 		setValue("story.min.enable", false);
 		setValue("story.max.enable", false);
