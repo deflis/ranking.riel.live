@@ -23,14 +23,12 @@ const stringParams = pipe(
 	transform((input) => String(input)),
 );
 
-// Helper for boolean flags (handles "0", "1", 0, 1, boolean)
-// Default value handling should be done with optional/fallback at usage site if needed,
-// or we assume undefined is handled by optional.
-// Here we define strict transformation from value to boolean.
+// Helper for boolean flags (handles "0", "1", 0, 1, boolean, "false", "true")
 const booleanParams = pipe(
 	union([string(), number(), boolean()]),
 	transform((input) => {
-		if (input === "0" || input === 0 || input === false) return false;
+		if (input === "0" || input === 0 || input === false || input === "false")
+			return false;
 		return true;
 	}),
 );
@@ -39,10 +37,7 @@ const booleanParams = pipe(
 const numberParams = pipe(
 	union([string(), number()]),
 	transform((input) => Number(input)),
-	number(), // Validate it is a valid number (though Number("abc") is NaN, valibot's number() allows NaN? No, usually not, but let's check. Actually Number("abc") is NaN. NaN is typeof number.)
-	// We might need to handle NaN if input is invalid string.
-	// For now assuming inputs are relatively sane or we want safe parsing.
-	// Let's use a transform that returns undefined if NaN if we want "safe" parsing like parseIntSafe.
+	number(),
 );
 
 const safeNumberParams = pipe(
@@ -51,14 +46,9 @@ const safeNumberParams = pipe(
 		const num = Number(input);
 		return Number.isNaN(num) ? undefined : num;
 	}),
-	// Note: If undefined is returned here, it might conflict if the schema expects a number.
-	// So usually we use optional(pipe(..., transform))
 );
 
 // Genres parsing
-// Input: string "101,102" -> [101, 102]
-// Input: number 101 -> [101]
-// Input: undefined -> []
 const genresSchema = pipe(
 	union([string(), number(), array(number())]), // accept string, single number, or array of numbers (idempotent)
 	transform((input) => {
@@ -107,10 +97,6 @@ export const CustomRankingSearchSchema = object({
 	rensai: fallback(optional(booleanParams), true), // Default true
 	kanketsu: fallback(optional(booleanParams), true), // Default true
 	tanpen: fallback(optional(booleanParams), true), // Default true
-
-	// Type is usually in path params, but sometimes in search?
-	// Based on parseCustomRankingParams, type comes from argument, but let's check if it's in search.
-	// It's not in search schema in parseCustomRankingParams.
 });
 
 export type CustomRankingSearchInput = InferInput<

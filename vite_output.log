@@ -1,0 +1,16 @@
+
+> ranking-vite@0.0.0 dev /app
+> vite dev
+
+
+  VITE v7.3.1  ready in 9911 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  Debug:   http://localhost:5173/__debug
+4:34:51 AM [vite] (ssr) hmr update /@id/virtual:cloudflare/worker-entry, /src/index.css
+4:34:51 AM [vite] (client) hmr update /src/routes/custom/{-$type}.tsx, /src/routes/custom/{-$type}.tsx?tsr-split=component, /src/index.css
+[vite] hot updated: virtual:cloudflare/worker-entry
+4:35:38 AM [vite] (ssr) hmr update /src/index.css, /@id/virtual:cloudflare/worker-entry
+4:35:38 AM [vite] (client) hmr update /src/routes/custom/{-$type}.tsx, /src/routes/r18/ranking/{-$type}.tsx, /src/routes/r18/index.tsx, /src/routes/custom/{-$type}.tsx?tsr-split=component, /src/index.css
+[vite] hot updated: virtual:cloudflare/worker-entry
