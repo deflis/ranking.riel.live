@@ -130,14 +130,14 @@ export const parseR18RankingParams = (
 	};
 };
 
-function arrayFormat<T>(genres: T[] | undefined): T | T[] | undefined {
-	if (!genres || genres.length === 0) {
+function arrayFormat<T>(item: T[] | undefined): T | T[] | undefined {
+	if (!item || item.length === 0) {
 		return undefined;
 	}
-	if (genres.length === 1) {
-		return genres[0];
+	if (item.length === 1) {
+		return item[0];
 	}
-	return genres;
+	return item;
 }
 
 function stringFormat(string: string | undefined): string | undefined {
@@ -147,21 +147,28 @@ function stringFormat(string: string | undefined): string | undefined {
 	return String(string);
 }
 
+function booleanFormat(value: boolean | undefined, defaultValue: boolean): number | undefined {
+	if (value === undefined || value === defaultValue) {
+		return undefined;
+	}
+	return value ? 1 : 0;
+}
+
 export const buildCustomRankingSearch = (
 	params: Partial<Exclude<CustomRankingParams, "rankingType">>,
 ): Record<string, unknown> => {
 	return {
 		keyword: stringFormat(params.keyword),
 		not_keyword: stringFormat(params.notKeyword),
-		by_story: params.byStory ? 1 : undefined, // デフォルトfalse
-		by_title: params.byTitle ? 1 : undefined, // デフォルトfalse
+		by_story: booleanFormat(params.byStory ?? false, false), // デフォルトfalse
+		by_title: booleanFormat(params.byTitle ?? false, false), // デフォルトfalse
 		genres: arrayFormat(params.genres),
 		max: params.max ?? undefined,
 		min: params.min ?? undefined,
 		first_update: params.firstUpdate ?? undefined,
-		rensai: params.rensai ? undefined : 0, // デフォルトtrue
-		kanketsu: params.kanketsu ? undefined : 0, // デフォルトtrue
-		tanpen: params.tanpen ? undefined : 0, // デフォルトtrue
+		rensai: booleanFormat(params.rensai ?? true, true), // デフォルトtrue
+		kanketsu: booleanFormat(params.kanketsu ?? true, true), // デフォルトtrue
+		tanpen: booleanFormat(params.tanpen ?? true, true), // デフォルトtrue
 	};
 };
 
@@ -171,14 +178,14 @@ export const buildR18RankingSearch = (
 	return {
 		keyword: stringFormat(params.keyword),
 		not_keyword: stringFormat(params.notKeyword),
-		by_story: params.byStory ? 1 : undefined, // デフォルトfalse
-		by_title: params.byTitle ? 1 : undefined, // デフォルトfalse
+		by_story: booleanFormat(params.byStory ?? false, false), // デフォルトfalse
+		by_title: booleanFormat(params.byTitle ?? false, false), // デフォルトfalse
 		sites: arrayFormat(params.sites),
 		max: params.max ?? undefined,
 		min: params.min ?? undefined,
 		first_update: params.firstUpdate ?? undefined,
-		rensai: params.rensai ? undefined : 0, // デフォルトtrue
-		kanketsu: params.kanketsu ? undefined : 0, // デフォルトtrue
-		tanpen: params.tanpen ? undefined : 0, // デフォルトtrue
+		rensai: booleanFormat(params.rensai ?? true, true), // デフォルトtrue
+		kanketsu: booleanFormat(params.kanketsu ?? true, true), // デフォルトtrue
+		tanpen: booleanFormat(params.tanpen ?? true, true), // デフォルトtrue
 	};
 };
