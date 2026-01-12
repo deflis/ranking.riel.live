@@ -1,12 +1,11 @@
-import { Tab } from "@headlessui/react";
+import { Tab, TabGroup, TabList, TabPanels } from "@headlessui/react";
+import { Link as RouterLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 import { RankingType } from "narou";
-import React from "react";
 import { FaTrophy } from "react-icons/fa";
-import { Link as RouterLink } from "react-router-dom";
 import {
 	Brush,
 	CartesianGrid,
@@ -20,7 +19,7 @@ import {
 import colors from "tailwindcss/colors";
 
 import { darkModeAtom } from "../../../modules/atoms/global";
-import {
+import type {
 	RankingHistories,
 	RankingHistoryItem,
 } from "../../../modules/data/types";
@@ -195,7 +194,12 @@ const RankingHistoryCharts: React.FC<{
 							<tr key={date.toUnixInteger()} className={styles.tableRow}>
 								<td className="text-center">
 									<RouterLink
-										to={`/ranking/${type}/${date.toISODate()}`}
+										to="/ranking/{-$type}/{-$date}"
+										params={(prev) => ({
+											...prev,
+											type: type,
+											date: date.toISODate() ?? undefined,
+										})}
 										className="text-blue-500 hover:underline dark:text-blue-400"
 									>
 										{date.toFormat("yyyy年MM月dd日(EEE)")}
@@ -258,8 +262,8 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 		<Paper className="p-2 space-y-2 bg-white dark:bg-zinc-800">
 			<h2 className="text-xl font-medium">ランキング履歴</h2>
 			<div>
-				<Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-					<Tab.List className="w-full inline-block relative whitespace-nowrap">
+				<TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+					<TabList className="w-full inline-block relative whitespace-nowrap">
 						<div className="flex space-x-1 justify-center items-center">
 							{RankingTabs.map((type) => (
 								<Tab
@@ -269,26 +273,26 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 											"w-48 py-2.5 text-md leading-5",
 											selected
 												? "text-blue-500 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
-												: ranking[type].length != 0
-													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/[0.12] hover:text-blue-700 dark:hover:text-blue-300 "
+												: ranking[type].length !== 0
+													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/12 hover:text-blue-700 dark:hover:text-blue-300 "
 													: "text-gray-300 dark:text-neutral-700",
 										)
 									}
-									disabled={ranking[type].length == 0}
+									disabled={ranking[type].length === 0}
 								>
 									{RankingTypeName[type]}
 								</Tab>
 							))}
 						</div>
-					</Tab.List>
-					<Tab.Panels className="mt-2">
+					</TabList>
+					<TabPanels className="mt-2">
 						{RankingTabs.map((type) => (
 							<Tab.Panel key={type}>
 								<RankingHistoryCharts ranking={ranking[type]} type={type} />
 							</Tab.Panel>
 						))}
-					</Tab.Panels>
-				</Tab.Group>
+					</TabPanels>
+				</TabGroup>
 			</div>
 		</Paper>
 	);

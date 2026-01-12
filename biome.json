@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["dist/**", "src/routeTree.gen.ts"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -32,6 +32,19 @@
 						]
 					}
 				}
+			},
+			"correctness": {
+				"useExhaustiveDependencies": {
+					"level": "error",
+					"options": {
+						"hooks": [
+							{
+								"name": "useQueryClient",
+								"stableResult": true
+							}
+						]
+					}
+				}
 			}
 		}
 	},
@@ -39,5 +52,10 @@
 		"formatter": {
 			"quoteStyle": "double"
 		}
-	}	
+	},
+	"css": {
+		"parser": {
+			"cssModules": true
+		}
+	}
 }

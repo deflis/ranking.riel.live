@@ -1,46 +1,33 @@
 import clsx from "clsx";
-import {
-  ComponentPropsWithoutRef,
-  ElementType,
-  ForwardedRef,
-  PropsWithRef,
-  ReactElement,
-  forwardRef,
-} from "react";
+import type { ComponentProps, ElementType } from "react";
 
 import styles from "./form.module.css";
 
-type ButtonProps<T extends ElementType = "button"> = {
-  as?: T;
-  color?: "primary";
-} & Omit<ComponentPropsWithoutRef<T>, "as">;
+export type ButtonProps<T extends ElementType = "button"> = {
+	as?: T;
+	color?: "primary";
+} & ComponentProps<T>;
 
-function ButtonBase<T extends ElementType = "button">(
-  { className, as, color, type, ...props }: ButtonProps<T>,
-  ref: ForwardedRef<T>
-) {
-  const Component = as ?? "button";
-  return (
-    <Component
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ref={ref as any}
-      className={clsx(
-        "link-reset",
-        styles.button,
-        color === "primary" && styles.primary,
-        className
-      )}
-      type={type ?? "button"}
-      {...props}
-    />
-  );
+export function Button<T extends ElementType = "button">({
+	className,
+	as,
+	color,
+	type,
+	ref,
+	...props
+}: ButtonProps<T>) {
+	const Component = as ?? "button";
+	return (
+		<Component
+			ref={ref}
+			className={clsx(
+				"link-reset",
+				styles.button,
+				color === "primary" && styles.primary,
+				className,
+			)}
+			type={type ?? "button"}
+			{...props}
+		/>
+	);
 }
-
-interface ButtonType {
-  <T extends ElementType = "button">(
-    x: PropsWithRef<ButtonProps<T>>
-  ): ReactElement | null;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Button: ButtonType = forwardRef(ButtonBase) as any;

@@ -1,41 +1,41 @@
-@reference "../../../../../index.css";
+@reference "../../../../index.css";
 
 .tags {
-  @apply items-center inline-flex flex-wrap justify-start;
+	@apply items-center inline-flex flex-wrap justify-start;
 
-  .tag {
-    @apply mb-0.5;
-    &:not(:last-child) {
-      @apply mr-0.5;
-    }
-  }
+	.tag {
+		@apply mb-0.5;
+		&:not(:last-child) {
+			@apply mr-0.5;
+		}
+	}
 
-  &.addon .tag {
-    @apply mr-0;
+	&.addon .tag {
+		@apply mr-0;
 
-    &:not(:first-child) {
-      @apply ml-0 rounded-l-none;
-    }
+		&:not(:first-child) {
+			@apply ml-0 rounded-l-none;
+		}
 
-    &:not(:last-child) {
-      @apply ml-0 rounded-r-none;
-    }
-  }
+		&:not(:last-child) {
+			@apply ml-0 rounded-r-none;
+		}
+	}
 }
 
 .tag {
-  @apply rounded inline-flex justify-center px-1 whitespace-nowrap;
-  font-size: 80%;
-  @apply text-gray-700 bg-gray-200;
-  @apply dark:text-gray-200 dark:bg-zinc-600;
-  &.cyan {
-    @apply bg-sky-500 text-white;
-  }
-  &.light-green {
-    @apply bg-lime-500 text-lime-100;
-  }
-  &.red {
-    @apply bg-rose-500 text-rose-100;
-    @apply dark:bg-rose-700 text-rose-100;
-  }
+	@apply rounded inline-flex justify-center px-1 whitespace-nowrap;
+	font-size: 80%;
+	@apply text-gray-700 bg-gray-200;
+	@apply dark:text-gray-200 dark:bg-zinc-600;
+	&.cyan {
+		@apply bg-sky-500 text-white;
+	}
+	&.light-green {
+		@apply bg-lime-500 text-lime-100;
+	}
+	&.red {
+		@apply bg-rose-500 text-rose-100;
+		@apply dark:bg-rose-700 text-rose-100;
+	}
 }

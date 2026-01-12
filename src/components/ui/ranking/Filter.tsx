@@ -13,13 +13,13 @@ import { Checkbox } from "../atoms/Checkbox";
 import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 
-import styles from "./Filter.module.css";
 import {
-	FilterConfig,
+	type FilterConfig,
 	filterConfigAtom,
 	isUseFilterAtom,
 } from "@/modules/atoms/filter";
 import { allGenres } from "@/modules/enum/Genre";
+import styles from "./Filter.module.css";
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 	onClose,
@@ -29,17 +29,21 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 		defaultValues: filterCondig,
 	});
 
-	const selectAll = useCallback(
-		() => allGenres.forEach((id) => setValue(`genres.g${id}`, true)),
-		[setValue],
-	);
-	const unselectAll = useCallback(
-		() => allGenres.forEach((id) => setValue(`genres.g${id}`, false)),
-		[setValue],
-	);
+	const selectAll = useCallback(() => {
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, true);
+		}
+	}, [setValue]);
+	const unselectAll = useCallback(() => {
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, false);
+		}
+	}, [setValue]);
 
 	const clear = useCallback(() => {
-		allGenres.forEach((id) => setValue(`genres.g${id}`, true));
+		for (const id of allGenres) {
+			setValue(`genres.g${id}`, true);
+		}
 		setValue("firstUpdate.term", "none");
 		setValue("story.min.enable", false);
 		setValue("story.max.enable", false);
@@ -122,13 +126,16 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 						type="date"
 						{...register("firstUpdate.begin")}
 						min={
-							DateTime.fromObject({
-								year: 2013,
-								month: 5,
-								day: 1,
-							}).toISODate() ?? ""
+							DateTime.fromObject(
+								{
+									year: 2013,
+									month: 5,
+									day: 1,
+								},
+								{ zone: "Asia/Tokyo" },
+							).toISODate() ?? ""
 						}
-						max={DateTime.now().toISODate() ?? ""}
+						max={DateTime.now().setZone("Asia/Tokyo").toISODate() ?? ""}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}

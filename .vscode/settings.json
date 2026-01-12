@@ -1,23 +1,20 @@
 {
-  "cSpell.words": [
-    "allcount",
-    "bulma",
-    "firstup",
-    "hyoka",
-    "kanketsu",
-    "lastup",
-    "ncode",
-    "ncodes",
-    "nocgenre",
-    "noveltype",
-    "novelupdated",
-    "rensai",
-    "tanpen",
-    "tanstack",
-    "userid"
-  ],
-  "path-autocomplete.pathMappings": {
-    "@": "${folder}/src",
-    "~": "${folder}/public"
-  }
+	"cSpell.words": [
+		"allcount",
+		"bulma",
+		"darkmode",
+		"firstup",
+		"hyoka",
+		"kanketsu",
+		"lastup",
+		"ncode",
+		"ncodes",
+		"nocgenre",
+		"noveltype",
+		"novelupdated",
+		"rensai",
+		"tanpen",
+		"tanstack",
+		"userid"
+	]
 }
