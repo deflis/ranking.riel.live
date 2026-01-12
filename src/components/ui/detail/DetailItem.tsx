@@ -31,6 +31,10 @@ import ItemBadge from "../common/badges/ItemBadge";
 import { Tag } from "../common/bulma/Tag";
 const ChipLink = createLink(Chip);
 
+import {
+	buildCustomRankingSearch,
+	buildR18RankingSearch,
+} from "@/modules/utils/parseSearch";
 import DetailItemText from "./DetailItemText";
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
@@ -108,9 +112,9 @@ const DetailItem: React.FC<{
 							<RouterLink
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: "all" })}
-								search={{
-									genres: item.genre.toString(),
-								}}
+								search={(_) =>
+									buildCustomRankingSearch({ genres: [item.genre] })
+								}
 								rel="noopener noreferrer"
 							>
 								{GenreNotation[item.genre]}
@@ -119,9 +123,9 @@ const DetailItem: React.FC<{
 							<RouterLink
 								to="/r18"
 								params={(prev) => ({ ...prev })}
-								search={{
-									sites: item.nocgenre.toString(),
-								}}
+								search={(_) =>
+									buildR18RankingSearch({ sites: [item.nocgenre] })
+								}
 								rel="noopener noreferrer"
 							>
 								{R18SiteNotation[item.nocgenre]}
@@ -223,7 +227,9 @@ const DetailItem: React.FC<{
 								<RouterLink
 									to="/custom/{-$type}"
 									params={(prev) => ({ ...prev, type: "all" })}
-									search={{ genres: item.genre.toString() }}
+									search={(_) =>
+										buildCustomRankingSearch({ genres: [item.genre] })
+									}
 								>
 									{GenreNotation[item.genre]}
 								</RouterLink>
@@ -241,7 +247,9 @@ const DetailItem: React.FC<{
 								<RouterLink
 									to="/r18"
 									params={(prev) => ({ ...prev })}
-									search={{ sites: item.nocgenre.toString() }}
+									search={(_) =>
+										buildR18RankingSearch({ sites: [item.nocgenre] })
+									}
 								>
 									{R18SiteNotation[item.nocgenre]}
 								</RouterLink>
@@ -262,7 +270,11 @@ const DetailItem: React.FC<{
 											key={keyword}
 											to={isR18 ? "/r18" : "/custom/{-$type}"}
 											params={(prev) => ({ ...prev, type: "all" })}
-											search={{ keyword }}
+											search={(_) =>
+												isR18
+													? buildR18RankingSearch({ keyword })
+													: buildCustomRankingSearch({ keyword })
+											}
 										>
 											{keyword}
 										</ChipLink>

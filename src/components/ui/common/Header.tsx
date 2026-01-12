@@ -6,6 +6,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 
+import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
+import { Genre } from "narou";
 import {
 	adModeAtom,
 	darkModeAtom,
@@ -148,6 +150,7 @@ export const Header: React.FC = () => {
 					<Link
 						to="/custom/{-$type}"
 						params={(prev) => ({ ...prev, type: RankingType.Daily })}
+						search={(_) => ({})}
 					>
 						カスタムランキング
 					</Link>
@@ -202,6 +205,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
+					search={(_) => ({})}
 					hover
 				>
 					カスタムランキング
@@ -210,6 +214,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Yearly })}
+					search={(_) => ({})}
 					hover
 				>
 					{RankingTypeName[RankingType.Yearly]}
@@ -219,6 +224,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.All })}
+					search={(_) => ({})}
 					hover
 				>
 					{RankingTypeName[RankingType.All]}
@@ -228,6 +234,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.UniqueUser })}
+					search={(_) => ({})}
 					hover
 				>
 					{RankingTypeName[RankingType.UniqueUser]}
@@ -237,7 +244,9 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "201" }}
+					search={(_) =>
+						buildCustomRankingSearch({ genres: [Genre.FantasyHigh] })
+					}
 					hover
 				>
 					日間ハイファンタジー
@@ -247,7 +256,9 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "101" }}
+					search={(_) =>
+						buildCustomRankingSearch({ genres: [Genre.RenaiIsekai] })
+					}
 					hover
 				>
 					日間異世界恋愛
@@ -257,7 +268,9 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "102" }}
+					search={(_) =>
+						buildCustomRankingSearch({ genres: [Genre.RenaiGenjitsusekai] })
+					}
 					hover
 				>
 					日間現実世界恋愛
@@ -265,7 +278,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/r18" hover>
+				<SidebarItemLink to="/r18" search={(_) => ({})} hover>
 					R18ランキング
 				</SidebarItemLink>
 				<Divider />

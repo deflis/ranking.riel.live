@@ -13,6 +13,10 @@ import { useR18ItemForListing } from "@/modules/data/r18item";
 import type { Item, NocItem } from "@/modules/data/types";
 import type { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 import { RankingType } from "@/modules/interfaces/RankingType";
+import {
+	buildCustomRankingSearch,
+	buildR18RankingSearch,
+} from "@/modules/utils/parseSearch";
 import { Suspense } from "react";
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
@@ -110,7 +114,9 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ genres: String(item.genre) }}
+								search={(_) =>
+									buildCustomRankingSearch({ genres: [item.genre] })
+								}
 							>
 								{GenreNotation[item.genre]}
 							</Link>
@@ -119,7 +125,9 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/r18/ranking/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ sites: String(item.nocgenre) }}
+								search={(_) =>
+									buildR18RankingSearch({ sites: [item.nocgenre] })
+								}
 							>
 								{R18SiteNotation[item.nocgenre]}
 							</Link>
