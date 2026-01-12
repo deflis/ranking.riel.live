@@ -11,16 +11,21 @@ export const parseBoolean = (
 	defaultValue: boolean,
 ): boolean => {
 	const num = parseIntSafe(str);
-	return str === undefined || num === undefined || Number.isNaN(num)
-		? defaultValue
-		: num !== 0;
+	return num === undefined ? defaultValue : num !== 0;
 };
 
 export const parseIntSafe = (
 	str: string | number | undefined,
 ): number | undefined => {
-	return str !== undefined ? Number.parseInt(String(str), 10) : undefined;
-};
+	if (str === undefined || str === "") {
+		return undefined;
+	}
+	const num = Number.parseInt(String(str), 10);
+	if (Number.isNaN(num)) {
+		return undefined;
+	}
+	return num;
+}
 
 export const parseString = (
 	str: string | number | undefined,
