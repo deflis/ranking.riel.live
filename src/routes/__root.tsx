@@ -38,20 +38,17 @@ function RootComponent() {
 
 	return (
 		<RootDocument>
-			<QueryClientProvider client={Route.useRouteContext().queryClient}>
-				<Layout>
-					<QueryErrorResetBoundary>
-						{({ reset }) => (
-							<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-								<Suspense fallback={<DotLoader />}>
-									<Outlet />
-								</Suspense>
-							</ErrorBoundary>
-						)}
-					</QueryErrorResetBoundary>
-				</Layout>
-				<ReactQueryDevtools buttonPosition="bottom-left" />
-			</QueryClientProvider>
+			<Layout>
+				<QueryErrorResetBoundary>
+					{({ reset }) => (
+						<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+							<Suspense fallback={<DotLoader />}>
+								<Outlet />
+							</Suspense>
+						</ErrorBoundary>
+					)}
+				</QueryErrorResetBoundary>
+			</Layout>
 		</RootDocument>
 	);
 }
@@ -64,6 +61,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
+				<ReactQueryDevtools buttonPosition="bottom-left" />
 				<TanStackRouterDevtools position="bottom-right" />
 				<Scripts />
 			</body>

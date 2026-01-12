@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Link, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
 
 export function getRouter() {
 	const queryClient = new QueryClient({
@@ -29,6 +30,13 @@ export function getRouter() {
 			);
 		},
 	});
+	
+  setupRouterSsrQueryIntegration({
+    router,
+    queryClient,
+    handleRedirects: true,
+    wrapQueryClient: true,
+  })
 
 	return router;
 }
