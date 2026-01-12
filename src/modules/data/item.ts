@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
+import { DateTime } from "luxon";
 import {
 	Fields,
 	type RankingHistoryResult,
@@ -208,7 +209,7 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
 		rankingData[type] = history
 			.filter((x) => x.type === type)
 			.map(({ date, pt, rank }) => ({
-				date: date.toISOString(),
+				date: DateTime.fromJSDate(date, { zone: "Asia/Tokyo" }).toISO() ?? "",
 				pt,
 				rank,
 			}));

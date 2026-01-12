@@ -3,7 +3,7 @@ import { Link as RouterLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import type { DateTime } from "luxon";
+import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import { FaTrophy } from "react-icons/fa";
 import {
@@ -84,16 +84,16 @@ const RankingHistoryCharts: React.FC<{
 	const maxDate = dateList[dateList.length - 1];
 
 	const data: DataType[] = Array.from(rangeDate(minDate, maxDate, type))
-		.map(
-			(date) =>
-				ranking.find((item) =>
-					date.hasSame(DateTime.fromISO(item.date), "day"),
-				) ?? {
-					date,
-					rank: null,
-					pt: null,
-				},
-		)
+		.map((date) => {
+			const item = ranking.find((item) =>
+				date.hasSame(DateTime.fromISO(item.date), "day"),
+			);
+			return {
+				date,
+				rank: item?.rank ?? null,
+				pt: item?.pt ?? null,
+			};
+		})
 		.map(({ date, rank, pt }) => ({
 			date: date.toFormat("yyyy年MM月dd日(EEE)"),
 			順位: rank,
