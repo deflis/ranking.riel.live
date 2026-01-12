@@ -3,7 +3,7 @@
 このリポジトリでは日本語で回答してください。
 
 ## Project Structure & Module Organization
-This is a Vite + TanStack Start React app targeting Cloudflare Pages. Core code lives in `src/`, with feature code split into `src/components`, `src/hooks`, and `src/modules`. Routes are file-based under `src/routes` (for example `src/routes/__root.tsx`, `src/routes/index.tsx`, and nested folders like `src/routes/ranking`). Static assets belong in `public/`. Build artifacts are generated into `dist/` and `.output/` and should not be edited. The `app/` folder is reserved for Start routing conventions, but currently minimal.
+This is a Vite + TanStack Start React app targeting Cloudflare Pages. Core code lives in `src/`, with feature code split into `src/components`, `src/hooks`, and `src/modules`. Routes are file-based under `src/routes` (for example `src/routes/index.tsx`, and nested folders like `src/routes/ranking`).
 
 ## Build, Test, and Development Commands
 Use pnpm (see `packageManager` in `package.json`).
@@ -19,10 +19,23 @@ Use pnpm (see `packageManager` in `package.json`).
 Formatting and linting are enforced by Biome (`biome.json`). Use tabs for indentation and double quotes in JS/TS. Typescript is strict (`tsconfig.json`), and `@/` is a path alias for `src/`. CSS Modules are used where appropriate (e.g. `*.module.css`). Route files follow TanStack Router conventions in `src/routes`.
 
 ## Testing Guidelines
-No project-level test runner is configured yet. If you add tests, keep them near the feature (e.g. `src/modules/__tests__/feature.test.ts`) and document the runner in this file.
+No project-level test runner is configured yet.
 
 ## Commit & Pull Request Guidelines
-Recent commit history uses short, sentence-style messages (often Japanese) without Conventional Commit prefixes. Keep messages concise and descriptive. For pull requests, include a brief summary, verification steps, and screenshots for UI changes; link related issues when available.
+- コミットメッセージは、日本語で生成してください。
+- 体言止めを使用してください。
+- 複数の変更があるときは、修正したコンポーネントの名前を含む短く簡潔かつ網羅的な概要を1行目に、必要なら詳細を3行目以降に箇条書きで書いてください。
+- 詳細も同じ内容になるなら、1行だけにしてください。
 
-## Environment & Configuration Tips
-`mise.toml` pins Node to LTS. Cloudflare settings live in `wrangler.jsonc`, and local Pages state may appear in `.wrangler/`.
+例:1行だけの場合
+```
+コンポーネントのタイトルの変数名を `title` から `componentTitle` に変更
+```
+
+例:複数行の場合
+```
+概要画面のタイトルの変数名を修正
+
+- タイトルの変数名を `title` から `componentTitle` に変更
+- 関連するテストケースも更新
+```
