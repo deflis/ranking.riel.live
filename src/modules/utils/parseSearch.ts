@@ -11,7 +11,9 @@ export const parseBoolean = (
 	defaultValue: boolean,
 ): boolean => {
 	const num = parseIntSafe(str);
-	return str === undefined ? defaultValue : num !== 0;
+	return str === undefined || num === undefined || Number.isNaN(num)
+		? defaultValue
+		: num !== 0;
 };
 
 export const parseIntSafe = (
