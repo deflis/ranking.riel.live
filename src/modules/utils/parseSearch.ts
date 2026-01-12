@@ -20,6 +20,12 @@ export const parseIntSafe = (
 	return str !== undefined ? Number.parseInt(String(str), 10) : undefined;
 };
 
+export const parseString = (
+	str: string | number | undefined,
+): string | undefined => {
+	return str !== undefined ? String(str) : undefined;
+};
+
 const allSites = [
 	R18Site.Nocturne,
 	R18Site.MoonLight,
@@ -69,8 +75,8 @@ export const parseCustomRankingParams = (
 ): CustomRankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
 	return {
-		keyword: String(search.keyword),
-		notKeyword: String(search.not_keyword),
+		keyword: parseString(search.keyword),
+		notKeyword: parseString(search.not_keyword),
 		byStory: parseBoolean(search.by_story, false),
 		byTitle: parseBoolean(search.by_title, false),
 		genres: parseGenres(search.genres),
@@ -102,8 +108,8 @@ export const parseR18RankingParams = (
 ): R18RankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
 	return {
-		keyword: String(search.keyword),
-		notKeyword: String(search.not_keyword),
+		keyword: parseString(search.keyword),
+		notKeyword: parseString(search.not_keyword),
 		byStory: parseBoolean(search.by_story, false),
 		byTitle: parseBoolean(search.by_title, false),
 		sites: parseSites(search.sites),
