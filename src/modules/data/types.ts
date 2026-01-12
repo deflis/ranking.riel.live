@@ -1,8 +1,7 @@
-import type { DateTime } from "luxon";
 import type { PickedNarouSearchResult, RankingType } from "narou";
 
 type ResultConvertDate<T, TDateProps extends keyof T> = Omit<T, TDateProps> & {
-	[key in TDateProps]: DateTime;
+	[key in TDateProps]: string;
 };
 
 export type Item = ResultConvertDate<
@@ -84,7 +83,7 @@ export type RankingHistories = {
 };
 
 export interface RankingHistoryItem {
-	date: DateTime;
+	date: string;
 	pt: number;
 	rank: number;
 }

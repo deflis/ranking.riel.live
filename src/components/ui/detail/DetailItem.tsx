@@ -1,5 +1,6 @@
 import { Link as RouterLink, createLink } from "@tanstack/react-router";
 import { decode } from "html-entities";
+import { DateTime } from "luxon";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
 import type React from "react";
 import { FaPenNib } from "react-icons/fa";
@@ -290,8 +291,8 @@ const DetailItem: React.FC<{
 					>
 						{item ? (
 							<>
-								{item.general_firstup.toFormat(dateFormat)} （
-								{item.general_firstup.toRelative()}）
+								{DateTime.fromISO(item.general_firstup).toFormat(dateFormat)} （
+								{DateTime.fromISO(item.general_firstup).toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
@@ -303,8 +304,8 @@ const DetailItem: React.FC<{
 					>
 						{item ? (
 							<>
-								{item.general_lastup.toFormat(dateFormat)} （
-								{item.general_lastup.toRelative()}）
+								{DateTime.fromISO(item.general_lastup).toFormat(dateFormat)} （
+								{DateTime.fromISO(item.general_lastup).toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />

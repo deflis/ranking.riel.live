@@ -199,6 +199,6 @@ function RankingPage() {
 }
 
 function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
-	const { data } = useRanking(type, date);
+	const { data } = useRanking(type, date.toISODate() ?? "");
 	return <RankingRender ranking={data} />;
 }

@@ -202,7 +202,7 @@ export const filterAtom = atom((get) => {
 		(storyMin === undefined ||
 			storyMin < 1 ||
 			item.general_all_no >= storyMin) &&
-		(!firstUpdate || firstUpdate < item.general_firstup) &&
+		(!firstUpdate || firstUpdate <= DateTime.fromISO(item.general_firstup)) &&
 		((enableTanpen && item.noveltype === 2) ||
 			(enableRensai && item.noveltype === 1 && item.end === 1) ||
 			(enableKanketsu && item.noveltype === 1 && item.end === 0));

@@ -18,8 +18,8 @@ import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
 
-export const rankingKey = (type: NarouRankingType, date: DateTime) =>
-	["ranking", type, date.toISODate() ?? ""] as const;
+export const rankingKey = (type: NarouRankingType, date: string) =>
+	["ranking", type, date] as const;
 export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
@@ -36,7 +36,7 @@ const rankingServerFn = createServerFn({ method: "GET" })
 		return await ranking().date(dateValue).type(type).execute({ fetchOptions });
 	});
 
-export function useRanking(type: NarouRankingType, date: DateTime) {
+export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
 		queryKey: rankingKey(type, date),
 		queryFn: rankingFetcher,

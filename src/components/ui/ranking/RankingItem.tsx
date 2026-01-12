@@ -4,6 +4,7 @@ import { Link, createLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
+import { DateTime } from "luxon";
 import { GenreNotation, R18SiteNotation } from "narou";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -96,10 +97,14 @@ const RankingItemRender: React.FC<{
 				<Tags>
 					<Tag>{rankingItem.pt?.toLocaleString()}pt</Tag>
 					{item?.general_firstup &&
-						item.general_firstup.diffNow().as("month") <= 1 && (
+						DateTime.fromISO(item.general_firstup).diffNow().as("month") <=
+							1 && (
 							<Tag
 								tagColor="red"
-								light={item.general_firstup.diffNow().as("day") <= 7}
+								light={
+									DateTime.fromISO(item.general_firstup).diffNow().as("day") <=
+									7
+								}
 							>
 								New!
 							</Tag>
@@ -177,17 +182,23 @@ const RankingItemRender: React.FC<{
 			</p>
 			<p>
 				更新日時:{" "}
-				{item?.novelupdated_at.toFormat("yyyy/MM/dd HH:mm:ss") ?? (
+				{item?.novelupdated_at ? (
+					DateTime.fromISO(item.novelupdated_at).toFormat("yyyy/MM/dd HH:mm:ss")
+				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
 			</p>
 			<p>
 				掲載開始:{" "}
-				{item?.general_firstup.toRelative() ?? (
+				{item?.general_firstup ? (
+					DateTime.fromISO(item.general_firstup).toRelative()
+				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}{" "}
 				/ 最終更新:{" "}
-				{item?.general_lastup.toRelative() ?? (
+				{item?.general_lastup ? (
+					DateTime.fromISO(item.general_lastup).toRelative()
+				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
 			</p>

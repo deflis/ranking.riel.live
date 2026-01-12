@@ -25,7 +25,7 @@ export const parseIntSafe = (
 		return undefined;
 	}
 	return num;
-}
+};
 
 export const parseString = (
 	str: string | number | undefined,
@@ -147,7 +147,10 @@ function stringFormat(string: string | undefined): string | undefined {
 	return String(string);
 }
 
-function booleanFormat(value: boolean | undefined, defaultValue: boolean): number | undefined {
+function booleanFormat(
+	value: boolean | undefined,
+	defaultValue: boolean,
+): number | undefined {
 	if (value === undefined || value === defaultValue) {
 		return undefined;
 	}

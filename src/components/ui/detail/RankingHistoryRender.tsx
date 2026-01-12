@@ -79,14 +79,16 @@ const RankingHistoryCharts: React.FC<{
 }> = ({ ranking, type }) => {
 	const graphColor = useAtomValue(graphColorAtom);
 
-	const date = ranking.map(({ date }) => date);
-	const minDate = date[0];
-	const maxDate = date[date.length - 1];
+	const dateList = ranking.map(({ date }) => DateTime.fromISO(date));
+	const minDate = dateList[0];
+	const maxDate = dateList[dateList.length - 1];
 
 	const data: DataType[] = Array.from(rangeDate(minDate, maxDate, type))
 		.map(
 			(date) =>
-				ranking.find((item) => date.equals(item.date)) ?? {
+				ranking.find((item) =>
+					date.hasSame(DateTime.fromISO(item.date), "day"),
+				) ?? {
 					date,
 					rank: null,
 					pt: null,
@@ -191,18 +193,21 @@ const RankingHistoryCharts: React.FC<{
 					</thead>
 					<tbody>
 						{ranking.map(({ date, rank, pt }) => (
-							<tr key={date.toUnixInteger()} className={styles.tableRow}>
+							<tr
+								key={DateTime.fromISO(date).toUnixInteger()}
+								className={styles.tableRow}
+							>
 								<td className="text-center">
 									<RouterLink
 										to="/ranking/{-$type}/{-$date}"
 										params={(prev) => ({
 											...prev,
 											type: type,
-											date: date.toISODate() ?? undefined,
+											date: date,
 										})}
 										className="text-blue-500 hover:underline dark:text-blue-400"
 									>
-										{date.toFormat("yyyy年MM月dd日(EEE)")}
+										{DateTime.fromISO(date).toFormat("yyyy年MM月dd日(EEE)")}
 									</RouterLink>
 								</td>
 								<td className="text-right">
