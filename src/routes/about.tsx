@@ -37,7 +37,11 @@ function AboutPage() {
 						こちらのフィルターはブラウザごとに記録されており、次の閲覧時に再度反映されるようになっています。
 					</p>
 					<p>
-						<Link to="/custom/{-$type}" params={{ type: "all" }} search={(_) => ({})}>
+						<Link
+							to="/custom/{-$type}"
+							params={{ type: "all" }}
+							search={(_) => ({})}
+						>
 							カスタムランキング
 						</Link>
 						では、右上の「
