@@ -4,12 +4,14 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
+		"preinstall": "npx only-allow pnpm",
 		"dev": "vite dev",
 		"build": "vite build",
 		"start": "wrangler pages dev .output/public",
 		"deploy": "wrangler pages deploy .output/public",
 		"lint": "biome check .",
-		"lint:fix": "biome check --apply ."
+		"lint:fix": "biome check --apply .",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.2.9",
