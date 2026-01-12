@@ -6,33 +6,16 @@ import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
 import type { R18RankingParams } from "@/modules/interfaces/CustomRankingParams";
 import type { RankingType } from "@/modules/interfaces/RankingType";
-
-export type R18RankingSearch = {
-	keyword?: string;
-	not_keyword?: string;
-	by_title?: string;
-	by_story?: string;
-	sites?: string;
-	min?: string;
-	max?: string;
-	first_update?: string;
-	rensai?: string;
-	kanketsu?: string;
-	tanpen?: string;
-};
-
-const allSites = [
-	R18Site.Nocturne,
-	R18Site.MoonLight,
-	R18Site.MoonLightBL,
-	R18Site.Midnight,
-];
+import type { R18RankingSearchInput } from "@/modules/validations/ranking";
 
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
+// Exporting R18RankingSearch type for consumers (like src/routes/r18/index.tsx)
+export type R18RankingSearch = R18RankingSearchInput;
+
 export const R18RankingPage: React.FC<{
 	rankingType: RankingType;
-	search: R18RankingSearch;
+	search: R18RankingSearchInput; // Typed search input
 }> = ({ rankingType, search }) => {
 	const navigate = useNavigate();
 
@@ -40,7 +23,7 @@ export const R18RankingPage: React.FC<{
 
 	const handleSearch = useCallback(
 		(newParams: R18RankingParams) => {
-			const nextSearch: R18RankingSearch = {};
+			const nextSearch: Record<string, unknown> = {};
 			if (newParams.keyword) nextSearch.keyword = newParams.keyword;
 			if (newParams.notKeyword) nextSearch.not_keyword = newParams.notKeyword;
 			if (newParams.byStory) nextSearch.by_story = "1";

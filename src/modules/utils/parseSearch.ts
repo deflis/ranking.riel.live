@@ -1,105 +1,66 @@
-import { type Genre, R18Site } from "narou";
-import { allGenres } from "../enum/Genre";
+import { parse } from "valibot";
 import type {
 	CustomRankingParams,
 	R18RankingParams,
 } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
+import {
+	type CustomRankingSearchInput,
+	CustomRankingSearchSchema,
+	type R18RankingSearchInput,
+	R18RankingSearchSchema,
+} from "../validations/ranking";
 
-export const parseBoolean = (
-	str: string | undefined,
-	defaultValue: boolean,
-): boolean => {
-	return str === undefined ? defaultValue : str !== "0";
-};
-
-export const parseIntSafe = (str: string | undefined): number | undefined => {
-	return str !== undefined ? Number.parseInt(str, 10) : undefined;
-};
-
-const allSites = [
-	R18Site.Nocturne,
-	R18Site.MoonLight,
-	R18Site.MoonLightBL,
-	R18Site.Midnight,
-];
-
-export const parseGenres = (rawGenres: string | undefined): Genre[] => {
-	return (rawGenres ?? "")
-		.split(",")
-		.map((x) => Number.parseInt(x, 10) as Genre)
-		.filter((x) => allGenres.includes(x));
-};
-
-export const parseSites = (rawSites: string | undefined): R18Site[] => {
-	return (rawSites ?? "")
-		.split(",")
-		.map((x) => Number.parseInt(x, 10) as R18Site)
-		.filter((x) => allSites.includes(x));
-};
-
+/**
+ * Validates and converts search parameters using Valibot schemas.
+ * This can replace manual parsing logic.
+ */
 export const parseCustomRankingParams = (
 	type: string | undefined,
-	search: {
-		keyword?: string;
-		not_keyword?: string;
-		by_title?: string;
-		by_story?: string;
-		genres?: string;
-		min?: string;
-		max?: string;
-		first_update?: string;
-		rensai?: string;
-		kanketsu?: string;
-		tanpen?: string;
-	},
+	search: CustomRankingSearchInput,
 ): CustomRankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
+	const result = parse(CustomRankingSearchSchema, search);
+
+	// Map snake_case result to camelCase CustomRankingParams
+	// Using ! assertion or ?? default to satisfy TS if it thinks fallback might fail (it shouldn't).
+	// Or maybe the inferred type of fallback() includes undefined in this version?
+	// Let's use ?? to be safe and satisfy TS.
 	return {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
-		byStory: parseBoolean(search.by_story, false),
-		byTitle: parseBoolean(search.by_title, false),
-		genres: parseGenres(search.genres),
-		max: parseIntSafe(search.max),
-		min: parseIntSafe(search.min),
-		firstUpdate: search.first_update,
-		rensai: parseBoolean(search.rensai, true),
-		kanketsu: parseBoolean(search.kanketsu, true),
-		tanpen: parseBoolean(search.tanpen, true),
+		keyword: result.keyword,
+		notKeyword: result.not_keyword,
+		byTitle: result.by_title ?? false,
+		byStory: result.by_story ?? false,
+		genres: result.genres ?? [],
+		min: result.min,
+		max: result.max,
+		firstUpdate: result.first_update,
+		rensai: result.rensai ?? true,
+		kanketsu: result.kanketsu ?? true,
+		tanpen: result.tanpen ?? true,
 		rankingType,
 	};
 };
 
 export const parseR18RankingParams = (
 	type: string | undefined,
-	search: {
-		keyword?: string;
-		not_keyword?: string;
-		by_title?: string;
-		by_story?: string;
-		sites?: string;
-		min?: string;
-		max?: string;
-		first_update?: string;
-		rensai?: string;
-		kanketsu?: string;
-		tanpen?: string;
-	},
+	search: R18RankingSearchInput,
 ): R18RankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
+	const result = parse(R18RankingSearchSchema, search);
+
 	return {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
-		byStory: parseBoolean(search.by_story, false),
-		byTitle: parseBoolean(search.by_title, false),
-		sites: parseSites(search.sites),
-		max: parseIntSafe(search.max),
-		min: parseIntSafe(search.min),
-		firstUpdate: search.first_update,
-		rensai: parseBoolean(search.rensai, true),
-		kanketsu: parseBoolean(search.kanketsu, true),
-		tanpen: parseBoolean(search.tanpen, true),
+		keyword: result.keyword,
+		notKeyword: result.not_keyword,
+		byTitle: result.by_title ?? false,
+		byStory: result.by_story ?? false,
+		sites: result.sites ?? [],
+		min: result.min,
+		max: result.max,
+		firstUpdate: result.first_update,
+		rensai: result.rensai ?? true,
+		kanketsu: result.kanketsu ?? true,
+		tanpen: result.tanpen ?? true,
 		rankingType,
 	};
 };

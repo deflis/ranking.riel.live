@@ -110,7 +110,7 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ genres: String(item.genre) }}
+								search={{ genres: [item.genre] }}
 							>
 								{GenreNotation[item.genre]}
 							</Link>
@@ -119,7 +119,7 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/r18/ranking/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ sites: String(item.nocgenre) }}
+								search={{ sites: [item.nocgenre] }}
 							>
 								{R18SiteNotation[item.nocgenre]}
 							</Link>
