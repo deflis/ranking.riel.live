@@ -109,7 +109,7 @@ const DetailItem: React.FC<{
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: "all" })}
 								search={{
-									genres: item.genre.toString(),
+									genres: [item.genre],
 								}}
 								rel="noopener noreferrer"
 							>
@@ -120,7 +120,7 @@ const DetailItem: React.FC<{
 								to="/r18"
 								params={(prev) => ({ ...prev })}
 								search={{
-									sites: item.nocgenre.toString(),
+									sites: [item.nocgenre],
 								}}
 								rel="noopener noreferrer"
 							>
@@ -223,7 +223,7 @@ const DetailItem: React.FC<{
 								<RouterLink
 									to="/custom/{-$type}"
 									params={(prev) => ({ ...prev, type: "all" })}
-									search={{ genres: item.genre.toString() }}
+									search={{ genres: [item.genre] }}
 								>
 									{GenreNotation[item.genre]}
 								</RouterLink>
@@ -241,7 +241,7 @@ const DetailItem: React.FC<{
 								<RouterLink
 									to="/r18"
 									params={(prev) => ({ ...prev })}
-									search={{ sites: item.nocgenre.toString() }}
+									search={{ sites: [item.nocgenre] }}
 								>
 									{R18SiteNotation[item.nocgenre]}
 								</RouterLink>

@@ -237,7 +237,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "201" }}
+					search={{ genres: [201] }}
 					hover
 				>
 					日間ハイファンタジー
@@ -247,7 +247,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "101" }}
+					search={{ genres: [101] }}
 					hover
 				>
 					日間異世界恋愛
@@ -257,7 +257,7 @@ export const Header: React.FC = () => {
 				<SidebarItemLink
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
-					search={{ genres: "102" }}
+					search={{ genres: [102] }}
 					hover
 				>
 					日間現実世界恋愛

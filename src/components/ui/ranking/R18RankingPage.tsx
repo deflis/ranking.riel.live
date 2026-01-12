@@ -8,23 +8,14 @@ import type { R18RankingParams } from "@/modules/interfaces/CustomRankingParams"
 import type { RankingType } from "@/modules/interfaces/RankingType";
 import type { R18RankingSearchInput } from "@/modules/validations/ranking";
 
-// We can remove the local R18RankingSearch definition or align it with R18RankingSearchInput
-// Valibot's InferInput is what the schema accepts (string | number | ...).
-// If `validateSearch` returns a transformed object (InferOutput), then `search` prop will be that.
-// But we are passing `search` to `parseR18RankingParams`, which expects `unknown` (and validates with schema).
-// Since the schema is now idempotent, passing InferOutput is valid (it satisfies InferInput too mostly, or we made it so).
-
-// However, `validateSearch` in route returns `InferOutput<typeof R18RankingSearchSchema>`.
-// So `search` prop here receives that output.
-// We should type `search` as `R18RankingSearchOutput`?
-// But `parseR18RankingParams` takes `unknown`.
-// Let's use `unknown` or a flexible type to avoid `any`.
-
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
+
+// Exporting R18RankingSearch type for consumers (like src/routes/r18/index.tsx)
+export type R18RankingSearch = R18RankingSearchInput;
 
 export const R18RankingPage: React.FC<{
 	rankingType: RankingType;
-	search: unknown;
+	search: R18RankingSearchInput; // Typed search input
 }> = ({ rankingType, search }) => {
 	const navigate = useNavigate();
 
@@ -32,7 +23,6 @@ export const R18RankingPage: React.FC<{
 
 	const handleSearch = useCallback(
 		(newParams: R18RankingParams) => {
-			// We use a simplified object here for navigation, relying on serialization or schema handling.
 			const nextSearch: Record<string, unknown> = {};
 			if (newParams.keyword) nextSearch.keyword = newParams.keyword;
 			if (newParams.notKeyword) nextSearch.not_keyword = newParams.notKeyword;

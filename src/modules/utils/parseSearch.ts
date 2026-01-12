@@ -5,7 +5,9 @@ import type {
 } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import {
+	type CustomRankingSearchInput,
 	CustomRankingSearchSchema,
+	type R18RankingSearchInput,
 	R18RankingSearchSchema,
 } from "../validations/ranking";
 
@@ -15,35 +17,34 @@ import {
  */
 export const parseCustomRankingParams = (
 	type: string | undefined,
-	search: unknown,
+	search: CustomRankingSearchInput,
 ): CustomRankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
-	// Use safe parsing or standard parsing. Since we want to ensure valid types, parse is fine.
-	// If validation fails, it throws. If that's acceptable, we proceed.
-	// Given the previous code didn't really throw but used defaults, we might want to handle errors if strictly needed,
-	// but the schema uses fallbacks so it should be robust.
 	const result = parse(CustomRankingSearchSchema, search);
 
 	// Map snake_case result to camelCase CustomRankingParams
+	// Using ! assertion or ?? default to satisfy TS if it thinks fallback might fail (it shouldn't).
+	// Or maybe the inferred type of fallback() includes undefined in this version?
+	// Let's use ?? to be safe and satisfy TS.
 	return {
 		keyword: result.keyword,
 		notKeyword: result.not_keyword,
-		byTitle: result.by_title,
-		byStory: result.by_story,
-		genres: result.genres,
+		byTitle: result.by_title ?? false,
+		byStory: result.by_story ?? false,
+		genres: result.genres ?? [],
 		min: result.min,
 		max: result.max,
 		firstUpdate: result.first_update,
-		rensai: result.rensai,
-		kanketsu: result.kanketsu,
-		tanpen: result.tanpen,
+		rensai: result.rensai ?? true,
+		kanketsu: result.kanketsu ?? true,
+		tanpen: result.tanpen ?? true,
 		rankingType,
 	};
 };
 
 export const parseR18RankingParams = (
 	type: string | undefined,
-	search: unknown,
+	search: R18RankingSearchInput,
 ): R18RankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
 	const result = parse(R18RankingSearchSchema, search);
@@ -51,15 +52,15 @@ export const parseR18RankingParams = (
 	return {
 		keyword: result.keyword,
 		notKeyword: result.not_keyword,
-		byTitle: result.by_title,
-		byStory: result.by_story,
-		sites: result.sites,
+		byTitle: result.by_title ?? false,
+		byStory: result.by_story ?? false,
+		sites: result.sites ?? [],
 		min: result.min,
 		max: result.max,
 		firstUpdate: result.first_update,
-		rensai: result.rensai,
-		kanketsu: result.kanketsu,
-		tanpen: result.tanpen,
+		rensai: result.rensai ?? true,
+		kanketsu: result.kanketsu ?? true,
+		tanpen: result.tanpen ?? true,
 		rankingType,
 	};
 };
