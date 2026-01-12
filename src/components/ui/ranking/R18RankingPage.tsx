@@ -28,7 +28,10 @@ const allSites = [
 	R18Site.Midnight,
 ];
 
-import { parseR18RankingParams } from "@/modules/utils/parseSearch";
+import {
+	buildR18RankingSearch,
+	parseR18RankingParams,
+} from "@/modules/utils/parseSearch";
 
 export const R18RankingPage: React.FC<{
 	rankingType: RankingType;
@@ -40,25 +43,10 @@ export const R18RankingPage: React.FC<{
 
 	const handleSearch = useCallback(
 		(newParams: R18RankingParams) => {
-			const nextSearch: R18RankingSearch = {};
-			if (newParams.keyword) nextSearch.keyword = newParams.keyword;
-			if (newParams.notKeyword) nextSearch.not_keyword = newParams.notKeyword;
-			if (newParams.byStory) nextSearch.by_story = "1";
-			if (newParams.byTitle) nextSearch.by_title = "1";
-			if (newParams.sites.length !== 0)
-				nextSearch.sites = newParams.sites.join(",");
-			if (newParams.max) nextSearch.max = newParams.max.toString();
-			if (newParams.min) nextSearch.min = newParams.min.toString();
-			if (newParams.firstUpdate)
-				nextSearch.first_update = newParams.firstUpdate;
-			if (newParams.rensai === false) nextSearch.rensai = "0";
-			if (newParams.kanketsu === false) nextSearch.kanketsu = "0";
-			if (newParams.tanpen === false) nextSearch.tanpen = "0";
-
 			navigate({
 				to: "/r18/ranking/{-$type}",
 				params: { type: newParams.rankingType },
-				search: nextSearch,
+				search: (_) => buildR18RankingSearch(newParams),
 			});
 		},
 		[navigate],

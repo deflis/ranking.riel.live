@@ -10,11 +10,14 @@ export const parseBoolean = (
 	str: string | undefined,
 	defaultValue: boolean,
 ): boolean => {
-	return str === undefined ? defaultValue : str !== "0";
+	const num = parseIntSafe(str);
+	return str === undefined ? defaultValue : num !== 0;
 };
 
-export const parseIntSafe = (str: string | undefined): number | undefined => {
-	return str !== undefined ? Number.parseInt(str, 10) : undefined;
+export const parseIntSafe = (
+	str: string | number | undefined,
+): number | undefined => {
+	return str !== undefined ? Number.parseInt(String(str), 10) : undefined;
 };
 
 const allSites = [
@@ -24,15 +27,25 @@ const allSites = [
 	R18Site.Midnight,
 ];
 
-export const parseGenres = (rawGenres: string | undefined): Genre[] => {
-	return (rawGenres ?? "")
+export const parseGenres = (
+	rawGenres: string | number | number[] | undefined,
+): Genre[] => {
+	if (Array.isArray(rawGenres)) {
+		return rawGenres.filter((x) => allGenres.includes(x as Genre)) as Genre[];
+	}
+	return String(rawGenres ?? "")
 		.split(",")
 		.map((x) => Number.parseInt(x, 10) as Genre)
 		.filter((x) => allGenres.includes(x));
 };
 
-export const parseSites = (rawSites: string | undefined): R18Site[] => {
-	return (rawSites ?? "")
+export const parseSites = (
+	rawSites: string | number | number[] | undefined,
+): R18Site[] => {
+	if (Array.isArray(rawSites)) {
+		return rawSites.filter((x) => allSites.includes(x as R18Site)) as R18Site[];
+	}
+	return String(rawSites ?? "")
 		.split(",")
 		.map((x) => Number.parseInt(x, 10) as R18Site)
 		.filter((x) => allSites.includes(x));
@@ -56,8 +69,8 @@ export const parseCustomRankingParams = (
 ): CustomRankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
 	return {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
+		keyword: String(search.keyword),
+		notKeyword: String(search.not_keyword),
 		byStory: parseBoolean(search.by_story, false),
 		byTitle: parseBoolean(search.by_title, false),
 		genres: parseGenres(search.genres),
@@ -89,8 +102,8 @@ export const parseR18RankingParams = (
 ): R18RankingParams => {
 	const rankingType = (type ?? RankingType.Daily) as RankingType;
 	return {
-		keyword: search.keyword,
-		notKeyword: search.not_keyword,
+		keyword: String(search.keyword),
+		notKeyword: String(search.not_keyword),
 		byStory: parseBoolean(search.by_story, false),
 		byTitle: parseBoolean(search.by_title, false),
 		sites: parseSites(search.sites),
@@ -101,5 +114,58 @@ export const parseR18RankingParams = (
 		kanketsu: parseBoolean(search.kanketsu, true),
 		tanpen: parseBoolean(search.tanpen, true),
 		rankingType,
+	};
+};
+
+function arrayFormat<T>(genres: T[] | undefined): T | T[] | undefined {
+	if (!genres || genres.length === 0) {
+		return undefined;
+	}
+	if (genres.length === 1) {
+		return genres[0];
+	}
+	return genres;
+}
+
+function stringFormat(string: string | undefined): string | undefined {
+	if (!string || string.length === 0) {
+		return undefined;
+	}
+	return String(string);
+}
+
+export const buildCustomRankingSearch = (
+	params: Partial<Exclude<CustomRankingParams, "rankingType">>,
+): Record<string, unknown> => {
+	return {
+		keyword: stringFormat(params.keyword),
+		not_keyword: stringFormat(params.notKeyword),
+		by_story: params.byStory ? 1 : undefined, // デフォルトfalse
+		by_title: params.byTitle ? 1 : undefined, // デフォルトfalse
+		genres: arrayFormat(params.genres),
+		max: params.max ?? undefined,
+		min: params.min ?? undefined,
+		first_update: params.firstUpdate ?? undefined,
+		rensai: params.rensai ? undefined : 0, // デフォルトtrue
+		kanketsu: params.kanketsu ? undefined : 0, // デフォルトtrue
+		tanpen: params.tanpen ? undefined : 0, // デフォルトtrue
+	};
+};
+
+export const buildR18RankingSearch = (
+	params: Partial<Exclude<R18RankingParams, "rankingType">>,
+): Record<string, unknown> => {
+	return {
+		keyword: stringFormat(params.keyword),
+		not_keyword: stringFormat(params.notKeyword),
+		by_story: params.byStory ? 1 : undefined, // デフォルトfalse
+		by_title: params.byTitle ? 1 : undefined, // デフォルトfalse
+		sites: arrayFormat(params.sites),
+		max: params.max ?? undefined,
+		min: params.min ?? undefined,
+		first_update: params.firstUpdate ?? undefined,
+		rensai: params.rensai ? undefined : 0, // デフォルトtrue
+		kanketsu: params.kanketsu ? undefined : 0, // デフォルトtrue
+		tanpen: params.tanpen ? undefined : 0, // デフォルトtrue
 	};
 };

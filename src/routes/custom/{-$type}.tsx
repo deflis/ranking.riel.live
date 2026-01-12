@@ -23,7 +23,10 @@ type CustomRankingSearch = {
 };
 
 import { prefetchCustomRanking } from "@/modules/data/custom";
-import { parseCustomRankingParams } from "@/modules/utils/parseSearch";
+import {
+	buildCustomRankingSearch,
+	parseCustomRankingParams,
+} from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/custom/{-$type}")({
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
@@ -62,25 +65,10 @@ function CustomRankingPage() {
 
 	const handleSearch = useCallback(
 		(newParams: CustomRankingParams) => {
-			const nextSearch: CustomRankingSearch = {};
-			if (newParams.keyword) nextSearch.keyword = newParams.keyword;
-			if (newParams.notKeyword) nextSearch.not_keyword = newParams.notKeyword;
-			if (newParams.byStory) nextSearch.by_story = "1";
-			if (newParams.byTitle) nextSearch.by_title = "1";
-			if (newParams.genres.length !== 0)
-				nextSearch.genres = newParams.genres.join(",");
-			if (newParams.max) nextSearch.max = newParams.max.toString();
-			if (newParams.min) nextSearch.min = newParams.min.toString();
-			if (newParams.firstUpdate)
-				nextSearch.first_update = newParams.firstUpdate;
-			if (newParams.rensai === false) nextSearch.rensai = "0";
-			if (newParams.kanketsu === false) nextSearch.kanketsu = "0";
-			if (newParams.tanpen === false) nextSearch.tanpen = "0";
-
 			navigate({
 				to: "/custom/{-$type}",
 				params: { type: newParams.rankingType },
-				search: nextSearch,
+				search: (_) => buildCustomRankingSearch(newParams),
 			});
 		},
 		[navigate],

@@ -1,5 +1,6 @@
 import { Paper } from "@/components/ui/atoms/Paper";
 import { SelfAd } from "@/components/ui/common/SelfAd";
+import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { FaCog } from "react-icons/fa";
@@ -36,7 +37,7 @@ function AboutPage() {
 						こちらのフィルターはブラウザごとに記録されており、次の閲覧時に再度反映されるようになっています。
 					</p>
 					<p>
-						<Link to="/custom/{-$type}" params={{ type: "all" }}>
+						<Link to="/custom/{-$type}" params={{ type: "all" }} search={(_) => ({})}>
 							カスタムランキング
 						</Link>
 						では、右上の「
@@ -46,7 +47,7 @@ function AboutPage() {
 						<Link
 							to="/custom/{-$type}"
 							params={{ type: "all" }}
-							search={{ keyword: "悪役令嬢" }}
+							search={() => buildCustomRankingSearch({ keyword: "悪役令嬢" })}
 						>
 							悪役令嬢
 						</Link>
@@ -54,7 +55,7 @@ function AboutPage() {
 						<Link
 							to="/custom/{-$type}"
 							params={{ type: "all" }}
-							search={{ keyword: "VRMMO" }}
+							search={() => buildCustomRankingSearch({ keyword: "VRMMO" })}
 						>
 							VRMMO
 						</Link>

@@ -20,6 +20,7 @@ import { PulseLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag, Tags } from "../common/bulma/Tag";
+import { buildCustomRankingSearch, buildR18RankingSearch } from "@/modules/utils/parseSearch";
 
 const ChipLink = createLink(Chip);
 
@@ -110,7 +111,7 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ genres: String(item.genre) }}
+								search={(_) => buildCustomRankingSearch({ genres: [item.genre] })}
 							>
 								{GenreNotation[item.genre]}
 							</Link>
@@ -119,7 +120,7 @@ const RankingItemRender: React.FC<{
 							<Link
 								to="/r18/ranking/{-$type}"
 								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={{ sites: String(item.nocgenre) }}
+								search={(_) => buildR18RankingSearch({ sites: [item.nocgenre] })}
 							>
 								{R18SiteNotation[item.nocgenre]}
 							</Link>
