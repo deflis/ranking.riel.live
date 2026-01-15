@@ -93,7 +93,7 @@ function RankingPage() {
 					params: (prev) => ({
 						...prev,
 						type: type ?? undefined,
-						date: newDate.toISODate() ?? undefined,
+						date: newDate.toISODate(),
 					}),
 				});
 			}
@@ -129,7 +129,7 @@ function RankingPage() {
 								params: (prev) => ({
 									...prev,
 									type: newType,
-									date: isNow ? undefined : (date.toISODate() ?? undefined),
+									date: isNow ? undefined : date.toISODate(),
 								}),
 							})
 						}
@@ -145,7 +145,7 @@ function RankingPage() {
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, -1).toISODate() ?? undefined,
+								date: addDate(date, type, -1).toISODate(),
 							})}
 						>
 							前
@@ -168,7 +168,7 @@ function RankingPage() {
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, 1).toISODate() ?? undefined,
+								date: addDate(date, type, 1).toISODate(),
 							})}
 						>
 							次

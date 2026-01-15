@@ -135,9 +135,9 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 							novelupdated_at,
 							...others
 						}) => ({
-							general_firstup: parseDate(general_firstup).toISO() ?? "",
-							general_lastup: parseDate(general_lastup).toISO() ?? "",
-							novelupdated_at: parseDate(novelupdated_at).toISO() ?? "",
+							general_firstup: parseDate(general_firstup).toISO(),
+							general_lastup: parseDate(general_lastup).toISO(),
+							novelupdated_at: parseDate(novelupdated_at).toISO(),
 							...others,
 						}),
 					)
@@ -209,7 +209,7 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
 		rankingData[type] = history
 			.filter((x) => x.type === type)
 			.map(({ date, pt, rank }) => ({
-				date: DateTime.fromJSDate(date, { zone: "Asia/Tokyo" }).toISO() ?? "",
+				date: DateTime.fromJSDate(date, { zone: "Asia/Tokyo" }).toISO(),
 				pt,
 				rank,
 			}));

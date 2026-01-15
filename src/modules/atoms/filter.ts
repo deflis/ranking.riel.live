@@ -145,8 +145,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 					: ((firstUpdateRaw as TermStrings) ?? "none"),
 				begin:
 					firstUpdate?.toISODate() ??
-					DateTime.now().setZone("Asia/Tokyo").toISODate() ??
-					"",
+					DateTime.now().setZone("Asia/Tokyo").toISODate(),
 				end: "",
 			},
 			status: {
@@ -175,7 +174,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 		set(
 			firstUpdateRawAtom,
 			config.firstUpdate.term === "custom" && firstUpdateBegin.isValid
-				? (firstUpdateBegin.startOf("day").toISO() ?? "")
+				? firstUpdateBegin.startOf("day").toISO()
 				: config.firstUpdate.term !== "none"
 					? config.firstUpdate.term
 					: undefined,

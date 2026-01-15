@@ -95,9 +95,9 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 							novelupdated_at,
 							...others
 						}) => ({
-							general_firstup: parseDate(general_firstup).toISO() ?? "",
-							general_lastup: parseDate(general_lastup).toISO() ?? "",
-							novelupdated_at: parseDate(novelupdated_at).toISO() ?? "",
+							general_firstup: parseDate(general_firstup).toISO(),
+							general_lastup: parseDate(general_lastup).toISO(),
+							novelupdated_at: parseDate(novelupdated_at).toISO(),
 							...others,
 						}),
 					)

@@ -123,8 +123,7 @@ function getDefaultValues({
 				: ((firstUpdateRaw as TermStrings) ?? "none"),
 			begin:
 				firstUpdate?.toISODate() ??
-				DateTime.now().setZone("Asia/Tokyo").toISODate() ??
-				"",
+				DateTime.now().setZone("Asia/Tokyo").toISODate(),
 			end: "",
 		},
 		status: {
