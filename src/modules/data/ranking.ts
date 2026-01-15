@@ -43,14 +43,7 @@ const rankingServerFn = createServerFn({ method: "GET" })
 			.date(dateValue)
 			.type(type)
 			.execute({
-				fetchOptions: {
-					...fetchOptions,
-					cf: {
-						...fetchOptions.cf,
-						cacheTtl: 60 * 60 * 24 * 30, // 30 日
-						cacheEverything: true,
-					},
-				},
+				fetchOptions // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
 			});
 	});
 
