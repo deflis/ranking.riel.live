@@ -130,7 +130,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 			),
 			story: {
 				min: {
-					enable: !!storyMax,
+					enable: !!storyMin,
 					value: storyMin ?? 1,
 				},
 				max: {
@@ -139,10 +139,11 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 				},
 			},
 			firstUpdate: {
-				term: DateTime.fromISO(firstUpdateRaw ?? "", { zone: "Asia/Tokyo" })
-					.isValid
-					? "custom"
-					: ((firstUpdateRaw as TermStrings) ?? "none"),
+				term:
+					firstUpdateRaw &&
+					DateTime.fromISO(firstUpdateRaw, { zone: "Asia/Tokyo" }).isValid
+						? "custom"
+						: ((firstUpdateRaw as TermStrings) ?? "none"),
 				begin:
 					firstUpdate?.toISODate() ??
 					DateTime.now().setZone("Asia/Tokyo").toISODate(),
@@ -201,7 +202,7 @@ export const filterAtom = atom((get) => {
 		(storyMin === undefined ||
 			storyMin < 1 ||
 			item.general_all_no >= storyMin) &&
-		(!firstUpdate || firstUpdate <= DateTime.fromISO(item.general_firstup)) &&
+		(!firstUpdate || firstUpdate < DateTime.fromISO(item.general_firstup)) &&
 		((enableTanpen && item.noveltype === 2) ||
 			(enableRensai && item.noveltype === 1 && item.end === 1) ||
 			(enableKanketsu && item.noveltype === 1 && item.end === 0));
