@@ -46,6 +46,7 @@ const minDate = DateTime.fromObject(
 const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
 
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
+	ssr: "data-only",
 	loader: async ({
 		context: { queryClient },
 		params: { type: typeParam, date: dateParam },
