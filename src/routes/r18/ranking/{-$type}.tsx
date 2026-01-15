@@ -11,7 +11,6 @@ import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/ranking/{-$type}")({
-	ssr: "data-only",
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,

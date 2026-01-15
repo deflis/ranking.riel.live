@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import React from "react";
 
 import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
-import { useR18DetailForView } from "@/modules/data/r18item";
 
 import { prefetchR18Detail } from "@/modules/data/r18item";
 import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
