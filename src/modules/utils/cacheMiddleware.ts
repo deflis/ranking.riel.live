@@ -13,9 +13,6 @@ export type CacheOptions = {
 };
 
 /**
- * キャッシュミドルウェア
- */
-/**
  * Cache-Control ヘッダを生成する
  */
 export function createCacheControlHeader(options: CacheOptions = {}) {
@@ -33,6 +30,9 @@ export function createCacheControlHeader(options: CacheOptions = {}) {
 			)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
 }
 
+/**
+ * キャッシュミドルウェア
+ */
 export function cacheMiddleware(options: CacheOptions = {}) {
 	const headerValue = createCacheControlHeader(options);
 
