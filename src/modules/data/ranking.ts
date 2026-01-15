@@ -27,7 +27,11 @@ export const rankingFetcher: QueryFunction<
 	await rankingServerFn({ data: { type, date } });
 
 const rankingServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
+	.middleware([cacheMiddleware({
+		// 過去のランキングは全く変わらないはずなので長めにキャッシュする
+		maxAge: 60 * 60 * 24 * 30, // 30 日
+		sMaxAge: 60 * 60 * 24 * 30, // 30 日
+	})])
 	.inputValidator((data: { type: NarouRankingType; date: string }) => data)
 	.handler(async ({ data: { type, date } }) => {
 		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
