@@ -21,12 +21,10 @@ type CacheHeaders = {
  * キャッシュヘッダを生成する
  */
 export function createCacheHeaders(options: CacheOptions = {}): CacheHeaders {
-	const {
-		maxAge = 3600,
-		sMaxAge = maxAge,
-		staleWhileRevalidate = 60,
-		visibility = "public",
-	} = options;
+	const visibility = options.visibility ?? "public";
+	const maxAge = Math.round(options.maxAge ?? 3600);
+	const sMaxAge = Math.round(options.sMaxAge ?? maxAge);
+	const staleWhileRevalidate = Math.round(options.staleWhileRevalidate ?? 60);
 
 	if (visibility === "no-store") {
 		return {
@@ -34,13 +32,8 @@ export function createCacheHeaders(options: CacheOptions = {}): CacheHeaders {
 		};
 	}
 
-	const cacheControl = `${visibility}, max-age=${Math.round(
-		maxAge,
-	)}, s-maxage=${Math.round(sMaxAge)}, stale-while-revalidate=${Math.round(
-		staleWhileRevalidate,
-	)}`;
-
-	const cdnCacheControl = `max-age=${Math.round(sMaxAge)}`;
+	const cacheControl = `${visibility}, max-age=${maxAge}, s-maxage=${sMaxAge}, stale-while-revalidate=${staleWhileRevalidate}`;
+	const cdnCacheControl = `max-age=${sMaxAge}`;
 	return {
 		"Cache-Control": cacheControl,
 		"CDN-Cache-Control": cdnCacheControl,
