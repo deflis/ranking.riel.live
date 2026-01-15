@@ -74,5 +74,5 @@ export const fetchOptions = {
 	cf: {
 		cacheTtl: 60 * 60, // 1 時間
 		cacheEverything: true,
-	}
+	},
 } satisfies RequestInit;
