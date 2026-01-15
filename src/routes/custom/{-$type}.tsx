@@ -23,11 +23,11 @@ type CustomRankingSearch = {
 };
 
 import { prefetchCustomRanking } from "@/modules/data/custom";
+import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
 import {
 	buildCustomRankingSearch,
 	parseCustomRankingParams,
 } from "@/modules/utils/parseSearch";
-import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
 
 export const Route = createFileRoute("/custom/{-$type}")({
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {

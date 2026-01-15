@@ -20,17 +20,17 @@ export type CacheOptions = {
  */
 export function createCacheControlHeader(options: CacheOptions = {}) {
 	const {
-        maxAge = 3600,
-        sMaxAge = maxAge,
-        staleWhileRevalidate = 60,
-        visibility = "public",
-    } = options;
+		maxAge = 3600,
+		sMaxAge = maxAge,
+		staleWhileRevalidate = 60,
+		visibility = "public",
+	} = options;
 
 	return visibility === "no-store"
 		? "no-store"
 		: `${visibility}, max-age=${Math.round(maxAge)}, s-maxage=${Math.round(
-			sMaxAge,
-		)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+				sMaxAge,
+			)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
 }
 
 export function cacheMiddleware(options: CacheOptions = {}) {

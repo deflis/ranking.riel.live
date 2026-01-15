@@ -20,8 +20,8 @@ import { RankingRender } from "@/components/ui/ranking/RankingRender";
 import { prefetchRanking } from "@/modules/data/prefetch";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
-import { addDate, convertDate } from "@/modules/utils/date";
 import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
+import { addDate, convertDate } from "@/modules/utils/date";
 
 const ButtonLink = createLink(Button);
 

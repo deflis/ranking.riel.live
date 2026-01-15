@@ -79,16 +79,18 @@ const RankingHistoryCharts: React.FC<{
 }> = ({ ranking, type }) => {
 	const graphColor = useAtomValue(graphColorAtom);
 
-	const rankingData = ranking.map(({ date, rank, pt }) => ({ date: DateTime.fromISO(date), rank, pt }));
+	const rankingData = ranking.map(({ date, rank, pt }) => ({
+		date: DateTime.fromISO(date),
+		rank,
+		pt,
+	}));
 	const dateList = rankingData.map(({ date }) => date);
 	const minDate = dateList[0];
 	const maxDate = dateList[dateList.length - 1];
 
 	const data: DataType[] = Array.from(rangeDate(minDate, maxDate, type))
 		.map((date) => {
-			const item = rankingData.find((item) =>
-				date.hasSame(item.date, "day"),
-			);
+			const item = rankingData.find((item) => date.hasSame(item.date, "day"));
 			return {
 				date,
 				rank: item?.rank ?? null,

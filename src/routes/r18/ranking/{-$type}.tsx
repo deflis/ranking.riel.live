@@ -7,8 +7,8 @@ import {
 import { RankingType } from "@/modules/interfaces/RankingType";
 
 import { prefetchR18Ranking } from "@/modules/data/r18ranking";
-import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
+import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/ranking/{-$type}")({
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
