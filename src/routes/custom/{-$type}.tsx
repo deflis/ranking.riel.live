@@ -23,7 +23,7 @@ type CustomRankingSearch = {
 };
 
 import { prefetchCustomRanking } from "@/modules/data/custom";
-import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
+import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
 import {
 	buildCustomRankingSearch,
 	parseCustomRankingParams,
@@ -55,9 +55,7 @@ export const Route = createFileRoute("/custom/{-$type}")({
 		await prefetchCustomRanking(queryClient, params, 1);
 	},
 	component: CustomRankingPage,
-	headers: () => ({
-		"Cache-Control": createCacheControlHeader(),
-	}),
+	headers: () => createCacheHeaders(),
 });
 
 function CustomRankingPage() {

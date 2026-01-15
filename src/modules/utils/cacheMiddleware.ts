@@ -12,10 +12,15 @@ export type CacheOptions = {
 	visibility?: "public" | "private" | "no-store" | string;
 };
 
+type CacheHeaders = {
+	readonly "Cache-Control": string;
+	readonly "CDN-Cache-Control"?: string;
+};
+
 /**
- * Cache-Control ヘッダを生成する
+ * キャッシュヘッダを生成する
  */
-export function createCacheControlHeader(options: CacheOptions = {}) {
+export function createCacheHeaders(options: CacheOptions = {}): CacheHeaders {
 	const {
 		maxAge = 3600,
 		sMaxAge = maxAge,
@@ -23,18 +28,34 @@ export function createCacheControlHeader(options: CacheOptions = {}) {
 		visibility = "public",
 	} = options;
 
-	return visibility === "no-store"
-		? "no-store"
-		: `${visibility}, max-age=${Math.round(maxAge)}, s-maxage=${Math.round(
-				sMaxAge,
-			)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+	if (visibility === "no-store") {
+		return {
+			"Cache-Control": "no-store",
+		};
+	}
+
+	const cacheControl = `${visibility}, max-age=${Math.round(
+		maxAge,
+	)}, s-maxage=${Math.round(sMaxAge)}, stale-while-revalidate=${Math.round(
+		staleWhileRevalidate,
+	)}`;
+
+	const cdnCacheControl = `s-maxage=${Math.round(
+		sMaxAge,
+	)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+	return {
+		"Cache-Control": cacheControl,
+		"CDN-Cache-Control": cdnCacheControl,
+	};
 }
 
 /**
  * キャッシュミドルウェア
  */
 export function cacheMiddleware(options: CacheOptions = {}) {
-	const headerValue = createCacheControlHeader(options);
+	const headers = createCacheHeaders(options);
+	const cacheControlHeader = headers["Cache-Control"];
+	const cdnCacheControlHeader = headers["CDN-Cache-Control"];
 
 	return createMiddleware().server(async ({ next }) => {
 		const res = await next();
@@ -44,7 +65,10 @@ export function cacheMiddleware(options: CacheOptions = {}) {
 		}
 
 		// キャッシュを設定する
-		setResponseHeader("Cache-Control", headerValue);
+		setResponseHeader("Cache-Control", cacheControlHeader);
+		if (cdnCacheControlHeader) {
+			setResponseHeader("CDN-Cache-Control", cdnCacheControlHeader);
+		}
 		return res;
 	});
 }

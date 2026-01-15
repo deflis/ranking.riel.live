@@ -1,4 +1,4 @@
-import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
+import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -7,7 +7,5 @@ export const Route = createFileRoute("/")({
 			to: "/ranking/{-$type}/{-$date}",
 		});
 	},
-	headers: () => ({
-		"Cache-Control": createCacheControlHeader(),
-	}),
+	headers: () => createCacheHeaders(),
 });
