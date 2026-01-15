@@ -5,12 +5,16 @@ import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
 import { useR18DetailForView } from "@/modules/data/r18item";
 
 import { prefetchR18Detail } from "@/modules/data/r18item";
+import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
 
 export const Route = createFileRoute("/r18/detail/$ncode")({
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
 		await prefetchR18Detail(queryClient, ncode);
 	},
 	component: R18DetailPage,
+	headers: () => ({
+		"Cache-Control": createCacheControlHeader(),
+	}),
 });
 
 function R18DetailPage() {

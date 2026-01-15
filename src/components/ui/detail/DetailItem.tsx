@@ -1,5 +1,6 @@
 import { Link as RouterLink, createLink } from "@tanstack/react-router";
 import { decode } from "html-entities";
+import { DateTime } from "luxon";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
 import type React from "react";
 import { FaPenNib } from "react-icons/fa";
@@ -93,6 +94,13 @@ const DetailItem: React.FC<{
 	const link = `${baseUrl}/${ncode}/`;
 	const linkFirst = `${baseUrl}/${ncode}/1/`;
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
+
+	const generalFirstup = item?.general_firstup
+		? DateTime.fromISO(item.general_firstup)
+		: undefined;
+	const generalLastup = item?.general_lastup
+		? DateTime.fromISO(item.general_lastup)
+		: undefined;
 
 	return (
 		<>
@@ -288,10 +296,10 @@ const DetailItem: React.FC<{
 						label="掲載日"
 						icon={<HiCalendar className="w-3 h-3 inline" />}
 					>
-						{item ? (
+						{generalFirstup ? (
 							<>
-								{item.general_firstup.toFormat(dateFormat)} （
-								{item.general_firstup.toRelative()}）
+								{generalFirstup.toFormat(dateFormat)} （
+								{generalFirstup.toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
@@ -301,10 +309,10 @@ const DetailItem: React.FC<{
 						label="最新部分掲載日"
 						icon={<IoTime className="w-3 h-3 inline" />}
 					>
-						{item ? (
+						{generalLastup ? (
 							<>
-								{item.general_lastup.toFormat(dateFormat)} （
-								{item.general_lastup.toRelative()}）
+								{generalLastup.toFormat(dateFormat)} （
+								{generalLastup.toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />

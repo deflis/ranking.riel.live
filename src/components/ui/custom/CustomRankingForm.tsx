@@ -123,8 +123,7 @@ function getDefaultValues({
 				: ((firstUpdateRaw as TermStrings) ?? "none"),
 			begin:
 				firstUpdate?.toISODate() ??
-				DateTime.now().setZone("Asia/Tokyo").toISODate() ??
-				"",
+				DateTime.now().setZone("Asia/Tokyo").toISODate(),
 			end: "",
 		},
 		status: {
@@ -397,17 +396,15 @@ const EnableCustomRankingForm: React.FC<
 					<TextField
 						type="date"
 						{...register("firstUpdate.begin")}
-						min={
-							DateTime.fromObject(
-								{
-									year: 2013,
-									month: 5,
-									day: 1,
-								},
-								{ zone: "Asia/Tokyo" },
-							).toISODate() ?? ""
-						}
-						max={DateTime.now().setZone("Asia/Tokyo").toISODate() ?? ""}
+						min={DateTime.fromObject(
+							{
+								year: 2013,
+								month: 5,
+								day: 1,
+							},
+							{ zone: "Asia/Tokyo" },
+						).toISODate()}
+						max={DateTime.now().setZone("Asia/Tokyo").toISODate()}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}

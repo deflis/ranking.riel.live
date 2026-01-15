@@ -15,7 +15,10 @@ export type CacheOptions = {
 /**
  * キャッシュミドルウェア
  */
-export function cacheMiddleware(options: CacheOptions = {}) {
+/**
+ * Cache-Control ヘッダを生成する
+ */
+export function createCacheControlHeader(options: CacheOptions = {}) {
 	const {
 		maxAge = 3600,
 		sMaxAge = maxAge,
@@ -23,12 +26,15 @@ export function cacheMiddleware(options: CacheOptions = {}) {
 		visibility = "public",
 	} = options;
 
-	const headerValue =
-		visibility === "no-store"
-			? "no-store"
-			: `${visibility}, max-age=${Math.round(maxAge)}, s-maxage=${Math.round(
-					sMaxAge,
-				)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+	return visibility === "no-store"
+		? "no-store"
+		: `${visibility}, max-age=${Math.round(maxAge)}, s-maxage=${Math.round(
+				sMaxAge,
+			)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+}
+
+export function cacheMiddleware(options: CacheOptions = {}) {
+	const headerValue = createCacheControlHeader(options);
 
 	return createMiddleware().server(async ({ next }) => {
 		const res = await next();

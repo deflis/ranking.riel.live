@@ -19,12 +19,13 @@ export const prefetchRanking = async (
 	type: RankingType,
 	date: DateTime,
 ) => {
+	const normalizedDate = convertDate(date, type).toISODate();
 	await queryClient.prefetchQuery({
-		queryKey: rankingKey(type, convertDate(date, type)),
+		queryKey: rankingKey(type, normalizedDate),
 		queryFn: rankingFetcher,
 	});
 	const ranking = queryClient.getQueryData<NarouRankingResult[]>(
-		rankingKey(type, convertDate(date, type)),
+		rankingKey(type, normalizedDate),
 	);
 	await prefetchRankingDetail(
 		queryClient,

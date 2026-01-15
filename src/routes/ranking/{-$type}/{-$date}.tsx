@@ -20,6 +20,7 @@ import { RankingRender } from "@/components/ui/ranking/RankingRender";
 import { prefetchRanking } from "@/modules/data/prefetch";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
+import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
 import { addDate, convertDate } from "@/modules/utils/date";
 
 const ButtonLink = createLink(Button);
@@ -58,6 +59,9 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		await prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
+	headers: () => ({
+		"Cache-Control": createCacheControlHeader(),
+	}),
 });
 
 function RankingPage() {
@@ -77,7 +81,7 @@ function RankingPage() {
 	const dateInputRef = useRef<HTMLInputElement>(null);
 
 	if (dateInputRef.current) {
-		dateInputRef.current.value = date.toISODate() ?? "";
+		dateInputRef.current.value = date.toISODate();
 	}
 
 	const handleDateCommit = useCallback(
@@ -89,7 +93,7 @@ function RankingPage() {
 					params: (prev) => ({
 						...prev,
 						type: type ?? undefined,
-						date: newDate.toISODate() ?? undefined,
+						date: newDate.toISODate(),
 					}),
 				});
 			}
@@ -125,7 +129,7 @@ function RankingPage() {
 								params: (prev) => ({
 									...prev,
 									type: newType,
-									date: isNow ? undefined : (date.toISODate() ?? undefined),
+									date: isNow ? undefined : date.toISODate(),
 								}),
 							})
 						}
@@ -141,7 +145,7 @@ function RankingPage() {
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, -1).toISODate() ?? undefined,
+								date: addDate(date, type, -1).toISODate(),
 							})}
 						>
 							前
@@ -149,9 +153,9 @@ function RankingPage() {
 					)}
 					<TextField
 						ref={dateInputRef}
-						min={minDate.toISODate() ?? ""}
-						max={maxDate.toISODate() ?? ""}
-						defaultValue={date.toISODate() ?? ""}
+						min={minDate.toISODate()}
+						max={maxDate.toISODate()}
+						defaultValue={date.toISODate()}
 						type="date"
 						step={rankingTypeSteps[type]}
 						onBlur={handleBlur}
@@ -164,7 +168,7 @@ function RankingPage() {
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, 1).toISODate() ?? undefined,
+								date: addDate(date, type, 1).toISODate(),
 							})}
 						>
 							次
@@ -199,6 +203,6 @@ function RankingPage() {
 }
 
 function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
-	const { data } = useRanking(type, date);
+	const { data } = useRanking(type, date.toISODate());
 	return <RankingRender ranking={data} />;
 }

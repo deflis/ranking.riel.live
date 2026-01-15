@@ -18,8 +18,8 @@ import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
 
-export const rankingKey = (type: NarouRankingType, date: DateTime) =>
-	["ranking", type, date.toISODate() ?? ""] as const;
+export const rankingKey = (type: NarouRankingType, date: string) =>
+	["ranking", type, date] as const;
 export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
@@ -27,7 +27,13 @@ export const rankingFetcher: QueryFunction<
 	await rankingServerFn({ data: { type, date } });
 
 const rankingServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
+	.middleware([
+		cacheMiddleware({
+			// 過去のランキングは全く変わらないはずなので長めにキャッシュする
+			maxAge: 60 * 60 * 24 * 30, // 30 日
+			sMaxAge: 60 * 60 * 24 * 30, // 30 日
+		}),
+	])
 	.inputValidator((data: { type: NarouRankingType; date: string }) => data)
 	.handler(async ({ data: { type, date } }) => {
 		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
@@ -36,7 +42,7 @@ const rankingServerFn = createServerFn({ method: "GET" })
 		return await ranking().date(dateValue).type(type).execute({ fetchOptions });
 	});
 
-export function useRanking(type: NarouRankingType, date: DateTime) {
+export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
 		queryKey: rankingKey(type, date),
 		queryFn: rankingFetcher,
