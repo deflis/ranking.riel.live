@@ -77,7 +77,7 @@ function RankingPage() {
 	const dateInputRef = useRef<HTMLInputElement>(null);
 
 	if (dateInputRef.current) {
-		dateInputRef.current.value = date.toISODate() ?? "";
+		dateInputRef.current.value = date.toISODate();
 	}
 
 	const handleDateCommit = useCallback(
@@ -149,9 +149,9 @@ function RankingPage() {
 					)}
 					<TextField
 						ref={dateInputRef}
-						min={minDate.toISODate() ?? ""}
-						max={maxDate.toISODate() ?? ""}
-						defaultValue={date.toISODate() ?? ""}
+						min={minDate.toISODate()}
+						max={maxDate.toISODate()}
+						defaultValue={date.toISODate()}
 						type="date"
 						step={rankingTypeSteps[type]}
 						onBlur={handleBlur}
@@ -199,6 +199,6 @@ function RankingPage() {
 }
 
 function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
-	const { data } = useRanking(type, date.toISODate() ?? "");
+	const { data } = useRanking(type, date.toISODate());
 	return <RankingRender ranking={data} />;
 }

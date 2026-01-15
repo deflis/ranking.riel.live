@@ -19,7 +19,7 @@ export const prefetchRanking = async (
 	type: RankingType,
 	date: DateTime,
 ) => {
-	const normalizedDate = convertDate(date, type).toISODate() ?? "";
+	const normalizedDate = convertDate(date, type).toISODate();
 	await queryClient.prefetchQuery({
 		queryKey: rankingKey(type, normalizedDate),
 		queryFn: rankingFetcher,

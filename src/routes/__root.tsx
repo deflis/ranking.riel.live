@@ -24,6 +24,7 @@ import "@/index.css";
 
 Settings.defaultZone = "Asia/Tokyo";
 Settings.defaultLocale = "ja";
+Settings.throwOnInvalid = true;
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

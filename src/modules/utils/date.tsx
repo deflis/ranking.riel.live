@@ -13,7 +13,7 @@ export function parseDate(date: string | undefined): DateTime | undefined {
 }
 
 export function formatDate(date: DateTime, type: NarouRankingType): string {
-	return convertDate(date, type).toISODate() ?? "";
+	return convertDate(date, type).toISODate();
 }
 
 export function convertDate(date: DateTime, type: NarouRankingType): DateTime {
