@@ -16,6 +16,7 @@ import { ErrorFallback } from "../common/ErrorFallback";
 import { SelfAd } from "../common/SelfAd";
 import DetailItem from "./DetailItem";
 import { RankingHistoryRender } from "./RankingHistoryRender";
+import { ClientOnly } from "@tanstack/react-router";
 
 const DetailItemContent: React.FC<{
 	ncode: string;
@@ -46,6 +47,8 @@ const RankingHistoryContent: React.FC<{
 	return <RankingHistoryRender ranking={ranking} />;
 };
 
+
+
 export const DetailRenderer: React.FC<{
 	ncode: string;
 	isR18?: boolean;
@@ -63,15 +66,17 @@ export const DetailRenderer: React.FC<{
 			</QueryErrorResetBoundary>
 
 			{!isR18 && (
-				<QueryErrorResetBoundary>
-					{({ reset }) => (
-						<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-							<Suspense fallback={<DotLoader />}>
-								<RankingHistoryContent ncode={ncode} />
-							</Suspense>
-						</ErrorBoundary>
-					)}
-				</QueryErrorResetBoundary>
+				<ClientOnly>
+					<QueryErrorResetBoundary>
+						{({ reset }) => (
+							<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
+								<Suspense fallback={<DotLoader />}>
+									<RankingHistoryContent ncode={ncode} />
+								</Suspense>
+							</ErrorBoundary>
+						)}
+					</QueryErrorResetBoundary>
+				</ClientOnly>
 			)}
 
 			<Paper>
