@@ -2,7 +2,6 @@ import { Paper } from "@/components/ui/atoms/Paper";
 import { SelfAd } from "@/components/ui/common/SelfAd";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import React from "react";
 import { FaCog } from "react-icons/fa";
 
 export const Route = createFileRoute("/about")({

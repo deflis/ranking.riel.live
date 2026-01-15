@@ -1,12 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import type { Genre } from "narou";
 import { useCallback } from "react";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
-import { allGenres } from "@/modules/enum/Genre";
 import type { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
-import { RankingType } from "@/modules/interfaces/RankingType";
 
 type CustomRankingSearch = {
 	keyword?: string;

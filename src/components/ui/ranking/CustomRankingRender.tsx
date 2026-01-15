@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import type React from "react";
@@ -7,10 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
 
 import { adModeAtom } from "../../../modules/atoms/global";
-import {
-	prefetchCustomRanking,
-	useCustomRanking,
-} from "../../../modules/data/custom";
+import { useCustomRanking } from "../../../modules/data/custom";
 import type { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
@@ -68,11 +64,6 @@ export const CustomRankingRender: React.FC<{
 	useEffect(() => {
 		setPage(1);
 	}, [params]);
-
-	const queryClient = useQueryClient();
-	useEffect(() => {
-		prefetchCustomRanking(queryClient, params, page + 1);
-	}, [params, page]);
 
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (

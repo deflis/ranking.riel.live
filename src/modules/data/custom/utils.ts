@@ -71,4 +71,8 @@ export const fetchOptions = {
 	headers: {
 		"User-Agent": "RankingRielLive/1.0 (https://ranking.riel.live/)",
 	},
+	cf: {
+		cacheTtl: 60 * 60, // 1 時間
+		cacheEverything: true,
+	},
 } satisfies RequestInit;

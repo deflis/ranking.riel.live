@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Suspense, useCallback, useEffect, useState } from "react";
@@ -6,10 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
 
 import { adModeAtom } from "../../../modules/atoms/global";
-import {
-	prefetchR18Ranking,
-	useR18Ranking,
-} from "../../../modules/data/r18ranking";
+import { useR18Ranking } from "../../../modules/data/r18ranking";
 import type { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
@@ -67,11 +63,6 @@ export const R18RankingRender: React.FC<{
 	useEffect(() => {
 		setPage(1);
 	}, [params]);
-
-	const queryClient = useQueryClient();
-	useEffect(() => {
-		prefetchR18Ranking(queryClient, params, page + 1);
-	}, [params, page]);
 
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (

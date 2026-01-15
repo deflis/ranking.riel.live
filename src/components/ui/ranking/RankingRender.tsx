@@ -1,14 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import type { NarouRankingResult } from "narou";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Waypoint } from "react-waypoint";
 
 import { adModeAtom } from "../../../modules/atoms/global";
-import { prefetchRankingDetail } from "../../../modules/data/prefetch";
 import { chunk } from "../../../modules/utils/chunk";
 import { Button } from "../atoms/Button";
-import { DotLoader } from "../atoms/Loader";
 import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
@@ -74,13 +71,6 @@ const InsideRender: React.FC<{
 		setMax(10);
 	}, [rankingConstants]);
 
-	const queryClient = useQueryClient();
-	useEffect(() => {
-		prefetchRankingDetail(
-			queryClient,
-			ranking.slice(max, max + 10).map((x) => x.ncode),
-		);
-	}, [ranking, max]);
 	const adMode = useAtomValue(adModeAtom);
 
 	return (
