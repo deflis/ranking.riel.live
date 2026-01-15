@@ -193,10 +193,7 @@ const RankingHistoryCharts: React.FC<{
 					</thead>
 					<tbody>
 						{ranking.map(({ date, rank, pt }) => (
-							<tr
-								key={DateTime.fromISO(date).toUnixInteger()}
-								className={styles.tableRow}
-							>
+							<tr key={date} className={styles.tableRow}>
 								<td className="text-center">
 									<RouterLink
 										to="/ranking/{-$type}/{-$date}"
