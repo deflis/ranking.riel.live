@@ -40,9 +40,7 @@ export function createCacheHeaders(options: CacheOptions = {}): CacheHeaders {
 		staleWhileRevalidate,
 	)}`;
 
-	const cdnCacheControl = `s-maxage=${Math.round(
-		sMaxAge,
-	)}, stale-while-revalidate=${Math.round(staleWhileRevalidate)}`;
+	const cdnCacheControl = `max-age=${Math.round(sMaxAge)}`;
 	return {
 		"Cache-Control": cacheControl,
 		"CDN-Cache-Control": cdnCacheControl,
