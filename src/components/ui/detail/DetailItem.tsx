@@ -95,6 +95,13 @@ const DetailItem: React.FC<{
 	const linkFirst = `${baseUrl}/${ncode}/1/`;
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
 
+	const generalFirstup = item?.general_firstup
+		? DateTime.fromISO(item.general_firstup)
+		: undefined;
+	const generalLastup = item?.general_lastup
+		? DateTime.fromISO(item.general_lastup)
+		: undefined;
+
 	return (
 		<>
 			<div>
@@ -289,10 +296,10 @@ const DetailItem: React.FC<{
 						label="掲載日"
 						icon={<HiCalendar className="w-3 h-3 inline" />}
 					>
-						{item ? (
+						{generalFirstup ? (
 							<>
-								{DateTime.fromISO(item.general_firstup).toFormat(dateFormat)} （
-								{DateTime.fromISO(item.general_firstup).toRelative()}）
+								{generalFirstup.toFormat(dateFormat)} （
+								{generalFirstup.toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
@@ -302,10 +309,10 @@ const DetailItem: React.FC<{
 						label="最新部分掲載日"
 						icon={<IoTime className="w-3 h-3 inline" />}
 					>
-						{item ? (
+						{generalLastup ? (
 							<>
-								{DateTime.fromISO(item.general_lastup).toFormat(dateFormat)} （
-								{DateTime.fromISO(item.general_lastup).toRelative()}）
+								{generalLastup.toFormat(dateFormat)} （
+								{generalLastup.toRelative()}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
