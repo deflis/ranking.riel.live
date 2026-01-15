@@ -11,7 +11,8 @@
 		"deploy": "wrangler pages deploy .output/public",
 		"lint": "biome check .",
 		"lint:fix": "biome check --apply .",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"cf-types": "wrangler types ./src/types/cloudflare.d.ts"
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.2.9",
