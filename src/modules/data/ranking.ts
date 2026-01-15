@@ -63,14 +63,12 @@ export function useRanking(type: NarouRankingType, date: string) {
 
 	const isUseFilter = useAtomValue(isUseFilterAtom);
 	const items = useSuspenseQueries({
-		queries: data.map((v) => ({
-			queryKey: itemKey(v.ncode),
-			queryFn: itemFetcher,
-			// useSuspenseQueries does not support enabled: false in the same way, but we can return nullish data if not used.
-			// However, if we want to skip fetch when filter is off, we might need a different approach or just let it suspend.
-			// For now, if isUseFilter is false, we might still want to fetch it for later use or just suspended.
-			// If enabled: isUseFilter is used in useSuspenseQueries, it will still work but it might be tricky.
-		})),
+		queries: isUseFilter
+			? data.map((v) => ({
+					queryKey: itemKey(v.ncode),
+					queryFn: itemFetcher,
+				}))
+			: [],
 	});
 
 	const filter = useAtomValue(filterAtom);
