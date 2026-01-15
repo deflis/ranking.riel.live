@@ -21,6 +21,7 @@ import { prefetchRanking } from "@/modules/data/prefetch";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
 import { addDate, convertDate } from "@/modules/utils/date";
+import { createCacheControlHeader } from "@/modules/utils/cacheMiddleware";
 
 const ButtonLink = createLink(Button);
 
@@ -58,6 +59,9 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		await prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
+	headers: () => ({
+		"Cache-Control": createCacheControlHeader(),
+	}),
 });
 
 function RankingPage() {
