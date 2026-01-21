@@ -60,7 +60,7 @@
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1",
 		"vite-tsconfig-paths": "^6.0.4",
-		"wrangler": "^4.58.0"
+		"wrangler": "^4.59.1"
 	},
 	"packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }
