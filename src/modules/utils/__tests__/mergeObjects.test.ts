@@ -45,7 +45,6 @@ describe("mergeObject", () => {
 	it("プリミティブ値はマージせず置き換えること", () => {
 		const target: Record<string, unknown> = { a: { b: 1 } };
 		const source: Record<string, unknown> = { a: 42 };
-		// @ts-ignore
 		expect(mergeObject(target, source)).toEqual({ a: 42 });
 	});
 
