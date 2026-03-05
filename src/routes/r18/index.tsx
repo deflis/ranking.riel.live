@@ -30,7 +30,6 @@ export const Route = createFileRoute("/r18/")({
 		const params = parseR18RankingParams(undefined, search);
 		await prefetchR18Ranking(queryClient, params, 1);
 	},
-	staleTime: 10 * 60 * 1000,
 	component: R18RankingPageWrapper,
 	headers: () => createCacheHeaders(),
 });
