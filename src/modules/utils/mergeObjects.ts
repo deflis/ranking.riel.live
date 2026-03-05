@@ -8,7 +8,7 @@ export function mergeObjects<T extends object>(target: T, ...sources: T[]): T {
 }
 
 export function mergeObject<T extends object>(target: T, source: T): T {
-	const newObj: T = { ...source, ...target };
+	const newObj: T = { ...target, ...source };
 
 	for (const key of Object.keys(source) as Array<keyof T>) {
 		const tObj = target[key];
@@ -16,12 +16,14 @@ export function mergeObject<T extends object>(target: T, source: T): T {
 		if (
 			typeof tObj === "object" &&
 			tObj !== null &&
+			!Array.isArray(tObj) &&
 			typeof sObj === "object" &&
-			sObj !== null
+			sObj !== null &&
+			!Array.isArray(sObj)
 		) {
-			newObj[key] = { ...sObj, ...mergeObject(tObj as object, sObj as object) };
+			newObj[key] = mergeObject(tObj as object, sObj as object) as T[keyof T];
 		}
 	}
 
-	return { ...target, ...source, ...newObj };
+	return newObj;
 }
