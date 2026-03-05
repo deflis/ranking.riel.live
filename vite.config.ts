@@ -12,6 +12,8 @@ const excludePaths = [
 	"/ranking/w/",
 	"/ranking/m/",
 	"/ranking/q/",
+	"/ranking/t/",
+	"/ranking/y/",
 	"/r18",
 ]
 
