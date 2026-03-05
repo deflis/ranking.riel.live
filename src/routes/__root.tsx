@@ -58,6 +58,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="ja">
 			<head>
+				<meta charSet="utf-8" />
 				<HeadContent />
 			</head>
 			<body>
