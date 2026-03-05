@@ -3,7 +3,6 @@
 // Runtime types generated with workerd@1.20260114.0 2026-01-07 nodejs_compat
 declare namespace Cloudflare {
 	interface Env {
-		CACHE: KVNamespace;
 	}
 }
 interface Env extends Cloudflare.Env {}

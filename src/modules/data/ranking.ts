@@ -39,12 +39,9 @@ const rankingServerFn = createServerFn({ method: "GET" })
 		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
 			.setZone("UTC", { keepLocalTime: true })
 			.toJSDate();
-		return await ranking()
-			.date(dateValue)
-			.type(type)
-			.execute({
-				fetchOptions // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
-			});
+		return await ranking().date(dateValue).type(type).execute({
+			fetchOptions, // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
+		});
 	});
 
 export function useRanking(type: NarouRankingType, date: string) {
