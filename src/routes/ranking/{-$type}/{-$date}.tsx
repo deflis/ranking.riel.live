@@ -62,13 +62,18 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		await prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
-	headers: ({ params: { date } }) => {
-		if (!date) {
+	headers: ({ params: { type: typeParam, date } }) => {
+		const type = (typeParam as RankingType) ?? RankingType.Daily;
+
+		if (!date && type === RankingType.Daily) {
 			const now = DateTime.now().setZone("Asia/Tokyo");
-			const tomorrowNoon = now.startOf("day").plus({ days: 1, hours: 12 });
+			let nextNoon = now.startOf("day").plus({ hours: 12 });
+			if (now >= nextNoon) {
+				nextNoon = nextNoon.plus({ days: 1 });
+			}
 			const ttl = Math.max(
 				60,
-				Math.floor(tomorrowNoon.diff(now, "seconds").seconds),
+				Math.floor(nextNoon.diff(now, "seconds").seconds),
 			);
 
 			return createCacheHeaders({
