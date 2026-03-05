@@ -12,13 +12,19 @@ function isMergeableObject(val: unknown): val is object {
 }
 
 export function mergeObject<T extends object>(target: T, source: T): T {
-	const newObj: T = { ...target, ...source };
+	const newObj: T = { ...target };
 
 	for (const key of Object.keys(source) as Array<keyof T>) {
+		if (key === "__proto__" || key === "constructor" || key === "prototype") {
+			continue;
+		}
+
 		const tObj = target[key];
 		const sObj = source[key];
 		if (isMergeableObject(tObj) && isMergeableObject(sObj)) {
 			newObj[key] = mergeObject(tObj, sObj) as T[keyof T];
+		} else {
+			newObj[key] = sObj;
 		}
 	}
 

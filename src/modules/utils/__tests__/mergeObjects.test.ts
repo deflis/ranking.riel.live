@@ -32,6 +32,26 @@ describe("mergeObject", () => {
 		// @ts-ignore
 		expect(mergeObject(target, source)).toEqual({ a: 42 });
 	});
+
+	it("プロトタイプ汚染を防ぐため、特定のキーを無視すること", () => {
+		const target: Record<string, unknown> = {};
+		const payload = JSON.parse('{"__proto__": {"polluted": "yes"}}');
+		const result = mergeObject(target, payload);
+
+		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		expect((result as any).__proto__.polluted).toBeUndefined();
+		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		expect(({} as any).polluted).toBeUndefined();
+
+		const payloadConstructor = JSON.parse(
+			'{"constructor": {"prototype": {"polluted2": "yes"}}}',
+		);
+		const resultConstructor = mergeObject(target, payloadConstructor);
+
+		expect(resultConstructor.constructor).toBe(Object);
+		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		expect(({} as any).polluted2).toBeUndefined();
+	});
 });
 
 describe("mergeObjects", () => {
