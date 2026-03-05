@@ -62,10 +62,8 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		await prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
-	headers: ({ params: { type: typeParam, date } }) => {
-		const type = (typeParam as RankingType) ?? RankingType.Daily;
-
-		if (!date && type === RankingType.Daily) {
+	headers: ({ params: { date } }) => {
+		if (!date) {
 			const now = DateTime.now().setZone("Asia/Tokyo");
 			let nextNoon = now.startOf("day").plus({ hours: 12 });
 			if (now >= nextNoon) {
