@@ -12,6 +12,9 @@ export default defineConfig({
 		tailwindcss(),
 		tanstackStart({
 			srcDirectory: "src",
+      prerender: {
+        enabled: true,
+      },
 		}),
 		react(),
 		tsconfigPaths(),
