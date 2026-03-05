@@ -3,7 +3,6 @@ import { mergeObject, mergeObjects } from "../mergeObjects";
 
 describe("mergeObject", () => {
 	it("シンプルなオブジェクトをマージし、sourceがtargetを上書きすること", () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const target: Record<string, unknown> = { a: 1, b: 2 };
 		const source: Record<string, unknown> = { b: 3, c: 4 };
 		expect(mergeObject(target, source)).toEqual({ a: 1, b: 3, c: 4 });
