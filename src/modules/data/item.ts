@@ -102,7 +102,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			return [];
 		}
 
-		const { values: freshValues } = await search()
+		const { values } = await search()
 			.ncode([...ncodes])
 			.limit(ncodes.length)
 			.fields([
@@ -123,7 +123,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.execute({ fetchOptions });
 
-		return freshValues;
+		return values;
 	});
 
 const itemLoader = new DataLoader<string, Item | undefined>(
@@ -163,7 +163,7 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			return [];
 		}
 
-		const { values: freshValues } = await search()
+		const { values } = await search()
 			.ncode([...ncodes])
 			.limit(ncodes.length)
 			.fields([
@@ -183,7 +183,7 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.opt("weekly")
 			.execute({ fetchOptions });
 
-		return freshValues;
+		return values;
 	});
 
 const itemRankingHistoryServerFn = createServerFn({ method: "GET" })

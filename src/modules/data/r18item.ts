@@ -118,7 +118,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			return [];
 		}
 
-		const { values: freshValues } = await searchR18()
+		const { values } = await searchR18()
 			.ncode([...ncodes])
 			.limit(ncodes.length)
 			.fields([
@@ -139,7 +139,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.execute({ fetchOptions });
 
-		return freshValues;
+		return values;
 	});
 
 const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
@@ -150,7 +150,7 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			return [];
 		}
 
-		const { values: freshValues } = await searchR18()
+		const { values } = await searchR18()
 			.ncode([...ncodes])
 			.limit(ncodes.length)
 			.fields([
@@ -170,7 +170,7 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.opt("weekly")
 			.execute({ fetchOptions });
 
-		return freshValues;
+		return values;
 	});
 
 const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
