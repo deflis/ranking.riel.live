@@ -8,6 +8,7 @@ import {
 	useR18ItemForListing,
 } from "@/modules/data/r18item";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { ClientOnly } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { DotLoader } from "../atoms/Loader";
@@ -16,7 +17,6 @@ import { ErrorFallback } from "../common/ErrorFallback";
 import { SelfAd } from "../common/SelfAd";
 import DetailItem from "./DetailItem";
 import { RankingHistoryRender } from "./RankingHistoryRender";
-import { ClientOnly } from "@tanstack/react-router";
 
 const DetailItemContent: React.FC<{
 	ncode: string;
@@ -46,8 +46,6 @@ const RankingHistoryContent: React.FC<{
 	const { data: ranking } = useRankingHistory(ncode);
 	return <RankingHistoryRender ranking={ranking} />;
 };
-
-
 
 export const DetailRenderer: React.FC<{
 	ncode: string;

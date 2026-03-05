@@ -116,10 +116,7 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
 		// キャッシュミス分だけAPIに問い合わせ
-		const { hits, misses } = await getManyCached<NocItem>(
-			"r18-item",
-			ncodes,
-		);
+		const { hits, misses } = await getManyCached<NocItem>("r18-item", ncodes);
 
 		if (misses.length === 0) {
 			return [...hits.values()];
