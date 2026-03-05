@@ -11,7 +11,6 @@ import { R18Fields, searchR18 } from "narou";
 import { parseDate } from "../utils/date";
 
 import { cacheMiddleware } from "../utils/cacheMiddleware";
-import { getManyCached, putManyCached } from "../utils/kvCache";
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
 
@@ -115,19 +114,13 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
-		// キャッシュミス分だけAPIに問い合わせ
-		const { hits, misses } = await getManyCached<NocItem>(
-			"r18-item",
-			ncodes,
-		);
-
-		if (misses.length === 0) {
-			return [...hits.values()];
+		if (ncodes.length === 0) {
+			return [];
 		}
 
 		const { values: freshValues } = await searchR18()
-			.ncode(misses)
-			.limit(misses.length)
+			.ncode([...ncodes])
+			.limit(ncodes.length)
 			.fields([
 				R18Fields.ncode,
 				R18Fields.title,
@@ -146,32 +139,20 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.execute({ fetchOptions });
 
-		// 結果を個別にKVに保存
-		await putManyCached(
-			"r18-item",
-			freshValues.map((v) => [v.ncode, v]),
-		);
-
-		return [...hits.values(), ...freshValues];
+		return freshValues;
 	});
 
 const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
-		// KVから個別キャッシュを取得
-		const { hits, misses } = await getManyCached<NocDetail & { ncode: string }>(
-			"r18-item-detail",
-			ncodes,
-		);
-
-		if (misses.length === 0) {
-			return [...hits.values()];
+		if (ncodes.length === 0) {
+			return [];
 		}
 
 		const { values: freshValues } = await searchR18()
-			.ncode(misses)
-			.limit(misses.length)
+			.ncode([...ncodes])
+			.limit(ncodes.length)
 			.fields([
 				R18Fields.ncode,
 				R18Fields.all_hyoka_cnt,
@@ -189,13 +170,7 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.opt("weekly")
 			.execute({ fetchOptions });
 
-		// 結果を個別にKVに保存
-		await putManyCached(
-			"r18-item-detail",
-			freshValues.map((v) => [v.ncode, v]),
-		);
-
-		return [...hits.values(), ...freshValues];
+		return freshValues;
 	});
 
 const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
