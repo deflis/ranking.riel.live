@@ -16,18 +16,35 @@ export async function getManyCached<T>(
 ): Promise<{ hits: Map<string, T>; misses: string[] }> {
 	const kv = env.CACHE;
 	const normalizedKeys = keys.map((k) => k.toLowerCase());
-	const results = await Promise.all(
-		normalizedKeys.map(async (key) => {
-			const cached = await kv.get(`${prefix}:${key}`, "json");
-			return [key, cached] as const;
-		}),
-	);
+	const prefixedKeys = normalizedKeys.map((k) => `${prefix}:${k}`);
+
 	const hits = new Map<string, T>();
 	const misses: string[] = [];
-	for (const [key, value] of results) {
-		if (value !== null) hits.set(key, value as T);
-		else misses.push(key);
+
+	const MAX_KV_BULK_GET = 100;
+	const promises: Promise<Map<string, T | null>>[] = [];
+
+	for (let i = 0; i < prefixedKeys.length; i += MAX_KV_BULK_GET) {
+		const chunk = prefixedKeys.slice(i, i + MAX_KV_BULK_GET);
+		promises.push(kv.get<T>(chunk, "json"));
 	}
+
+	const results = await Promise.all(promises);
+
+	for (let i = 0; i < prefixedKeys.length; i++) {
+		const normalizedKey = normalizedKeys[i];
+		const prefixedKey = prefixedKeys[i];
+		const chunkIndex = Math.floor(i / MAX_KV_BULK_GET);
+		const resultMap = results[chunkIndex];
+
+		const value = resultMap.get(prefixedKey);
+		if (value !== null && value !== undefined) {
+			hits.set(normalizedKey, value);
+		} else {
+			misses.push(normalizedKey);
+		}
+	}
+
 	return { hits, misses };
 }
 
@@ -42,11 +59,12 @@ export async function putManyCached<T>(
 ): Promise<void> {
 	const kv = env.CACHE;
 	const ttl = options?.ttl ?? 3600;
-	await Promise.all(
+	// 保存を待たずにバックグラウンドで実行
+	Promise.all(
 		entries.map(([key, value]) =>
 			kv.put(`${prefix}:${key.toLowerCase()}`, JSON.stringify(value), {
 				expirationTtl: ttl,
 			}),
 		),
-	);
+	).catch(console.error);
 }
