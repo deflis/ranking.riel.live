@@ -84,25 +84,20 @@ export const useR18DetailForView = (ncode: string) => {
 const itemLoader = new DataLoader<string, NocItem | undefined>(
 	async (ncodes) => {
 		const values = await itemLoaderServerFn({ data: { ncodes } });
-		return ncodes
-			.map((x) => x.toLowerCase())
-			.map((ncode) =>
-				values
-					.map(
-						({
-							general_firstup,
-							general_lastup,
-							novelupdated_at,
-							...others
-						}) => ({
-							general_firstup: parseDate(general_firstup).toISO(),
-							general_lastup: parseDate(general_lastup).toISO(),
-							novelupdated_at: parseDate(novelupdated_at).toISO(),
-							...others,
-						}),
-					)
-					.find((x) => x.ncode.toLowerCase() === ncode),
-			);
+		const resultMap = new Map(
+			values.map(
+				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
+					const item: NocItem = {
+						general_firstup: parseDate(general_firstup).toISO(),
+						general_lastup: parseDate(general_lastup).toISO(),
+						novelupdated_at: parseDate(novelupdated_at).toISO(),
+						...others,
+					};
+					return [others.ncode.toLowerCase(), item];
+				},
+			),
+		);
+		return ncodes.map((ncode) => resultMap.get(ncode.toLowerCase()));
 	},
 	{
 		cache: false,
@@ -176,9 +171,10 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
 	async (ncodes) => {
 		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
-		return ncodes
-			.map((x) => x.toLowerCase())
-			.map((ncode) => values.find((x) => x.ncode.toLowerCase() === ncode));
+		const resultMap = new Map(
+			values.map((value) => [value.ncode.toLowerCase(), value]),
+		);
+		return ncodes.map((ncode) => resultMap.get(ncode.toLowerCase()));
 	},
 	{
 		cache: false,
