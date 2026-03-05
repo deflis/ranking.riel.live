@@ -8,6 +8,22 @@ describe("mergeObject", () => {
 		expect(mergeObject(target, source)).toEqual({ a: 1, b: 3, c: 4 });
 	});
 
+	it("sourceとtargetにしかないキーが正しくマージされること", () => {
+		const target: Record<string, unknown> = {
+			targetOnly: "targetValue",
+			shared: "t",
+		};
+		const source: Record<string, unknown> = {
+			sourceOnly: "sourceValue",
+			shared: "s",
+		};
+		expect(mergeObject(target, source)).toEqual({
+			targetOnly: "targetValue",
+			sourceOnly: "sourceValue",
+			shared: "s",
+		});
+	});
+
 	it("ネストされたオブジェクトを深くマージすること", () => {
 		const target: Record<string, unknown> = { a: { x: 1, y: 2 } };
 		const source: Record<string, unknown> = { a: { y: 3, z: 4 } };
