@@ -20,7 +20,10 @@ import { RankingRender } from "@/components/ui/ranking/RankingRender";
 import { prefetchRanking } from "@/modules/data/prefetch";
 import useRanking from "@/modules/data/ranking";
 import { RankingTypeName } from "@/modules/interfaces/RankingType";
-import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
+import {
+	MAIN_PAGE_CACHE_OPTIONS,
+	createCacheHeaders,
+} from "@/modules/utils/cacheMiddleware";
 import { addDate, convertDate } from "@/modules/utils/date";
 
 const ButtonLink = createLink(Button);
@@ -59,7 +62,27 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		await prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
-	headers: () => createCacheHeaders(),
+	headers: ({ params: { date } }) => {
+		if (!date) {
+			const now = DateTime.now().setZone("Asia/Tokyo");
+			let nextNoon = now.startOf("day").plus({ hours: 12 });
+			if (now >= nextNoon) {
+				nextNoon = nextNoon.plus({ days: 1 });
+			}
+			const ttl = Math.max(
+				60,
+				Math.floor(nextNoon.diff(now, "seconds").seconds),
+			);
+
+			return createCacheHeaders({
+				...MAIN_PAGE_CACHE_OPTIONS,
+				maxAge: ttl,
+				sMaxAge: ttl,
+			});
+		}
+
+		return createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS);
+	},
 });
 
 function RankingPage() {

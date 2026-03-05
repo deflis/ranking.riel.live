@@ -12,6 +12,12 @@ export type CacheOptions = {
 	visibility?: "public" | "private" | "no-store" | string;
 };
 
+export const MAIN_PAGE_CACHE_OPTIONS: CacheOptions = {
+	maxAge: 3600,
+	sMaxAge: 86400,
+	staleWhileRevalidate: 60,
+};
+
 type CacheHeaders = {
 	readonly "Cache-Control": string;
 	readonly "CDN-Cache-Control"?: string;

@@ -3,14 +3,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
 
 import { prefetchDetail } from "@/modules/data/prefetch";
-import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
+import {
+	MAIN_PAGE_CACHE_OPTIONS,
+	createCacheHeaders,
+} from "@/modules/utils/cacheMiddleware";
 
 export const Route = createFileRoute("/detail/$ncode")({
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
 		await prefetchDetail(queryClient, ncode);
 	},
 	component: DetailPage,
-	headers: () => createCacheHeaders(),
+	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 
 function DetailPage() {

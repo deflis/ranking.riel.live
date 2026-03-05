@@ -7,7 +7,10 @@ import {
 import { RankingType } from "@/modules/interfaces/RankingType";
 
 import { prefetchR18Ranking } from "@/modules/data/r18ranking";
-import { createCacheHeaders } from "@/modules/utils/cacheMiddleware";
+import {
+	MAIN_PAGE_CACHE_OPTIONS,
+	createCacheHeaders,
+} from "@/modules/utils/cacheMiddleware";
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/ranking/{-$type}")({
@@ -36,7 +39,7 @@ export const Route = createFileRoute("/r18/ranking/{-$type}")({
 		await prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
-	headers: () => createCacheHeaders(),
+	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 
 function R18RankingPageWrapper() {
