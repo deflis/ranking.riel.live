@@ -218,7 +218,7 @@ describe("buildCustomRankingSearch", () => {
 			notKeyword: "exclude",
 			byTitle: true,
 			byStory: false,
-			genres: [101, 201] as unknown as number[],
+			genres: [101, 201] as unknown as Genre[],
 			min: 100,
 			max: 200,
 			firstUpdate: "2023-01-01",
@@ -245,7 +245,7 @@ describe("buildCustomRankingSearch", () => {
 
 	it("配列の要素が1つの場合は単一の値を返すこと", () => {
 		const params = {
-			genres: [101] as unknown as number[],
+			genres: [101] as unknown as Genre[],
 		};
 		const result = buildCustomRankingSearch(params);
 		expect(result.genres).toBe(101);

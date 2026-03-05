@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
-import { RankingType } from "../../interfaces/RankingType";
+import { RankingType } from "narou";
 import { addDate, convertDate, formatDate, parseDate } from "../date";
 
 describe("date utils", () => {
@@ -59,10 +59,7 @@ describe("date utils", () => {
 		});
 
 		it("Quarterlyの場合はその月の1日を返すこと", () => {
-			const result = convertDate(
-				testDate,
-				RankingType.Quarter as unknown as RankingType,
-			);
+			const result = convertDate(testDate, RankingType.Quarterly);
 			expect(result.toISODate()).toBe("2023-10-01");
 		});
 	});
@@ -112,13 +109,9 @@ describe("date utils", () => {
 		});
 
 		it("Quarterlyの場合は指定された月数を加算すること", () => {
-			expect(
-				addDate(
-					testDate,
-					RankingType.Quarter as unknown as RankingType,
-					3,
-				).toISODate(),
-			).toBe("2024-01-25");
+			expect(addDate(testDate, RankingType.Quarterly, 3).toISODate()).toBe(
+				"2024-01-25",
+			);
 		});
 	});
 });
