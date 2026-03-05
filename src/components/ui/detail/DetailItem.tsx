@@ -90,7 +90,7 @@ const DetailItem: React.FC<{
 		: "https://ncode.syosetu.com";
 	const ncode = (item?.ncode ?? rawNcode).toLowerCase();
 	const detail = `${baseUrl}/novelview/infotop/ncode/${ncode}/`;
-	const user = `https://mypage.syosetu.com/${item?.userid}/`;
+	const user = `https://mypage.syosetu.com/${item?.userid ? encodeURIComponent(item.userid) : ""}/`;
 	const link = `${baseUrl}/${ncode}/`;
 	const linkFirst = `${baseUrl}/${ncode}/1/`;
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
