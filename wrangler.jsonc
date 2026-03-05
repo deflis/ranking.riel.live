@@ -6,5 +6,8 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"observability": {
 		"enabled": true
-	}
+	},
+	"kv_namespaces": [
+		{ "binding": "CACHE", "id": "76e4be47071942ae804fde1302e1f39c" }
+	]
 }

@@ -17,6 +17,7 @@ import {
 import { parseDate } from "../utils/date";
 
 import { cacheMiddleware } from "../utils/cacheMiddleware";
+import { getManyCached, putManyCached } from "../utils/kvCache";
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
 
@@ -98,9 +99,19 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
-		const { values } = await search()
-			.ncode(ncodes)
-			.limit(ncodes.length)
+		// キャッシュミス分だけAPIに問い合わせ
+		const { hits, misses } = await getManyCached<Item>(
+			"item",
+			ncodes,
+		);
+
+		if (misses.length === 0) {
+			return [...hits.values()];
+		}
+
+		const { values: freshValues } = await search()
+			.ncode(misses)
+			.limit(misses.length)
 			.fields([
 				Fields.ncode,
 				Fields.title,
@@ -118,7 +129,14 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 				Fields.story,
 			])
 			.execute({ fetchOptions });
-		return values;
+
+		// 結果を個別にKVに保存
+		await putManyCached(
+			"item",
+			freshValues.map((v) => [v.ncode, v]),
+		);
+
+		return [...hits.values(), ...freshValues];
 	});
 
 const itemLoader = new DataLoader<string, Item | undefined>(
@@ -154,9 +172,19 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 	.middleware([cacheMiddleware()])
 	.inputValidator((data: { ncodes: readonly string[] }) => data)
 	.handler(async ({ data: { ncodes } }) => {
-		const { values } = await search()
-			.ncode(ncodes)
-			.limit(ncodes.length)
+		// KVから個別キャッシュを取得
+		const { hits, misses } = await getManyCached<Detail & { ncode: string }>(
+			"item-detail",
+			ncodes,
+		);
+
+		if (misses.length === 0) {
+			return [...hits.values()];
+		}
+
+		const { values: freshValues } = await search()
+			.ncode(misses)
+			.limit(misses.length)
 			.fields([
 				Fields.ncode,
 				Fields.all_hyoka_cnt,
@@ -173,7 +201,14 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.opt("weekly")
 			.execute({ fetchOptions });
-		return values;
+
+		// 結果を個別にKVに保存
+		await putManyCached(
+			"item-detail",
+			freshValues.map((v) => [v.ncode, v]),
+		);
+
+		return [...hits.values(), ...freshValues];
 	});
 
 const itemRankingHistoryServerFn = createServerFn({ method: "GET" })
