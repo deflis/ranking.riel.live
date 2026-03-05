@@ -1,7 +1,6 @@
 import {
 	type QueryClient,
 	type QueryFunction,
-	keepPreviousData,
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -16,7 +15,6 @@ import {
 	type PickedNarouSearchResult,
 	search,
 } from "narou";
-import { useCallback } from "react";
 
 import { parseDateRange } from "../atoms/filter";
 import { allGenres } from "../enum/Genre";
