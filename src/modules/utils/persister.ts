@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 /**
  * キャッシュからパースするときに日付ならLuxonでパースする
  */
-function reviver(key: string, value: unknown): unknown {
+export function reviver(key: string, value: unknown): unknown {
 	if (typeof value === "string") {
 		const date = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
 		if (date.isValid) {
