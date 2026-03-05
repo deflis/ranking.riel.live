@@ -12,6 +12,7 @@ const excludePaths = [
 	"/ranking/w/",
 	"/ranking/m/",
 	"/ranking/q/",
+	"/r18",
 ]
 
 // https://vitejs.dev/config/
@@ -23,7 +24,7 @@ export default defineConfig({
 			srcDirectory: "src",
 			prerender: {
 				enabled: true,
-        crawlLinks: true,
+				crawlLinks: true,
 				filter: ({ path }) => !excludePaths.some(excludePath => path.startsWith(excludePath)),
 			},
 		}),
