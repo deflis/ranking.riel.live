@@ -1,4 +1,4 @@
-name: Lint and Typecheck
+name: CI
 
 on:
   push:
@@ -31,3 +31,6 @@ jobs:
 
       - name: Run Typecheck
         run: pnpm run typecheck
+
+      - name: Run Tests
+        run: pnpm test
