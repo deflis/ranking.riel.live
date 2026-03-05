@@ -58,6 +58,7 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 
 		await prefetchRanking(queryClient, type, date);
 	},
+	staleTime: 10 * 60 * 1000,
 	component: RankingPage,
 	headers: () => createCacheHeaders(),
 });

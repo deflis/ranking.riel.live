@@ -9,6 +9,7 @@ export const Route = createFileRoute("/r18/detail/$ncode")({
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
 		await prefetchR18Detail(queryClient, ncode);
 	},
+	staleTime: 10 * 60 * 1000,
 	component: R18DetailPage,
 	headers: () => createCacheHeaders(),
 });

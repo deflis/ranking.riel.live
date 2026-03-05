@@ -51,6 +51,7 @@ export const Route = createFileRoute("/custom/{-$type}")({
 		const params = parseCustomRankingParams(type, search);
 		await prefetchCustomRanking(queryClient, params, 1);
 	},
+	staleTime: 10 * 60 * 1000,
 	component: CustomRankingPage,
 	headers: () => createCacheHeaders(),
 });
