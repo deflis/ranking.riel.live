@@ -38,16 +38,14 @@ export const rankingFetcher: QueryFunction<
 		.execute({
 			fetchOptions: {
 				...fetchOptions,
-				cf: isGenerated
-					? {
-							cacheTtlByStatus: {
-								"200-299": 60 * 60 * 24 * 30, // 30 日
-								404: 1,
-								"500-599": 0,
-							},
-							cacheEverything: true,
-						}
-					: undefined,
+				cf: {
+					cacheTtlByStatus: {
+						"200-299": isGenerated ? 60 * 60 * 24 * 30 : 60 * 5, // 生成済みなら30日、未生成(当日等)なら5分
+						404: 1,
+						"500-599": 0,
+					},
+					cacheEverything: true,
+				},
 			},
 		});
 };
