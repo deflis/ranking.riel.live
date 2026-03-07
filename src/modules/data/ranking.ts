@@ -25,19 +25,22 @@ export const rankingFetcher: QueryFunction<
 	const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
 		.setZone("UTC", { keepLocalTime: true })
 		.toJSDate();
-	return await ranking().date(dateValue).type(type).execute({
-		fetchOptions: {
-			...fetchOptions,
-			cf: {
-				cacheTtlByStatus: {
-					"200-299": 60 * 60 * 24 * 30, // 30 日
-					404: 1,
-					"500-599": 0,
+	return await ranking()
+		.date(dateValue)
+		.type(type)
+		.execute({
+			fetchOptions: {
+				...fetchOptions,
+				cf: {
+					cacheTtlByStatus: {
+						"200-299": 60 * 60 * 24 * 30, // 30 日
+						404: 1,
+						"500-599": 0,
+					},
+					cacheEverything: true,
 				},
-				cacheEverything: true,
-			},
-		}, // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
-	});
+			}, // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
+		});
 };
 
 export function useRanking(type: NarouRankingType, date: string) {
