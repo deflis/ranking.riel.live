@@ -1,4 +1,3 @@
-import { createMiddleware } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 
 export type CacheOptions = {
@@ -47,25 +46,15 @@ export function createCacheHeaders(options: CacheOptions = {}): CacheHeaders {
 }
 
 /**
- * キャッシュミドルウェア
+ * キャッシュヘッダを設定する
  */
-export function cacheMiddleware(options: CacheOptions = {}) {
+export function setCacheHeaders(options: CacheOptions = {}) {
 	const headers = createCacheHeaders(options);
 	const cacheControlHeader = headers["Cache-Control"];
 	const cdnCacheControlHeader = headers["CDN-Cache-Control"];
 
-	return createMiddleware().server(async ({ next }) => {
-		const res = await next();
-
-		if (res instanceof Response && res.status >= 400) {
-			return res;
-		}
-
-		// キャッシュを設定する
-		setResponseHeader("Cache-Control", cacheControlHeader);
-		if (cdnCacheControlHeader) {
-			setResponseHeader("CDN-Cache-Control", cdnCacheControlHeader);
-		}
-		return res;
-	});
+	setResponseHeader("Cache-Control", cacheControlHeader);
+	if (cdnCacheControlHeader) {
+		setResponseHeader("CDN-Cache-Control", cdnCacheControlHeader);
+	}
 }

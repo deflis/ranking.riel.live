@@ -4,13 +4,13 @@ import {
 	useSuspenseQueries,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
+import { createIsomorphicFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
 
 import { parseDate } from "../utils/date";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
+import { setCacheHeaders } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
 
@@ -83,7 +83,7 @@ export const useR18DetailForView = (ncode: string) => {
 
 const itemLoader = new DataLoader<string, NocItem | undefined>(
 	async (ncodes) => {
-		const values = await itemLoaderServerFn({ data: { ncodes } });
+		const values = (await itemLoaderServerFn({ ncodes })) ?? [];
 		const resultMap = new Map(
 			values.map(
 				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
@@ -105,10 +105,9 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 	},
 );
 
-const itemLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
+const itemLoaderServerFn = createIsomorphicFn().server(
+	async ({ ncodes }: { ncodes: readonly string[] }) => {
+		setCacheHeaders();
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -135,12 +134,12 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			.execute({ fetchOptions });
 
 		return values;
-	});
+	},
+);
 
-const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
+const itemDetailLoaderServerFn = createIsomorphicFn().server(
+	async ({ ncodes }: { ncodes: readonly string[] }) => {
+		setCacheHeaders();
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -166,11 +165,12 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.execute({ fetchOptions });
 
 		return values;
-	});
+	},
+);
 
 const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
 	async (ncodes) => {
-		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
+		const values = (await itemDetailLoaderServerFn({ ncodes })) ?? [];
 		const resultMap = new Map(
 			values.map((value) => [value.ncode.toLowerCase(), value]),
 		);

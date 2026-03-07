@@ -3,7 +3,7 @@ import {
 	useSuspenseQueries,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
+import { createIsomorphicFn } from "@tanstack/react-start";
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import {
@@ -14,7 +14,7 @@ import {
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
+import { setCacheHeaders } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
 
@@ -24,25 +24,23 @@ export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
 > = async ({ queryKey: [, type, date] }) =>
-	await rankingServerFn({ data: { type, date } });
+	(await rankingServerFn({ type, date })) ?? [];
 
-const rankingServerFn = createServerFn({ method: "GET" })
-	.middleware([
-		cacheMiddleware({
-			// 過去のランキングは全く変わらないはずなので長めにキャッシュする
+const rankingServerFn = createIsomorphicFn().server(
+	async ({ type, date }: { type: NarouRankingType; date: string }) => {
+		// 過去のランキングは全く変わらないはずなので長めにキャッシュする
+		setCacheHeaders({
 			maxAge: 60 * 60 * 24 * 30, // 30 日
 			sMaxAge: 60 * 60 * 24 * 30, // 30 日
-		}),
-	])
-	.inputValidator((data: { type: NarouRankingType; date: string }) => data)
-	.handler(async ({ data: { type, date } }) => {
+		});
 		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
 			.setZone("UTC", { keepLocalTime: true })
 			.toJSDate();
 		return await ranking().date(dateValue).type(type).execute({
 			fetchOptions, // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
 		});
-	});
+	},
+);
 
 export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
