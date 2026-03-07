@@ -25,4 +25,9 @@ describe("chunk", () => {
 	it("空の配列を渡した場合は空の配列を返すこと", () => {
 		expect(chunk([], 2)).toEqual([]);
 	});
+
+	it("チャンクサイズが0以下の場合はエラーをスローすること", () => {
+		expect(() => chunk([1, 2, 3], 0)).toThrow("size must be greater than 0");
+		expect(() => chunk([1, 2, 3], -1)).toThrow("size must be greater than 0");
+	});
 });

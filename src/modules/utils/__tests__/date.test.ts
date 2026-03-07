@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
-import { describe, expect, it } from "vitest";
 import { RankingType } from "narou";
+import { describe, expect, it } from "vitest";
 import { addDate, convertDate, formatDate, parseDate } from "../date";
 
 describe("date utils", () => {
