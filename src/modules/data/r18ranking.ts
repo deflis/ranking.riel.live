@@ -226,7 +226,6 @@ const customRankingFetcher: QueryFunction<
 			R18Fields.daily_point,
 			R18Fields.weekly_point,
 			R18Fields.monthly_point,
-			R18Fields.monthly_point,
 			R18Fields.quarter_point,
 			R18Fields.yearly_point,
 			R18Fields.all_hyoka_cnt,
