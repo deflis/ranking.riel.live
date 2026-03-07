@@ -3,7 +3,6 @@ import {
 	useSuspenseQueries,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
 import { DateTime } from "luxon";
 import {
@@ -16,7 +15,6 @@ import {
 
 import { parseDate } from "../utils/date";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
 
@@ -41,7 +39,7 @@ export const itemRankingHistoryFetcher: QueryFunction<
 	RankingHistories,
 	ReturnType<typeof itemRankingHistoryKey>
 > = async ({ queryKey: [, ncode] }) => {
-	const history = await itemRankingHistoryServerFn({ data: { ncode } });
+	const history = await rankingHistory(ncode, { fetchOptions });
 	return formatRankingHistory(history);
 };
 
@@ -94,10 +92,8 @@ export const useDetailForView = (ncode: string) => {
 	};
 };
 
-const itemLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
+const itemLoader = new DataLoader<string, Item | undefined>(
+	async (ncodes) => {
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -123,12 +119,6 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.execute({ fetchOptions });
 
-		return values;
-	});
-
-const itemLoader = new DataLoader<string, Item | undefined>(
-	async (ncodes) => {
-		const values = await itemLoaderServerFn({ data: { ncodes } });
 		const resultMap = new Map(
 			values.map(
 				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
@@ -150,10 +140,8 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 	},
 );
 
-const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
+const itemDetailLoader = new DataLoader<string, Detail | undefined>(
+	async (ncodes) => {
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -178,19 +166,6 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.opt("weekly")
 			.execute({ fetchOptions });
 
-		return values;
-	});
-
-const itemRankingHistoryServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncode: string }) => data)
-	.handler(async ({ data: { ncode } }) => {
-		return await rankingHistory(ncode, { fetchOptions });
-	});
-
-const itemDetailLoader = new DataLoader<string, Detail | undefined>(
-	async (ncodes) => {
-		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
 		const resultMap = new Map(
 			values.map((value) => [value.ncode.toLowerCase(), value]),
 		);

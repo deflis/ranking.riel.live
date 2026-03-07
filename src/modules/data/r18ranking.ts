@@ -5,7 +5,6 @@ import {
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import type { DateTime } from "luxon";
 import {
 	type NarouSearchResult,
@@ -23,7 +22,6 @@ import type { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 import {
 	type RankingData,
 	convertOrder,
@@ -198,87 +196,6 @@ type NarouCustomRankingSearchResults = NarouSearchResults<
 	NarouSearchResult,
 	CustomRankingResultKeyNames
 >;
-type CustomRankingServerParams = {
-	order: ReturnType<typeof convertOrder>;
-	keyword: string | undefined;
-	notKeyword: string | undefined;
-	byTitle: boolean;
-	byStory: boolean;
-	sites: readonly R18Site[];
-	novelTypeParam: NovelTypeParam | null;
-	fields: readonly R18Fields[];
-	optionalFields: "weekly"[];
-	page: number;
-};
-const customRankingServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: CustomRankingServerParams) => data)
-	.handler(
-		async ({
-			data: {
-				order,
-				keyword,
-				notKeyword,
-				byTitle,
-				byStory,
-				sites,
-				novelTypeParam,
-				fields,
-				optionalFields,
-				page,
-			},
-		}) => {
-			const searchBuilder = searchR18()
-				.order(order)
-				.page(page, CHUNK_ITEM_NUM)
-				.fields([
-					R18Fields.ncode,
-					R18Fields.general_all_no,
-					R18Fields.general_firstup,
-					R18Fields.noveltype,
-					R18Fields.end,
-					R18Fields.daily_point,
-					R18Fields.weekly_point,
-					R18Fields.monthly_point,
-					R18Fields.monthly_point,
-					R18Fields.quarter_point,
-					R18Fields.yearly_point,
-					R18Fields.all_hyoka_cnt,
-				])
-				.opt("weekly");
-
-			searchBuilder.fields(fields);
-			searchBuilder.opt(optionalFields);
-
-			if (sites.length > 0) {
-				searchBuilder.r18Site(sites);
-			}
-			if (keyword) {
-				searchBuilder.word(keyword).byKeyword(true);
-			}
-			if (notKeyword) {
-				searchBuilder.notWord(notKeyword).byKeyword(true);
-			}
-			if (byTitle) {
-				searchBuilder.byTitle(byTitle);
-			}
-			if (byStory) {
-				searchBuilder.byOutline();
-			}
-			if (novelTypeParam) {
-				searchBuilder.type(novelTypeParam);
-			}
-			const result = await searchBuilder.execute({ fetchOptions });
-			return {
-				allcount: result.allcount,
-				limit: result.limit,
-				start: result.start,
-				page: result.page,
-				length: result.length,
-				values: result.values,
-			};
-		},
-	);
 const customRankingFetcher: QueryFunction<
 	NarouCustomRankingSearchResults,
 	CustomRankingKey
@@ -297,20 +214,55 @@ const customRankingFetcher: QueryFunction<
 		page,
 	],
 }) => {
-	return await customRankingServerFn({
-		data: {
-			order,
-			keyword,
-			notKeyword,
-			byTitle,
-			byStory,
-			sites,
-			novelTypeParam,
-			fields,
-			optionalFields,
-			page,
-		},
-	});
+	const searchBuilder = searchR18()
+		.order(order)
+		.page(page, CHUNK_ITEM_NUM)
+		.fields([
+			R18Fields.ncode,
+			R18Fields.general_all_no,
+			R18Fields.general_firstup,
+			R18Fields.noveltype,
+			R18Fields.end,
+			R18Fields.daily_point,
+			R18Fields.weekly_point,
+			R18Fields.monthly_point,
+			R18Fields.monthly_point,
+			R18Fields.quarter_point,
+			R18Fields.yearly_point,
+			R18Fields.all_hyoka_cnt,
+		])
+		.opt("weekly");
+
+	searchBuilder.fields(fields);
+	searchBuilder.opt(optionalFields);
+
+	if (sites.length > 0) {
+		searchBuilder.r18Site(sites);
+	}
+	if (keyword) {
+		searchBuilder.word(keyword).byKeyword(true);
+	}
+	if (notKeyword) {
+		searchBuilder.notWord(notKeyword).byKeyword(true);
+	}
+	if (byTitle) {
+		searchBuilder.byTitle(byTitle);
+	}
+	if (byStory) {
+		searchBuilder.byOutline();
+	}
+	if (novelTypeParam) {
+		searchBuilder.type(novelTypeParam);
+	}
+	const result = await searchBuilder.execute({ fetchOptions });
+	return {
+		allcount: result.allcount,
+		limit: result.limit,
+		start: result.start,
+		page: result.page,
+		length: result.length,
+		values: result.values,
+	};
 };
 
 class FilterBuilder<

@@ -4,13 +4,11 @@ import {
 	useSuspenseQueries,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
 
 import { parseDate } from "../utils/date";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
 
@@ -83,32 +81,6 @@ export const useR18DetailForView = (ncode: string) => {
 
 const itemLoader = new DataLoader<string, NocItem | undefined>(
 	async (ncodes) => {
-		const values = await itemLoaderServerFn({ data: { ncodes } });
-		const resultMap = new Map(
-			values.map(
-				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
-					const item: NocItem = {
-						general_firstup: parseDate(general_firstup).toISO(),
-						general_lastup: parseDate(general_lastup).toISO(),
-						novelupdated_at: parseDate(novelupdated_at).toISO(),
-						...others,
-					};
-					return [others.ncode.toLowerCase(), item];
-				},
-			),
-		);
-		return ncodes.map((ncode) => resultMap.get(ncode.toLowerCase()));
-	},
-	{
-		cache: false,
-		maxBatchSize: 500,
-	},
-);
-
-const itemLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -134,13 +106,29 @@ const itemLoaderServerFn = createServerFn({ method: "GET" })
 			])
 			.execute({ fetchOptions });
 
-		return values;
-	});
+		const resultMap = new Map(
+			values.map(
+				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
+					const item: NocItem = {
+						general_firstup: parseDate(general_firstup).toISO(),
+						general_lastup: parseDate(general_lastup).toISO(),
+						novelupdated_at: parseDate(novelupdated_at).toISO(),
+						...others,
+					};
+					return [others.ncode.toLowerCase(), item];
+				},
+			),
+		);
+		return ncodes.map((ncode) => resultMap.get(ncode.toLowerCase()));
+	},
+	{
+		cache: false,
+		maxBatchSize: 500,
+	},
+);
 
-const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: { ncodes: readonly string[] }) => data)
-	.handler(async ({ data: { ncodes } }) => {
+const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
+	async (ncodes) => {
 		if (ncodes.length === 0) {
 			return [];
 		}
@@ -165,12 +153,6 @@ const itemDetailLoaderServerFn = createServerFn({ method: "GET" })
 			.opt("weekly")
 			.execute({ fetchOptions });
 
-		return values;
-	});
-
-const itemDetailLoader = new DataLoader<string, NocDetail | undefined>(
-	async (ncodes) => {
-		const values = await itemDetailLoaderServerFn({ data: { ncodes } });
 		const resultMap = new Map(
 			values.map((value) => [value.ncode.toLowerCase(), value]),
 		);

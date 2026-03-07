@@ -4,7 +4,6 @@ import {
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import type { DateTime } from "luxon";
 import {
 	Fields,
@@ -22,7 +21,6 @@ import type { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 import {
 	type RankingData,
 	convertOrder,
@@ -193,94 +191,6 @@ type NarouCustomRankingSearchResults = NarouSearchResults<
 	NarouSearchResult,
 	CustomRankingResultKeyNames
 >;
-type CustomRankingServerParams = {
-	order: ReturnType<typeof convertOrder>;
-	keyword: string | undefined;
-	notKeyword: string | undefined;
-	byTitle: boolean;
-	byStory: boolean;
-	firstUpdate?: string | null;
-	genres: readonly Genre[];
-	novelTypeParam: NovelTypeParam | null;
-	fields: readonly Fields[];
-	optionalFields: "weekly"[];
-	page: number;
-};
-const customRankingServerFn = createServerFn({ method: "GET" })
-	.middleware([cacheMiddleware()])
-	.inputValidator((data: CustomRankingServerParams) => data)
-	.handler(
-		async ({
-			data: {
-				order,
-				keyword,
-				notKeyword,
-				byTitle,
-				byStory,
-				firstUpdate,
-				genres,
-				novelTypeParam,
-				fields,
-				optionalFields,
-				page,
-			},
-		}) => {
-			const firstUpdateDate = firstUpdate ? new Date(firstUpdate) : null;
-			const searchBuilder = search()
-				.order(order)
-				.page(page, CHUNK_ITEM_NUM)
-				.fields([
-					Fields.ncode,
-					Fields.general_all_no,
-					Fields.general_firstup,
-					Fields.noveltype,
-					Fields.end,
-					Fields.daily_point,
-					Fields.weekly_point,
-					Fields.monthly_point,
-					Fields.monthly_point,
-					Fields.quarter_point,
-					Fields.yearly_point,
-					Fields.all_hyoka_cnt,
-				])
-				.opt("weekly");
-
-			searchBuilder.fields(fields);
-			searchBuilder.opt(optionalFields);
-
-			if (genres.length > 0) {
-				searchBuilder.genre(genres);
-			}
-			if (keyword) {
-				searchBuilder.word(keyword).byKeyword(true);
-			}
-			if (notKeyword) {
-				searchBuilder.notWord(notKeyword).byKeyword(true);
-			}
-			if (byTitle) {
-				searchBuilder.byTitle(byTitle);
-			}
-			if (byStory) {
-				searchBuilder.byOutline();
-			}
-			if (firstUpdateDate) {
-				// firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
-				searchBuilder.lastUpdate(firstUpdateDate, new Date());
-			}
-			if (novelTypeParam) {
-				searchBuilder.type(novelTypeParam);
-			}
-			const result = await searchBuilder.execute({ fetchOptions });
-			return {
-				allcount: result.allcount,
-				limit: result.limit,
-				start: result.start,
-				page: result.page,
-				length: result.length,
-				values: result.values,
-			};
-		},
-	);
 const customRankingFetcher: QueryFunction<
 	NarouCustomRankingSearchResults,
 	CustomRankingKey
@@ -300,21 +210,60 @@ const customRankingFetcher: QueryFunction<
 		page,
 	],
 }) => {
-	return await customRankingServerFn({
-		data: {
-			order,
-			keyword,
-			notKeyword,
-			byTitle,
-			byStory,
-			firstUpdate,
-			genres,
-			novelTypeParam,
-			fields,
-			optionalFields,
-			page,
-		},
-	});
+	const firstUpdateDate = firstUpdate ? new Date(firstUpdate) : null;
+	const searchBuilder = search()
+		.order(order)
+		.page(page, CHUNK_ITEM_NUM)
+		.fields([
+			Fields.ncode,
+			Fields.general_all_no,
+			Fields.general_firstup,
+			Fields.noveltype,
+			Fields.end,
+			Fields.daily_point,
+			Fields.weekly_point,
+			Fields.monthly_point,
+			Fields.monthly_point,
+			Fields.quarter_point,
+			Fields.yearly_point,
+			Fields.all_hyoka_cnt,
+		])
+		.opt("weekly");
+
+	searchBuilder.fields(fields);
+	searchBuilder.opt(optionalFields);
+
+	if (genres.length > 0) {
+		searchBuilder.genre(genres);
+	}
+	if (keyword) {
+		searchBuilder.word(keyword).byKeyword(true);
+	}
+	if (notKeyword) {
+		searchBuilder.notWord(notKeyword).byKeyword(true);
+	}
+	if (byTitle) {
+		searchBuilder.byTitle(byTitle);
+	}
+	if (byStory) {
+		searchBuilder.byOutline();
+	}
+	if (firstUpdateDate) {
+		// firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
+		searchBuilder.lastUpdate(firstUpdateDate, new Date());
+	}
+	if (novelTypeParam) {
+		searchBuilder.type(novelTypeParam);
+	}
+	const result = await searchBuilder.execute({ fetchOptions });
+	return {
+		allcount: result.allcount,
+		limit: result.limit,
+		start: result.start,
+		page: result.page,
+		length: result.length,
+		values: result.values,
+	};
 };
 export class FilterBuilder<
 	T extends PickedNarouSearchResult<
