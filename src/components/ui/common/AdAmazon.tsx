@@ -84,9 +84,8 @@ export const PropOver: React.FC = () => {
 		window.amzn_assoc_marketplace = "amazon";
 		window.amzn_assoc_region = "JP";
 
-		if (!document.getElementById("amazon-ad")) {
+		if (!ref.current.querySelector('script[src*="amazon-adsystem.com"]')) {
 			const script = document.createElement("script");
-			script.id = "amazon-ad";
 			script.type = "text/javascript";
 			script.src =
 				"//ws-fe.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1&MarketPlace=JP";
@@ -95,7 +94,9 @@ export const PropOver: React.FC = () => {
 
 		return () => {
 			if (ref.current) {
-				const script = ref.current.querySelector("#amazon-ad");
+				const script = ref.current.querySelector(
+					'script[src*="amazon-adsystem.com"]',
+				);
 				if (script) {
 					ref.current.removeChild(script);
 				}
@@ -105,5 +106,5 @@ export const PropOver: React.FC = () => {
 
 	if (!adMode) return null;
 
-	return <div ref={ref} id="amazon-ad-container" style={{ display: "none" }} />;
+	return <div ref={ref} style={{ display: "none" }} />;
 };
