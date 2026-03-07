@@ -20,4 +20,14 @@ describe("NarouDateFormat parse", () => {
 	it("空文字列が渡された場合はundefinedを返すこと", () => {
 		expect(parse("")).toBeUndefined();
 	});
+
+	it("不正な形式の文字列が渡された場合は無効なDateTimeオブジェクトを返すこと", () => {
+		const result = parse("invalid-date-string");
+		expect(result).toBeInstanceOf(DateTime);
+		expect(result?.isValid).toBe(false);
+
+		const result2 = parse("2023/10/25 14:30:00"); // 形式が違う (ハイフンではなくスラッシュ)
+		expect(result2).toBeInstanceOf(DateTime);
+		expect(result2?.isValid).toBe(false);
+	});
 });
