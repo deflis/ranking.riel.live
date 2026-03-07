@@ -92,6 +92,15 @@ export const PropOver: React.FC = () => {
 				"//ws-fe.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1&MarketPlace=JP";
 			ref.current.appendChild(script);
 		}
+
+		return () => {
+			if (ref.current) {
+				const script = ref.current.querySelector("#amazon-ad");
+				if (script) {
+					ref.current.removeChild(script);
+				}
+			}
+		};
 	}, [adMode]);
 
 	if (!adMode) return null;
