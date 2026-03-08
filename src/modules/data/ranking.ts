@@ -25,8 +25,7 @@ export const rankingFetcher: QueryFunction<
 	const requestDate = DateTime.fromISO(date, { zone: "Asia/Tokyo" });
 	const now = DateTime.now().setZone("Asia/Tokyo");
 
-	const isGenerated =
-		now.startOf("day") > requestDate.startOf("day") || now.hour >= 12;
+	const isGenerated = now >= requestDate.startOf("day").plus({ hours: 12 });
 
 	const dateValue = requestDate
 		.setZone("UTC", { keepLocalTime: true })
