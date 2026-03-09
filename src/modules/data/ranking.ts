@@ -3,7 +3,6 @@ import {
 	useSuspenseQueries,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import {
@@ -14,7 +13,6 @@ import {
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
-import { cacheMiddleware } from "../utils/cacheMiddleware";
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
 
@@ -23,26 +21,33 @@ export const rankingKey = (type: NarouRankingType, date: string) =>
 export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
-> = async ({ queryKey: [, type, date] }) =>
-	await rankingServerFn({ data: { type, date } });
+> = async ({ queryKey: [, type, date] }) => {
+	const requestDate = DateTime.fromISO(date, { zone: "Asia/Tokyo" });
+	const now = DateTime.now().setZone("Asia/Tokyo");
 
-const rankingServerFn = createServerFn({ method: "GET" })
-	.middleware([
-		cacheMiddleware({
-			// 過去のランキングは全く変わらないはずなので長めにキャッシュする
-			maxAge: 60 * 60 * 24 * 30, // 30 日
-			sMaxAge: 60 * 60 * 24 * 30, // 30 日
-		}),
-	])
-	.inputValidator((data: { type: NarouRankingType; date: string }) => data)
-	.handler(async ({ data: { type, date } }) => {
-		const dateValue = DateTime.fromISO(date, { zone: "Asia/Tokyo" })
-			.setZone("UTC", { keepLocalTime: true })
-			.toJSDate();
-		return await ranking().date(dateValue).type(type).execute({
-			fetchOptions, // TTLは伸ばしていないが、未生成のランキングのエラーをキャッシュするのは避けたい
+	const isGenerated = now >= requestDate.startOf("day").plus({ hours: 12 });
+
+	const dateValue = requestDate
+		.setZone("UTC", { keepLocalTime: true })
+		.toJSDate();
+
+	return await ranking()
+		.date(dateValue)
+		.type(type)
+		.execute({
+			fetchOptions: {
+				...fetchOptions,
+				cf: {
+					cacheTtlByStatus: {
+						"200-299": isGenerated ? 60 * 60 * 24 * 30 : 60 * 5, // 生成済みなら30日、未生成(当日等)なら5分
+						404: 1,
+						"500-599": 0,
+					},
+					cacheEverything: true,
+				},
+			},
 		});
-	});
+};
 
 export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
