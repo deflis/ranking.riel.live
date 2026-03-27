@@ -1,6 +1,6 @@
-import { useEffectOnce } from "@/hooks/useEffectOnce";
 import { useMedia } from "@/hooks/useMedia";
 import { useAtomValue } from "jotai";
+import { useEffect, useRef } from "react";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 
@@ -72,27 +72,39 @@ declare global {
 }
 export const PropOver: React.FC = () => {
 	const adMode = useAtomValue(adModeAtom);
-	useEffectOnce(() => {
-		if (!window) return;
-		if (adMode) {
-			window.amzn_assoc_ad_type = "link_enhancement_widget";
-			window.amzn_assoc_tracking_id = "riel011-22";
-			window.amzn_assoc_linkid = "77015d67c4bcdd9353d9c9f7dcec22fb";
-			window.amzn_assoc_placement = "";
-			window.amzn_assoc_marketplace = "amazon";
-			window.amzn_assoc_region = "JP";
-			const head = document.querySelector("head");
+	const ref = useRef<HTMLDivElement>(null);
 
-			if (!head?.querySelector("#amazon-ad")) {
-				const script = document.createElement("script");
-				script.id = "amazon-ad";
-				script.type = "text/javascript";
-				script.src =
-					"//ws-fe.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1&MarketPlace=JP";
-				head?.appendChild(script);
-			}
+	useEffect(() => {
+		if (typeof window === "undefined" || !adMode || !ref.current) return;
+
+		window.amzn_assoc_ad_type = "link_enhancement_widget";
+		window.amzn_assoc_tracking_id = "riel011-22";
+		window.amzn_assoc_linkid = "77015d67c4bcdd9353d9c9f7dcec22fb";
+		window.amzn_assoc_placement = "";
+		window.amzn_assoc_marketplace = "amazon";
+		window.amzn_assoc_region = "JP";
+
+		if (!ref.current.querySelector('script[src*="amazon-adsystem.com"]')) {
+			const script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src =
+				"//ws-fe.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&Operation=GetScript&ID=OneJS&WS=1&MarketPlace=JP";
+			ref.current.appendChild(script);
 		}
-	});
 
-	return <></>;
+		return () => {
+			if (ref.current) {
+				const script = ref.current.querySelector(
+					'script[src*="amazon-adsystem.com"]',
+				);
+				if (script) {
+					ref.current.removeChild(script);
+				}
+			}
+		};
+	}, [adMode]);
+
+	if (!adMode) return null;
+
+	return <div ref={ref} style={{ display: "none" }} />;
 };
