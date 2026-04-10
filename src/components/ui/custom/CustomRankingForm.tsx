@@ -7,9 +7,9 @@ import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
 import {
 	type FilterConfig,
+	type TermStrings,
 	isCustomDateString,
 	isRelativeTermString,
-	type TermStrings,
 	parseDateRange,
 } from "../../../modules/atoms/filter";
 import { allGenres } from "../../../modules/enum/Genre";
@@ -204,7 +204,7 @@ function formatDateRange(raw: string | TermStrings | undefined): string {
 		return "";
 	}
 }
-	
+
 const DisableCustomRankingForm: React.FC<{
 	params: CustomRankingParams;
 }> = React.memo(function DisableCustomRankingFormBase({
