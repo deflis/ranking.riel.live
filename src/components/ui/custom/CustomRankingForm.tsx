@@ -88,6 +88,8 @@ function getDefaultValues({
 	genres,
 	min,
 	max,
+	minLength,
+	maxLength,
 	firstUpdate: firstUpdateRaw,
 	kanketsu,
 	rensai,
@@ -117,6 +119,16 @@ function getDefaultValues({
 				value: max ?? 1,
 			},
 		},
+		length: {
+			min: {
+				enable: !!minLength,
+				value: minLength ?? 1,
+			},
+			max: {
+				enable: !!maxLength,
+				value: maxLength ?? 1,
+			},
+		},
 		firstUpdate: {
 			term: getTermFromRaw(firstUpdateRaw),
 			begin:
@@ -140,6 +152,7 @@ function convertToParams({
 	byStory,
 	genres,
 	story,
+	length,
 	firstUpdate,
 	status,
 }: CustomRankingConfig): CustomRankingParams {
@@ -152,6 +165,8 @@ function convertToParams({
 		genres: allGenres.filter((id) => genres[`g${id}`]),
 		min: story.min.enable ? story.min.value : undefined,
 		max: story.max.enable ? story.max.value : undefined,
+		minLength: length.min.enable ? length.min.value : undefined,
+		maxLength: length.max.enable ? length.max.value : undefined,
 		firstUpdate:
 			firstUpdate.term === "custom"
 				? firstUpdate.begin
@@ -212,6 +227,8 @@ const DisableCustomRankingForm: React.FC<{
 		byStory,
 		min,
 		max,
+		minLength,
+		maxLength,
 		firstUpdate,
 		rensai,
 		kanketsu,
@@ -241,6 +258,12 @@ const DisableCustomRankingForm: React.FC<{
 					<Tag className="px-2 py-1">
 						話数: {min ? `最小${min}` : ""}
 						{max ? `最大${max}` : ""}
+					</Tag>
+				)}
+				{(minLength || maxLength) && (
+					<Tag className="px-2 py-1">
+						文字数: {minLength ? `最小${minLength}` : ""}
+						{maxLength ? `最大${maxLength}` : ""}
 					</Tag>
 				)}
 				{firstUpdate && (
@@ -368,6 +391,30 @@ const EnableCustomRankingForm: React.FC<
 							min="1"
 							{...register("story.max.value", { valueAsNumber: true })}
 							disabled={!useWatch({ control, name: "story.max.enable" })}
+						/>
+					</label>
+				</fieldset>
+				<fieldset>
+					<legend className="font-bold text-sm text-slate-500">文字数</legend>
+					<label>
+						<Checkbox {...register("length.min.enable")} />
+						最小
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.min.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.min.enable" })}
+						/>
+					</label>
+					～
+					<label>
+						<Checkbox {...register("length.max.enable")} />
+						最大
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.max.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.max.enable" })}
 						/>
 					</label>
 				</fieldset>

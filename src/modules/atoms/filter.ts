@@ -15,6 +15,14 @@ export const storyMinAtom = atomWithStorage<number | undefined>(
 	"minNo",
 	undefined,
 );
+export const lengthMaxAtom = atomWithStorage<number | undefined>(
+	"maxLength",
+	undefined,
+);
+export const lengthMinAtom = atomWithStorage<number | undefined>(
+	"minLength",
+	undefined,
+);
 export const firstUpdateRawAtom = atomWithStorage<
 	string | TermStrings | undefined
 >("firstUpdate", undefined);
@@ -99,6 +107,13 @@ export function checkAllGenres(genres: Genre[]): boolean {
 	return allGenres.every((genre) => genres.includes(genre));
 }
 
+function normalizeFilterNumber(value: number): number | undefined {
+	if (Number.isNaN(value)) {
+		return undefined;
+	}
+	return value;
+}
+
 export const isUseFilterAtom: Atom<boolean> = atom((get) => {
 	const genres = get(genresAtom);
 	const maxNo = get(storyMaxAtom);
@@ -107,10 +122,14 @@ export const isUseFilterAtom: Atom<boolean> = atom((get) => {
 	const enableTanpen = get(enableTanpenAtom);
 	const enableRensai = get(enableRensaiAtom);
 	const enableKanketsu = get(enableKanketsuAtom);
+	const lengthMax = get(lengthMaxAtom);
+	const lengthMin = get(lengthMinAtom);
 	return (
 		(genres.length !== 0 && !checkAllGenres(genres)) ||
 		(maxNo !== undefined && maxNo > 1) ||
 		(minNo !== undefined && minNo > 1) ||
+		lengthMax !== undefined ||
+		(lengthMin !== undefined && lengthMin > 1) ||
 		!!firstUpdate ||
 		!enableTanpen ||
 		!enableRensai ||
@@ -137,6 +156,10 @@ export type FilterConfig = {
 		min: NumberConfig;
 		max: NumberConfig;
 	};
+	length: {
+		min: NumberConfig;
+		max: NumberConfig;
+	};
 	firstUpdate: TermConfig;
 	status: {
 		tanpen: boolean;
@@ -150,6 +173,8 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 		const genres = get(genresAtom);
 		const storyMax = get(storyMaxAtom);
 		const storyMin = get(storyMinAtom);
+		const lengthMax = get(lengthMaxAtom);
+		const lengthMin = get(lengthMinAtom);
 		const firstUpdate = get(firstUpdateAtom);
 		const firstUpdateRaw = get(firstUpdateRawAtom);
 		const enableTanpen = get(enableTanpenAtom);
@@ -173,6 +198,16 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 					value: storyMax ?? 30,
 				},
 			},
+			length: {
+				min: {
+					enable: !!lengthMin,
+					value: lengthMin ?? 1,
+				},
+				max: {
+					enable: !!lengthMax,
+					value: lengthMax ?? 50000,
+				},
+			},
 			firstUpdate: {
 				term: getTermFromRaw(firstUpdateRaw),
 				begin:
@@ -194,11 +229,27 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 		);
 		set(
 			storyMinAtom,
-			config.story.min.enable ? config.story.min.value : undefined,
+			config.story.min.enable
+				? normalizeFilterNumber(config.story.min.value)
+				: undefined,
 		);
 		set(
 			storyMaxAtom,
-			config.story.max.enable ? config.story.max.value : undefined,
+			config.story.max.enable
+				? normalizeFilterNumber(config.story.max.value)
+				: undefined,
+		);
+		set(
+			lengthMinAtom,
+			config.length.min.enable
+				? normalizeFilterNumber(config.length.min.value)
+				: undefined,
+		);
+		set(
+			lengthMaxAtom,
+			config.length.max.enable
+				? normalizeFilterNumber(config.length.max.value)
+				: undefined,
 		);
 		const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin, {
 			zone: "Asia/Tokyo",
@@ -225,6 +276,8 @@ export const filterAtom = atom((get) => {
 	const enableTanpen = get(enableTanpenAtom);
 	const enableRensai = get(enableRensaiAtom);
 	const enableKanketsu = get(enableKanketsuAtom);
+	const lengthMax = get(lengthMaxAtom);
+	const lengthMin = get(lengthMinAtom);
 	return (item: Item): boolean =>
 		(genres.length === 0 || genres.includes(item.genre)) &&
 		(storyMax === undefined ||
@@ -233,6 +286,8 @@ export const filterAtom = atom((get) => {
 		(storyMin === undefined ||
 			storyMin < 1 ||
 			item.general_all_no >= storyMin) &&
+		(lengthMax === undefined || lengthMax < 1 || item.length <= lengthMax) &&
+		(lengthMin === undefined || lengthMin < 1 || item.length >= lengthMin) &&
 		(!firstUpdate || firstUpdate < DateTime.fromISO(item.general_firstup)) &&
 		((enableTanpen && item.noveltype === 2) ||
 			(enableRensai && item.noveltype === 1 && item.end === 1) ||

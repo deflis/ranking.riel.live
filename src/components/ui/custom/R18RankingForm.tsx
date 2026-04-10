@@ -61,7 +61,7 @@ export const R18RankingForm: React.FC<R18RankingFormParams> = ({
 const DisableCustomRankingForm: React.FC<{
 	params: R18RankingParams;
 }> = React.memo(function DisableCustomRankingFormBase({
-	params: { keyword, rankingType, sites },
+	params: { keyword, rankingType, sites, min, max, minLength, maxLength },
 }: {
 	params: R18RankingParams;
 }) {
@@ -86,6 +86,20 @@ const DisableCustomRankingForm: React.FC<{
 				{RankingTypeName[rankingType]}ランキング
 			</h1>
 			<h2>{genre}</h2>
+			<div className="flex flex-wrap gap-1">
+				{(min || max) && (
+					<Tag className="px-2 py-1">
+						話数: {min ? `最小${min}` : ""}
+						{max ? `最大${max}` : ""}
+					</Tag>
+				)}
+				{(minLength || maxLength) && (
+					<Tag className="px-2 py-1">
+						文字数: {minLength ? `最小${minLength}` : ""}
+						{maxLength ? `最大${maxLength}` : ""}
+					</Tag>
+				)}
+			</div>
 		</>
 	);
 });
@@ -123,6 +137,8 @@ function getDefaultValues({
 	sites,
 	min,
 	max,
+	minLength,
+	maxLength,
 	firstUpdate: firstUpdateRaw,
 	kanketsu,
 	rensai,
@@ -151,6 +167,16 @@ function getDefaultValues({
 				value: max ?? 1,
 			},
 		},
+		length: {
+			min: {
+				enable: !!minLength,
+				value: minLength ?? 1,
+			},
+			max: {
+				enable: !!maxLength,
+				value: maxLength ?? 1,
+			},
+		},
 		firstUpdate: {
 			term: getTermFromRaw(firstUpdateRaw),
 			begin:
@@ -174,6 +200,7 @@ function convertToParams({
 	byStory,
 	sites: { nocturne, moonLight, moonLightBL, midnight },
 	story,
+	length,
 	firstUpdate,
 	status,
 }: CustomRankingConfig): R18RankingParams {
@@ -191,6 +218,8 @@ function convertToParams({
 		],
 		min: story.min.enable ? story.min.value : undefined,
 		max: story.max.enable ? story.max.value : undefined,
+		minLength: length.min.enable ? length.min.value : undefined,
+		maxLength: length.max.enable ? length.max.value : undefined,
 		firstUpdate:
 			firstUpdate.term === "custom"
 				? firstUpdate.begin
@@ -323,6 +352,30 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 							min="1"
 							{...register("story.max.value", { valueAsNumber: true })}
 							disabled={!useWatch({ control, name: "story.max.enable" })}
+						/>
+					</label>
+				</fieldset>
+				<fieldset>
+					<legend className="font-bold text-sm text-slate-500">文字数</legend>
+					<label>
+						<Checkbox {...register("length.min.enable")} />
+						最小
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.min.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.min.enable" })}
+						/>
+					</label>
+					～
+					<label>
+						<Checkbox {...register("length.max.enable")} />
+						最大
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.max.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.max.enable" })}
 						/>
 					</label>
 				</fieldset>
