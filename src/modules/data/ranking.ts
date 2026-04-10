@@ -71,14 +71,13 @@ export function useRanking(type: NarouRankingType, date: string) {
 		.map((x) => x.data)
 		.filter((data) => data != null && (!isUseFilter || filter(data)));
 
+	const filteredNcodes = new Set(
+		filteredItems.map((item) => item?.ncode).filter((ncode) => ncode != null),
+	);
+
 	return {
 		data: data.filter(
-			(rank) =>
-				!isUseFilter ||
-				(filteredItems.some(
-					(item) => item != null && item.ncode === rank.ncode,
-				) ??
-					false),
+			(rank) => !isUseFilter || filteredNcodes.has(rank.ncode),
 		),
 	};
 }
