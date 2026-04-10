@@ -15,6 +15,7 @@ import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
+import type { Item } from "./types";
 
 export const rankingKey = (type: NarouRankingType, date: string) =>
 	["ranking", type, date] as const;
@@ -49,6 +50,29 @@ export const rankingFetcher: QueryFunction<
 		});
 };
 
+export function filterRankingData<T extends { ncode: string }>(
+	data: T[],
+	items: { data: Item | undefined | null }[],
+	isUseFilter: boolean,
+	filter: (item: Item) => boolean,
+): T[] {
+	if (!isUseFilter) {
+		return data;
+	}
+
+	const itemMap = new Map<string, Item>();
+	for (const { data: item } of items) {
+		if (item != null) {
+			itemMap.set(item.ncode.toLowerCase(), item);
+		}
+	}
+
+	return data.filter((rank) => {
+		const item = itemMap.get(rank.ncode.toLowerCase());
+		return item != null && filter(item);
+	});
+}
+
 export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
 		queryKey: rankingKey(type, date),
@@ -57,6 +81,7 @@ export function useRanking(type: NarouRankingType, date: string) {
 	});
 
 	const isUseFilter = useAtomValue(isUseFilterAtom);
+	const filter = useAtomValue(filterAtom);
 	const items = useSuspenseQueries({
 		queries: isUseFilter
 			? data.map((v) => ({
@@ -66,20 +91,8 @@ export function useRanking(type: NarouRankingType, date: string) {
 			: [],
 	});
 
-	const filter = useAtomValue(filterAtom);
-	const filteredItems = items
-		.map((x) => x.data)
-		.filter((data) => data != null && (!isUseFilter || filter(data)));
-
 	return {
-		data: data.filter(
-			(rank) =>
-				!isUseFilter ||
-				(filteredItems.some(
-					(item) => item != null && item.ncode === rank.ncode,
-				) ??
-					false),
-		),
+		data: filterRankingData(data, items, isUseFilter, filter),
 	};
 }
 
