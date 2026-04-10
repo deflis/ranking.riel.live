@@ -47,6 +47,8 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 		setValue("firstUpdate.term", "none");
 		setValue("story.min.enable", false);
 		setValue("story.max.enable", false);
+		setValue("length.min.enable", false);
+		setValue("length.max.enable", false);
 		setValue("status.kanketsu", true);
 		setValue("status.rensai", true);
 		setValue("status.tanpen", true);
@@ -97,6 +99,30 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 							min="1"
 							{...register("story.max.value", { valueAsNumber: true })}
 							disabled={!useWatch({ control, name: "story.max.enable" })}
+						/>
+					</label>
+				</fieldset>
+				<fieldset>
+					<legend className={styles.label}>文字数</legend>
+					<label>
+						<Checkbox {...register("length.min.enable")} />
+						最小
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.min.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.min.enable" })}
+						/>
+					</label>
+					～
+					<label>
+						<Checkbox {...register("length.max.enable")} />
+						最大
+						<TextField
+							type="number"
+							min="1"
+							{...register("length.max.value", { valueAsNumber: true })}
+							disabled={!useWatch({ control, name: "length.max.enable" })}
 						/>
 					</label>
 				</fieldset>
