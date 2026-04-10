@@ -7,7 +7,6 @@ import {
 import type { DateTime } from "luxon";
 import {
 	Fields,
-	type Genre,
 	type NarouSearchResult,
 	type NarouSearchResults,
 	NovelTypeParam,

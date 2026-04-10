@@ -1,7 +1,6 @@
 import {
 	type QueryClient,
 	type QueryFunction,
-	keepPreviousData,
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -15,7 +14,6 @@ import {
 	R18Site,
 	searchR18,
 } from "narou";
-import { useCallback } from "react";
 
 import { parseDateRange } from "../atoms/filter";
 import type { R18RankingParams } from "../interfaces/CustomRankingParams";

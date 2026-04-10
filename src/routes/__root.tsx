@@ -1,8 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
-import {
-	QueryClientProvider,
-	QueryErrorResetBoundary,
-} from "@tanstack/react-query";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 /// <reference types="vite/client" />
 import { createRootRouteWithContext } from "@tanstack/react-router";
