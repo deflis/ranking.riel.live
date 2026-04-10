@@ -5,16 +5,11 @@ import type { Item } from "../types";
 describe("filterRankingData", () => {
 	it("isUseFilterがfalseのとき、データをそのまま返す", () => {
 		const mockData = [{ ncode: "n1" }, { ncode: "n2" }];
-		const mockItems = [];
+		const mockItems: { data: Item | null }[] = [];
 		const isUseFilter = false;
-		const filter = () => true;
+		const filter = (_item: Item) => true;
 
-		const result = filterRankingData(
-			mockData,
-			mockItems,
-			isUseFilter,
-			filter as any,
-		);
+		const result = filterRankingData(mockData, mockItems, isUseFilter, filter);
 		expect(result).toEqual(mockData);
 	});
 
