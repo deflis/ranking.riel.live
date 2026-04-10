@@ -65,5 +65,16 @@ describe("filter utilities", () => {
 			expect(parseDateRange(undefined)).toBeUndefined();
 			expect(parseDateRange("invalid-date")).toBeUndefined();
 		});
+
+		it("throwOnInvalid=true でも無効な入力で例外を投げないこと", () => {
+			const prevThrowOnInvalid = Settings.throwOnInvalid;
+			Settings.throwOnInvalid = true;
+			try {
+				expect(() => parseDateRange("invalid-date")).not.toThrow();
+				expect(parseDateRange("invalid-date")).toBeUndefined();
+			} finally {
+				Settings.throwOnInvalid = prevThrowOnInvalid;
+			}
+		});
 	});
 });
