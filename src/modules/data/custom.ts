@@ -123,6 +123,8 @@ const customRankingKey = (
 		tanpen,
 		genres,
 		firstUpdate,
+		minLength,
+		maxLength,
 	} = params;
 	let novelTypeParam: NovelTypeParam | null = null;
 	if (!tanpen) {
@@ -180,6 +182,8 @@ const customRankingKey = (
 		byTitle,
 		byStory,
 		parseDateRange(firstUpdate)?.toISO(),
+		minLength,
+		maxLength,
 		genres.length === 0 ? allGenres : genres,
 		novelTypeParam,
 		[...fields, ...newFields] as const,
@@ -205,6 +209,8 @@ const customRankingFetcher: QueryFunction<
 		byTitle,
 		byStory,
 		firstUpdate,
+		minLength,
+		maxLength,
 		genres,
 		novelTypeParam,
 		fields,
@@ -253,6 +259,9 @@ const customRankingFetcher: QueryFunction<
 	if (firstUpdateDate) {
 		// firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
 		searchBuilder.lastUpdate(firstUpdateDate, new Date());
+	}
+	if (minLength && maxLength) {
+		searchBuilder.length([minLength, maxLength]);
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);

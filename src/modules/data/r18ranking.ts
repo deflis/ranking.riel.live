@@ -117,6 +117,8 @@ const customRankingKey = (
 		notKeyword,
 		byTitle,
 		byStory,
+		minLength,
+		maxLength,
 		rensai,
 		kanketsu,
 		tanpen,
@@ -177,6 +179,8 @@ const customRankingKey = (
 		notKeyword,
 		byTitle,
 		byStory,
+		minLength,
+		maxLength,
 		sites.length === 0
 			? [
 					R18Site.Nocturne,
@@ -208,6 +212,8 @@ const customRankingFetcher: QueryFunction<
 		notKeyword,
 		byTitle,
 		byStory,
+		minLength,
+		maxLength,
 		sites,
 		novelTypeParam,
 		fields,
@@ -251,6 +257,9 @@ const customRankingFetcher: QueryFunction<
 	}
 	if (byStory) {
 		searchBuilder.byOutline();
+	}
+	if (minLength && maxLength) {
+		searchBuilder.length([minLength, maxLength]);
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
