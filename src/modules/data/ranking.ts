@@ -15,6 +15,7 @@ import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
+import type { Item } from "./types";
 
 export const rankingKey = (type: NarouRankingType, date: string) =>
 	["ranking", type, date] as const;
@@ -51,9 +52,9 @@ export const rankingFetcher: QueryFunction<
 
 export function filterRankingData<T extends { ncode: string }>(
 	data: T[],
-	items: { data: any | undefined | null }[],
+	items: { data: Item | undefined | null }[],
 	isUseFilter: boolean,
-	filter: (item: any) => boolean,
+	filter: (item: Item) => boolean,
 ): T[] {
 	if (!isUseFilter) {
 		return data;
