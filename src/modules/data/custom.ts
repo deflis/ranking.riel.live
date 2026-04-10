@@ -62,6 +62,8 @@ const getCustomRankingQueryFn = (
 		const firstUpdate = parseDateRange(params.firstUpdate);
 		if (params.max) filterBuilder.setMaxNo(params.max);
 		if (params.min) filterBuilder.setMinNo(params.min);
+		if (params.maxLength) filterBuilder.setMaxLength(params.maxLength);
+		if (params.minLength) filterBuilder.setMinLength(params.minLength);
 		if (firstUpdate) filterBuilder.setFirstUpdate(firstUpdate);
 		if (!params.tanpen) filterBuilder.disableTanpen();
 		if (!params.kanketsu) filterBuilder.disableKanketsu();
@@ -93,6 +95,7 @@ const getCustomRankingQueryFn = (
 type CustomRankingResultKeyNames =
 	| "ncode"
 	| "general_all_no"
+	| "length"
 	| "general_firstup"
 	| "noveltype"
 	| "end"
@@ -216,6 +219,7 @@ const customRankingFetcher: QueryFunction<
 		.fields([
 			Fields.ncode,
 			Fields.general_all_no,
+			Fields.length,
 			Fields.general_firstup,
 			Fields.noveltype,
 			Fields.end,
@@ -265,11 +269,13 @@ const customRankingFetcher: QueryFunction<
 };
 export class FilterBuilder<
 	T extends PickedNarouSearchResult<
-		"general_all_no" | "general_firstup" | "noveltype" | "end"
+		"general_all_no" | "length" | "general_firstup" | "noveltype" | "end"
 	>,
 > {
 	private maxNo?: number;
 	private minNo?: number;
+	private maxLength?: number;
+	private minLength?: number;
 	private firstUpdate?: DateTime;
 	private tanpen = true;
 	private rensai = true;
@@ -280,6 +286,12 @@ export class FilterBuilder<
 			return false;
 		}
 		if (this.minNo && item.general_all_no < this.minNo) {
+			return false;
+		}
+		if (this.maxLength && item.length > this.maxLength) {
+			return false;
+		}
+		if (this.minLength && item.length < this.minLength) {
 			return false;
 		}
 		if (this.firstUpdate) {
@@ -306,6 +318,9 @@ export class FilterBuilder<
 		if (this.maxNo || this.minNo) {
 			fields.add(Fields.general_all_no);
 		}
+		if (this.maxLength || this.minLength) {
+			fields.add(Fields.length);
+		}
 		if (this.firstUpdate) {
 			fields.add(Fields.general_firstup);
 		}
@@ -324,6 +339,12 @@ export class FilterBuilder<
 	}
 	setMinNo(minNo: number) {
 		this.minNo = minNo;
+	}
+	setMaxLength(maxLength: number) {
+		this.maxLength = maxLength;
+	}
+	setMinLength(minLength: number) {
+		this.minLength = minLength;
 	}
 	setFirstUpdate(firstUpdate: DateTime) {
 		this.firstUpdate = firstUpdate;
