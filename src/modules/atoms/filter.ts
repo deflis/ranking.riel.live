@@ -107,6 +107,13 @@ export function checkAllGenres(genres: Genre[]): boolean {
 	return allGenres.every((genre) => genres.includes(genre));
 }
 
+function normalizeFilterNumber(value: number): number | undefined {
+	if (Number.isNaN(value)) {
+		return undefined;
+	}
+	return value;
+}
+
 export const isUseFilterAtom: Atom<boolean> = atom((get) => {
 	const genres = get(genresAtom);
 	const maxNo = get(storyMaxAtom);
@@ -121,7 +128,7 @@ export const isUseFilterAtom: Atom<boolean> = atom((get) => {
 		(genres.length !== 0 && !checkAllGenres(genres)) ||
 		(maxNo !== undefined && maxNo > 1) ||
 		(minNo !== undefined && minNo > 1) ||
-		(lengthMax !== undefined && lengthMax > 1) ||
+		lengthMax !== undefined ||
 		(lengthMin !== undefined && lengthMin > 1) ||
 		!!firstUpdate ||
 		!enableTanpen ||
@@ -222,19 +229,27 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 		);
 		set(
 			storyMinAtom,
-			config.story.min.enable ? config.story.min.value : undefined,
+			config.story.min.enable
+				? normalizeFilterNumber(config.story.min.value)
+				: undefined,
 		);
 		set(
 			storyMaxAtom,
-			config.story.max.enable ? config.story.max.value : undefined,
+			config.story.max.enable
+				? normalizeFilterNumber(config.story.max.value)
+				: undefined,
 		);
 		set(
 			lengthMinAtom,
-			config.length.min.enable ? config.length.min.value : undefined,
+			config.length.min.enable
+				? normalizeFilterNumber(config.length.min.value)
+				: undefined,
 		);
 		set(
 			lengthMaxAtom,
-			config.length.max.enable ? config.length.max.value : undefined,
+			config.length.max.enable
+				? normalizeFilterNumber(config.length.max.value)
+				: undefined,
 		);
 		const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin, {
 			zone: "Asia/Tokyo",
