@@ -27,10 +27,26 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Biome Linting
-        run: pnpm biome check . --reporter=github
+        id: lint
+        run: pnpm exec biome ci . --reporter=github
+        continue-on-error: true
 
       - name: Run Typecheck
-        run: pnpm tsc --noEmit --pretty false
+        id: typecheck
+        if: ${{ always() }}
+        run: pnpm exec tsc --noEmit --pretty false
+        continue-on-error: true
 
       - name: Run Tests
-        run: pnpm test -- --reporter=github-actions --reporter=default
+        id: test
+        if: ${{ always() }}
+        run: pnpm exec vitest run --reporter=github-actions --reporter=default
+        continue-on-error: true
+
+      - name: Fail if any checks failed
+        if: ${{ always() && (steps.lint.outcome == 'failure' || steps.typecheck.outcome == 'failure' || steps.test.outcome == 'failure') }}
+        run: |
+          echo "One or more checks failed."
+          echo "lint=${{ steps.lint.outcome }}, typecheck=${{ steps.typecheck.outcome }}, test=${{ steps.test.outcome }}"
+          exit 1
+
