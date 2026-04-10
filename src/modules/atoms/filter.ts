@@ -25,6 +25,37 @@ export const firstUpdateAtom = atom((get) =>
 	parseDateRange(get(firstUpdateRawAtom)),
 );
 
+const relativeTermPattern = /^\d+(days|months|years)$/;
+
+export function isRelativeTermString(
+	raw: string | undefined,
+): raw is TermStrings {
+	return !!raw && relativeTermPattern.test(raw);
+}
+
+export function isCustomDateString(raw: string | undefined): boolean {
+	if (!raw || isRelativeTermString(raw)) {
+		return false;
+	}
+	try {
+		return DateTime.fromISO(raw, { zone: "Asia/Tokyo" }).isValid;
+	} catch {
+		return false;
+	}
+}
+
+export function getTermFromRaw(
+	raw: string | undefined,
+): TermStrings | "custom" | "none" {
+	if (isCustomDateString(raw)) {
+		return "custom";
+	}
+	if (isRelativeTermString(raw)) {
+		return raw;
+	}
+	return "none";
+}
+
 export function parseDateRange(raw: string | undefined): DateTime | undefined {
 	if (!raw) {
 		return undefined;
@@ -56,8 +87,12 @@ export function parseDateRange(raw: string | undefined): DateTime | undefined {
 				.minus({ years });
 		}
 	}
-	const date = raw ? DateTime.fromISO(raw, { zone: "Asia/Tokyo" }) : undefined;
-	return date?.isValid ? date : undefined;
+	try {
+		const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
+		return date.isValid ? date : undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 export function checkAllGenres(genres: Genre[]): boolean {
@@ -139,11 +174,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 				},
 			},
 			firstUpdate: {
-				term:
-					firstUpdateRaw &&
-					DateTime.fromISO(firstUpdateRaw, { zone: "Asia/Tokyo" }).isValid
-						? "custom"
-						: ((firstUpdateRaw as TermStrings) ?? "none"),
+				term: getTermFromRaw(firstUpdateRaw),
 				begin:
 					firstUpdate?.toISODate() ??
 					DateTime.now().setZone("Asia/Tokyo").toISODate(),

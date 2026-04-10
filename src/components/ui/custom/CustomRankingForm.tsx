@@ -8,6 +8,7 @@ import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import {
 	type FilterConfig,
 	type TermStrings,
+	getTermFromRaw,
 	parseDateRange,
 } from "../../../modules/atoms/filter";
 import { allGenres } from "../../../modules/enum/Genre";
@@ -117,10 +118,7 @@ function getDefaultValues({
 			},
 		},
 		firstUpdate: {
-			term: DateTime.fromISO(firstUpdateRaw ?? "", { zone: "Asia/Tokyo" })
-				.isValid
-				? "custom"
-				: ((firstUpdateRaw as TermStrings) ?? "none"),
+			term: getTermFromRaw(firstUpdateRaw),
 			begin:
 				firstUpdate?.toISODate() ??
 				DateTime.now().setZone("Asia/Tokyo").toISODate(),
@@ -190,12 +188,16 @@ function formatDateRange(raw: string | TermStrings | undefined): string {
 	}
 
 	// ISO日付形式の処理
-	const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
-	if (!date.isValid) {
+	try {
+		const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
+		if (!date.isValid) {
+			return "";
+		}
+
+		return date.toFormat("yyyy年MM月dd日");
+	} catch {
 		return "";
 	}
-
-	return date.toFormat("yyyy年MM月dd日");
 }
 
 const DisableCustomRankingForm: React.FC<{

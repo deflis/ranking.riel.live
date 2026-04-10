@@ -107,8 +107,8 @@ function RankingPage() {
 
 	const handleDateCommit = useCallback(
 		(value: string) => {
-			const newDate = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
-			if (newDate.isValid) {
+			try {
+				const newDate = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",
 					params: (prev) => ({
@@ -117,6 +117,8 @@ function RankingPage() {
 						date: newDate.toISODate(),
 					}),
 				});
+			} catch {
+				// 無効な日付の場合は何もしない
 			}
 		},
 		[type, navigate],
