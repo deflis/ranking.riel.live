@@ -1,8 +1,8 @@
-import { Link as RouterLink, createLink } from "@tanstack/react-router";
+import { Link, createLink } from "@tanstack/react-router";
 import { decode } from "html-entities";
 import { DateTime } from "luxon";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
-import type React from "react";
+import type { FC } from "react";
 import { FaPenNib } from "react-icons/fa";
 import {
 	HiBookmark,
@@ -14,6 +14,10 @@ import {
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
 
+import {
+	buildCustomRankingSearch,
+	buildR18RankingSearch,
+} from "@/modules/utils/parseSearch";
 import type {
 	Detail,
 	Item,
@@ -30,13 +34,9 @@ import { FirstAd } from "../common/FirstAd";
 import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag } from "../common/bulma/Tag";
-const ChipLink = createLink(Chip);
-
-import {
-	buildCustomRankingSearch,
-	buildR18RankingSearch,
-} from "@/modules/utils/parseSearch";
 import DetailItemText from "./DetailItemText";
+
+const ChipLink = createLink(Chip);
 
 const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 /**
@@ -71,7 +71,7 @@ function checkR18(
 	return isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined);
 }
 
-const DetailItem: React.FC<{
+const DetailItem: FC<{
 	ncode: string;
 	item: Item | NocItem | null | undefined;
 	detail: Detail | NocDetail | null | undefined;
@@ -117,7 +117,7 @@ const DetailItem: React.FC<{
 					</Tag>{" "}
 					{item ? (
 						!isR18 ? (
-							<RouterLink
+							<Link
 								to="/custom/{-$type}"
 								params={(prev) => ({ ...prev, type: "all" })}
 								search={(_) =>
@@ -126,9 +126,9 @@ const DetailItem: React.FC<{
 								rel="noopener noreferrer"
 							>
 								{GenreNotation[item.genre]}
-							</RouterLink>
+							</Link>
 						) : (
-							<RouterLink
+							<Link
 								to="/r18"
 								params={(prev) => ({ ...prev })}
 								search={(_) =>
@@ -137,7 +137,7 @@ const DetailItem: React.FC<{
 								rel="noopener noreferrer"
 							>
 								{R18SiteNotation[item.nocgenre]}
-							</RouterLink>
+							</Link>
 						)
 					) : (
 						<PulseLoader className="w-1/4" disabled={isNotFound} />
@@ -232,7 +232,7 @@ const DetailItem: React.FC<{
 							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
 						>
 							{item ? (
-								<RouterLink
+								<Link
 									to="/custom/{-$type}"
 									params={(prev) => ({ ...prev, type: "all" })}
 									search={(_) =>
@@ -240,7 +240,7 @@ const DetailItem: React.FC<{
 									}
 								>
 									{GenreNotation[item.genre]}
-								</RouterLink>
+								</Link>
 							) : (
 								<PulseLoader className="w-1/2" disabled={isNotFound} />
 							)}
@@ -252,7 +252,7 @@ const DetailItem: React.FC<{
 							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
 						>
 							{item ? (
-								<RouterLink
+								<Link
 									to="/r18"
 									params={(prev) => ({ ...prev })}
 									search={(_) =>
@@ -260,7 +260,7 @@ const DetailItem: React.FC<{
 									}
 								>
 									{R18SiteNotation[item.nocgenre]}
-								</RouterLink>
+								</Link>
 							) : (
 								<PulseLoader className="w-1/2" disabled={isNotFound} />
 							)}
