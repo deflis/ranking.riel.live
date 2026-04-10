@@ -215,10 +215,9 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 		defaultValues,
 	});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		reset(defaultValues);
-	}, [defaultValues]);
+	}, [reset, defaultValues]);
 
 	const handleSearch = useCallback(
 		(config: CustomRankingConfig) => {
@@ -227,20 +226,19 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 		[onSearch],
 	);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const selectAll = useCallback(() => {
 		setValue("sites.nocturne", true);
 		setValue("sites.moonLight", true);
 		setValue("sites.moonLightBL", true);
 		setValue("sites.midnight", true);
-	}, []);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	}, [setValue]);
+
 	const unselectAll = useCallback(() => {
 		setValue("sites.nocturne", false);
 		setValue("sites.moonLight", false);
 		setValue("sites.moonLightBL", false);
 		setValue("sites.midnight", false);
-	}, []);
+	}, [setValue]);
 
 	return (
 		<form onSubmit={handleSubmit(handleSearch)}>
