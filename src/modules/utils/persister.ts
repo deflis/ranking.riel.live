@@ -6,9 +6,13 @@ import { DateTime } from "luxon";
  */
 function reviver(key: string, value: unknown): unknown {
 	if (typeof value === "string") {
-		const date = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
-		if (date.isValid) {
-			return date;
+		try {
+			const date = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
+			if (date.isValid) {
+				return date;
+			}
+		} catch {
+			return value;
 		}
 	}
 	return value;
