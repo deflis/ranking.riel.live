@@ -49,6 +49,22 @@ export const rankingFetcher: QueryFunction<
 		});
 };
 
+export function filterRankingData<T extends { ncode: string }>(
+	data: T[],
+	items: { data: any | undefined | null }[],
+	isUseFilter: boolean,
+	filter: (item: any) => boolean,
+): T[] {
+	if (!isUseFilter) {
+		return data;
+	}
+
+	return data.filter((_, index) => {
+		const item = items[index]?.data;
+		return item != null && filter(item);
+	});
+}
+
 export function useRanking(type: NarouRankingType, date: string) {
 	const { data } = useSuspenseQuery({
 		queryKey: rankingKey(type, date),
@@ -67,18 +83,8 @@ export function useRanking(type: NarouRankingType, date: string) {
 			: [],
 	});
 
-	if (!isUseFilter) {
-		return { data };
-	}
-
-	const filteredItems = items
-		.map((x) => x.data)
-		.filter((data) => data != null && filter(data));
-
-	const filteredNcodes = new Set(filteredItems.map((item) => item.ncode));
-
 	return {
-		data: data.filter((rank) => filteredNcodes.has(rank.ncode)),
+		data: filterRankingData(data, items, isUseFilter, filter),
 	};
 }
 
