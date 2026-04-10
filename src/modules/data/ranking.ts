@@ -57,6 +57,7 @@ export function useRanking(type: NarouRankingType, date: string) {
 	});
 
 	const isUseFilter = useAtomValue(isUseFilterAtom);
+	const filter = useAtomValue(filterAtom);
 	const items = useSuspenseQueries({
 		queries: isUseFilter
 			? data.map((v) => ({
@@ -66,19 +67,18 @@ export function useRanking(type: NarouRankingType, date: string) {
 			: [],
 	});
 
-	const filter = useAtomValue(filterAtom);
+	if (!isUseFilter) {
+		return { data };
+	}
+
 	const filteredItems = items
 		.map((x) => x.data)
-		.filter((data) => data != null && (!isUseFilter || filter(data)));
+		.filter((data) => data != null && filter(data));
 
-	const filteredNcodes = new Set(
-		filteredItems.map((item) => item?.ncode).filter((ncode) => ncode != null),
-	);
+	const filteredNcodes = new Set(filteredItems.map((item) => item.ncode));
 
 	return {
-		data: data.filter(
-			(rank) => !isUseFilter || filteredNcodes.has(rank.ncode),
-		),
+		data: data.filter((rank) => filteredNcodes.has(rank.ncode)),
 	};
 }
 
