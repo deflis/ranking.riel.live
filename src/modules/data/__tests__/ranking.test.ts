@@ -14,7 +14,7 @@ describe("filterRankingData", () => {
 	});
 
 	it("isUseFilterがtrueのとき、dataがnullのアイテムを除外する", () => {
-		const mockData = [{ ncode: "n1" }, { ncode: "n2" }, { ncode: "n3" }];
+		const mockData = [{ ncode: "N1" }, { ncode: "n2" }, { ncode: "n3" }];
 		const mockItems = [
 			{ data: { ncode: "n1" } as Item },
 			{ data: null }, // dataがnull
@@ -24,7 +24,7 @@ describe("filterRankingData", () => {
 		const filter = () => true;
 
 		const result = filterRankingData(mockData, mockItems, isUseFilter, filter);
-		expect(result).toEqual([{ ncode: "n1" }, { ncode: "n3" }]);
+		expect(result).toEqual([{ ncode: "N1" }, { ncode: "n3" }]);
 	});
 
 	it("isUseFilterがtrueのとき、filter条件に合わないアイテムを除外する", () => {

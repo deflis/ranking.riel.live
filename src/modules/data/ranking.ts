@@ -60,8 +60,15 @@ export function filterRankingData<T extends { ncode: string }>(
 		return data;
 	}
 
-	return data.filter((_, index) => {
-		const item = items[index]?.data;
+	const itemMap = new Map<string, Item>();
+	for (const { data: item } of items) {
+		if (item != null) {
+			itemMap.set(item.ncode.toLowerCase(), item);
+		}
+	}
+
+	return data.filter((rank) => {
+		const item = itemMap.get(rank.ncode.toLowerCase());
 		return item != null && filter(item);
 	});
 }
