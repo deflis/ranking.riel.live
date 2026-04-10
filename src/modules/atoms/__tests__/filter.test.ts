@@ -1,7 +1,7 @@
 import { DateTime, Settings } from "luxon";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { allGenres } from "../../enum/Genre";
-import { checkAllGenres, parseDateRange } from "../filter";
+import { checkAllGenres, getTermFromRaw, parseDateRange } from "../filter";
 
 // タイムゾーンを日本に固定
 Settings.defaultZone = "Asia/Tokyo";
@@ -75,6 +75,21 @@ describe("filter utilities", () => {
 			} finally {
 				Settings.throwOnInvalid = prevThrowOnInvalid;
 			}
+		});
+	});
+
+	describe("getTermFromRaw", () => {
+		it("相対termはそのまま返すこと", () => {
+			expect(getTermFromRaw("7days")).toBe("7days");
+		});
+
+		it("ISO日付はcustomを返すこと", () => {
+			expect(getTermFromRaw("2023-01-01T00:00:00.000Z")).toBe("custom");
+		});
+
+		it("無効値はnoneを返すこと", () => {
+			expect(getTermFromRaw(undefined)).toBe("none");
+			expect(getTermFromRaw("invalid-date")).toBe("none");
 		});
 	});
 });

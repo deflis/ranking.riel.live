@@ -8,8 +8,7 @@ import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 import {
 	type FilterConfig,
 	type TermStrings,
-	isCustomDateString,
-	isRelativeTermString,
+	getTermFromRaw,
 	parseDateRange,
 } from "../../../modules/atoms/filter";
 import { allGenres } from "../../../modules/enum/Genre";
@@ -119,11 +118,7 @@ function getDefaultValues({
 			},
 		},
 		firstUpdate: {
-			term: isCustomDateString(firstUpdateRaw)
-				? "custom"
-				: isRelativeTermString(firstUpdateRaw)
-					? firstUpdateRaw
-					: "none",
+			term: getTermFromRaw(firstUpdateRaw),
 			begin:
 				firstUpdate?.toISODate() ??
 				DateTime.now().setZone("Asia/Tokyo").toISODate(),

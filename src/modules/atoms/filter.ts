@@ -44,6 +44,18 @@ export function isCustomDateString(raw: string | undefined): boolean {
 	}
 }
 
+export function getTermFromRaw(
+	raw: string | undefined,
+): TermStrings | "custom" | "none" {
+	if (isCustomDateString(raw)) {
+		return "custom";
+	}
+	if (isRelativeTermString(raw)) {
+		return raw;
+	}
+	return "none";
+}
+
 export function parseDateRange(raw: string | undefined): DateTime | undefined {
 	if (!raw) {
 		return undefined;
@@ -162,11 +174,7 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 				},
 			},
 			firstUpdate: {
-				term: isCustomDateString(firstUpdateRaw)
-					? "custom"
-					: isRelativeTermString(firstUpdateRaw)
-						? firstUpdateRaw
-						: "none",
+				term: getTermFromRaw(firstUpdateRaw),
 				begin:
 					firstUpdate?.toISODate() ??
 					DateTime.now().setZone("Asia/Tokyo").toISODate(),
