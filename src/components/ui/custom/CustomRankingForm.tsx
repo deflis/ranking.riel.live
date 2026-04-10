@@ -193,14 +193,18 @@ function formatDateRange(raw: string | TermStrings | undefined): string {
 	}
 
 	// ISO日付形式の処理
-	const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
-	if (!date.isValid) {
+	try {
+		const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
+		if (!date.isValid) {
+			return "";
+		}
+
+		return date.toFormat("yyyy年MM月dd日");
+	} catch {
 		return "";
 	}
-
-	return date.toFormat("yyyy年MM月dd日");
 }
-
+	
 const DisableCustomRankingForm: React.FC<{
 	params: CustomRankingParams;
 }> = React.memo(function DisableCustomRankingFormBase({
