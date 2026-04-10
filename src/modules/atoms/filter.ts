@@ -53,14 +53,14 @@ export function parseDateRange(raw: string | undefined): DateTime | undefined {
 			return DateTime.now()
 				.setZone("Asia/Tokyo")
 				.startOf("day")
-				.minus({ months: years });
+				.minus({ years });
 		}
 	}
 	const date = raw ? DateTime.fromISO(raw, { zone: "Asia/Tokyo" }) : undefined;
 	return date?.isValid ? date : undefined;
 }
 
-function checkAllGenres(genres: Genre[]): boolean {
+export function checkAllGenres(genres: Genre[]): boolean {
 	return allGenres.every((genre) => genres.includes(genre));
 }
 
