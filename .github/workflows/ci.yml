@@ -44,7 +44,7 @@ jobs:
         continue-on-error: true
 
       - name: Fail if any checks failed
-        if: ${{ always() && (steps.lint.outcome == 'failure' || steps.typecheck.outcome == 'failure' || steps.test.outcome == 'failure') }}
+        if: ${{ always() && (steps.lint.outcome != 'success' || steps.typecheck.outcome != 'success' || steps.test.outcome != 'success') }}
         run: |
           echo "One or more checks failed."
           echo "lint=${{ steps.lint.outcome }}, typecheck=${{ steps.typecheck.outcome }}, test=${{ steps.test.outcome }}"
