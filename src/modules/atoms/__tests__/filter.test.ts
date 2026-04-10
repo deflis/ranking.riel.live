@@ -39,14 +39,14 @@ describe("filter utilities", () => {
 			vi.useRealTimers();
 		});
 
-		const todayStart = mockNow.startOf("day");
-
 		it("相対的な期間文字列 (days) を正しく解析すること", () => {
+			const todayStart = mockNow.startOf("day");
 			const result = parseDateRange("7days");
 			expect(result?.toISODate()).toBe(todayStart.minus({ days: 7 }).toISODate());
 		});
 
 		it("相対的な期間文字列 (months) を正しく解析すること", () => {
+			const todayStart = mockNow.startOf("day");
 			const result = parseDateRange("1months");
 			expect(result?.toISODate()).toBe(
 				todayStart.minus({ months: 1 }).toISODate(),
@@ -54,6 +54,7 @@ describe("filter utilities", () => {
 		});
 
 		it("相対的な期間文字列 (years) を正しく解析すること", () => {
+			const todayStart = mockNow.startOf("day");
 			const result = parseDateRange("1years");
 			expect(result?.toISODate()).toBe(
 				todayStart.minus({ years: 1 }).toISODate(),
