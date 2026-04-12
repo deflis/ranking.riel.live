@@ -260,8 +260,8 @@ const customRankingFetcher: QueryFunction<
 		// firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
 		searchBuilder.lastUpdate(firstUpdateDate, new Date());
 	}
-	if (minLength && maxLength) {
-		searchBuilder.length([minLength, maxLength]);
+	if (minLength !== undefined || maxLength !== undefined) {
+		searchBuilder.length([minLength ?? 0, maxLength ?? 2147483647]);
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
