@@ -258,8 +258,8 @@ const customRankingFetcher: QueryFunction<
 	if (byStory) {
 		searchBuilder.byOutline();
 	}
-	if (minLength && maxLength) {
-		searchBuilder.length([minLength, maxLength]);
+	if (minLength !== undefined || maxLength !== undefined) {
+		searchBuilder.length([minLength ?? 0, maxLength ?? 2147483647]);
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
