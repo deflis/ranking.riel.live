@@ -13,6 +13,8 @@ type CustomRankingSearch = {
 	genres?: string;
 	min?: string;
 	max?: string;
+	min_length?: string;
+	max_length?: string;
 	first_update?: string;
 	rensai?: string;
 	kanketsu?: string;
@@ -39,6 +41,8 @@ export const Route = createFileRoute("/custom/{-$type}")({
 			genres: search.genres as string | undefined,
 			min: search.min as string | undefined,
 			max: search.max as string | undefined,
+			min_length: search.min_length as string | undefined,
+			max_length: search.max_length as string | undefined,
 			first_update: search.first_update as string | undefined,
 			rensai: search.rensai as string | undefined,
 			kanketsu: search.kanketsu as string | undefined,

@@ -74,6 +74,8 @@ export const parseCustomRankingParams = (
 		genres?: string;
 		min?: string;
 		max?: string;
+		min_length?: string;
+		max_length?: string;
 		first_update?: string;
 		rensai?: string;
 		kanketsu?: string;
@@ -89,6 +91,8 @@ export const parseCustomRankingParams = (
 		genres: parseGenres(search.genres),
 		max: parseIntSafe(search.max),
 		min: parseIntSafe(search.min),
+		maxLength: parseIntSafe(search.max_length),
+		minLength: parseIntSafe(search.min_length),
 		firstUpdate: search.first_update,
 		rensai: parseBoolean(search.rensai, true),
 		kanketsu: parseBoolean(search.kanketsu, true),
@@ -107,6 +111,8 @@ export const parseR18RankingParams = (
 		sites?: string;
 		min?: string;
 		max?: string;
+		min_length?: string;
+		max_length?: string;
 		first_update?: string;
 		rensai?: string;
 		kanketsu?: string;
@@ -122,6 +128,8 @@ export const parseR18RankingParams = (
 		sites: parseSites(search.sites),
 		max: parseIntSafe(search.max),
 		min: parseIntSafe(search.min),
+		maxLength: parseIntSafe(search.max_length),
+		minLength: parseIntSafe(search.min_length),
 		firstUpdate: search.first_update,
 		rensai: parseBoolean(search.rensai, true),
 		kanketsu: parseBoolean(search.kanketsu, true),
@@ -168,6 +176,8 @@ export const buildCustomRankingSearch = (
 		genres: arrayFormat(params.genres),
 		max: params.max ?? undefined,
 		min: params.min ?? undefined,
+		max_length: params.maxLength ?? undefined,
+		min_length: params.minLength ?? undefined,
 		first_update: params.firstUpdate ?? undefined,
 		rensai: booleanFormat(params.rensai ?? true, true), // デフォルトtrue
 		kanketsu: booleanFormat(params.kanketsu ?? true, true), // デフォルトtrue
@@ -186,6 +196,8 @@ export const buildR18RankingSearch = (
 		sites: arrayFormat(params.sites),
 		max: params.max ?? undefined,
 		min: params.min ?? undefined,
+		max_length: params.maxLength ?? undefined,
+		min_length: params.minLength ?? undefined,
 		first_update: params.firstUpdate ?? undefined,
 		rensai: booleanFormat(params.rensai ?? true, true), // デフォルトtrue
 		kanketsu: booleanFormat(params.kanketsu ?? true, true), // デフォルトtrue

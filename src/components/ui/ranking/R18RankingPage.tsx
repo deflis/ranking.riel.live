@@ -15,6 +15,8 @@ export type R18RankingSearch = {
 	sites?: string;
 	min?: string;
 	max?: string;
+	min_length?: string;
+	max_length?: string;
 	first_update?: string;
 	rensai?: string;
 	kanketsu?: string;
