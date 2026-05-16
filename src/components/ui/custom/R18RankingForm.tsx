@@ -164,7 +164,7 @@ function getDefaultValues({
 			},
 			max: {
 				enable: !!max,
-				value: max ?? 1,
+				value: max ?? 1000,
 			},
 		},
 		length: {
@@ -174,7 +174,7 @@ function getDefaultValues({
 			},
 			max: {
 				enable: !!maxLength,
-				value: maxLength ?? 1,
+				value: maxLength ?? 1000000,
 			},
 		},
 		firstUpdate: {
