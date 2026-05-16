@@ -23,6 +23,8 @@ export const Route = createFileRoute("/r18/ranking/{-$type}")({
 			sites: search.sites as string | undefined,
 			min: search.min as string | undefined,
 			max: search.max as string | undefined,
+			min_length: search.min_length as string | undefined,
+			max_length: search.max_length as string | undefined,
 			first_update: search.first_update as string | undefined,
 			rensai: search.rensai as string | undefined,
 			kanketsu: search.kanketsu as string | undefined,
