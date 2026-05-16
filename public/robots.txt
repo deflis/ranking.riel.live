@@ -1,2 +1,20 @@
 # https://www.robotstxt.org/robotstxt.html
+User-agent: Googlebot
+Disallow: /custom/
+
+User-agent: bingbot
+Disallow: /custom/
+
+User-agent: DuckDuckBot
+Disallow: /custom/
+
+User-agent: Baiduspider
+Disallow: /custom/
+
+User-agent: YandexBot
+Disallow: /custom/
+
+User-agent: Naverbot
+Disallow: /custom/
+
 User-agent: *
