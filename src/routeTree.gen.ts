@@ -67,7 +67,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/custom/{-$type}': typeof CustomChar123TypeChar125Route
   '/detail/$ncode': typeof DetailNcodeRoute
-  '/r18': typeof R18IndexRoute
+  '/r18/': typeof R18IndexRoute
   '/r18/detail/$ncode': typeof R18DetailNcodeRoute
   '/r18/ranking/{-$type}': typeof R18RankingChar123TypeChar125Route
   '/ranking/{-$type}/{-$date}': typeof RankingChar123TypeChar125Char123DateChar125Route
@@ -100,7 +100,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/custom/{-$type}'
     | '/detail/$ncode'
-    | '/r18'
+    | '/r18/'
     | '/r18/detail/$ncode'
     | '/r18/ranking/{-$type}'
     | '/ranking/{-$type}/{-$date}'
@@ -156,7 +156,7 @@ declare module '@tanstack/react-router' {
     '/r18/': {
       id: '/r18/'
       path: '/r18'
-      fullPath: '/r18'
+      fullPath: '/r18/'
       preLoaderRoute: typeof R18IndexRouteImport
       parentRoute: typeof rootRouteImport
     }

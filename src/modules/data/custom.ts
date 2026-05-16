@@ -261,7 +261,12 @@ const customRankingFetcher: QueryFunction<
 		searchBuilder.lastUpdate(firstUpdateDate, new Date());
 	}
 	if (Number.isFinite(minLength) || Number.isFinite(maxLength)) {
-		searchBuilder.length([Number.isFinite(minLength) ? minLength : 0, Number.isFinite(maxLength) ? maxLength : 2147483647]);
+		searchBuilder.length([
+			Number.isFinite(minLength) ? (minLength as number) : 0,
+			Number.isFinite(maxLength)
+				? (maxLength as number)
+				: Number.MAX_SAFE_INTEGER,
+		]);
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
