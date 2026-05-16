@@ -2,51 +2,59 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec biome ci . --reporter=github
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
 
-      - name: Run Biome Linting
-        id: lint
-        run: pnpm exec biome ci . --reporter=github
-        continue-on-error: true
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vitest run --reporter=github-actions --reporter=default
 
-      - name: Run Typecheck
-        id: typecheck
-        if: ${{ always() }}
-        run: pnpm exec tsc --noEmit --pretty false
-        continue-on-error: true
-
-      - name: Run Tests
-        id: test
-        if: ${{ always() }}
-        run: pnpm exec vitest run --reporter=github-actions --reporter=default
-        continue-on-error: true
-
-      - name: Fail if any checks failed
-        if: ${{ always() && (steps.lint.outcome != 'success' || steps.typecheck.outcome != 'success' || steps.test.outcome != 'success') }}
-        run: |
-          echo "One or more checks failed."
-          echo "lint=${{ steps.lint.outcome }}, typecheck=${{ steps.typecheck.outcome }}, test=${{ steps.test.outcome }}"
-          exit 1
-
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1.1.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
