@@ -9,6 +9,7 @@ import {
 } from "@/modules/utils/cacheMiddleware";
 
 export const Route = createFileRoute("/r18/detail/$ncode")({
+	ssr: false,
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
 		await prefetchR18Detail(queryClient, ncode);
 	},
