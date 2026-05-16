@@ -2,51 +2,59 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec biome ci . --reporter=github
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
 
-      - name: Run Biome Linting
-        id: lint
-        run: pnpm exec biome ci . --reporter=github
-        continue-on-error: true
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vitest run --reporter=github-actions --reporter=default
 
-      - name: Run Typecheck
-        id: typecheck
-        if: ${{ always() }}
-        run: pnpm exec tsc --noEmit --pretty false
-        continue-on-error: true
-
-      - name: Run Tests
-        id: test
-        if: ${{ always() }}
-        run: pnpm exec vitest run --reporter=github-actions --reporter=default
-        continue-on-error: true
-
-      - name: Fail if any checks failed
-        if: ${{ always() && (steps.lint.outcome != 'success' || steps.typecheck.outcome != 'success' || steps.test.outcome != 'success') }}
-        run: |
-          echo "One or more checks failed."
-          echo "lint=${{ steps.lint.outcome }}, typecheck=${{ steps.typecheck.outcome }}, test=${{ steps.test.outcome }}"
-          exit 1
-
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
