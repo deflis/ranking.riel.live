@@ -34,7 +34,7 @@ export const prefetchRankingDetail = async (
 	queryClient: QueryClient,
 	ncodes: string[],
 ) => {
-	await Promise.all(
+	await Promise.allSettled(
 		ncodes.map(async (ncode) =>
 			queryClient.ensureQueryData({
 				queryKey: itemKey(ncode),
@@ -48,7 +48,7 @@ export const prefetchDetail = async (
 	queryClient: QueryClient,
 	ncode: string,
 ) => {
-	await Promise.all([
+	await Promise.allSettled([
 		queryClient.ensureQueryData({
 			queryKey: itemKey(ncode),
 			queryFn: itemFetcher,
