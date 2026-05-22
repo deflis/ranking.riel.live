@@ -2,8 +2,8 @@ import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Waypoint } from "react-waypoint";
 
+import { useIntersectionObserver } from "../../../hooks/useIntersectionObserver";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { useR18Ranking } from "../../../modules/data/r18ranking";
 import type { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -25,6 +25,7 @@ const InsideRender: React.FC<{
 	const handleMore = useCallback(() => {
 		setPage((max) => (isTail ? max + 1 : max));
 	}, [setPage, isTail]);
+	const waypointRef = useIntersectionObserver(handleMore);
 	const { data } = useR18Ranking(params, page);
 	const adMode = useAtomValue(adModeAtom);
 
@@ -42,13 +43,11 @@ const InsideRender: React.FC<{
 				</div>
 			)}
 			{isTail && (
-				<Waypoint onEnter={handleMore}>
-					<div className="col-span-full">
-						<Button onClick={handleMore} className="w-full h-20 text-3xl">
-							もっと見る
-						</Button>
-					</div>
-				</Waypoint>
+				<div ref={waypointRef} className="col-span-full">
+					<Button onClick={handleMore} className="w-full h-20 text-3xl">
+						もっと見る
+					</Button>
+				</div>
 			)}
 		</>
 	);

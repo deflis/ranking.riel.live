@@ -1,8 +1,8 @@
 import { useAtomValue } from "jotai";
 import type { NarouRankingResult } from "narou";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Waypoint } from "react-waypoint";
 
+import { useIntersectionObserver } from "../../../hooks/useIntersectionObserver";
 import { adModeAtom } from "../../../modules/atoms/global";
 import { chunk } from "../../../modules/utils/chunk";
 import { Button } from "../atoms/Button";
@@ -20,6 +20,7 @@ const ChunkRender: React.FC<{
 	const handleMore = useCallback(() => {
 		setMax((max) => (isTail ? max + 10 : max));
 	}, [setMax, isTail]);
+	const waypointRef = useIntersectionObserver(handleMore);
 	const adMode = useAtomValue(adModeAtom);
 
 	return (
@@ -31,13 +32,11 @@ const ChunkRender: React.FC<{
 				</div>
 			)}
 			{isTail && (
-				<Waypoint onEnter={handleMore}>
-					<div className="col-span-full px-20 pt-10 pb-20">
-						<Button onClick={handleMore} className="w-full h-20 text-3xl">
-							もっと見る
-						</Button>
-					</div>
-				</Waypoint>
+				<div ref={waypointRef} className="col-span-full px-20 pt-10 pb-20">
+					<Button onClick={handleMore} className="w-full h-20 text-3xl">
+						もっと見る
+					</Button>
+				</div>
 			)}
 		</>
 	);
