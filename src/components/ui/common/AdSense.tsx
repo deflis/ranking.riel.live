@@ -1,7 +1,7 @@
+import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
-import { useLocation } from "@tanstack/react-router";
 import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
@@ -10,12 +10,36 @@ declare global {
 	}
 }
 
-export const AdSense: React.FC = () => {
+interface AdsenseProps {
+	slot?: string;
+	format?: string;
+	responsive?: string;
+	className?: string;
+}
+
+export const AdSense: React.FC<AdsenseProps> = ({
+	slot = "3138091970",
+	format = "auto",
+	responsive = "true",
+	className,
+}) => {
 	const adMode = useAtomValue(adModeAtom);
-	return adMode ? <InnerAdSense /> : null;
+	return adMode ? (
+		<InnerAdSense
+			slot={slot}
+			format={format}
+			responsive={responsive}
+			className={className}
+		/>
+	) : null;
 };
 
-export const InnerAdSense: React.FC = () => {
+const InnerAdSense: React.FC<AdsenseProps> = ({
+	slot,
+	format,
+	responsive,
+	className,
+}) => {
 	useEffect(() => {
 		if (!window) return;
 		try {
@@ -25,16 +49,19 @@ export const InnerAdSense: React.FC = () => {
 			console.error(e);
 		}
 	}, []);
-	const location = useLocation();
 
 	return (
-		<div className="text-center" key={location.pathname}>
+		<div
+			className={clsx("adsense-container", className)}
+			style={{ minHeight: "100px", overflow: "hidden" }}
+		>
 			<ins
-				className="adsbygoogle block"
-				data-ad-format="fluid"
-				data-ad-layout-key="-fb+5w+4e-db+86"
+				className="adsbygoogle"
+				style={{ display: "block" }}
 				data-ad-client="ca-pub-6809573064811153"
-				data-ad-slot="3138091970"
+				data-ad-slot={slot}
+				data-ad-format={format}
+				data-full-width-responsive={responsive}
 			/>
 		</div>
 	);
