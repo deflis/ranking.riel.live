@@ -20,7 +20,7 @@ const ChunkRender: React.FC<{
 	return (
 		<>
 			{chunk}
-			<AdSense className="col-span-full p-auto" />
+			<AdSense className="col-span-full" />
 			{isTail && (
 				<Waypoint onEnter={handleMore}>
 					<div className="col-span-full px-20 pt-10 pb-20">
