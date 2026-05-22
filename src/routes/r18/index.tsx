@@ -13,6 +13,7 @@ import {
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/")({
+	ssr: false,
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
