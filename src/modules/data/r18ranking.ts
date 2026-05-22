@@ -46,11 +46,10 @@ export const prefetchR18Ranking = async (
 	params: R18RankingParams,
 	page: number,
 ) => {
-	await queryClient.prefetchQuery({
+	const ranking = await queryClient.ensureQueryData({
 		queryKey: [params, page],
 		queryFn: getCustomRankingQueryFn(queryClient),
 	});
-	const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
 	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
 };
 

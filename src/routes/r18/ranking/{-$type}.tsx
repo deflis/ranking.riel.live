@@ -38,7 +38,7 @@ export const Route = createFileRoute("/r18/ranking/{-$type}")({
 		deps: { search },
 	}) => {
 		const params = parseR18RankingParams(type, search);
-		await prefetchR18Ranking(queryClient, params, 1);
+		prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),

@@ -11,7 +11,7 @@ import {
 export const Route = createFileRoute("/detail/$ncode")({
 	ssr: false,
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
-		await prefetchDetail(queryClient, ncode);
+		prefetchDetail(queryClient, ncode);
 	},
 	component: DetailPage,
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),

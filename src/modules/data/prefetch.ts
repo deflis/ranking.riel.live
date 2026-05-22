@@ -20,13 +20,10 @@ export const prefetchRanking = async (
 	date: DateTime,
 ) => {
 	const normalizedDate = convertDate(date, type).toISODate();
-	await queryClient.prefetchQuery({
+	const ranking = await queryClient.ensureQueryData({
 		queryKey: rankingKey(type, normalizedDate),
 		queryFn: rankingFetcher,
 	});
-	const ranking = queryClient.getQueryData<NarouRankingResult[]>(
-		rankingKey(type, normalizedDate),
-	);
 	await prefetchRankingDetail(
 		queryClient,
 		ranking?.slice(0, 10).map((x) => x.ncode) ?? [],
@@ -37,9 +34,9 @@ export const prefetchRankingDetail = async (
 	queryClient: QueryClient,
 	ncodes: string[],
 ) => {
-	await Promise.all(
+	await Promise.allSettled(
 		ncodes.map(async (ncode) =>
-			queryClient.prefetchQuery({
+			queryClient.ensureQueryData({
 				queryKey: itemKey(ncode),
 				queryFn: itemFetcher,
 			}),
@@ -51,16 +48,16 @@ export const prefetchDetail = async (
 	queryClient: QueryClient,
 	ncode: string,
 ) => {
-	await Promise.all([
-		queryClient.prefetchQuery({
+	await Promise.allSettled([
+		queryClient.ensureQueryData({
 			queryKey: itemKey(ncode),
 			queryFn: itemFetcher,
 		}),
-		queryClient.prefetchQuery({
+		queryClient.ensureQueryData({
 			queryKey: itemDetailKey(ncode),
 			queryFn: itemDetailFetcher,
 		}),
-		queryClient.prefetchQuery({
+		queryClient.ensureQueryData({
 			queryKey: itemRankingHistoryKey(ncode),
 			queryFn: itemRankingHistoryFetcher,
 		}),
