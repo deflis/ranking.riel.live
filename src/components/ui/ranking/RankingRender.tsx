@@ -1,12 +1,9 @@
-import { useAtomValue } from "jotai";
 import type { NarouRankingResult } from "narou";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Waypoint } from "react-waypoint";
 
-import { adModeAtom } from "../../../modules/atoms/global";
 import { chunk } from "../../../modules/utils/chunk";
 import { Button } from "../atoms/Button";
-import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
 
@@ -20,16 +17,10 @@ const ChunkRender: React.FC<{
 	const handleMore = useCallback(() => {
 		setMax((max) => (isTail ? max + 10 : max));
 	}, [setMax, isTail]);
-	const adMode = useAtomValue(adModeAtom);
-
 	return (
 		<>
 			{chunk}
-			{adMode && (
-				<div className="col-span-full	p-auto">
-					<AdAmazonWidth />
-				</div>
-			)}
+			<AdSense className="col-span-full p-auto" />
 			{isTail && (
 				<Waypoint onEnter={handleMore}>
 					<div className="col-span-full px-20 pt-10 pb-20">
@@ -71,25 +62,17 @@ const InsideRender: React.FC<{
 		setMax(10);
 	}, [rankingConstants]);
 
-	const adMode = useAtomValue(adModeAtom);
-
 	return (
 		<div
 			className="w-full grid md:grid-cols-2 p-4 gap-4"
 			suppressHydrationWarning
 		>
-			{adMode && (
-				<div className="col-span-full">
-					<AdSense />
-				</div>
-			)}
+			<AdSense className="col-span-full" />
 			{renderItems}
 			<div className="col-span-full">
 				<SelfAd />
 			</div>
-			<div className="col-span-full">
-				<AdSense />
-			</div>
+			<AdSense className="col-span-full" />
 		</div>
 	);
 };

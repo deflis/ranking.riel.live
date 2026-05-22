@@ -1,16 +1,13 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import type React from "react";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
 
-import { adModeAtom } from "../../../modules/atoms/global";
 import { useCustomRanking } from "../../../modules/data/custom";
 import type { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
 import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
-import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
 
@@ -27,8 +24,6 @@ const InsideRender: React.FC<{
 		setPage((max) => (isTail ? max + 1 : max));
 	}, [setPage, isTail]);
 	const { data } = useCustomRanking(params, page);
-	const adMode = useAtomValue(adModeAtom);
-
 	if (data?.length === 0 || !data) {
 		return page === 1 ? <div className="w-full">データがありません</div> : null;
 	}
@@ -37,11 +32,7 @@ const InsideRender: React.FC<{
 			{data.map((item) => (
 				<RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
 			))}
-			{adMode && (
-				<div className="col-span-full">
-					<AdAmazonWidth />
-				</div>
-			)}
+			<AdSense className="col-span-full" />
 			{isTail && (
 				<Waypoint onEnter={handleMore}>
 					<div className="col-span-full">
