@@ -59,7 +59,7 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 			: DateTime.fromISO(dateParam);
 		const date = convertDate(dt, type);
 
-		await prefetchRanking(queryClient, type, date);
+		prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
 	headers: ({ params: { date } }) => {
