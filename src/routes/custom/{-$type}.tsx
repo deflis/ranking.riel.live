@@ -32,6 +32,7 @@ import {
 } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/custom/{-$type}")({
+	ssr: false,
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
