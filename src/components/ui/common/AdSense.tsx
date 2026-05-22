@@ -35,9 +35,9 @@ export const AdSense: React.FC<AdsenseProps> = ({
 };
 
 const InnerAdSense: React.FC<AdsenseProps> = ({
-	slot = "3138091970",
-	format = "auto",
-	responsive = "true",
+	slot,
+	format,
+	responsive,
 	className,
 }) => {
 	useEffect(() => {
