@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
@@ -53,9 +52,7 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	}, []);
 
 	return (
-		<div
-			className={clsx("adsense-container", className)}
-		>
+		<div className={className}>
 			<ins
 				className="adsbygoogle"
 				style={{ display: "block" }}
