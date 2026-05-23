@@ -48,18 +48,17 @@ export const prefetchDetail = async (
 	queryClient: QueryClient,
 	ncode: string,
 ) => {
-	await Promise.allSettled([
-		queryClient.ensureQueryData({
-			queryKey: itemKey(ncode),
-			queryFn: itemFetcher,
-		}),
-		queryClient.ensureQueryData({
-			queryKey: itemDetailKey(ncode),
-			queryFn: itemDetailFetcher,
-		}),
-		queryClient.ensureQueryData({
-			queryKey: itemRankingHistoryKey(ncode),
-			queryFn: itemRankingHistoryFetcher,
-		}),
-	]);
+	const listing = queryClient.ensureQueryData({
+		queryKey: itemKey(ncode),
+		queryFn: itemFetcher,
+	});
+	queryClient.ensureQueryData({
+		queryKey: itemDetailKey(ncode),
+		queryFn: itemDetailFetcher,
+	});
+	queryClient.ensureQueryData({
+		queryKey: itemRankingHistoryKey(ncode),
+		queryFn: itemRankingHistoryFetcher,
+	});
+	return (await listing)?.title ?? null;
 };

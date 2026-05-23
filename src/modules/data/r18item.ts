@@ -47,16 +47,15 @@ export const prefetchR18Detail = async (
 	queryClient: QueryClient,
 	ncode: string,
 ) => {
-	await Promise.allSettled([
-		queryClient.ensureQueryData({
-			queryKey: itemKey(ncode),
-			queryFn: itemFetcher,
-		}),
-		queryClient.ensureQueryData({
-			queryKey: itemDetailKey(ncode),
-			queryFn: itemDetailFetcher,
-		}),
-	]);
+	const listing = queryClient.ensureQueryData({
+		queryKey: itemKey(ncode),
+		queryFn: itemFetcher,
+	});
+	queryClient.ensureQueryData({
+		queryKey: itemDetailKey(ncode),
+		queryFn: itemDetailFetcher,
+	});
+	return (await listing)?.title ?? null;
 };
 
 export const useR18DetailForView = (ncode: string) => {
