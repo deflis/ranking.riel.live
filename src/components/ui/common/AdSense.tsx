@@ -17,6 +17,8 @@ interface AdsenseProps {
 	className?: string;
 }
 
+export const adSenseClientId = "ca-pub-6809573064811153";
+
 export const AdSense: React.FC<AdsenseProps> = ({
 	slot = "3138091970",
 	format = "auto",
@@ -58,7 +60,7 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 			<ins
 				className="adsbygoogle"
 				style={{ display: "block" }}
-				data-ad-client="ca-pub-6809573064811153"
+				data-ad-client={adSenseClientId}
 				data-ad-slot={slot}
 				data-ad-format={format}
 				data-full-width-responsive={responsive}
