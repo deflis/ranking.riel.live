@@ -50,7 +50,8 @@ export const prefetchCustomRanking = async (
 		queryKey: [params, page],
 		queryFn: getCustomRankingQueryFn(queryClient),
 	});
-	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
+	prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
+	// ランキングのprefetchでは値を返す必要がない
 };
 
 const getCustomRankingQueryFn = (

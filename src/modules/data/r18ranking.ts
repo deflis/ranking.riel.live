@@ -27,6 +27,7 @@ import {
 } from "./custom/utils";
 import { fetchOptions } from "./custom/utils";
 import { prefetchRankingDetail } from "./prefetch";
+import { itemFetcher, itemKey } from "./r18item";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -50,7 +51,13 @@ export const prefetchR18Ranking = async (
 		queryKey: [params, page],
 		queryFn: getCustomRankingQueryFn(queryClient),
 	});
-	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
+	ranking?.slice(0, 10).map((x) => x.ncode).map((ncode) => {
+		queryClient.ensureQueryData({
+			queryKey: itemKey(ncode),
+			queryFn: itemFetcher,
+		});
+	});
+	// ランキングのprefetchでは値を返す必要がない
 };
 
 const getCustomRankingQueryFn = (

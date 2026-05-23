@@ -24,31 +24,26 @@ export const prefetchRanking = async (
 		queryKey: rankingKey(type, normalizedDate),
 		queryFn: rankingFetcher,
 	});
-	await prefetchRankingDetail(
+	prefetchRankingDetail(
 		queryClient,
 		ranking?.slice(0, 10).map((x) => x.ncode) ?? [],
 	);
+	// ランキングのprefetchでは値を返す必要がない
 };
 
-export const prefetchRankingDetail = async (
+export const prefetchRankingDetail = (
 	queryClient: QueryClient,
 	ncodes: string[],
 ) => {
-	await Promise.allSettled(
-		ncodes.map(async (ncode) =>
-			queryClient.ensureQueryData({
-				queryKey: itemKey(ncode),
-				queryFn: itemFetcher,
-			}),
-		),
-	);
+	ncodes.map((ncode) =>
+		queryClient.ensureQueryData({
+			queryKey: itemKey(ncode),
+			queryFn: itemFetcher,
+		}),
+	)
 };
 
-export const prefetchDetail = async (
-	queryClient: QueryClient,
-	ncode: string,
-) => {
-	// 詳細とランキング履歴を同時にプリフェッチする
+export const prefetchDetail = (queryClient: QueryClient, ncode: string) => {
 	const listing = queryClient.ensureQueryData({
 		queryKey: itemKey(ncode),
 		queryFn: itemFetcher,
@@ -61,6 +56,5 @@ export const prefetchDetail = async (
 		queryKey: itemRankingHistoryKey(ncode),
 		queryFn: itemRankingHistoryFetcher,
 	});
-	// タイトルだけ返す。タイトル取得だけであれば詳細やランキング履歴は不要なので、listingの完了を待ってから返す
-	return (await listing)?.title ?? null;
+	return listing.then((item) => item?.title ?? null);
 };
