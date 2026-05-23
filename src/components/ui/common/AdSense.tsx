@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
@@ -16,6 +15,8 @@ interface AdsenseProps {
 	responsive?: string;
 	className?: string;
 }
+
+export const adSenseClientId = "ca-pub-6809573064811153";
 
 export const AdSense: React.FC<AdsenseProps> = ({
 	slot = "3138091970",
@@ -51,14 +52,11 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	}, []);
 
 	return (
-		<div
-			className={clsx("adsense-container", className)}
-			style={{ minHeight: "100px", overflow: "hidden" }}
-		>
+		<div className={className}>
 			<ins
 				className="adsbygoogle"
 				style={{ display: "block" }}
-				data-ad-client="ca-pub-6809573064811153"
+				data-ad-client={adSenseClientId}
 				data-ad-slot={slot}
 				data-ad-format={format}
 				data-full-width-responsive={responsive}
