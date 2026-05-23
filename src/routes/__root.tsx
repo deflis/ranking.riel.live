@@ -57,6 +57,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<head>
 				<meta charSet="utf-8" />
 				<HeadContent />
+				<script 
+					async 
+					src="https://googlesyndication.com" 
+					crossOrigin="anonymous">
+				</script>
 			</head>
 			<body>
 				{children}
