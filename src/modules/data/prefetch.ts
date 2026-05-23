@@ -48,6 +48,7 @@ export const prefetchDetail = async (
 	queryClient: QueryClient,
 	ncode: string,
 ) => {
+	// 詳細とランキング履歴を同時にプリフェッチする
 	const listing = queryClient.ensureQueryData({
 		queryKey: itemKey(ncode),
 		queryFn: itemFetcher,
@@ -60,5 +61,6 @@ export const prefetchDetail = async (
 		queryKey: itemRankingHistoryKey(ncode),
 		queryFn: itemRankingHistoryFetcher,
 	});
+	// タイトルだけ返す。タイトル取得だけであれば詳細やランキング履歴は不要なので、listingの完了を待ってから返す
 	return (await listing)?.title ?? null;
 };
