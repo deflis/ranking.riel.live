@@ -3,7 +3,10 @@ import {
 	R18RankingPage,
 	type R18RankingSearch,
 } from "../../components/ui/ranking/R18RankingPage";
-import { RankingType } from "../../modules/interfaces/RankingType";
+import {
+	RankingType,
+	RankingTypeName,
+} from "../../modules/interfaces/RankingType";
 
 import { prefetchR18Ranking } from "@/modules/data/r18ranking";
 import {
@@ -37,6 +40,13 @@ export const Route = createFileRoute("/r18/")({
 		prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
+	head: () => ({
+		meta: [
+			{
+				title: `R18${RankingTypeName[RankingType.Daily]}ランキング - なろうランキングビューワ`,
+			},
+		],
+	}),
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

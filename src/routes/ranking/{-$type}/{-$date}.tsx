@@ -62,6 +62,20 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 		prefetchRanking(queryClient, type, date);
 	},
 	component: RankingPage,
+	head: ({ params: { type: typeParam, date: dateParam } }) => {
+		const type = (typeParam as RankingType) ?? RankingType.Daily;
+		const dt = !dateParam
+			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
+			: DateTime.fromISO(dateParam);
+		const date = convertDate(dt, type);
+		return {
+			meta: [
+				{
+					title: `${date.year}年${date.month}月${date.day}日の${RankingTypeName[type]}ランキング - なろうランキングビューワ`,
+				},
+			],
+		};
+	},
 	headers: ({ params: { date } }) => {
 		if (!date) {
 			const now = DateTime.now().setZone("Asia/Tokyo");
