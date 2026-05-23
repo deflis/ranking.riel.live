@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
+import { clsx } from "clsx";
 import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
@@ -52,7 +53,7 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	}, []);
 
 	return (
-		<div className={className}>
+		<div className={clsx("text-center", className)}>
 			<ins
 				className="adsbygoogle"
 				style={{ display: "block" }}
