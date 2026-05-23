@@ -55,7 +55,6 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	return (
 		<div
 			className={clsx("adsense-container", className)}
-			style={{ minHeight: "100px", overflow: "hidden" }}
 		>
 			<ins
 				className="adsbygoogle"
