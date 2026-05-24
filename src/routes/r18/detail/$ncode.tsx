@@ -11,14 +11,14 @@ import {
 export const Route = createFileRoute("/r18/detail/$ncode")({
 	ssr: false,
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
-		const title = await prefetchR18Detail(queryClient, ncode);
-		return { title };
+		const item = await prefetchR18Detail(queryClient, ncode);
+		return { item };
 	},
 	component: R18DetailPage,
 	head: ({ loaderData, params: { ncode } }) => ({
 		meta: [
 			{
-				title: `${loaderData?.title ?? ncode.toUpperCase()} - なろうランキングビューワ`,
+				title: `${loaderData?.item?.title ?? ncode.toUpperCase()} - なろうランキングビューワ`,
 			},
 		],
 	}),
