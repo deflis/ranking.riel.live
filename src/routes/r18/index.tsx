@@ -8,7 +8,7 @@ import {
 	RankingTypeName,
 } from "../../modules/interfaces/RankingType";
 
-import { prefetchR18Ranking } from "@/modules/data/r18ranking";
+import { prefetchR18Ranking } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,

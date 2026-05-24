@@ -22,7 +22,7 @@ type CustomRankingSearch = {
 	tanpen?: string;
 };
 
-import { prefetchCustomRanking } from "@/modules/data/custom";
+import { prefetchCustomRanking } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,

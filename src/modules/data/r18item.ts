@@ -1,5 +1,4 @@
 import {
-	type QueryClient,
 	type QueryFunction,
 	useSuspenseQueries,
 	useSuspenseQuery,
@@ -41,18 +40,6 @@ export const useR18DetailForItem = (ncode: string) => {
 		queryFn: itemDetailFetcher,
 	});
 	return { data, error };
-};
-
-export const prefetchR18Detail = (queryClient: QueryClient, ncode: string) => {
-	const listing = queryClient.ensureQueryData({
-		queryKey: itemKey(ncode),
-		queryFn: itemFetcher,
-	});
-	queryClient.ensureQueryData({
-		queryKey: itemDetailKey(ncode),
-		queryFn: itemDetailFetcher,
-	});
-	return listing;
 };
 
 export const useR18DetailForView = (ncode: string) => {

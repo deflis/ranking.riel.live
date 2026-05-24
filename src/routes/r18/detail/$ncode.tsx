@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
 
-import { prefetchR18Detail } from "@/modules/data/r18item";
+import { prefetchR18Detail } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
