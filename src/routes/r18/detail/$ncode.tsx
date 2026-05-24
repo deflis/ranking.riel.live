@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { DetailRenderer } from "@/components/ui/detail/DetailRenderer";
 
-import { prefetchR18Detail } from "@/modules/data/r18item";
+import { prefetchR18Detail } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
@@ -11,9 +11,17 @@ import {
 export const Route = createFileRoute("/r18/detail/$ncode")({
 	ssr: false,
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
-		prefetchR18Detail(queryClient, ncode);
+		const item = await prefetchR18Detail(queryClient, ncode);
+		return { item };
 	},
 	component: R18DetailPage,
+	head: ({ loaderData, params: { ncode } }) => ({
+		meta: [
+			{
+				title: `${loaderData?.item?.title ?? ncode.toUpperCase()} - なろうランキングビューワ`,
+			},
+		],
+	}),
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

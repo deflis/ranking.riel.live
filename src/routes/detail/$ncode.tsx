@@ -11,9 +11,17 @@ import {
 export const Route = createFileRoute("/detail/$ncode")({
 	ssr: false,
 	loader: async ({ context: { queryClient }, params: { ncode } }) => {
-		prefetchDetail(queryClient, ncode);
+		const item = await prefetchDetail(queryClient, ncode);
+		return { item };
 	},
 	component: DetailPage,
+	head: ({ loaderData, params: { ncode } }) => ({
+		meta: [
+			{
+				title: `${loaderData?.item?.title ?? ncode.toUpperCase()} - なろうランキングビューワ`,
+			},
+		],
+	}),
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
 import type { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
 
 type CustomRankingSearch = {
 	keyword?: string;
@@ -21,7 +22,7 @@ type CustomRankingSearch = {
 	tanpen?: string;
 };
 
-import { prefetchCustomRanking } from "@/modules/data/custom";
+import { prefetchCustomRanking } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
@@ -60,6 +61,16 @@ export const Route = createFileRoute("/custom/{-$type}")({
 		prefetchCustomRanking(queryClient, params, 1);
 	},
 	component: CustomRankingPage,
+	head: ({ params: { type } }) => {
+		const rankingType = (type ?? RankingType.Daily) as RankingType;
+		return {
+			meta: [
+				{
+					title: `カスタム${RankingTypeName[rankingType]}ランキング - なろうランキングビューワ`,
+				},
+			],
+		};
+	},
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

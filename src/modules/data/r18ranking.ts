@@ -26,7 +26,6 @@ import {
 	formatCustomRankingRaw,
 } from "./custom/utils";
 import { fetchOptions } from "./custom/utils";
-import { prefetchRankingDetail } from "./prefetch";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -36,24 +35,12 @@ export const useR18Ranking = (params: R18RankingParams, page: number) => {
 
 	const { data } = useSuspenseQuery({
 		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient),
+		queryFn: getR18RankingQueryFn(queryClient),
 	});
 	return { data };
 };
 
-export const prefetchR18Ranking = async (
-	queryClient: QueryClient,
-	params: R18RankingParams,
-	page: number,
-) => {
-	const ranking = await queryClient.ensureQueryData({
-		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient),
-	});
-	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
-};
-
-const getCustomRankingQueryFn = (
+export const getR18RankingQueryFn = (
 	queryClient: QueryClient,
 ): QueryFunction<RankingData[], readonly [R18RankingParams, number]> => {
 	return async ({ queryKey: [params, page] }) => {

@@ -6,6 +6,9 @@ import { FaCog } from "react-icons/fa";
 
 export const Route = createFileRoute("/about")({
 	component: AboutPage,
+	head: () => ({
+		meta: [{ title: "このサイトについて - なろうランキングビューワ" }],
+	}),
 });
 
 function AboutPage() {
