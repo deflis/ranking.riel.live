@@ -51,7 +51,7 @@ export const prefetchR18Ranking = async (
 		queryKey: [params, page],
 		queryFn: getCustomRankingQueryFn(queryClient),
 	});
-	ranking?.slice(0, 10).map((x) => x.ncode).map((ncode) => {
+	ranking?.slice(0, 10).map(({ ncode }) => {
 		queryClient.ensureQueryData({
 			queryKey: itemKey(ncode),
 			queryFn: itemFetcher,
