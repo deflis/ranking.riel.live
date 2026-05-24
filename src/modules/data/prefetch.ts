@@ -43,7 +43,7 @@ export const prefetchRankingDetail = (
 	)
 };
 
-export const prefetchDetail = (queryClient: QueryClient, ncode: string) => {
+export const prefetchDetail = async (queryClient: QueryClient, ncode: string) => {
 	const listing = queryClient.ensureQueryData({
 		queryKey: itemKey(ncode),
 		queryFn: itemFetcher,
@@ -56,5 +56,5 @@ export const prefetchDetail = (queryClient: QueryClient, ncode: string) => {
 		queryKey: itemRankingHistoryKey(ncode),
 		queryFn: itemRankingHistoryFetcher,
 	});
-	return listing.then((item) => item?.title ?? null);
+	return listing;
 };

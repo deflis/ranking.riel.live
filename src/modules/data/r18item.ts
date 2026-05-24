@@ -52,7 +52,7 @@ export const prefetchR18Detail = (queryClient: QueryClient, ncode: string) => {
 		queryKey: itemDetailKey(ncode),
 		queryFn: itemDetailFetcher,
 	});
-	return listing.then((item) => item?.title ?? null);
+	return listing;
 };
 
 export const useR18DetailForView = (ncode: string) => {
