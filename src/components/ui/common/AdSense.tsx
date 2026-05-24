@@ -19,6 +19,22 @@ interface AdsenseProps {
 }
 
 export const adSenseClientId = "ca-pub-6809573064811153";
+const adSenseScriptId = "google-adsense";
+const adSenseScriptUrl = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClientId}`;
+
+const appendAdSenseScript = () => {
+	if (typeof document === "undefined") return;
+
+	const head = document.querySelector("head");
+	if (head?.querySelector(`#${adSenseScriptId}`)) return;
+
+	const script = document.createElement("script");
+	script.id = adSenseScriptId;
+	script.async = true;
+	script.src = adSenseScriptUrl;
+	script.crossOrigin = "anonymous";
+	head?.appendChild(script);
+};
 
 export const AdSense: React.FC<AdsenseProps> = ({
 	slot = "3138091970",
@@ -47,7 +63,10 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	className,
 }) => {
 	useEffect(() => {
-		if (!window) return;
+		if (typeof window === "undefined") return;
+
+		appendAdSenseScript();
+
 		try {
 			window.adsbygoogle = window.adsbygoogle || [];
 			window.adsbygoogle.push({});

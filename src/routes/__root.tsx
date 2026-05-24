@@ -13,7 +13,6 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
-import { adSenseClientId } from "@/components/ui/common/AdSense";
 import { ErrorFallback } from "@/components/ui/common/ErrorFallback";
 import { countAtom } from "@/modules/atoms/global";
 import { useCustomTheme } from "@/modules/theme/theme";
@@ -59,11 +58,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<HeadContent />
-				<script
-					async
-					src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClientId}`}
-					crossOrigin="anonymous"
-				/>
 			</head>
 			<body>
 				{children}
