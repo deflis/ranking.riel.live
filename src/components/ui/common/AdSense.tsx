@@ -68,8 +68,8 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 		appendAdSenseScript();
 
 		try {
-			window.adsbygoogle = window.adsbygoogle || [];
-			window.adsbygoogle.push({});
+      // biome-ignore lint/suspicious/noAssignInExpressions: Google AdSense requires this exact code to work
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
 		} catch (e) {
 			console.error(e);
 		}
