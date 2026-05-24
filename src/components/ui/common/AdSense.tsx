@@ -14,6 +14,7 @@ interface AdsenseProps {
 	slot?: string;
 	format?: string;
 	responsive?: string;
+	layoutKey?: string;
 	className?: string;
 }
 
@@ -21,8 +22,9 @@ export const adSenseClientId = "ca-pub-6809573064811153";
 
 export const AdSense: React.FC<AdsenseProps> = ({
 	slot = "3138091970",
-	format = "auto",
+	format = "fluid",
 	responsive = "true",
+	layoutKey = "-fb+5w+4e-db+86",
 	className,
 }) => {
 	const adMode = useAtomValue(adModeAtom);
@@ -31,6 +33,7 @@ export const AdSense: React.FC<AdsenseProps> = ({
 			slot={slot}
 			format={format}
 			responsive={responsive}
+			layoutKey={layoutKey}
 			className={className}
 		/>
 	) : null;
@@ -40,6 +43,7 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	slot,
 	format,
 	responsive,
+	layoutKey,
 	className,
 }) => {
 	useEffect(() => {
@@ -55,12 +59,12 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	return (
 		<div className={clsx("text-center", className)}>
 			<ins
-				className="adsbygoogle"
-				style={{ display: "block" }}
+				className="adsbygoogle block"
 				data-ad-client={adSenseClientId}
 				data-ad-slot={slot}
 				data-ad-format={format}
 				data-full-width-responsive={responsive}
+				data-ad-layout-key={layoutKey}
 			/>
 		</div>
 	);
