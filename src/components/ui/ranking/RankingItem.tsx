@@ -162,7 +162,6 @@ const RankingItemRender: React.FC<{
 				<Link
 					to={detail}
 					params={detailParams}
-					title={decode(item?.title)}
 					title={decodeNarouText(item?.title)}
 					className={[
 						"link-reset text-gray-800 dark:text-white hover:underline",
