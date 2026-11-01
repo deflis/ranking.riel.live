@@ -73,7 +73,6 @@ const RankingItemRender: React.FC<{
 	const isR18 = checkR18(rawR18, item);
 	const isNotfound = (!item && !isPending) || isError;
 
-	const user = `https://mypage.syosetu.com/${item?.userid ? encodeURIComponent(item.userid) : ""}/`;
 	const link = isR18
 		? `https://novel18.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`
 		: `https://ncode.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`;
@@ -177,7 +176,11 @@ const RankingItemRender: React.FC<{
 					isR18 ? (
 						decode(item.writer)
 					) : (
-						<a href={user} target="_blank" rel="noopener noreferrer">
+						<a
+							href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							{decode(item.writer)}
 						</a>
 					)

@@ -74,7 +74,6 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 			.fields([
 				R18Fields.ncode,
 				R18Fields.title,
-				R18Fields.userid,
 				R18Fields.writer,
 				R18Fields.nocgenre,
 				R18Fields.noveltype,
