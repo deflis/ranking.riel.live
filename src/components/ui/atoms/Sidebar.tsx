@@ -1,6 +1,7 @@
 import {
 	Dialog,
 	DialogPanel,
+	DialogTitle,
 	Transition,
 	TransitionChild,
 } from "@headlessui/react";
@@ -10,6 +11,7 @@ import {
 	Fragment,
 	type PropsWithChildren,
 } from "react";
+import { HiX } from "react-icons/hi";
 
 export type SidebarItemProps<T extends ElementType = "span"> = {
 	as?: T;
@@ -60,10 +62,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 		<Dialog onClose={onClose}>
 			<TransitionChild
 				as={Fragment}
-				enter="ease-out duration-300"
+				enter="transition-opacity ease-out duration-300 motion-reduce:duration-0"
 				enterFrom="opacity-0"
 				enterTo="opacity-100"
-				leave="ease-in duration-200"
+				leave="transition-opacity ease-in duration-200 motion-reduce:duration-0"
 				leaveFrom="opacity-100"
 				leaveTo="opacity-0"
 			>
@@ -71,14 +73,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
 			</TransitionChild>
 			<TransitionChild
 				as={Fragment}
-				enter="ease-out duration-300"
-				enterFrom="opacity-0 scale-x-0 origin-left"
-				enterTo="opacity-100 scale-100 origin-left"
-				leave="ease-in duration-200"
-				leaveFrom="opacity-100 scale-100 origin-left"
-				leaveTo="opacity-0 scale-x-0 origin-left"
+				enter="transition-transform ease-out duration-300 motion-reduce:duration-0"
+				enterFrom="-translate-x-full"
+				enterTo="translate-x-0"
+				leave="transition-transform ease-in duration-200 motion-reduce:duration-0"
+				leaveFrom="translate-x-0"
+				leaveTo="-translate-x-full"
 			>
-				<DialogPanel className="w-120 h-full shadow-md bg-white dark:bg-neutral-900 px-1 absolute top-0 overflow-y-auto">
+				<DialogPanel className="w-120 max-w-[calc(100%-2rem)] h-full shadow-md bg-white dark:bg-neutral-900 px-1 fixed inset-y-0 left-0 overflow-y-auto">
+					<div className="flex items-center justify-between px-2 py-1">
+						<DialogTitle className="font-semibold">メニュー</DialogTitle>
+						<button
+							type="button"
+							aria-label="メニューを閉じる"
+							className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+							onClick={() => onClose(false)}
+						>
+							<HiX className="h-5 w-5" aria-hidden="true" />
+						</button>
+					</div>
 					<ul className="relative">{children}</ul>
 				</DialogPanel>
 			</TransitionChild>
