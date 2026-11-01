@@ -12,6 +12,12 @@ export default defineConfig({
 		tailwindcss(),
 		tanstackStart({
 			srcDirectory: "src",
+			// 作品詳細だけを静的なシェルから起動し、ランキングのSSRは維持する。
+			spa: {
+				enabled: true,
+				// 通常ページのプリレンダリングと区別し、詳細の書き換え規則も避ける。
+				maskPath: "/about?spa-shell",
+			},
 			prerender: {
 				enabled: true,
 				crawlLinks: false,

@@ -1,0 +1,3 @@
+# 作品詳細はURLを維持して静的シェルを返し、Workerの実行を避ける。
+/detail/:ncode /_shell 200
+/r18/detail/:ncode /_shell 200
