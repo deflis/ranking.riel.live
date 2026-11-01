@@ -1,3 +1,9 @@
+# 旧全期間ランキングURLを、検索条件を保持して正式な静的配信先へ転送する。
+/custom/all /custom/a 301
+/custom/all/ /custom/a 301
+/r18/ranking/all /r18/ranking/a 301
+/r18/ranking/all/ /r18/ranking/a 301
+
 # 作品詳細はURLを維持して静的シェルを返し、Workerの実行を避ける。
 /detail/:ncode /_shell 200
 /r18/detail/:ncode /_shell 200
