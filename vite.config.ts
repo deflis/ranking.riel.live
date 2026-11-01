@@ -15,6 +15,8 @@ export default defineConfig({
 			prerender: {
 				enabled: true,
 				crawlLinks: false,
+				// トップページは最新ランキングへ転送するため、閲覧時に取得する。
+				filter: ({ path }) => path !== "/",
 			},
 		}),
 		react(),
