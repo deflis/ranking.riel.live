@@ -30,8 +30,6 @@ import { Paper } from "../atoms/Paper";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag, Tags } from "../common/bulma/Tag";
 
-import styles from "./RankingItem.module.css";
-
 const ChipLink = createLink(Chip);
 
 const lineClamp = [
@@ -379,7 +377,6 @@ const RankingItemRender: React.FC<{
 		<div
 			className={[
 				className,
-				styles.card,
 				"box-border grid grid-rows-subgrid gap-2",
 				"row-span-8",
 				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",

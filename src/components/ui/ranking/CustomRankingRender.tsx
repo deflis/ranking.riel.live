@@ -11,6 +11,7 @@ import { ErrorFallback } from "../common/ErrorFallback";
 import { SelfAd } from "../common/SelfAd";
 import { LoadMore } from "./LoadMore";
 import RankingItem from "./RankingItem";
+import { RankingRows } from "./RankingRows";
 
 const InsideRender: React.FC<{
 	params: CustomRankingParams;
@@ -27,9 +28,11 @@ const InsideRender: React.FC<{
 	}
 	return (
 		<>
-			{data.map((item) => (
-				<RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
-			))}
+			<RankingRows
+				items={data.map((item) => (
+					<RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
+				))}
+			/>
 			<AdSense className="col-span-full" />
 			{isTail && <LoadMore onLoadMore={handleMore} />}
 		</>

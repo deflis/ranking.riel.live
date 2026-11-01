@@ -6,9 +6,10 @@ import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
 import { LoadMore } from "./LoadMore";
 import RankingItem from "./RankingItem";
+import { RankingRows } from "./RankingRows";
 
 const ChunkRender: React.FC<{
-	chunk: React.ReactNode;
+	chunk: React.ReactElement[];
 	isTail: boolean;
 	setMax: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ chunk, setMax, isTail }) => {
@@ -17,7 +18,7 @@ const ChunkRender: React.FC<{
 	};
 	return (
 		<>
-			{chunk}
+			<RankingRows items={chunk} />
 			<AdSense className="col-span-full" />
 			{isTail && (
 				<LoadMore onLoadMore={handleMore} className="px-20 pt-10 pb-20" />
