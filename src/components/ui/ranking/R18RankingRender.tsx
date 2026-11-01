@@ -1,15 +1,14 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Waypoint } from "react-waypoint";
 
 import { useR18Ranking } from "../../../modules/data/r18ranking";
 import type { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
-import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
 import AdSense from "../common/AdSense";
 import { ErrorFallback } from "../common/ErrorFallback";
 import { SelfAd } from "../common/SelfAd";
+import { LoadMore } from "./LoadMore";
 import { R18RankingItem } from "./RankingItem";
 
 const InsideRender: React.FC<{
@@ -31,15 +30,7 @@ const InsideRender: React.FC<{
 				<R18RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
 			))}
 			<AdSense className="col-span-full" />
-			{isTail && (
-				<Waypoint onEnter={handleMore}>
-					<div className="col-span-full">
-						<Button onClick={handleMore} className="w-full h-20 text-3xl">
-							もっと見る
-						</Button>
-					</div>
-				</Waypoint>
-			)}
+			{isTail && <LoadMore onLoadMore={handleMore} />}
 		</>
 	);
 };

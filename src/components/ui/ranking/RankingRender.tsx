@@ -1,11 +1,10 @@
 import type { NarouRankingResult } from "narou";
 import { useEffect, useState } from "react";
-import { Waypoint } from "react-waypoint";
 
 import { chunk } from "../../../modules/utils/chunk";
-import { Button } from "../atoms/Button";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
+import { LoadMore } from "./LoadMore";
 import RankingItem from "./RankingItem";
 
 const ChunkRender: React.FC<{
@@ -21,13 +20,7 @@ const ChunkRender: React.FC<{
 			{chunk}
 			<AdSense className="col-span-full" />
 			{isTail && (
-				<Waypoint onEnter={handleMore}>
-					<div className="col-span-full px-20 pt-10 pb-20">
-						<Button onClick={handleMore} className="w-full h-20 text-3xl">
-							もっと見る
-						</Button>
-					</div>
-				</Waypoint>
+				<LoadMore onLoadMore={handleMore} className="px-20 pt-10 pb-20" />
 			)}
 		</>
 	);
