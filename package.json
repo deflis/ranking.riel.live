@@ -30,7 +30,6 @@
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
 		"dataloader": "^2.2.3",
-		"html-entities": "^2.6.0",
 		"jotai": "^3.0.1",
 		"narou": "^2.1.0",
 		"react": "^19.3.1",
