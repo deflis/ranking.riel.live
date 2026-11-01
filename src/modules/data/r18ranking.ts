@@ -244,13 +244,18 @@ const customRankingFetcher: QueryFunction<
 	if (byStory) {
 		searchBuilder.byOutline();
 	}
-	if (Number.isFinite(minLength) || Number.isFinite(maxLength)) {
-		searchBuilder.length([
-			Number.isFinite(minLength) ? (minLength as number) : 0,
-			Number.isFinite(maxLength)
-				? (maxLength as number)
-				: Number.MAX_SAFE_INTEGER,
-		]);
+	const min =
+		minLength !== undefined && Number.isFinite(minLength)
+			? minLength
+			: undefined;
+	const max =
+		maxLength !== undefined && Number.isFinite(maxLength)
+			? maxLength
+			: undefined;
+	if (min !== undefined) {
+		searchBuilder.length({ min, max });
+	} else if (max !== undefined) {
+		searchBuilder.length({ max });
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
