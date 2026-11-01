@@ -1,6 +1,5 @@
 import { Transition } from "@headlessui/react";
 import { Link, createLink } from "@tanstack/react-router";
-import clsx from "clsx";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
 import { Suspense } from "react";
@@ -103,12 +102,14 @@ const RankingItemRender: React.FC<{
 
 	return (
 		<div
-			className={clsx(
+			className={[
 				className,
 				"box-border grid grid-rows-subgrid gap-2",
 				"row-span-8",
 				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",
-			)}
+			]
+				.filter(Boolean)
+				.join(" ")}
 			suppressHydrationWarning
 		>
 			<p>
@@ -162,10 +163,12 @@ const RankingItemRender: React.FC<{
 					to={detail}
 					params={detailParams}
 					title={decodeNarouText(item?.title)}
-					className={clsx(
+					className={[
 						"link-reset text-gray-800 dark:text-white hover:underline",
 						titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`,
-					)}
+					]
+						.filter(Boolean)
+						.join(" ")}
 				>
 					{item ? (
 						decodeNarouText(item.title)
@@ -218,10 +221,12 @@ const RankingItemRender: React.FC<{
 				)}
 			</p>
 			<Paper
-				className={clsx(
+				className={[
 					"p-2 space-2 bg-gray-50 dark:bg-zinc-900",
 					!showKeyword && "hidden",
-				)}
+				]
+					.filter(Boolean)
+					.join(" ")}
 			>
 				{item?.keyword
 					.split(/\s/g)

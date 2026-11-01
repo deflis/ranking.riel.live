@@ -1,6 +1,5 @@
 import { Tab, TabGroup, TabList, TabPanels } from "@headlessui/react";
 import { Link as RouterLink } from "@tanstack/react-router";
-import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { RankingType } from "narou";
@@ -192,14 +191,16 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 								<Tab
 									key={type}
 									className={({ selected }) =>
-										clsx(
+										[
 											"w-48 py-2.5 text-md leading-5",
 											selected
 												? "text-blue-500 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
 												: ranking[type].length !== 0
 													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/12 hover:text-blue-700 dark:hover:text-blue-300 "
 													: "text-gray-300 dark:text-neutral-700",
-										)
+										]
+											.filter(Boolean)
+											.join(" ")
 									}
 									disabled={ranking[type].length === 0}
 								>
