@@ -5,16 +5,6 @@ import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { RankingType } from "narou";
 import { FaTrophy } from "react-icons/fa";
-import {
-	Brush,
-	CartesianGrid,
-	Line,
-	LineChart,
-	ResponsiveContainer,
-	Tooltip,
-	XAxis,
-	YAxis,
-} from "recharts";
 import colors from "tailwindcss/colors";
 
 import { formatJapaneseDate } from "@/modules/utils/temporal";
@@ -26,6 +16,7 @@ import type {
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
+import { RankingHistoryChart } from "./RankingHistoryChart";
 
 import styles from "./RankingHistoryRender.module.css";
 
@@ -77,8 +68,6 @@ const graphColorAtom = atom((get) =>
 			},
 );
 
-const DEFAULT_MAX_RANGE = 365;
-
 const RankingHistoryCharts: React.FC<{
 	ranking: RankingHistoryItem[];
 	type: RankingType;
@@ -110,85 +99,8 @@ const RankingHistoryCharts: React.FC<{
 		}));
 	return (
 		<div className="flex flex-col	lg:flex-row">
-			<div className="w-full lg:w-2/3 h-96">
-				<ResponsiveContainer width="100%" height="100%">
-					<LineChart data={data}>
-						<Line
-							type="monotone"
-							dataKey="順位"
-							yAxisId="left"
-							stroke={graphColor.rank}
-						/>
-						<Line
-							type="monotone"
-							dataKey="ポイント"
-							yAxisId="right"
-							stroke={graphColor.pt}
-						/>
-						<CartesianGrid stroke={graphColor.text} />
-						<YAxis
-							reversed
-							domain={[1, 300]}
-							ticks={[10, 50, 100, 300]}
-							allowDataOverflow
-							scale="log"
-							yAxisId="left"
-							axisLine={{ stroke: graphColor.rank }}
-							tickLine={{ stroke: graphColor.rank }}
-							tick={{ fill: graphColor.rank }}
-							label={{
-								value: "順位",
-								fill: graphColor.rank,
-								angle: -90,
-								dx: -20,
-							}}
-						/>
-						<YAxis
-							yAxisId="right"
-							orientation="right"
-							axisLine={{ stroke: graphColor.pt }}
-							tickLine={{ stroke: graphColor.pt }}
-							tick={{ fill: graphColor.pt }}
-							label={{
-								value: "ポイント",
-								fill: graphColor.pt,
-								angle: 90,
-								dx: 20,
-							}}
-						/>
-						<XAxis dataKey="date" tick={{ fill: graphColor.text }} />
-						<Brush
-							dataKey="date"
-							height={30}
-							stroke={graphColor.text}
-							fill={graphColor.bg}
-							endIndex={
-								data.length < DEFAULT_MAX_RANGE
-									? data.length - 1
-									: DEFAULT_MAX_RANGE
-							}
-						>
-							<LineChart>
-								<Line
-									type="monotone"
-									dataKey="順位"
-									yAxisId="left"
-									stroke={graphColor.rank}
-									dot={false}
-								/>
-								<YAxis
-									reversed
-									domain={[1, 300]}
-									allowDataOverflow
-									scale="log"
-									yAxisId="left"
-									hide
-								/>
-							</LineChart>
-						</Brush>
-						<Tooltip contentStyle={{ background: graphColor.bg }} />
-					</LineChart>
-				</ResponsiveContainer>
+			<div className="w-full min-w-0 lg:w-2/3 h-96">
+				<RankingHistoryChart data={data} colors={graphColor} />
 			</div>
 
 			<div className="w-full lg:w-1/3 lg:h-96 lg:overflow-auto">
