@@ -42,10 +42,12 @@ export const prefetchRanking = async (
 		ranking = await fetchRanking(normalizedDate);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : error;
-		const isNotFound =
+		// 未公開分はWorkersから403になる場合があり、JSONPではコールバックも返らない。
+		const isUnavailable =
 			message === "Error: Data not found." ||
-			(typeof message === "string" && message.startsWith("HTTP 404:"));
-		if (!fallbackToPrevious || !isNotFound) {
+			message === "JSONP callback was not called" ||
+			(typeof message === "string" && /^HTTP (403|404):/.test(message));
+		if (!fallbackToPrevious || !isUnavailable) {
 			throw error;
 		}
 	}

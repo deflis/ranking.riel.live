@@ -49,6 +49,8 @@ describe("prefetchRanking", () => {
 		"Error: Data not found.",
 		new Error("Error: Data not found."),
 		new Error("HTTP 404: Not Found"),
+		new Error("HTTP 403: Forbidden"),
+		new Error("JSONP callback was not called"),
 	])(
 		"当日のデータがない場合は前日のランキングを取得する (%s)",
 		async (response) => {
@@ -86,6 +88,26 @@ describe("prefetchRanking", () => {
 			await prefetchRanking(createClient(), RankingType.Daily, date, false),
 		).toBe("2026-11-03");
 		expect(rankingFetcher).toHaveBeenCalledTimes(1);
+	});
+
+	it("日付指定時の403は前日に切り替えず通知する", async () => {
+		vi.mocked(rankingFetcher).mockRejectedValue(
+			new Error("HTTP 403: Forbidden"),
+		);
+		await expect(
+			prefetchRanking(createClient(), RankingType.Daily, date, false),
+		).rejects.toThrow("HTTP 403: Forbidden");
+		expect(rankingFetcher).toHaveBeenCalledTimes(1);
+	});
+
+	it("前日も403ならエラーを通知してそれ以上さかのぼらない", async () => {
+		vi.mocked(rankingFetcher).mockRejectedValue(
+			new Error("HTTP 403: Forbidden"),
+		);
+		await expect(
+			prefetchRanking(createClient(), RankingType.Daily, date, true),
+		).rejects.toThrow("HTTP 403: Forbidden");
+		expect(rankingFetcher).toHaveBeenCalledTimes(2);
 	});
 
 	it("当日分が公開されたら再取得で当日のランキングに戻る", async () => {
