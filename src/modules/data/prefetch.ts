@@ -1,11 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { RankingType } from "narou";
+import type { NarouRankingResult, RankingType } from "narou";
 
 import type {
 	CustomRankingParams,
 	R18RankingParams,
 } from "../interfaces/CustomRankingParams";
-import { convertDate } from "../utils/date";
+import { addDate, convertDate } from "../utils/date";
 import { getCustomRankingQueryFn } from "./custom";
 import {
 	itemDetailFetcher,
@@ -28,17 +28,36 @@ export const prefetchRanking = async (
 	queryClient: QueryClient,
 	type: RankingType,
 	date: Temporal.PlainDate,
+	fallbackToPrevious: boolean,
 ) => {
-	const normalizedDate = convertDate(date, type).toString();
-	const ranking = await queryClient.ensureQueryData({
-		queryKey: rankingKey(type, normalizedDate),
-		queryFn: rankingFetcher,
-	});
+	let normalizedDate = convertDate(date, type).toString();
+	const fetchRanking = (date: string) =>
+		queryClient.fetchQuery({
+			queryKey: rankingKey(type, date),
+			queryFn: rankingFetcher,
+			staleTime: fallbackToPrevious ? 0 : Number.POSITIVE_INFINITY,
+		});
+	let ranking: NarouRankingResult[] | undefined;
+	try {
+		ranking = await fetchRanking(normalizedDate);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : error;
+		const isNotFound =
+			message === "Error: Data not found." ||
+			(typeof message === "string" && message.startsWith("HTTP 404:"));
+		if (!fallbackToPrevious || !isNotFound) {
+			throw error;
+		}
+	}
+	if (fallbackToPrevious && !ranking?.length) {
+		normalizedDate = addDate(convertDate(date, type), type, -1).toString();
+		ranking = await fetchRanking(normalizedDate);
+	}
 	prefetchRankingDetail(
 		queryClient,
 		ranking?.slice(0, 10).map((x) => x.ncode) ?? [],
 	);
-	// ランキングのprefetchでは値を返す必要がない
+	return normalizedDate;
 };
 
 export const prefetchRankingDetail = (

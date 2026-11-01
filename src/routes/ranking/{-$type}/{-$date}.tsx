@@ -6,7 +6,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { RankingType } from "narou";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useRef } from "react";
 
 import { Button } from "@/components/ui/atoms/Button";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -52,19 +52,19 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	}) => {
 		const type = (typeParam as RankingType) ?? RankingType.Daily;
 		const dt = !dateParam
-			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
+			? nowInTokyo().toPlainDate()
 			: Temporal.PlainDate.from(dateParam);
 		const date = convertDate(dt, type);
 
-		prefetchRanking(queryClient, type, date);
+		return {
+			date: await prefetchRanking(queryClient, type, date, !dateParam),
+		};
 	},
 	component: RankingPage,
-	head: ({ params: { type: typeParam, date: dateParam } }) => {
+	head: ({ params: { type: typeParam }, loaderData }) => {
 		const type = (typeParam as RankingType) ?? RankingType.Daily;
-		const dt = !dateParam
-			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
-			: Temporal.PlainDate.from(dateParam);
-		const date = convertDate(dt, type);
+		if (!loaderData) return {};
+		const date = Temporal.PlainDate.from(loaderData.date);
 		return {
 			meta: [
 				{
@@ -75,20 +75,10 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	},
 	headers: ({ params: { date } }) => {
 		if (!date) {
-			const now = nowInTokyo();
-			let nextNoon = now.startOfDay().add({ hours: 12 });
-			if (Temporal.ZonedDateTime.compare(now, nextNoon) >= 0) {
-				nextNoon = nextNoon.add({ days: 1 });
-			}
-			const ttl = Math.max(
-				60,
-				Math.floor(now.until(nextNoon).total("seconds")),
-			);
-
 			return createCacheHeaders({
 				...MAIN_PAGE_CACHE_OPTIONS,
-				maxAge: ttl,
-				sMaxAge: ttl,
+				maxAge: 60 * 5,
+				sMaxAge: 60 * 5,
 			});
 		}
 
@@ -100,12 +90,8 @@ function RankingPage() {
 	const { type: typeParam, date: dateParam } = Route.useParams();
 	const type = (typeParam as RankingType) ?? RankingType.Daily;
 
-	const date = useMemo(() => {
-		const dt = !dateParam
-			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
-			: Temporal.PlainDate.from(dateParam);
-		return convertDate(dt, type);
-	}, [dateParam, type]);
+	const { date: resolvedDate } = Route.useLoaderData();
+	const date = Temporal.PlainDate.from(resolvedDate);
 
 	const isNow = !dateParam;
 	const navigate = useNavigate();
