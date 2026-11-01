@@ -12,6 +12,7 @@ import {
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
 
+import { RankingType } from "@/modules/interfaces/RankingType";
 import { decodeNarouText } from "@/modules/utils/decodeNarouText";
 import {
 	buildCustomRankingSearch,
@@ -122,7 +123,7 @@ const DetailItem: FC<{
 						!isR18 ? (
 							<Link
 								to="/custom/{-$type}"
-								params={(prev) => ({ ...prev, type: "all" })}
+								params={(prev) => ({ ...prev, type: RankingType.All })}
 								search={(_) =>
 									buildCustomRankingSearch({ genres: [item.genre] })
 								}
@@ -241,7 +242,7 @@ const DetailItem: FC<{
 							{item ? (
 								<Link
 									to="/custom/{-$type}"
-									params={(prev) => ({ ...prev, type: "all" })}
+									params={(prev) => ({ ...prev, type: RankingType.All })}
 									search={(_) =>
 										buildCustomRankingSearch({ genres: [item.genre] })
 									}
@@ -284,7 +285,7 @@ const DetailItem: FC<{
 											as="a"
 											key={keyword}
 											to={isR18 ? "/r18" : "/custom/{-$type}"}
-											params={(prev) => ({ ...prev, type: "all" })}
+											params={(prev) => ({ ...prev, type: RankingType.All })}
 											search={(_) =>
 												isR18
 													? buildR18RankingSearch({ keyword })

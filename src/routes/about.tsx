@@ -3,6 +3,7 @@ import { FaCog } from "react-icons/fa";
 
 import { Paper } from "@/components/ui/atoms/Paper";
 import { SelfAd } from "@/components/ui/common/SelfAd";
+import { RankingType } from "@/modules/interfaces/RankingType";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/about")({
@@ -42,7 +43,7 @@ function AboutPage() {
 					<p>
 						<Link
 							to="/custom/{-$type}"
-							params={{ type: "all" }}
+							params={{ type: RankingType.All }}
 							search={(_) => ({})}
 						>
 							カスタムランキング
@@ -53,7 +54,7 @@ function AboutPage() {
 						例えば、
 						<Link
 							to="/custom/{-$type}"
-							params={{ type: "all" }}
+							params={{ type: RankingType.All }}
 							search={() => buildCustomRankingSearch({ keyword: "悪役令嬢" })}
 						>
 							悪役令嬢
@@ -61,7 +62,7 @@ function AboutPage() {
 						や
 						<Link
 							to="/custom/{-$type}"
-							params={{ type: "all" }}
+							params={{ type: RankingType.All }}
 							search={() => buildCustomRankingSearch({ keyword: "VRMMO" })}
 						>
 							VRMMO
