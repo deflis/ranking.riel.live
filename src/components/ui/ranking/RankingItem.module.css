@@ -1,0 +1,5 @@
+.card {
+	content-visibility: auto;
+	contain-intrinsic-block-size: auto 600px;
+	overflow-clip-margin: 8px;
+}

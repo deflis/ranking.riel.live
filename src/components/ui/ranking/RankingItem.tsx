@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 import { CatchBoundary, Link, createLink } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
-import { Suspense } from "react";
+import { memo, Suspense, useMemo } from "react";
 
 import { useToggle } from "@/hooks/useToggle";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
@@ -30,6 +30,8 @@ import { Paper } from "../atoms/Paper";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag, Tags } from "../common/bulma/Tag";
 
+import styles from "./RankingItem.module.css";
+
 const ChipLink = createLink(Chip);
 
 const lineClamp = [
@@ -52,155 +54,122 @@ function checkR18(
 ): item is NocItem {
 	return isR18 && (item == null || (item as NocItem)?.nocgenre !== undefined);
 }
-const RankingItemRender: React.FC<{
-	className?: string;
-	ncode: string;
-	rankingItem: RankingResultItem;
+type ItemFieldsProps = {
 	item: Item | NocItem | null | undefined;
-	isR18?: true;
-	isPending: boolean;
-	isError: boolean;
-}> = ({
-	className,
-	ncode,
-	rankingItem,
+	ncode: string;
+	isR18: boolean;
+	isNotfound: boolean;
+	generalFirstup: Temporal.ZonedDateTime | null;
+};
+
+const RankingItemTitle = memo(function RankingItemTitle({
 	item,
-	isError,
-	isPending,
-	isR18: rawR18 = false,
-}) => {
+	ncode,
+	isR18,
+	isNotfound,
+}: ItemFieldsProps) {
 	const titleHeight = useAtomValue(titleHeightAtom);
-	const showKeyword = useAtomValue(showKeywordAtom);
-
-	const [openStory, toggleStory] = useToggle(false);
-
-	const isR18 = checkR18(rawR18, item);
-	const isNotfound = (!item && !isPending) || isError;
-
-	const link = isR18
-		? `https://novel18.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`
-		: `https://ncode.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`;
+	const title = useMemo(() => decodeNarouText(item?.title), [item?.title]);
 	const detail = isR18 ? "/r18/detail/$ncode" : "/detail/$ncode";
-	const detailParams = {
-		ncode: item?.ncode ?? ncode,
-	} as const;
-
-	const novelupdatedAt = item?.novelupdated_at
-		? parseDateTime(item.novelupdated_at)
-		: null;
-	const generalFirstup = item?.general_firstup
-		? parseDateTime(item.general_firstup)
-		: null;
-	const generalLastup = item?.general_lastup
-		? parseDateTime(item.general_lastup)
-		: null;
-	const generalFirstupDiffDays = generalFirstup
-		? (generalFirstup.epochMilliseconds - nowInTokyo().epochMilliseconds) /
-			86_400_000
-		: null;
-
+	const detailParams = { ncode: item?.ncode ?? ncode } as const;
 	return (
-		<div
+		<h2 className="mb-2 text-2xl">
+			<Link
+				to={detail}
+				params={detailParams}
+				title={title}
+				className={[
+					"link-reset text-gray-800 dark:text-white hover:underline",
+					titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`,
+				]
+					.filter(Boolean)
+					.join(" ")}
+			>
+				{item ? (
+					title
+				) : isNotfound ? (
+					"この小説は見つかりません"
+				) : (
+					<PulseLoader className="h-6" disabled={isNotfound} />
+				)}
+			</Link>
+		</h2>
+	);
+});
+
+const RankingItemKeywordLinks = memo(function RankingItemKeywordLinks({
+	keyword,
+	isR18,
+	isNotfound,
+}: {
+	keyword: string | undefined;
+	isR18: boolean;
+	isNotfound: boolean;
+}) {
+	const keywords = useMemo(
+		() => keyword?.split(/\s/g).filter(Boolean),
+		[keyword],
+	);
+	return (
+		<>
+			{keywords?.map((keyword) => (
+				<ChipLink
+					key={keyword}
+					to={isR18 ? "/r18/ranking/{-$type}" : "/custom/{-$type}"}
+					params={(prev) => ({ ...prev, type: RankingType.Daily })}
+					search={{ keyword }}
+				>
+					{keyword}
+				</ChipLink>
+			)) ?? <PulseLoader disabled={isNotfound} />}
+		</>
+	);
+});
+const RankingItemKeywords = memo(function RankingItemKeywords({
+	item,
+	isR18,
+	isNotfound,
+}: ItemFieldsProps) {
+	const showKeyword = useAtomValue(showKeywordAtom);
+	return (
+		<Paper
 			className={[
-				className,
-				"box-border grid grid-rows-subgrid gap-2",
-				"row-span-8",
-				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",
+				"p-2 space-2 bg-gray-50 dark:bg-zinc-900",
+				!showKeyword && "hidden",
 			]
 				.filter(Boolean)
 				.join(" ")}
-			suppressHydrationWarning
 		>
-			<p>
-				第{rankingItem.rank}位{" "}
-				<Tags>
-					<Tag>{rankingItem.pt?.toLocaleString()}pt</Tag>
-					{generalFirstupDiffDays !== null && generalFirstupDiffDays <= 30 && (
-						<Tag tagColor="red" light={generalFirstupDiffDays <= 7}>
-							New!
-						</Tag>
-					)}
-				</Tags>
-			</p>
-			<p>
-				{item ? (
-					<>
-						<ItemBadge item={item} />
-						{!isR18 && (
-							<Link
-								to="/custom/{-$type}"
-								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={(_) =>
-									buildCustomRankingSearch({ genres: [item.genre] })
-								}
-							>
-								{GenreNotation[item.genre]}
-							</Link>
-						)}
-						{isR18 && (
-							<Link
-								to="/r18/ranking/{-$type}"
-								params={(prev) => ({ ...prev, type: RankingType.Daily })}
-								search={(_) =>
-									buildR18RankingSearch({ sites: [item.nocgenre] })
-								}
-							>
-								{R18SiteNotation[item.nocgenre]}
-							</Link>
-						)}
-						<Tag>
-							{Math.round(item.length / item.general_all_no).toLocaleString()}
-							文字/話
-						</Tag>
-					</>
-				) : (
-					<PulseLoader disabled={isNotfound} />
-				)}
-			</p>
-			<h2 className="mb-2 text-2xl">
-				<Link
-					to={detail}
-					params={detailParams}
-					title={decodeNarouText(item?.title)}
-					className={[
-						"link-reset text-gray-800 dark:text-white hover:underline",
-						titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`,
-					]
-						.filter(Boolean)
-						.join(" ")}
-				>
-					{item ? (
-						decodeNarouText(item.title)
-					) : isNotfound ? (
-						"この小説は見つかりません"
-					) : (
-						<PulseLoader className="h-6" disabled={isNotfound} />
-					)}
-				</Link>
-			</h2>
+			<RankingItemKeywordLinks
+				keyword={item?.keyword}
+				isR18={isR18}
+				isNotfound={isNotfound}
+			/>
+		</Paper>
+	);
+});
+const RankingItemDates = memo(function RankingItemDates({
+	item,
+	isNotfound,
+	generalFirstup,
+}: ItemFieldsProps) {
+	const updatedValue = item?.novelupdated_at;
+	const lastupValue = item?.general_lastup;
+	const novelupdatedAt = useMemo(
+		() => (updatedValue ? formatDateTime(parseDateTime(updatedValue)) : null),
+		[updatedValue],
+	);
 
-			<p>
-				作者:{" "}
-				{item ? (
-					isR18 ? (
-						decodeNarouText(item.writer)
-					) : (
-						<a
-							href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{decodeNarouText(item.writer)}
-						</a>
-					)
-				) : (
-					<PulseLoader className="w-1/4" disabled={isNotfound} />
-				)}
-			</p>
+	const generalLastup = useMemo(
+		() => (lastupValue ? parseDateTime(lastupValue) : null),
+		[lastupValue],
+	);
+	return (
+		<>
 			<p>
 				更新日時:{" "}
 				{novelupdatedAt ? (
-					formatDateTime(novelupdatedAt)
+					novelupdatedAt
 				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
@@ -219,66 +188,216 @@ const RankingItemRender: React.FC<{
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
 			</p>
-			<Paper
-				className={[
-					"p-2 space-2 bg-gray-50 dark:bg-zinc-900",
-					!showKeyword && "hidden",
-				]
-					.filter(Boolean)
-					.join(" ")}
-			>
-				{item?.keyword
-					.split(/\s/g)
-					.filter((keyword) => keyword)
-					.map((keyword) => (
-						<ChipLink
-							key={keyword}
-							to={isR18 ? "/r18/ranking/{-$type}" : "/custom/{-$type}"}
-							params={(prev) => ({ ...prev, type: RankingType.Daily })}
-							search={{ keyword }}
-						>
-							{keyword}
-						</ChipLink>
-					)) ?? <PulseLoader disabled={isNotfound} />}
-			</Paper>
-
-			<div className="space-y-2">
+		</>
+	);
+});
+const RankingItemActions = memo(function RankingItemActions({
+	item,
+	ncode,
+	isR18,
+}: ItemFieldsProps) {
+	const [openStory, toggleStory] = useToggle(false);
+	const title = useMemo(() => decodeNarouText(item?.title), [item?.title]);
+	const link = isR18
+		? `https://novel18.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`
+		: `https://ncode.syosetu.com/${(item?.ncode ?? ncode)?.toLowerCase()}/`;
+	const detail = isR18 ? "/r18/detail/$ncode" : "/detail/$ncode";
+	const detailParams = { ncode: item?.ncode ?? ncode } as const;
+	return (
+		<div className="space-y-2">
+			{item && (
+				<Transition
+					show={openStory}
+					enter="transition duration-100 origin-top ease-out"
+					enterFrom="transform scale-75 scale-y-0 opacity-0 "
+					enterTo="transform scale-100 opacity-100"
+					leave="transition duration-75 origin-top ease-out"
+					leaveFrom="transform scale-100 opacity-100"
+					leaveTo="transform scale-75 opacity-0"
+					as={Paper}
+					className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900 box-content"
+				>
+					{item.story}
+				</Transition>
+			)}
+			<div className="flex space-x-2 items-center">
 				{item && (
-					<Transition
-						show={openStory}
-						enter="transition duration-100 origin-top ease-out"
-						enterFrom="transform scale-75 scale-y-0 opacity-0 "
-						enterTo="transform scale-100 opacity-100"
-						leave="transition duration-75 origin-top ease-out"
-						leaveFrom="transform scale-100 opacity-100"
-						leaveTo="transform scale-75 opacity-0"
-						as={Paper}
-						className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900 box-content"
-					>
-						{item.story}
-					</Transition>
+					<Button aria-expanded={openStory} onClick={toggleStory}>
+						あらすじを{openStory ? "隠す" : "表示"}
+					</Button>
 				)}
-				<div className="flex space-x-2 items-center">
-					{item && (
-						<Button onClick={toggleStory}>
-							あらすじを{openStory ? "隠す" : "表示"}
-						</Button>
-					)}
-					<div className="grow" />
-					<Link to={detail} params={detailParams}>
-						小説情報
-					</Link>
-					<Button
-						as="a"
-						href={link}
+				<div className="grow" />
+				<Link to={detail} params={detailParams}>
+					小説情報
+				</Link>
+				<Button
+					as="a"
+					href={link}
+					target="_blank"
+					rel="noopener noreferrer"
+					title={title}
+				>
+					読む
+				</Button>
+			</div>
+		</div>
+	);
+});
+const RankingItemAuthor = memo(function RankingItemAuthor({
+	item,
+	isR18: rawR18,
+	isNotfound,
+}: ItemFieldsProps) {
+	const isR18 = checkR18(rawR18, item);
+	const writer = useMemo(() => decodeNarouText(item?.writer), [item?.writer]);
+	return (
+		<p>
+			作者:{" "}
+			{item ? (
+				isR18 ? (
+					writer
+				) : (
+					<a
+						href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
 						target="_blank"
 						rel="noopener noreferrer"
-						title={decodeNarouText(item?.title)}
 					>
-						読む
-					</Button>
-				</div>
-			</div>
+						{writer}
+					</a>
+				)
+			) : (
+				<PulseLoader className="w-1/4" disabled={isNotfound} />
+			)}
+		</p>
+	);
+});
+const RankingItemMetadata = memo(function RankingItemMetadata({
+	item,
+	isR18: rawR18,
+	isNotfound,
+}: ItemFieldsProps) {
+	const isR18 = checkR18(rawR18, item);
+	const length = item?.length;
+	const episodes = item?.general_all_no;
+	const averageLength = useMemo(
+		() =>
+			length !== undefined && episodes !== undefined
+				? Math.round(length / episodes).toLocaleString()
+				: "",
+		[length, episodes],
+	);
+	return (
+		<p>
+			{item ? (
+				<>
+					<ItemBadge item={item} />
+					{!isR18 && (
+						<Link
+							to="/custom/{-$type}"
+							params={(prev) => ({ ...prev, type: RankingType.Daily })}
+							search={(_) => buildCustomRankingSearch({ genres: [item.genre] })}
+						>
+							{GenreNotation[item.genre]}
+						</Link>
+					)}
+					{isR18 && (
+						<Link
+							to="/r18/ranking/{-$type}"
+							params={(prev) => ({ ...prev, type: RankingType.Daily })}
+							search={(_) => buildR18RankingSearch({ sites: [item.nocgenre] })}
+						>
+							{R18SiteNotation[item.nocgenre]}
+						</Link>
+					)}
+					<Tag>
+						{averageLength}
+						文字/話
+					</Tag>
+				</>
+			) : (
+				<PulseLoader disabled={isNotfound} />
+			)}
+		</p>
+	);
+});
+const RankingItemRank = memo(function RankingItemRank({
+	generalFirstup,
+	rankingItem,
+}: {
+	generalFirstup: ItemFieldsProps["generalFirstup"];
+	rankingItem: RankingResultItem;
+}) {
+	const generalFirstupDiffDays = generalFirstup
+		? (generalFirstup.epochMilliseconds - nowInTokyo().epochMilliseconds) /
+			86_400_000
+		: null;
+	const points = useMemo(
+		() => rankingItem.pt?.toLocaleString(),
+		[rankingItem.pt],
+	);
+	return (
+		<p>
+			第{rankingItem.rank}位{" "}
+			<Tags>
+				<Tag>{points}pt</Tag>
+				{generalFirstupDiffDays !== null && generalFirstupDiffDays <= 30 && (
+					<Tag tagColor="red" light={generalFirstupDiffDays <= 7}>
+						New!
+					</Tag>
+				)}
+			</Tags>
+		</p>
+	);
+});
+
+const RankingItemRender: React.FC<{
+	className?: string;
+	ncode: string;
+	rankingItem: RankingResultItem;
+	item: Item | NocItem | null | undefined;
+	isR18?: true;
+	isPending: boolean;
+	isError: boolean;
+}> = ({
+	className,
+	ncode,
+	rankingItem,
+	item,
+	isError,
+	isPending,
+	isR18: rawR18 = false,
+}) => {
+	const isR18 = checkR18(rawR18, item);
+	const isNotfound = (!item && !isPending) || isError;
+	const firstupValue = item?.general_firstup;
+	const generalFirstup = useMemo(
+		() => (firstupValue ? parseDateTime(firstupValue) : null),
+		[firstupValue],
+	);
+	const fields = { item, ncode, isR18, isNotfound, generalFirstup };
+	return (
+		<div
+			className={[
+				className,
+				styles.card,
+				"box-border grid grid-rows-subgrid gap-2",
+				"row-span-8",
+				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",
+			]
+				.filter(Boolean)
+				.join(" ")}
+			suppressHydrationWarning
+		>
+			<RankingItemRank
+				generalFirstup={generalFirstup}
+				rankingItem={rankingItem}
+			/>
+			<RankingItemMetadata {...fields} />
+			<RankingItemTitle {...fields} />
+			<RankingItemAuthor {...fields} />
+			<RankingItemDates {...fields} />
+			<RankingItemKeywords {...fields} />
+			<RankingItemActions {...fields} />
 		</div>
 	);
 };
