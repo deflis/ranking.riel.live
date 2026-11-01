@@ -74,10 +74,10 @@ export const Header: React.FC = () => {
 		}
 	};
 	useEffect(() => {
-		if (titleHeightStatus) {
-			setTitleHeightRaw(titleHeight);
+		if (titleHeightRaw > 0) {
+			setTitleHeight(titleHeightRaw);
 		}
-	}, [titleHeightStatus, titleHeight, setTitleHeightRaw]);
+	}, [titleHeightRaw]);
 	const [showKeyword, setShowKeyword] = useAtom(showKeywordAtom);
 	const toggleShowKeyword = () => setShowKeyword((x) => !x);
 
@@ -85,6 +85,9 @@ export const Header: React.FC = () => {
 		const value = Number.parseInt(e.target.value, 10);
 		if (value > 0) {
 			setTitleHeight(value);
+			if (titleHeightStatus) {
+				setTitleHeightRaw(value);
+			}
 		}
 	};
 

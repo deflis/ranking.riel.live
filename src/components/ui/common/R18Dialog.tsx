@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import type React from "react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 import { r18Atom } from "../../../modules/atoms/global";
 import { Button } from "../atoms/Button";
@@ -74,21 +74,15 @@ export const R18Dialog: React.FC<{
 
 export const R18DialogForm: React.FC = () => {
 	const [ok, setOk] = useAtom(r18Atom);
-	const [showDialog, setShowDialog] = useState(!ok);
 	const navigate = useNavigate();
 	const handleOk = () => {
 		setOk(true);
-		setShowDialog(false);
 	};
 	const handleCancel = () => {
 		navigate({ to: "/" });
 	};
 	return (
-		<R18Dialog
-			open={showDialog}
-			handleOk={handleOk}
-			handleCancel={handleCancel}
-		/>
+		<R18Dialog open={!ok} handleOk={handleOk} handleCancel={handleCancel} />
 	);
 };
 
