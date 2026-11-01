@@ -1,5 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import { R18Site } from "narou";
 import { useCallback } from "react";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
@@ -22,13 +21,6 @@ export type R18RankingSearch = {
 	kanketsu?: string;
 	tanpen?: string;
 };
-
-const allSites = [
-	R18Site.Nocturne,
-	R18Site.MoonLight,
-	R18Site.MoonLightBL,
-	R18Site.Midnight,
-];
 
 import {
 	buildR18RankingSearch,

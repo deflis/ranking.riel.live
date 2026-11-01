@@ -1,0 +1,44 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "react", "jsx-a11y", "import", "unicorn", "oxc"],
+	"categories": {
+		"correctness": "error"
+	},
+	"ignorePatterns": [
+		"dist/**",
+		".output/**",
+		".tanstack/**",
+		".wrangler/**",
+		"src/routeTree.gen.ts",
+		"src/types/cloudflare.d.ts"
+	],
+	"rules": {
+		"react/rules-of-hooks": "error",
+		"react/exhaustive-deps": "error",
+		"react/no-array-index-key": "error",
+		"typescript/no-explicit-any": "error",
+		"jsx-a11y/label-has-associated-control": [
+			"error",
+			{
+				"controlComponents": [
+					"TextField",
+					"Checkbox",
+					"SelectBox",
+					"Controller"
+				]
+			}
+		],
+		"react/react-in-jsx-scope": "off",
+		"unicorn/consistent-function-scoping": "off",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"ignoreRestSiblings": true
+			}
+		],
+		"react/refs": "off",
+		"react/set-state-in-effect": "off"
+	}
+}

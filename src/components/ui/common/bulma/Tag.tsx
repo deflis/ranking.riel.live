@@ -17,7 +17,7 @@ export function Tag<C extends ElementType = "span">({
 	as,
 	tagColor,
 	className,
-	light,
+	light: _light,
 	ref,
 	...props
 }: TagProps<C>) {

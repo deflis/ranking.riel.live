@@ -1,4 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+
+import { prefetchR18Ranking } from "@/modules/data/prefetch";
+import {
+	MAIN_PAGE_CACHE_OPTIONS,
+	createCacheHeaders,
+} from "@/modules/utils/cacheMiddleware";
+import { parseR18RankingParams } from "@/modules/utils/parseSearch";
+
 import {
 	R18RankingPage,
 	type R18RankingSearch,
@@ -7,13 +15,6 @@ import {
 	RankingType,
 	RankingTypeName,
 } from "../../modules/interfaces/RankingType";
-
-import { prefetchR18Ranking } from "@/modules/data/prefetch";
-import {
-	MAIN_PAGE_CACHE_OPTIONS,
-	createCacheHeaders,
-} from "@/modules/utils/cacheMiddleware";
-import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/")({
 	ssr: false,

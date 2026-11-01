@@ -12,7 +12,6 @@ import {
 } from "narou";
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
-
 import { fetchOptions } from "./custom/utils";
 import { itemFetcher, itemKey } from "./item";
 import type { Item } from "./types";

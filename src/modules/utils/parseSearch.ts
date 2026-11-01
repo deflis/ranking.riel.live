@@ -1,4 +1,5 @@
 import { type Genre, R18Site } from "narou";
+
 import { allGenres } from "../enum/Genre";
 import type {
 	CustomRankingParams,

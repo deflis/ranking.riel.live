@@ -9,9 +9,8 @@ import type { CustomRankingParams } from "../../../modules/interfaces/CustomRank
 import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
 import AdSense from "../common/AdSense";
-import { SelfAd } from "../common/SelfAd";
-
 import { ErrorFallback } from "../common/ErrorFallback";
+import { SelfAd } from "../common/SelfAd";
 import RankingItem from "./RankingItem";
 
 const InsideRender: React.FC<{
@@ -51,9 +50,9 @@ export const CustomRankingRender: React.FC<{
 }> = ({ params }) => {
 	const [page, setPage] = useState(1);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: paramsが変わったときにリセットする
 	useEffect(() => {
 		setPage(1);
+		// oxlint-disable-next-line react/exhaustive-deps -- paramsが変わったときにリセットする
 	}, [params]);
 
 	const pages = Array.from({ length: page }, (_, i) => i + 1);

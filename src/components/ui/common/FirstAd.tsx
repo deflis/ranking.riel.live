@@ -1,7 +1,6 @@
 import { useAtomValue } from "jotai";
 
 import { countAtom } from "../../../modules/atoms/global";
-
 import AdSense from "./AdSense";
 
 let localCount = 0;

@@ -4,9 +4,8 @@ import {
 	R18RankingPage,
 	type R18RankingSearch,
 } from "@/components/ui/ranking/R18RankingPage";
-import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
-
 import { prefetchR18Ranking } from "@/modules/data/prefetch";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,

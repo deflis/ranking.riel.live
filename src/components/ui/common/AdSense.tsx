@@ -1,7 +1,7 @@
+import { clsx } from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
-import { clsx } from "clsx";
 import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
@@ -68,7 +68,6 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 		appendAdSenseScript();
 
 		try {
-			// biome-ignore lint/suspicious/noAssignInExpressions: Google AdSense requires this exact code to work
 			(window.adsbygoogle = window.adsbygoogle || []).push({});
 		} catch (e) {
 			console.error(e);

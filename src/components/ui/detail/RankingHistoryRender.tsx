@@ -25,6 +25,7 @@ import type {
 } from "../../../modules/data/types";
 import { RankingTypeName } from "../../../modules/interfaces/RankingType";
 import { Paper } from "../atoms/Paper";
+
 import styles from "./RankingHistoryRender.module.css";
 
 function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {

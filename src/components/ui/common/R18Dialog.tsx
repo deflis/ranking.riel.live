@@ -6,7 +6,6 @@ import { Fragment, useCallback, useState } from "react";
 
 import { r18Atom } from "../../../modules/atoms/global";
 import { Button } from "../atoms/Button";
-
 import AdSense from "./AdSense";
 
 export const R18Dialog: React.FC<{
@@ -57,7 +56,7 @@ export const R18Dialog: React.FC<{
 								</div>
 
 								<div className="mt-4">
-									<Button autoFocus onClick={handleCancel} color="primary">
+									<Button data-autofocus onClick={handleCancel} color="primary">
 										18歳未満である（通常ランキングを見る）
 									</Button>
 									<Button onClick={handleOk} color="primary">

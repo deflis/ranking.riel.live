@@ -8,17 +8,18 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 
-import { Button } from "../atoms/Button";
-import { Checkbox } from "../atoms/Checkbox";
-import { SelectBox } from "../atoms/SelectBox";
-import { TextField } from "../atoms/TextField";
-
 import {
 	type FilterConfig,
 	filterConfigAtom,
 	isUseFilterAtom,
 } from "@/modules/atoms/filter";
 import { allGenres } from "@/modules/enum/Genre";
+
+import { Button } from "../atoms/Button";
+import { Checkbox } from "../atoms/Checkbox";
+import { SelectBox } from "../atoms/SelectBox";
+import { TextField } from "../atoms/TextField";
+
 import styles from "./Filter.module.css";
 
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({

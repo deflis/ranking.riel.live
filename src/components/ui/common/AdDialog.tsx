@@ -3,7 +3,6 @@ import type React from "react";
 import { Fragment } from "react";
 
 import { Button } from "../atoms/Button";
-
 import AdSense from "./AdSense";
 
 export const AdDialog: React.FC<{
@@ -52,7 +51,7 @@ export const AdDialog: React.FC<{
 								</div>
 
 								<div className="mt-4">
-									<Button autoFocus onClick={handleCancel} color="primary">
+									<Button data-autofocus onClick={handleCancel} color="primary">
 										広告を消去しない
 									</Button>
 									<Button onClick={handleOk} color="primary">

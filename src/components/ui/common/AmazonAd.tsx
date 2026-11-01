@@ -9,9 +9,10 @@ export function AmazonAd({ scriptSrc, id }: AmazonAdProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (typeof window === "undefined" || !containerRef.current) return;
+		const container = containerRef.current;
+		if (typeof window === "undefined" || !container) return;
 
-		if (containerRef.current.querySelector("script")) return;
+		if (container.querySelector("script")) return;
 
 		const script = document.createElement("script");
 		script.src = scriptSrc;
@@ -22,12 +23,10 @@ export function AmazonAd({ scriptSrc, id }: AmazonAdProps) {
 			script.id = id;
 		}
 
-		containerRef.current.appendChild(script);
+		container.appendChild(script);
 
 		return () => {
-			if (containerRef.current) {
-				containerRef.current.innerHTML = "";
-			}
+			container.innerHTML = "";
 		};
 	}, [scriptSrc, id]);
 
