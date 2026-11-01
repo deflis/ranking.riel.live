@@ -1,6 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import { R18Site } from "narou";
-import { useCallback } from "react";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
@@ -23,13 +21,6 @@ export type R18RankingSearch = {
 	tanpen?: string;
 };
 
-const allSites = [
-	R18Site.Nocturne,
-	R18Site.MoonLight,
-	R18Site.MoonLightBL,
-	R18Site.Midnight,
-];
-
 import {
 	buildR18RankingSearch,
 	parseR18RankingParams,
@@ -43,16 +34,13 @@ export const R18RankingPage: React.FC<{
 
 	const params = parseR18RankingParams(rankingType, search);
 
-	const handleSearch = useCallback(
-		(newParams: R18RankingParams) => {
-			navigate({
-				to: "/r18/ranking/{-$type}",
-				params: { type: newParams.rankingType },
-				search: (_) => buildR18RankingSearch(newParams),
-			});
-		},
-		[navigate],
-	);
+	const handleSearch = (newParams: R18RankingParams) => {
+		navigate({
+			to: "/r18/ranking/{-$type}",
+			params: { type: newParams.rankingType },
+			search: (_) => buildR18RankingSearch(newParams),
+		});
+	};
 
 	return (
 		<>

@@ -2,11 +2,10 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import type React from "react";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import { r18Atom } from "../../../modules/atoms/global";
 import { Button } from "../atoms/Button";
-
 import AdSense from "./AdSense";
 
 export const R18Dialog: React.FC<{
@@ -57,7 +56,7 @@ export const R18Dialog: React.FC<{
 								</div>
 
 								<div className="mt-4">
-									<Button autoFocus onClick={handleCancel} color="primary">
+									<Button data-autofocus onClick={handleCancel} color="primary">
 										18歳未満である（通常ランキングを見る）
 									</Button>
 									<Button onClick={handleOk} color="primary">
@@ -75,18 +74,19 @@ export const R18Dialog: React.FC<{
 
 export const R18DialogForm: React.FC = () => {
 	const [ok, setOk] = useAtom(r18Atom);
-	const [showDialog, setShowDialog] = useState(!ok);
+	const [ready, setReady] = useState(false);
+	// atomの購読で保存値を復元してから、年齢確認の要否を判定する。
+	useEffect(() => setReady(true), []);
 	const navigate = useNavigate();
-	const handleOk = useCallback(() => {
+	const handleOk = () => {
 		setOk(true);
-		setShowDialog(false);
-	}, [setOk]);
-	const handleCancel = useCallback(() => {
+	};
+	const handleCancel = () => {
 		navigate({ to: "/" });
-	}, [navigate]);
+	};
 	return (
 		<R18Dialog
-			open={showDialog}
+			open={ready && !ok}
 			handleOk={handleOk}
 			handleCancel={handleCancel}
 		/>

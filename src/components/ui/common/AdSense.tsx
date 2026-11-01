@@ -1,7 +1,6 @@
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
-import { useLocation } from "@tanstack/react-router";
 import { adModeAtom } from "../../../modules/atoms/global";
 
 declare global {
@@ -10,31 +9,79 @@ declare global {
 	}
 }
 
-export const AdSense: React.FC = () => {
-	const adMode = useAtomValue(adModeAtom);
-	return adMode ? <InnerAdSense /> : null;
+interface AdsenseProps {
+	slot?: string;
+	format?: string;
+	responsive?: string;
+	layoutKey?: string;
+	className?: string;
+}
+
+export const adSenseClientId = "ca-pub-6809573064811153";
+const adSenseScriptId = "google-adsense";
+const adSenseScriptUrl = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClientId}`;
+
+const appendAdSenseScript = () => {
+	if (typeof document === "undefined") return;
+
+	const head = document.querySelector("head");
+	if (head?.querySelector(`#${adSenseScriptId}`)) return;
+
+	const script = document.createElement("script");
+	script.id = adSenseScriptId;
+	script.async = true;
+	script.src = adSenseScriptUrl;
+	script.crossOrigin = "anonymous";
+	head?.appendChild(script);
 };
 
-export const InnerAdSense: React.FC = () => {
+export const AdSense: React.FC<AdsenseProps> = ({
+	slot = "3138091970",
+	format = "fluid",
+	responsive = "true",
+	layoutKey = "-fb+5w+4e-db+86",
+	className,
+}) => {
+	const adMode = useAtomValue(adModeAtom);
+	return adMode ? (
+		<InnerAdSense
+			slot={slot}
+			format={format}
+			responsive={responsive}
+			layoutKey={layoutKey}
+			className={className}
+		/>
+	) : null;
+};
+
+const InnerAdSense: React.FC<AdsenseProps> = ({
+	slot,
+	format,
+	responsive,
+	layoutKey,
+	className,
+}) => {
 	useEffect(() => {
-		if (!window) return;
+		if (typeof window === "undefined") return;
+
+		appendAdSenseScript();
+
 		try {
-			window.adsbygoogle = window.adsbygoogle || [];
-			window.adsbygoogle.push({});
+			(window.adsbygoogle = window.adsbygoogle || []).push({});
 		} catch (e) {
 			console.error(e);
 		}
 	}, []);
-	const location = useLocation();
 
 	return (
-		<div className="text-center" key={location.pathname}>
+		<div className={["text-center", className].filter(Boolean).join(" ")}>
 			<ins
 				className="adsbygoogle block"
-				data-ad-format="fluid"
-				data-ad-layout-key="-fb+5w+4e-db+86"
-				data-ad-client="ca-pub-6809573064811153"
-				data-ad-slot="3138091970"
+				data-ad-client={adSenseClientId}
+				data-ad-slot={slot}
+				data-ad-format={format}
+				data-full-width-responsive={responsive}
+				data-ad-layout-key={layoutKey}
 			/>
 		</div>
 	);

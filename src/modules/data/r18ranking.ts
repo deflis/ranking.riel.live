@@ -4,7 +4,6 @@ import {
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { DateTime } from "luxon";
 import {
 	type NarouSearchResult,
 	type NarouSearchResults,
@@ -19,14 +18,12 @@ import { parseDateRange } from "../atoms/filter";
 import type { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-
 import {
 	type RankingData,
 	convertOrder,
 	formatCustomRankingRaw,
 } from "./custom/utils";
 import { fetchOptions } from "./custom/utils";
-import { prefetchRankingDetail } from "./prefetch";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -36,25 +33,12 @@ export const useR18Ranking = (params: R18RankingParams, page: number) => {
 
 	const { data } = useSuspenseQuery({
 		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient),
+		queryFn: getR18RankingQueryFn(queryClient),
 	});
 	return { data };
 };
 
-export const prefetchR18Ranking = async (
-	queryClient: QueryClient,
-	params: R18RankingParams,
-	page: number,
-) => {
-	await queryClient.prefetchQuery({
-		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient),
-	});
-	const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
-	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
-};
-
-const getCustomRankingQueryFn = (
+export const getR18RankingQueryFn = (
 	queryClient: QueryClient,
 ): QueryFunction<RankingData[], readonly [R18RankingParams, number]> => {
 	return async ({ queryKey: [params, page] }) => {
@@ -258,13 +242,18 @@ const customRankingFetcher: QueryFunction<
 	if (byStory) {
 		searchBuilder.byOutline();
 	}
-	if (Number.isFinite(minLength) || Number.isFinite(maxLength)) {
-		searchBuilder.length([
-			Number.isFinite(minLength) ? (minLength as number) : 0,
-			Number.isFinite(maxLength)
-				? (maxLength as number)
-				: Number.MAX_SAFE_INTEGER,
-		]);
+	const min =
+		minLength !== undefined && Number.isFinite(minLength)
+			? minLength
+			: undefined;
+	const max =
+		maxLength !== undefined && Number.isFinite(maxLength)
+			? maxLength
+			: undefined;
+	if (min !== undefined) {
+		searchBuilder.length({ min, max });
+	} else if (max !== undefined) {
+		searchBuilder.length({ max });
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
@@ -289,7 +278,7 @@ class FilterBuilder<
 	private minNo?: number;
 	private maxLength?: number;
 	private minLength?: number;
-	private firstUpdate?: DateTime;
+	private firstUpdate?: Temporal.ZonedDateTime;
 	private tanpen = true;
 	private rensai = true;
 	private kanketsu = true;
@@ -309,7 +298,10 @@ class FilterBuilder<
 		}
 		if (this.firstUpdate) {
 			const parsedDate = parse(item.general_firstup);
-			if (parsedDate && parsedDate < this.firstUpdate) {
+			if (
+				parsedDate &&
+				Temporal.ZonedDateTime.compare(parsedDate, this.firstUpdate) < 0
+			) {
 				return false;
 			}
 		}
@@ -359,7 +351,7 @@ class FilterBuilder<
 	setMinLength(minLength: number) {
 		this.minLength = minLength;
 	}
-	setFirstUpdate(firstUpdate: DateTime) {
+	setFirstUpdate(firstUpdate: Temporal.ZonedDateTime) {
 		this.firstUpdate = firstUpdate;
 	}
 	disableTanpen() {

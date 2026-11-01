@@ -1,3 +1,7 @@
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { CatchBoundary, ClientOnly } from "@tanstack/react-router";
+import { Suspense } from "react";
+
 import {
 	useDetailForItem,
 	useItemForListing,
@@ -7,10 +11,7 @@ import {
 	useR18DetailForItem,
 	useR18ItemForListing,
 } from "@/modules/data/r18item";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { ClientOnly } from "@tanstack/react-router";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+
 import { DotLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import { ErrorFallback } from "../common/ErrorFallback";
@@ -18,24 +19,24 @@ import { SelfAd } from "../common/SelfAd";
 import DetailItem from "./DetailItem";
 import { RankingHistoryRender } from "./RankingHistoryRender";
 
-const DetailItemContent: React.FC<{
-	ncode: string;
-	isR18?: boolean;
-}> = ({ ncode, isR18 }) => {
-	const { data: item } = isR18
-		? useR18ItemForListing(ncode)
-		: useItemForListing(ncode);
-	const { data: detail } = isR18
-		? useR18DetailForItem(ncode)
-		: useDetailForItem(ncode);
+const DetailItemContent: React.FC<{ ncode: string }> = ({ ncode }) => {
+	const { data: item } = useItemForListing(ncode);
+	const { data: detail } = useDetailForItem(ncode);
+	return (
+		<DetailItem ncode={ncode} item={item} detail={detail} isNotFound={!item} />
+	);
+};
 
+const R18DetailItemContent: React.FC<{ ncode: string }> = ({ ncode }) => {
+	const { data: item } = useR18ItemForListing(ncode);
+	const { data: detail } = useR18DetailForItem(ncode);
 	return (
 		<DetailItem
 			ncode={ncode}
 			item={item}
 			detail={detail}
 			isNotFound={!item}
-			isR18={isR18 ? true : undefined}
+			isR18
 		/>
 	);
 };
@@ -54,25 +55,28 @@ export const DetailRenderer: React.FC<{
 	return (
 		<>
 			<QueryErrorResetBoundary>
-				{({ reset }) => (
-					<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-						<Suspense fallback={<DotLoader />}>
-							<DetailItemContent ncode={ncode} isR18={isR18} />
-						</Suspense>
-					</ErrorBoundary>
-				)}
+				<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+					<Suspense fallback={<DotLoader />}>
+						{isR18 ? (
+							<R18DetailItemContent ncode={ncode} />
+						) : (
+							<DetailItemContent ncode={ncode} />
+						)}
+					</Suspense>
+				</CatchBoundary>
 			</QueryErrorResetBoundary>
 
 			{!isR18 && (
 				<ClientOnly>
 					<QueryErrorResetBoundary>
-						{({ reset }) => (
-							<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-								<Suspense fallback={<DotLoader />}>
-									<RankingHistoryContent ncode={ncode} />
-								</Suspense>
-							</ErrorBoundary>
-						)}
+						<CatchBoundary
+							getResetKey={() => ""}
+							errorComponent={ErrorFallback}
+						>
+							<Suspense fallback={<DotLoader />}>
+								<RankingHistoryContent ncode={ncode} />
+							</Suspense>
+						</CatchBoundary>
 					</QueryErrorResetBoundary>
 				</ClientOnly>
 			)}

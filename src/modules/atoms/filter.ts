@@ -1,7 +1,12 @@
 import { type Atom, atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { DateTime } from "luxon";
 import type { Genre } from "narou";
+
+import {
+	nowInTokyo,
+	parseDateTime,
+	toISODateTime,
+} from "@/modules/utils/temporal";
 
 import type { Item } from "../data/types";
 import { allGenres } from "../enum/Genre";
@@ -46,7 +51,8 @@ export function isCustomDateString(raw: string | undefined): boolean {
 		return false;
 	}
 	try {
-		return DateTime.fromISO(raw, { zone: "Asia/Tokyo" }).isValid;
+		parseDateTime(raw);
+		return true;
 	} catch {
 		return false;
 	}
@@ -64,40 +70,33 @@ export function getTermFromRaw(
 	return "none";
 }
 
-export function parseDateRange(raw: string | undefined): DateTime | undefined {
+export function parseDateRange(
+	raw: string | undefined,
+): Temporal.ZonedDateTime | undefined {
 	if (!raw) {
 		return undefined;
 	}
 	if (raw.endsWith("days")) {
 		const days = Number.parseInt(raw.slice(0, -4));
 		if (days) {
-			return DateTime.now()
-				.setZone("Asia/Tokyo")
-				.startOf("day")
-				.minus({ days });
+			return nowInTokyo().startOfDay().subtract({ days });
 		}
 	}
 	if (raw.endsWith("months")) {
 		const months = Number.parseInt(raw.slice(0, -6));
 		if (months) {
-			return DateTime.now()
-				.setZone("Asia/Tokyo")
-				.startOf("day")
-				.minus({ months });
+			return nowInTokyo().startOfDay().subtract({ months });
 		}
 	}
 	if (raw.endsWith("years")) {
 		const years = Number.parseInt(raw.slice(0, -5));
 		if (years) {
-			return DateTime.now()
-				.setZone("Asia/Tokyo")
-				.startOf("day")
-				.minus({ years });
+			return nowInTokyo().startOfDay().subtract({ years });
 		}
 	}
 	try {
-		const date = DateTime.fromISO(raw, { zone: "Asia/Tokyo" });
-		return date.isValid ? date : undefined;
+		const date = parseDateTime(raw);
+		return date;
 	} catch {
 		return undefined;
 	}
@@ -211,8 +210,8 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 			firstUpdate: {
 				term: getTermFromRaw(firstUpdateRaw),
 				begin:
-					firstUpdate?.toISODate() ??
-					DateTime.now().setZone("Asia/Tokyo").toISODate(),
+					firstUpdate?.toPlainDate().toString() ??
+					nowInTokyo().toPlainDate().toString(),
 				end: "",
 			},
 			status: {
@@ -251,13 +250,14 @@ export const filterConfigAtom = atom<FilterConfig, [FilterConfig], void>(
 				? normalizeFilterNumber(config.length.max.value)
 				: undefined,
 		);
-		const firstUpdateBegin = DateTime.fromISO(config.firstUpdate.begin, {
-			zone: "Asia/Tokyo",
-		});
+		const firstUpdateBegin =
+			config.firstUpdate.term === "custom"
+				? parseDateTime(config.firstUpdate.begin)
+				: undefined;
 		set(
 			firstUpdateRawAtom,
-			config.firstUpdate.term === "custom" && firstUpdateBegin.isValid
-				? firstUpdateBegin.startOf("day").toISO()
+			firstUpdateBegin
+				? toISODateTime(firstUpdateBegin.startOfDay())
 				: config.firstUpdate.term !== "none"
 					? config.firstUpdate.term
 					: undefined,
@@ -288,7 +288,11 @@ export const filterAtom = atom((get) => {
 			item.general_all_no >= storyMin) &&
 		(lengthMax === undefined || lengthMax < 1 || item.length <= lengthMax) &&
 		(lengthMin === undefined || lengthMin < 1 || item.length >= lengthMin) &&
-		(!firstUpdate || firstUpdate < DateTime.fromISO(item.general_firstup)) &&
+		(!firstUpdate ||
+			Temporal.ZonedDateTime.compare(
+				firstUpdate,
+				parseDateTime(item.general_firstup),
+			) < 0) &&
 		((enableTanpen && item.noveltype === 2) ||
 			(enableRensai && item.noveltype === 1 && item.end === 1) ||
 			(enableKanketsu && item.noveltype === 1 && item.end === 0));

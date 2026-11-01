@@ -45,7 +45,6 @@ export type NocItem = ResultConvertDate<
 	PickedNarouSearchResult<
 		| "ncode"
 		| "title"
-		| "userid"
 		| "writer"
 		| "nocgenre"
 		| "noveltype"

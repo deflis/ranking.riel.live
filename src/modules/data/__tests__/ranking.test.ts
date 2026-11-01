@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { filterRankingData } from "../ranking";
 import type { Item } from "../types";
 

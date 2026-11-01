@@ -4,9 +4,8 @@ import {
 	R18RankingPage,
 	type R18RankingSearch,
 } from "@/components/ui/ranking/R18RankingPage";
-import { RankingType } from "@/modules/interfaces/RankingType";
-
-import { prefetchR18Ranking } from "@/modules/data/r18ranking";
+import { prefetchR18Ranking } from "@/modules/data/prefetch";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
@@ -14,6 +13,7 @@ import {
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/r18/ranking/{-$type}")({
+	ssr: false,
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
@@ -38,9 +38,19 @@ export const Route = createFileRoute("/r18/ranking/{-$type}")({
 		deps: { search },
 	}) => {
 		const params = parseR18RankingParams(type, search);
-		await prefetchR18Ranking(queryClient, params, 1);
+		prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
+	head: ({ params: { type } }) => {
+		const rankingType = (type ?? RankingType.Daily) as RankingType;
+		return {
+			meta: [
+				{
+					title: `R18${RankingTypeName[rankingType]}ランキング - なろうランキングビューワ`,
+				},
+			],
+		};
+	},
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

@@ -1,13 +1,12 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import {
+	CatchBoundary,
 	createFileRoute,
 	createLink,
 	useNavigate,
 } from "@tanstack/react-router";
-import { DateTime } from "luxon";
 import { RankingType } from "narou";
-import { Suspense, useCallback, useMemo, useRef } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import { Suspense, useRef } from "react";
 
 import { Button } from "@/components/ui/atoms/Button";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -25,6 +24,7 @@ import {
 	createCacheHeaders,
 } from "@/modules/utils/cacheMiddleware";
 import { addDate, convertDate } from "@/modules/utils/date";
+import { nowInTokyo } from "@/modules/utils/temporal";
 
 const ButtonLink = createLink(Button);
 
@@ -42,11 +42,8 @@ const rankingTypeSteps = {
 	[RankingType.Quarterly]: "",
 } as const;
 
-const minDate = DateTime.fromObject(
-	{ year: 2013, month: 5, day: 1 },
-	{ zone: "Asia/Tokyo" },
-);
-const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
+const minDate = Temporal.PlainDate.from("2013-05-01");
+const maxDate = nowInTokyo().toPlainDate();
 
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	loader: async ({
@@ -55,29 +52,33 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	}) => {
 		const type = (typeParam as RankingType) ?? RankingType.Daily;
 		const dt = !dateParam
-			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam);
+			? nowInTokyo().toPlainDate()
+			: Temporal.PlainDate.from(dateParam);
 		const date = convertDate(dt, type);
 
-		await prefetchRanking(queryClient, type, date);
+		return {
+			date: await prefetchRanking(queryClient, type, date, !dateParam),
+		};
 	},
 	component: RankingPage,
+	head: ({ params: { type: typeParam }, loaderData }) => {
+		const type = (typeParam as RankingType) ?? RankingType.Daily;
+		if (!loaderData) return {};
+		const date = Temporal.PlainDate.from(loaderData.date);
+		return {
+			meta: [
+				{
+					title: `${date.year}年${date.month}月${date.day}日の${RankingTypeName[type]}ランキング - なろうランキングビューワ`,
+				},
+			],
+		};
+	},
 	headers: ({ params: { date } }) => {
 		if (!date) {
-			const now = DateTime.now().setZone("Asia/Tokyo");
-			let nextNoon = now.startOf("day").plus({ hours: 12 });
-			if (now >= nextNoon) {
-				nextNoon = nextNoon.plus({ days: 1 });
-			}
-			const ttl = Math.max(
-				60,
-				Math.floor(nextNoon.diff(now, "seconds").seconds),
-			);
-
 			return createCacheHeaders({
 				...MAIN_PAGE_CACHE_OPTIONS,
-				maxAge: ttl,
-				sMaxAge: ttl,
+				maxAge: 60 * 5,
+				sMaxAge: 60 * 5,
 			});
 		}
 
@@ -89,12 +90,8 @@ function RankingPage() {
 	const { type: typeParam, date: dateParam } = Route.useParams();
 	const type = (typeParam as RankingType) ?? RankingType.Daily;
 
-	const date = useMemo(() => {
-		const dt = !dateParam
-			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam, { zone: "Asia/Tokyo" });
-		return convertDate(dt, type);
-	}, [dateParam, type]);
+	const { date: resolvedDate } = Route.useLoaderData();
+	const date = Temporal.PlainDate.from(resolvedDate);
 
 	const isNow = !dateParam;
 	const navigate = useNavigate();
@@ -102,43 +99,34 @@ function RankingPage() {
 	const dateInputRef = useRef<HTMLInputElement>(null);
 
 	if (dateInputRef.current) {
-		dateInputRef.current.value = date.toISODate();
+		dateInputRef.current.value = date.toString();
 	}
 
-	const handleDateCommit = useCallback(
-		(value: string) => {
-			try {
-				const newDate = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
-				navigate({
-					to: "/ranking/{-$type}/{-$date}",
-					params: (prev) => ({
-						...prev,
-						type: type ?? undefined,
-						date: newDate.toISODate(),
-					}),
-				});
-			} catch {
-				// 無効な日付の場合は何もしない
-			}
-		},
-		[type, navigate],
-	);
+	const handleDateCommit = (value: string) => {
+		try {
+			const newDate = Temporal.PlainDate.from(value);
+			navigate({
+				to: "/ranking/{-$type}/{-$date}",
+				params: (prev) => ({
+					...prev,
+					type: type ?? undefined,
+					date: newDate.toString(),
+				}),
+			});
+		} catch {
+			// 無効な日付の場合は何もしない
+		}
+	};
 
-	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (e.key === "Enter") {
-				handleDateCommit(e.currentTarget.value);
-			}
-		},
-		[handleDateCommit],
-	);
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter") {
+			handleDateCommit(e.currentTarget.value);
+		}
+	};
 
-	const handleBlur = useCallback(
-		(e: React.FocusEvent<HTMLInputElement>) => {
-			handleDateCommit(e.target.value);
-		},
-		[handleDateCommit],
-	);
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+		handleDateCommit(e.target.value);
+	};
 
 	return (
 		<>
@@ -152,7 +140,7 @@ function RankingPage() {
 								params: (prev) => ({
 									...prev,
 									type: newType,
-									date: isNow ? undefined : date.toISODate(),
+									date: isNow ? undefined : date.toString(),
 								}),
 							})
 						}
@@ -161,14 +149,14 @@ function RankingPage() {
 							label: RankingTypeName[value],
 						}))}
 					/>
-					{date > minDate && (
+					{Temporal.PlainDate.compare(date, minDate) > 0 && (
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, -1).toISODate(),
+								date: addDate(date, type, -1).toString(),
 							})}
 						>
 							前
@@ -176,22 +164,22 @@ function RankingPage() {
 					)}
 					<TextField
 						ref={dateInputRef}
-						min={minDate.toISODate()}
-						max={maxDate.toISODate()}
-						defaultValue={date.toISODate()}
+						min={minDate.toString()}
+						max={maxDate.toString()}
+						defaultValue={date.toString()}
 						type="date"
 						step={rankingTypeSteps[type]}
 						onBlur={handleBlur}
 						onKeyDown={handleKeyDown}
 					/>
-					{date < maxDate && (
+					{Temporal.PlainDate.compare(date, maxDate) < 0 && (
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, 1).toISODate(),
+								date: addDate(date, type, 1).toString(),
 							})}
 						>
 							次
@@ -213,19 +201,23 @@ function RankingPage() {
 				<FilterComponent />
 			</div>
 			<QueryErrorResetBoundary>
-				{({ reset }) => (
-					<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-						<Suspense fallback={<DotLoader />}>
-							<RankingList type={type} date={date} />
-						</Suspense>
-					</ErrorBoundary>
-				)}
+				<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+					<Suspense fallback={<DotLoader />}>
+						<RankingList type={type} date={date} />
+					</Suspense>
+				</CatchBoundary>
 			</QueryErrorResetBoundary>
 		</>
 	);
 }
 
-function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
-	const { data } = useRanking(type, date.toISODate());
+function RankingList({
+	type,
+	date,
+}: {
+	type: RankingType;
+	date: Temporal.PlainDate;
+}) {
+	const { data } = useRanking(type, date.toString());
 	return <RankingRender ranking={data} />;
 }

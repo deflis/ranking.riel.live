@@ -1,6 +1,4 @@
 import { Link, createLink } from "@tanstack/react-router";
-import { decode } from "html-entities";
-import { DateTime } from "luxon";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
 import type { FC } from "react";
 import { FaPenNib } from "react-icons/fa";
@@ -14,10 +12,17 @@ import {
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
 
+import { decodeNarouText } from "@/modules/utils/decodeNarouText";
 import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
 } from "@/modules/utils/parseSearch";
+import {
+	parseDateTime,
+	formatDateTime,
+	formatRelative,
+} from "@/modules/utils/temporal";
+
 import type {
 	Detail,
 	Item,
@@ -30,15 +35,14 @@ import { PulseLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import { AdRandomWidth } from "../common/AdRandom";
 import AdSense from "../common/AdSense";
-import { FirstAd } from "../common/FirstAd";
-import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag } from "../common/bulma/Tag";
+import { FirstAd } from "../common/FirstAd";
+import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 
 const ChipLink = createLink(Chip);
 
-const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 /**
  * JavaScript の計算誤差（0.615 が内部で 0.61499... になる等）を避け、
  * 期待通りに四捨五入を行うヘルパー。
@@ -90,16 +94,15 @@ const DetailItem: FC<{
 		: "https://ncode.syosetu.com";
 	const ncode = (item?.ncode ?? rawNcode).toLowerCase();
 	const detail = `${baseUrl}/novelview/infotop/ncode/${ncode}/`;
-	const user = `https://mypage.syosetu.com/${item?.userid ? encodeURIComponent(item.userid) : ""}/`;
 	const link = `${baseUrl}/${ncode}/`;
 	const linkFirst = `${baseUrl}/${ncode}/1/`;
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
 
 	const generalFirstup = item?.general_firstup
-		? DateTime.fromISO(item.general_firstup)
+		? parseDateTime(item.general_firstup)
 		: undefined;
 	const generalLastup = item?.general_lastup
-		? DateTime.fromISO(item.general_lastup)
+		? parseDateTime(item.general_lastup)
 		: undefined;
 
 	return (
@@ -151,7 +154,7 @@ const DetailItem: FC<{
 						className="link-reset hover:underline"
 					>
 						{item ? (
-							decode(item.title)
+							decodeNarouText(item.title)
 						) : isNotFound ? (
 							"小説が見つかりません。削除された可能性があります。"
 						) : (
@@ -216,10 +219,14 @@ const DetailItem: FC<{
 					>
 						{item ? (
 							isR18 ? (
-								decode(item.writer)
+								decodeNarouText(item.writer)
 							) : (
-								<a href={user} target="_blank" rel="noopener noreferrer">
-									{decode(item.writer)}
+								<a
+									href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{decodeNarouText(item.writer)}
 								</a>
 							)
 						) : (
@@ -298,8 +305,8 @@ const DetailItem: FC<{
 					>
 						{generalFirstup ? (
 							<>
-								{generalFirstup.toFormat(dateFormat)} （
-								{generalFirstup.toRelative()}）
+								{formatDateTime(generalFirstup, true)} （
+								{formatRelative(generalFirstup)}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
@@ -311,8 +318,8 @@ const DetailItem: FC<{
 					>
 						{generalLastup ? (
 							<>
-								{generalLastup.toFormat(dateFormat)} （
-								{generalLastup.toRelative()}）
+								{formatDateTime(generalLastup, true)} （
+								{formatRelative(generalLastup)}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />

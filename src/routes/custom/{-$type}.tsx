@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
 import type { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
+import { RankingType, RankingTypeName } from "@/modules/interfaces/RankingType";
 
 type CustomRankingSearch = {
 	keyword?: string;
@@ -21,7 +21,7 @@ type CustomRankingSearch = {
 	tanpen?: string;
 };
 
-import { prefetchCustomRanking } from "@/modules/data/custom";
+import { prefetchCustomRanking } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
@@ -32,6 +32,7 @@ import {
 } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/custom/{-$type}")({
+	ssr: false,
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
@@ -56,9 +57,19 @@ export const Route = createFileRoute("/custom/{-$type}")({
 		deps: { search },
 	}) => {
 		const params = parseCustomRankingParams(type, search);
-		await prefetchCustomRanking(queryClient, params, 1);
+		prefetchCustomRanking(queryClient, params, 1);
 	},
 	component: CustomRankingPage,
+	head: ({ params: { type } }) => {
+		const rankingType = (type ?? RankingType.Daily) as RankingType;
+		return {
+			meta: [
+				{
+					title: `カスタム${RankingTypeName[rankingType]}ランキング - なろうランキングビューワ`,
+				},
+			],
+		};
+	},
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 
@@ -69,16 +80,13 @@ function CustomRankingPage() {
 
 	const params = parseCustomRankingParams(type, search);
 
-	const handleSearch = useCallback(
-		(newParams: CustomRankingParams) => {
-			navigate({
-				to: "/custom/{-$type}",
-				params: { type: newParams.rankingType },
-				search: (_) => buildCustomRankingSearch(newParams),
-			});
-		},
-		[navigate],
-	);
+	const handleSearch = (newParams: CustomRankingParams) => {
+		navigate({
+			to: "/custom/{-$type}",
+			params: { type: newParams.rankingType },
+			search: (_) => buildCustomRankingSearch(newParams),
+		});
+	};
 
 	return (
 		<>

@@ -17,4 +17,10 @@ Disallow: /custom/
 User-agent: Naverbot
 Disallow: /custom/
 
+User-Agent: Claude-SearchBot
+Crawl-delay: 1
+
+User-agent: ClaudeBot
+Crawl-delay: 1
+
 User-agent: *

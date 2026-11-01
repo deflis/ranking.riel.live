@@ -4,7 +4,6 @@ import {
 	useSuspenseQuery,
 } from "@tanstack/react-query";
 import DataLoader from "dataloader";
-import { DateTime } from "luxon";
 import {
 	Fields,
 	type RankingHistoryResult,
@@ -13,8 +12,9 @@ import {
 	search,
 } from "narou";
 
-import { parseDate } from "../utils/date";
+import { toISODateTime } from "@/modules/utils/temporal";
 
+import { parseDate } from "../utils/date";
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
 
@@ -123,9 +123,9 @@ const itemLoader = new DataLoader<string, Item | undefined>(
 			values.map(
 				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
 					const item: Item = {
-						general_firstup: parseDate(general_firstup).toISO(),
-						general_lastup: parseDate(general_lastup).toISO(),
-						novelupdated_at: parseDate(novelupdated_at).toISO(),
+						general_firstup: toISODateTime(parseDate(general_firstup)),
+						general_lastup: toISODateTime(parseDate(general_lastup)),
+						novelupdated_at: toISODateTime(parseDate(novelupdated_at)),
 						...others,
 					};
 					return [others.ncode.toLowerCase(), item];
@@ -190,7 +190,11 @@ const formatRankingHistory = (history: RankingHistoryResult[]) => {
 		rankingData[type] = history
 			.filter((x) => x.type === type)
 			.map(({ date, pt, rank }) => ({
-				date: DateTime.fromJSDate(date, { zone: "Asia/Tokyo" }).toISO(),
+				date: toISODateTime(
+					Temporal.Instant.fromEpochMilliseconds(
+						date.getTime(),
+					).toZonedDateTimeISO("Asia/Tokyo"),
+				),
 				pt,
 				rank,
 			}));
