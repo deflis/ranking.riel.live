@@ -1,7 +1,6 @@
 import { Transition } from "@headlessui/react";
 import { Link, createLink } from "@tanstack/react-router";
 import clsx from "clsx";
-import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
 import { Suspense } from "react";
@@ -14,6 +13,7 @@ import { useR18ItemForListing } from "@/modules/data/r18item";
 import type { Item, NocItem } from "@/modules/data/types";
 import type { RankingResultItem } from "@/modules/interfaces/RankingResultItem";
 import { RankingType } from "@/modules/interfaces/RankingType";
+import { decodeNarouText } from "@/modules/utils/decodeNarouText";
 import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
@@ -161,14 +161,14 @@ const RankingItemRender: React.FC<{
 				<Link
 					to={detail}
 					params={detailParams}
-					title={decode(item?.title)}
+					title={decodeNarouText(item?.title)}
 					className={clsx(
 						"link-reset text-gray-800 dark:text-white hover:underline",
 						titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`,
 					)}
 				>
 					{item ? (
-						decode(item.title)
+						decodeNarouText(item.title)
 					) : isNotfound ? (
 						"この小説は見つかりません"
 					) : (
@@ -181,14 +181,14 @@ const RankingItemRender: React.FC<{
 				作者:{" "}
 				{item ? (
 					isR18 ? (
-						decode(item.writer)
+						decodeNarouText(item.writer)
 					) : (
 						<a
 							href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							{decode(item.writer)}
+							{decodeNarouText(item.writer)}
 						</a>
 					)
 				) : (
@@ -269,7 +269,7 @@ const RankingItemRender: React.FC<{
 						href={link}
 						target="_blank"
 						rel="noopener noreferrer"
-						title={decode(item?.title)}
+						title={decodeNarouText(item?.title)}
 					>
 						読む
 					</Button>
