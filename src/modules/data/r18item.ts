@@ -7,7 +7,6 @@ import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
 
 import { parseDate } from "../utils/date";
-
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
 

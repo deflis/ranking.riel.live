@@ -1,4 +1,3 @@
-import { useToggle } from "@/hooks/useToggle";
 import { Transition } from "@headlessui/react";
 import { Link, createLink } from "@tanstack/react-router";
 import clsx from "clsx";
@@ -6,8 +5,10 @@ import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
 import { DateTime } from "luxon";
 import { GenreNotation, R18SiteNotation } from "narou";
+import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
+import { useToggle } from "@/hooks/useToggle";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
 import { useItemForListing } from "@/modules/data/item";
 import { useR18ItemForListing } from "@/modules/data/r18item";
@@ -18,7 +19,7 @@ import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
 } from "@/modules/utils/parseSearch";
-import { Suspense } from "react";
+
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
 import { PulseLoader } from "../atoms/Loader";
@@ -219,7 +220,7 @@ const RankingItemRender: React.FC<{
 				{item?.keyword
 					.split(/\s/g)
 					.filter((keyword) => keyword)
-					.map((keyword, i) => (
+					.map((keyword) => (
 						<ChipLink
 							key={keyword}
 							to={isR18 ? "/r18/ranking/{-$type}" : "/custom/{-$type}"}

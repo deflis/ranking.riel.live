@@ -1,13 +1,14 @@
-import { useToggle } from "@/hooks/useToggle";
 import { Link, createLink, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
+import { Genre } from "narou";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 
+import { useToggle } from "@/hooks/useToggle";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
-import { Genre } from "narou";
+
 import {
 	adModeAtom,
 	darkModeAtom,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { mergeObject, mergeObjects } from "../mergeObjects";
 
 describe("mergeObject", () => {
@@ -53,9 +54,9 @@ describe("mergeObject", () => {
 		const payload = JSON.parse('{"__proto__": {"polluted": "yes"}}');
 		const result = mergeObject(target, payload);
 
-		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		// oxlint-disable-next-line typescript/no-explicit-any -- needed for prototype testing
 		expect((result as any).__proto__.polluted).toBeUndefined();
-		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		// oxlint-disable-next-line typescript/no-explicit-any -- needed for prototype testing
 		expect(({} as any).polluted).toBeUndefined();
 
 		const payloadConstructor = JSON.parse(
@@ -64,7 +65,7 @@ describe("mergeObject", () => {
 		const resultConstructor = mergeObject(target, payloadConstructor);
 
 		expect(resultConstructor.constructor).toBe(Object);
-		// biome-ignore lint/suspicious/noExplicitAny: needed for prototype testing
+		// oxlint-disable-next-line typescript/no-explicit-any -- needed for prototype testing
 		expect(({} as any).polluted2).toBeUndefined();
 	});
 });

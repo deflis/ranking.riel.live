@@ -14,7 +14,6 @@ import {
 } from "narou";
 
 import { parseDate } from "../utils/date";
-
 import { fetchOptions } from "./custom/utils";
 import type { Detail, Item, RankingHistories } from "./types";
 

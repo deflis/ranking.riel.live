@@ -19,7 +19,6 @@ import { allGenres } from "../enum/Genre";
 import type { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-
 import {
 	type RankingData,
 	convertOrder,

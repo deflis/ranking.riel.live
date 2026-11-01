@@ -19,7 +19,6 @@ import { parseDateRange } from "../atoms/filter";
 import type { R18RankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-
 import {
 	type RankingData,
 	convertOrder,

@@ -1,5 +1,6 @@
 import { type Genre, R18Site } from "narou";
 import { describe, expect, it } from "vitest";
+
 import { RankingType } from "../../interfaces/RankingType";
 import {
 	buildCustomRankingSearch,

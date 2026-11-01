@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
+
 import { parse } from "../NarouDateFormat";
 
 describe("NarouDateFormat parse", () => {

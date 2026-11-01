@@ -7,7 +7,6 @@ import type {
 	R18RankingParams,
 } from "../interfaces/CustomRankingParams";
 import { convertDate } from "../utils/date";
-
 import { getCustomRankingQueryFn } from "./custom";
 import {
 	itemDetailFetcher,

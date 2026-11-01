@@ -1,0 +1,17 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"singleQuote": false,
+	"printWidth": 80,
+	"ignorePatterns": [
+		"dist/**",
+		".output/**",
+		".tanstack/**",
+		".wrangler/**",
+		"src/routeTree.gen.ts",
+		"src/types/cloudflare.d.ts",
+		"pnpm-lock.yaml",
+		"AGENTS.md"
+	],
+	"sortImports": {}
+}

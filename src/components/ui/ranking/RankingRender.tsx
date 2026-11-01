@@ -6,7 +6,6 @@ import { chunk } from "../../../modules/utils/chunk";
 import { Button } from "../atoms/Button";
 import AdSense from "../common/AdSense";
 import { SelfAd } from "../common/SelfAd";
-
 import RankingItem from "./RankingItem";
 
 const ChunkRender: React.FC<{
@@ -49,7 +48,7 @@ const InsideRender: React.FC<{
 			chunk={v}
 			setMax={setMax}
 			isTail={i * 10 + 10 === max}
-			// biome-ignore lint/suspicious/noArrayIndexKey: chunkのindexをkeyとしている
+			// oxlint-disable-next-line react/no-array-index-key -- chunkのindexをkeyとしている
 			key={i}
 		/>
 	));
@@ -57,9 +56,9 @@ const InsideRender: React.FC<{
 		() => ranking.map(({ ncode, pt }) => `${ncode}${pt}`).join(),
 		[ranking],
 	);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: ランキングが変わったときにリセットする
 	useEffect(() => {
 		setMax(10);
+		// oxlint-disable-next-line react/exhaustive-deps -- ランキングが変わったときにリセットする
 	}, [rankingConstants]);
 
 	return (

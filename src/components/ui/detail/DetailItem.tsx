@@ -18,6 +18,7 @@ import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
 } from "@/modules/utils/parseSearch";
+
 import type {
 	Detail,
 	Item,
@@ -30,10 +31,10 @@ import { PulseLoader } from "../atoms/Loader";
 import { Paper } from "../atoms/Paper";
 import { AdRandomWidth } from "../common/AdRandom";
 import AdSense from "../common/AdSense";
-import { FirstAd } from "../common/FirstAd";
-import StoryRender from "../common/StoryRender";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag } from "../common/bulma/Tag";
+import { FirstAd } from "../common/FirstAd";
+import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 
 const ChipLink = createLink(Chip);
