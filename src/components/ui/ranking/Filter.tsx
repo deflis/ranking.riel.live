@@ -2,8 +2,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { GenreNotation } from "narou";
-import React, { useCallback } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import React, { useCallback, useState } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 
@@ -13,6 +12,7 @@ import {
 	isUseFilterAtom,
 } from "@/modules/atoms/filter";
 import { allGenres } from "@/modules/enum/Genre";
+import { readFilterFormData } from "@/modules/utils/readFilterFormData";
 import { nowInTokyo } from "@/modules/utils/temporal";
 
 import { Button } from "../atoms/Button";
@@ -25,53 +25,71 @@ import styles from "./Filter.module.css";
 const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 	onClose,
 }) => {
-	const [filterCondig, setFilterConfig] = useAtom(filterConfigAtom);
-	const { handleSubmit, register, control, setValue } = useForm({
-		defaultValues: filterCondig,
-	});
+	const [savedConfig, setFilterConfig] = useAtom(filterConfigAtom);
+	const [config, setConfig] = useState(savedConfig);
 
 	const selectAll = useCallback(() => {
-		for (const id of allGenres) {
-			setValue(`genres.g${id}`, true);
-		}
-	}, [setValue]);
+		setConfig((current) => ({
+			...current,
+			genres: Object.fromEntries(
+				allGenres.map((id) => [`g${id}`, true]),
+			) as FilterConfig["genres"],
+		}));
+	}, []);
 	const unselectAll = useCallback(() => {
-		for (const id of allGenres) {
-			setValue(`genres.g${id}`, false);
-		}
-	}, [setValue]);
+		setConfig((current) => ({
+			...current,
+			genres: Object.fromEntries(
+				allGenres.map((id) => [`g${id}`, false]),
+			) as FilterConfig["genres"],
+		}));
+	}, []);
 
 	const clear = useCallback(() => {
-		for (const id of allGenres) {
-			setValue(`genres.g${id}`, true);
-		}
-		setValue("firstUpdate.term", "none");
-		setValue("story.min.enable", false);
-		setValue("story.max.enable", false);
-		setValue("length.min.enable", false);
-		setValue("length.max.enable", false);
-		setValue("status.kanketsu", true);
-		setValue("status.rensai", true);
-		setValue("status.tanpen", true);
-	}, [setValue]);
+		setConfig((current) => ({
+			...current,
+			genres: Object.fromEntries(
+				allGenres.map((id) => [`g${id}`, true]),
+			) as FilterConfig["genres"],
+			firstUpdate: { ...current.firstUpdate, term: "none" },
+			story: {
+				min: { ...current.story.min, enable: false },
+				max: { ...current.story.max, enable: false },
+			},
+			length: {
+				min: { ...current.length.min, enable: false },
+				max: { ...current.length.max, enable: false },
+			},
+			status: { kanketsu: true, rensai: true, tanpen: true },
+		}));
+	}, []);
 
-	const onSubmit = useCallback(
-		(config: FilterConfig) => {
-			setFilterConfig(config);
-			onClose();
-		},
-		[onClose, setFilterConfig],
-	);
+	const onSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setFilterConfig(
+			readFilterFormData(new FormData(event.currentTarget), config),
+		);
+		onClose();
+	};
 
 	return (
-		<form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+		<form noValidate autoComplete="off" onSubmit={onSubmit}>
 			<div className={styles.container}>
 				<fieldset>
 					<legend className={styles.label}>ジャンル</legend>
 					{allGenres.map((id) => (
 						<React.Fragment key={id}>
 							<label>
-								<Checkbox {...register(`genres.g${id}`)} />
+								<Checkbox
+									checked={config.genres[`g${id}`]}
+									onChange={(event) => {
+										const value = event.currentTarget.checked;
+										setConfig((current) => ({
+											...current,
+											genres: { ...current.genres, [`g${id}`]: value },
+										}));
+									}}
+								/>
 								{GenreNotation[id]}
 							</label>
 						</React.Fragment>
@@ -82,95 +100,172 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 				<fieldset>
 					<legend className={styles.label}>話数</legend>
 					<label>
-						<Checkbox {...register("story.min.enable")} />
+						<Checkbox
+							checked={config.story.min.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									story: {
+										...current.story,
+										min: { ...current.story.min, enable: value },
+									},
+								}));
+							}}
+						/>
 						最小
 						<TextField
 							type="number"
 							min="1"
-							{...register("story.min.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "story.min.enable" })}
+							name="story.min.value"
+							defaultValue={config.story.min.value}
+							disabled={!config.story.min.enable}
 						/>
 					</label>
 					～
 					<label>
-						<Checkbox {...register("story.max.enable")} />
+						<Checkbox
+							checked={config.story.max.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									story: {
+										...current.story,
+										max: { ...current.story.max, enable: value },
+									},
+								}));
+							}}
+						/>
 						最大
 						<TextField
 							type="number"
 							min="1"
-							{...register("story.max.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "story.max.enable" })}
+							name="story.max.value"
+							defaultValue={config.story.max.value}
+							disabled={!config.story.max.enable}
 						/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<legend className={styles.label}>文字数</legend>
 					<label>
-						<Checkbox {...register("length.min.enable")} />
+						<Checkbox
+							checked={config.length.min.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									length: {
+										...current.length,
+										min: { ...current.length.min, enable: value },
+									},
+								}));
+							}}
+						/>
 						最小
 						<TextField
 							type="number"
 							min="1"
-							{...register("length.min.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "length.min.enable" })}
+							name="length.min.value"
+							defaultValue={config.length.min.value}
+							disabled={!config.length.min.enable}
 						/>
 					</label>
 					～
 					<label>
-						<Checkbox {...register("length.max.enable")} />
+						<Checkbox
+							checked={config.length.max.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									length: {
+										...current.length,
+										max: { ...current.length.max, enable: value },
+									},
+								}));
+							}}
+						/>
 						最大
 						<TextField
 							type="number"
 							min="1"
-							{...register("length.max.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "length.max.enable" })}
+							name="length.max.value"
+							defaultValue={config.length.max.value}
+							disabled={!config.length.max.enable}
 						/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<legend className={styles.label}>更新開始日</legend>
-					<Controller
-						name="firstUpdate.term"
-						control={control}
-						render={({ field: { onChange, value } }) => (
-							<SelectBox
-								value={value}
-								onChange={onChange}
-								options={[
-									{ value: "none", label: "指定しない" },
-									{ value: "2days", label: "2日より新しい" },
-									{ value: "7days", label: "1週間より新しい" },
-									{ value: "1months", label: "1ヶ月より新しい" },
-									{ value: "6months", label: "半年より新しい" },
-									{ value: "1years", label: "1年より新しい" },
-									{ value: "custom", label: "選択する" },
-								]}
-								buttonClassName="w-52"
-							/>
-						)}
+					<SelectBox<FilterConfig["firstUpdate"]["term"]>
+						value={config.firstUpdate.term}
+						onChange={(value) =>
+							setConfig((current) => ({
+								...current,
+								firstUpdate: { ...current.firstUpdate, term: value },
+							}))
+						}
+						options={[
+							{ value: "none", label: "指定しない" },
+							{ value: "2days", label: "2日より新しい" },
+							{ value: "7days", label: "1週間より新しい" },
+							{ value: "1months", label: "1ヶ月より新しい" },
+							{ value: "6months", label: "半年より新しい" },
+							{ value: "1years", label: "1年より新しい" },
+							{ value: "custom", label: "選択する" },
+						]}
+						buttonClassName="w-52"
 					/>
 					<TextField
 						type="date"
-						{...register("firstUpdate.begin")}
+						name="firstUpdate.begin"
+						defaultValue={config.firstUpdate.begin}
 						min={"2013-05-01"}
 						max={nowInTokyo().toPlainDate().toString()}
-						disabled={
-							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
-						}
+						disabled={config.firstUpdate.term !== "custom"}
 					/>
 				</fieldset>
 				<fieldset>
 					<legend className={styles.label}>更新状態</legend>
 					<label>
-						<Checkbox {...register("status.rensai")} />
+						<Checkbox
+							checked={config.status.rensai}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, rensai: value },
+								}));
+							}}
+						/>
 						連載中
 					</label>
 					<label>
-						<Checkbox {...register("status.kanketsu")} />
+						<Checkbox
+							checked={config.status.kanketsu}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, kanketsu: value },
+								}));
+							}}
+						/>
 						完結
 					</label>
 					<label>
-						<Checkbox {...register("status.tanpen")} />
+						<Checkbox
+							checked={config.status.tanpen}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, tanpen: value },
+								}));
+							}}
+						/>
 						短編
 					</label>
 				</fieldset>

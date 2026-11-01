@@ -1,9 +1,16 @@
 import { R18Site, R18SiteNotation } from "narou";
-import React, { Fragment, useCallback, useEffect, useMemo } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import React, {
+	Fragment,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
 import { useToggle } from "@/hooks/useToggle";
+import { readFilterFormData } from "@/modules/utils/readFilterFormData";
 import { nowInTokyo } from "@/modules/utils/temporal";
 
 import {
@@ -237,96 +244,164 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 	onClose,
 }) => {
 	const defaultValues = useMemo(() => getDefaultValues(params), [params]);
-	const { control, register, handleSubmit, setValue, reset } = useForm({
-		mode: "onSubmit",
-		defaultValues,
-	});
+	const [config, setConfig] = useState(defaultValues);
+	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
-		reset(defaultValues);
-	}, [reset, defaultValues]);
+		setConfig(defaultValues);
+		formRef.current?.reset();
+	}, [defaultValues]);
 
-	const handleSearch = useCallback(
-		(config: CustomRankingConfig) => {
-			onSearch(convertToParams(config));
-		},
-		[onSearch],
-	);
+	const handleSearch = (event: React.SubmitEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const data = new FormData(event.currentTarget);
+		onSearch(
+			convertToParams({
+				...readFilterFormData(data, config),
+				keyword: String(data.get("keyword") ?? ""),
+				notKeyword: String(data.get("notKeyword") ?? ""),
+			}),
+		);
+	};
 
 	const selectAll = useCallback(() => {
-		setValue("sites.nocturne", true);
-		setValue("sites.moonLight", true);
-		setValue("sites.moonLightBL", true);
-		setValue("sites.midnight", true);
-	}, [setValue]);
+		setConfig((current) => ({
+			...current,
+			sites: {
+				nocturne: true,
+				moonLight: true,
+				moonLightBL: true,
+				midnight: true,
+			},
+		}));
+	}, []);
 
 	const unselectAll = useCallback(() => {
-		setValue("sites.nocturne", false);
-		setValue("sites.moonLight", false);
-		setValue("sites.moonLightBL", false);
-		setValue("sites.midnight", false);
-	}, [setValue]);
+		setConfig((current) => ({
+			...current,
+			sites: {
+				nocturne: false,
+				moonLight: false,
+				moonLightBL: false,
+				midnight: false,
+			},
+		}));
+	}, []);
 
 	return (
-		<form onSubmit={handleSubmit(handleSearch)}>
+		<form ref={formRef} onSubmit={handleSearch}>
 			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800 dark:border-gray-700">
 				<fieldset>
 					<label className="inline-flex flex-col">
 						<span className="font-bold text-sm text-slate-500">種類</span>
-						<Controller
-							name="rankingType"
-							control={control}
-							render={({ field: { onChange, value } }) => (
-								<SelectBox
-									value={value}
-									onChange={onChange}
-									options={rankingTypeList.map((value) => ({
-										value,
-										label: RankingTypeName[value],
-									}))}
-									buttonClassName="w-52"
-								/>
-							)}
+						<SelectBox
+							value={config.rankingType}
+							onChange={(value) =>
+								setConfig((current) => ({ ...current, rankingType: value }))
+							}
+							options={rankingTypeList.map((value) => ({
+								value,
+								label: RankingTypeName[value],
+							}))}
+							buttonClassName="w-52"
 						/>
 					</label>
 				</fieldset>
 				<fieldset className="space-x-2 flex items-end">
 					<label className="inline-flex flex-col">
 						<span className="font-bold text-sm text-slate-500">キーワード</span>
-						<TextField {...register("keyword")} className="align-middle" />
+						<TextField
+							name="keyword"
+							defaultValue={defaultValues.keyword}
+							className="align-middle"
+						/>
 					</label>
 					<label className="inline-flex flex-col">
 						<span className="font-bold text-sm  text-slate-500">
 							除外キーワード
 						</span>
-						<TextField {...register("notKeyword")} className="align-middle" />
+						<TextField
+							name="notKeyword"
+							defaultValue={defaultValues.notKeyword}
+							className="align-middle"
+						/>
 					</label>
 
 					<label>
-						<Checkbox {...register("byTitle")} className="align-middle" />
+						<Checkbox
+							checked={config.byTitle}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({ ...current, byTitle: value }));
+							}}
+							className="align-middle"
+						/>
 						<span className="align-middle">タイトルを含める</span>
 					</label>
 					<label>
-						<Checkbox {...register("byStory")} className="align-middle" />
+						<Checkbox
+							checked={config.byStory}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({ ...current, byStory: value }));
+							}}
+							className="align-middle"
+						/>
 						<span className="align-middle">あらすじを含める</span>
 					</label>
 				</fieldset>
 				<fieldset>
 					<legend className="font-bold text-sm text-slate-500">サイト</legend>
 					<label>
-						<Checkbox {...register("sites.nocturne")} />
+						<Checkbox
+							checked={config.sites.nocturne}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									sites: { ...current.sites, nocturne: value },
+								}));
+							}}
+						/>
 						{R18SiteNotation[R18Site.Nocturne]}
 					</label>
 					<label>
-						<Checkbox {...register("sites.moonLight")} />
+						<Checkbox
+							checked={config.sites.moonLight}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									sites: { ...current.sites, moonLight: value },
+								}));
+							}}
+						/>
 						{R18SiteNotation[R18Site.MoonLight]}
 					</label>
 					<label>
-						<Checkbox {...register("sites.moonLightBL")} />
+						<Checkbox
+							checked={config.sites.moonLightBL}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									sites: { ...current.sites, moonLightBL: value },
+								}));
+							}}
+						/>
 						{R18SiteNotation[R18Site.MoonLightBL]}
 					</label>
 					<label>
-						<Checkbox {...register("sites.midnight")} />
+						<Checkbox
+							checked={config.sites.midnight}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									sites: { ...current.sites, midnight: value },
+								}));
+							}}
+						/>
 						{R18SiteNotation[R18Site.Midnight]}
 					</label>
 					<Button onClick={selectAll}>全選択</Button>
@@ -335,48 +410,100 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 				<fieldset>
 					<legend className="font-bold text-sm text-slate-500">話数</legend>
 					<label>
-						<Checkbox {...register("story.min.enable")} />
+						<Checkbox
+							checked={config.story.min.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									story: {
+										...current.story,
+										min: { ...current.story.min, enable: value },
+									},
+								}));
+							}}
+						/>
 						最小
 						<TextField
 							type="number"
 							min="1"
-							{...register("story.min.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "story.min.enable" })}
+							name="story.min.value"
+							defaultValue={defaultValues.story.min.value}
+							disabled={!config.story.min.enable}
 						/>
 					</label>
 					～
 					<label>
-						<Checkbox {...register("story.max.enable")} />
+						<Checkbox
+							checked={config.story.max.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									story: {
+										...current.story,
+										max: { ...current.story.max, enable: value },
+									},
+								}));
+							}}
+						/>
 						最大
 						<TextField
 							type="number"
 							min="1"
-							{...register("story.max.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "story.max.enable" })}
+							name="story.max.value"
+							defaultValue={defaultValues.story.max.value}
+							disabled={!config.story.max.enable}
 						/>
 					</label>
 				</fieldset>
 				<fieldset>
 					<legend className="font-bold text-sm text-slate-500">文字数</legend>
 					<label>
-						<Checkbox {...register("length.min.enable")} />
+						<Checkbox
+							checked={config.length.min.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									length: {
+										...current.length,
+										min: { ...current.length.min, enable: value },
+									},
+								}));
+							}}
+						/>
 						最小
 						<TextField
 							type="number"
 							min="1"
-							{...register("length.min.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "length.min.enable" })}
+							name="length.min.value"
+							defaultValue={defaultValues.length.min.value}
+							disabled={!config.length.min.enable}
 						/>
 					</label>
 					～
 					<label>
-						<Checkbox {...register("length.max.enable")} />
+						<Checkbox
+							checked={config.length.max.enable}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									length: {
+										...current.length,
+										max: { ...current.length.max, enable: value },
+									},
+								}));
+							}}
+						/>
 						最大
 						<TextField
 							type="number"
 							min="1"
-							{...register("length.max.value", { valueAsNumber: true })}
-							disabled={!useWatch({ control, name: "length.max.enable" })}
+							name="length.max.value"
+							defaultValue={defaultValues.length.max.value}
+							disabled={!config.length.max.enable}
 						/>
 					</label>
 				</fieldset>
@@ -384,48 +511,73 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 					<legend className="font-bold text-sm text-slate-500">
 						更新開始日
 					</legend>
-					<Controller
-						name="firstUpdate.term"
-						control={control}
-						render={({ field: { onChange, value } }) => (
-							<SelectBox
-								value={value}
-								onChange={onChange}
-								options={[
-									{ value: "none", label: "指定しない" },
-									{ value: "1days", label: "1日より新しい" },
-									{ value: "7days", label: "1週間より新しい" },
-									{ value: "1months", label: "1ヶ月より新しい" },
-									{ value: "6months", label: "半年より新しい" },
-									{ value: "1years", label: "1年より新しい" },
-									{ value: "custom", label: "選択する" },
-								]}
-								buttonClassName="w-52"
-							/>
-						)}
+					<SelectBox<FilterConfig["firstUpdate"]["term"]>
+						value={config.firstUpdate.term}
+						onChange={(value) =>
+							setConfig((current) => ({
+								...current,
+								firstUpdate: { ...current.firstUpdate, term: value },
+							}))
+						}
+						options={[
+							{ value: "none", label: "指定しない" },
+							{ value: "1days", label: "1日より新しい" },
+							{ value: "7days", label: "1週間より新しい" },
+							{ value: "1months", label: "1ヶ月より新しい" },
+							{ value: "6months", label: "半年より新しい" },
+							{ value: "1years", label: "1年より新しい" },
+							{ value: "custom", label: "選択する" },
+						]}
+						buttonClassName="w-52"
 					/>
 					<TextField
 						type="date"
-						{...register("firstUpdate.begin")}
+						name="firstUpdate.begin"
+						defaultValue={defaultValues.firstUpdate.begin}
 						min={"2013-05-01"}
 						max={nowInTokyo().toPlainDate().toString()}
-						disabled={
-							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
-						}
+						disabled={config.firstUpdate.term !== "custom"}
 					/>
 				</fieldset>
 				<fieldset>
 					<legend className="font-bold text-sm text-slate-500">更新状態</legend>
 					<label>
-						<Checkbox {...register("status.rensai")} />
+						<Checkbox
+							checked={config.status.rensai}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, rensai: value },
+								}));
+							}}
+						/>
 						連載中
 					</label>
 					<label>
-						<Checkbox {...register("status.kanketsu")} />
+						<Checkbox
+							checked={config.status.kanketsu}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, kanketsu: value },
+								}));
+							}}
+						/>
 						完結
 					</label>
 					<label>
-						<Checkbox {...register("status.tanpen")} />
+						<Checkbox
+							checked={config.status.tanpen}
+							onChange={(event) => {
+								const value = event.currentTarget.checked;
+								setConfig((current) => ({
+									...current,
+									status: { ...current.status, tanpen: value },
+								}));
+							}}
+						/>
 						短編
 					</label>
 				</fieldset>
