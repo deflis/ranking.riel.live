@@ -1,13 +1,18 @@
-import { useToggle } from "@/hooks/useToggle";
-import { Link, createLink, useNavigate } from "@tanstack/react-router";
+import {
+	CatchBoundary,
+	Link,
+	createLink,
+	useNavigate,
+} from "@tanstack/react-router";
 import { useAtom } from "jotai";
-import { Suspense, useCallback, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import { Genre } from "narou";
+import { Suspense, useEffect, useState } from "react";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 
+import { useToggle } from "@/hooks/useToggle";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
-import { Genre } from "narou";
+
 import {
 	adModeAtom,
 	darkModeAtom,
@@ -34,76 +39,75 @@ function validate(ncode: string): boolean {
 
 export const Header: React.FC = () => {
 	const [ncode, setNcode] = useState("");
+	const [expand, toggle] = useToggle(false);
+	const closeSidebarOnNavigate = (event: React.MouseEvent) => {
+		if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+			toggle(false);
+		}
+	};
 	const navigate = useNavigate();
-	const detail = useCallback(
-		(e: { preventDefault: () => void }) => {
-			e.preventDefault();
-			if (!validate(ncode)) {
-				return;
-			}
-			navigate({ to: "/detail/$ncode", params: { ncode } });
-		},
-		[navigate, ncode],
-	);
+	const detail = (e: { preventDefault: () => void }) => {
+		e.preventDefault();
+		if (!validate(ncode)) {
+			return;
+		}
+		navigate({ to: "/detail/$ncode", params: { ncode } });
+		toggle(false);
+	};
 
 	const handleChangeNcode = useHandleChange(setNcode);
-	const [expand, toggle] = useToggle(false);
 	const [darkmode, setDarkmode] = useAtom(darkModeAtom);
-	const toggleDarkmode = useCallback(
-		() => setDarkmode((x) => !x),
-		[setDarkmode],
-	);
+	const toggleDarkmode = () => setDarkmode((x) => !x);
 	const [adMode, setAdMode] = useAtom(adModeAtom);
 	const [showAdDialog, toggleAdDialog] = useToggle(false);
-	const handleAdMode = useCallback(() => {
+	const handleAdMode = () => {
 		if (adMode) {
 			toggleAdDialog();
 		} else {
 			setAdMode(true);
 		}
-	}, [adMode, toggleAdDialog, setAdMode]);
-	const removeAd = useCallback(() => {
+	};
+	const removeAd = () => {
 		setAdMode(false);
 		toggleAdDialog();
-	}, [setAdMode, toggleAdDialog]);
+	};
 	const [titleHeightRaw, setTitleHeightRaw] = useAtom(titleHeightAtom);
 	const [titleHeight, setTitleHeight] = useState(
 		titleHeightRaw > 0 ? titleHeightRaw : 2,
 	);
 	const titleHeightStatus = !!titleHeightRaw && titleHeightRaw > 0;
-	const toggleTitleHeightStatus = useCallback(() => {
+	const toggleTitleHeightStatus = () => {
 		if (!titleHeightStatus) {
 			setTitleHeightRaw(titleHeight);
 		} else {
 			setTitleHeightRaw(0);
 		}
-	}, [titleHeightStatus, setTitleHeightRaw, titleHeight]);
+	};
 	useEffect(() => {
-		if (titleHeightStatus) {
-			setTitleHeightRaw(titleHeight);
+		if (titleHeightRaw > 0) {
+			setTitleHeight(titleHeightRaw);
 		}
-	}, [titleHeightStatus, titleHeight, setTitleHeightRaw]);
+	}, [titleHeightRaw]);
 	const [showKeyword, setShowKeyword] = useAtom(showKeywordAtom);
-	const toggleShowKeyword = useCallback(
-		() => setShowKeyword((x) => !x),
-		[setShowKeyword],
-	);
+	const toggleShowKeyword = () => setShowKeyword((x) => !x);
 
-	const handleChangeHeight = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const value = Number.parseInt(e.target.value, 10);
-			if (value > 0) {
-				setTitleHeight(value);
+	const handleChangeHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = Number.parseInt(e.target.value, 10);
+		if (value > 0) {
+			setTitleHeight(value);
+			if (titleHeightStatus) {
+				setTitleHeightRaw(value);
 			}
-		},
-		[],
-	);
+		}
+	};
 
 	return (
 		<header>
 			<nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between dark:bg-neutral-900">
 				<button
 					type="button"
+					aria-label="メニューを開く"
+					aria-expanded={expand}
 					className="rounded-full hover:bg-stone-300 dark:hover:bg-neutral-800  w-10 h-10"
 					onClick={toggle}
 				>
@@ -158,6 +162,7 @@ export const Header: React.FC = () => {
 			</nav>
 			<Sidebar open={expand} onClose={toggle}>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/ranking/{-$type}/{-$date}"
 					params={(prev) => ({
 						...prev,
@@ -169,6 +174,7 @@ export const Header: React.FC = () => {
 					{RankingTypeName[RankingType.Daily]}
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/ranking/{-$type}/{-$date}"
 					params={(prev) => ({
 						...prev,
@@ -180,6 +186,7 @@ export const Header: React.FC = () => {
 					{RankingTypeName[RankingType.Weekly]}
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/ranking/{-$type}/{-$date}"
 					params={(prev) => ({
 						...prev,
@@ -191,6 +198,7 @@ export const Header: React.FC = () => {
 					{RankingTypeName[RankingType.Monthly]}
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/ranking/{-$type}/{-$date}"
 					params={(prev) => ({
 						...prev,
@@ -203,6 +211,7 @@ export const Header: React.FC = () => {
 				</SidebarItemLink>
 				<Divider />
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
 					search={(_) => ({})}
@@ -212,6 +221,7 @@ export const Header: React.FC = () => {
 				</SidebarItemLink>
 				<Divider />
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Yearly })}
 					search={(_) => ({})}
@@ -222,6 +232,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.All })}
 					search={(_) => ({})}
@@ -232,6 +243,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.UniqueUser })}
 					search={(_) => ({})}
@@ -242,6 +254,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
 					search={(_) =>
@@ -254,6 +267,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
 					search={(_) =>
@@ -266,6 +280,7 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
 					to="/custom/{-$type}"
 					params={(prev) => ({ ...prev, type: RankingType.Daily })}
 					search={(_) =>
@@ -278,11 +293,16 @@ export const Header: React.FC = () => {
 					カスタムランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/r18" search={(_) => ({})} hover>
+				<SidebarItemLink
+					onClick={closeSidebarOnNavigate}
+					to="/r18"
+					search={(_) => ({})}
+					hover
+				>
 					R18ランキング
 				</SidebarItemLink>
 				<Divider />
-				<SidebarItemLink to="/about" hover>
+				<SidebarItemLink onClick={closeSidebarOnNavigate} to="/about" hover>
 					このサイトについて
 				</SidebarItemLink>
 				<Divider />
@@ -331,7 +351,7 @@ export const Header: React.FC = () => {
 					</Button>
 				</SidebarItem>
 			</Sidebar>
-			<ErrorBoundary fallback={null}>
+			<CatchBoundary getResetKey={() => ""} errorComponent={() => null}>
 				<Suspense>
 					<AdDialog
 						open={showAdDialog}
@@ -339,7 +359,7 @@ export const Header: React.FC = () => {
 						handleOk={removeAd}
 					/>
 				</Suspense>
-			</ErrorBoundary>
+			</CatchBoundary>
 		</header>
 	);
 };

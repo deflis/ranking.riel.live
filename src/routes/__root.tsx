@@ -2,14 +2,15 @@ import type { QueryClient } from "@tanstack/react-query";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 /// <reference types="vite/client" />
-import { createRootRouteWithContext } from "@tanstack/react-router";
+import {
+	CatchBoundary,
+	createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useSetAtom } from "jotai";
-import { Settings } from "luxon";
+import { useAtom } from "jotai";
 import type React from "react";
 import { Suspense, useEffect } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -19,10 +20,6 @@ import { useCustomTheme } from "@/modules/theme/theme";
 
 import "@/index.css";
 
-Settings.defaultZone = "Asia/Tokyo";
-Settings.defaultLocale = "ja";
-Settings.throwOnInvalid = true;
-
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
 }>()({
@@ -31,20 +28,19 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
 	useCustomTheme();
-	const setCount = useSetAtom(countAtom);
+	// 購読による保存値の復元後に訪問回数を加算する。
+	const [, setCount] = useAtom(countAtom);
 	useEffect(() => setCount((count) => (count ?? 0) + 1), [setCount]);
 
 	return (
 		<RootDocument>
 			<Layout>
 				<QueryErrorResetBoundary>
-					{({ reset }) => (
-						<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-							<Suspense fallback={<DotLoader />}>
-								<Outlet />
-							</Suspense>
-						</ErrorBoundary>
-					)}
+					<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+						<Suspense fallback={<DotLoader />}>
+							<Outlet />
+						</Suspense>
+					</CatchBoundary>
 				</QueryErrorResetBoundary>
 			</Layout>
 		</RootDocument>
@@ -56,6 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang="ja">
 			<head>
 				<meta charSet="utf-8" />
+				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<HeadContent />
 			</head>
 			<body>

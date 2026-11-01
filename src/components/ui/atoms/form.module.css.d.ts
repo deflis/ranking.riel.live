@@ -2,6 +2,7 @@ declare const styles: Readonly<{ input: string }> &
 	Readonly<{ input: string }> &
 	Readonly<{ input: string }> &
 	Readonly<{ append_icon: string }> &
+	Readonly<{ checkbox: string }> &
 	Readonly<{ button: string }> &
 	Readonly<{ button: string }> &
 	Readonly<{ button: string }> &

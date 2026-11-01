@@ -3,8 +3,9 @@
 @plugin "@tailwindcss/forms";
 
 @theme {
-	--font-sans: "Noto Sans JP", ui-sans-serif, system-ui, sans-serif,
-		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-sans:
+		"Noto Sans JP", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
 	--grid-template-rows-subgrid: subgrid;
 	--grid-template-columns-subgrid: subgrid;

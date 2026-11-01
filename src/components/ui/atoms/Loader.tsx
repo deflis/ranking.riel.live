@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import type { ComponentProps } from "react";
 
 type PulseLoaderProps = ComponentProps<"span"> & { disabled?: boolean };
@@ -9,11 +8,13 @@ export const PulseLoader: React.FC<PulseLoaderProps> = ({
 	...props
 }: PulseLoaderProps) => (
 	<span
-		className={clsx(
+		className={[
 			!disabled && "animate-pulse",
 			"w-full bg-slate-300 dark:bg-slate-700 rounded h-4 inline-block",
 			className,
-		)}
+		]
+			.filter(Boolean)
+			.join(" ")}
 		{...props}
 	/>
 );

@@ -1,11 +1,15 @@
-import { Paper } from "@/components/ui/atoms/Paper";
-import { SelfAd } from "@/components/ui/common/SelfAd";
-import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { FaCog } from "react-icons/fa";
 
+import { Paper } from "@/components/ui/atoms/Paper";
+import { SelfAd } from "@/components/ui/common/SelfAd";
+import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
+
 export const Route = createFileRoute("/about")({
 	component: AboutPage,
+	head: () => ({
+		meta: [{ title: "このサイトについて - なろうランキングビューワ" }],
+	}),
 });
 
 function AboutPage() {

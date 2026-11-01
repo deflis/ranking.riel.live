@@ -1,20 +1,16 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { Suspense, useCallback, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { Waypoint } from "react-waypoint";
+import { CatchBoundary } from "@tanstack/react-router";
+import { Suspense, useEffect, useState } from "react";
 
-import { adModeAtom } from "../../../modules/atoms/global";
 import { useR18Ranking } from "../../../modules/data/r18ranking";
 import type { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
-import { Button } from "../atoms/Button";
 import { DotLoader } from "../atoms/Loader";
-import { AdAmazonWidth } from "../common/AdAmazon";
 import AdSense from "../common/AdSense";
-import { SelfAd } from "../common/SelfAd";
-
 import { ErrorFallback } from "../common/ErrorFallback";
+import { SelfAd } from "../common/SelfAd";
+import { LoadMore } from "./LoadMore";
 import { R18RankingItem } from "./RankingItem";
+import { RankingRows } from "./RankingRows";
 
 const InsideRender: React.FC<{
 	params: R18RankingParams;
@@ -22,34 +18,22 @@ const InsideRender: React.FC<{
 	isTail: boolean;
 	setPage: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ params, page, isTail, setPage }) => {
-	const handleMore = useCallback(() => {
+	const handleMore = () => {
 		setPage((max) => (isTail ? max + 1 : max));
-	}, [setPage, isTail]);
+	};
 	const { data } = useR18Ranking(params, page);
-	const adMode = useAtomValue(adModeAtom);
-
 	if (data?.length === 0 || !data) {
 		return page === 1 ? <div className="w-full">データがありません</div> : null;
 	}
 	return (
 		<>
-			{data.map((item) => (
-				<R18RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
-			))}
-			{adMode && (
-				<div className="col-span-full">
-					<AdAmazonWidth />
-				</div>
-			)}
-			{isTail && (
-				<Waypoint onEnter={handleMore}>
-					<div className="col-span-full">
-						<Button onClick={handleMore} className="w-full h-20 text-3xl">
-							もっと見る
-						</Button>
-					</div>
-				</Waypoint>
-			)}
+			<RankingRows
+				items={data.map((item) => (
+					<R18RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
+				))}
+			/>
+			<AdSense className="col-span-full" />
+			{isTail && <LoadMore onLoadMore={handleMore} />}
 		</>
 	);
 };
@@ -59,26 +43,24 @@ export const R18RankingRender: React.FC<{
 }> = ({ params }) => {
 	const [page, setPage] = useState(1);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: paramsが変わったときにリセットする
 	useEffect(() => {
 		setPage(1);
+		// oxlint-disable-next-line react/exhaustive-deps -- paramsが変わったときにリセットする
 	}, [params]);
 
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (
 		<QueryErrorResetBoundary key={currentPage}>
-			{({ reset }) => (
-				<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-					<Suspense fallback={<DotLoader />}>
-						<InsideRender
-							params={params}
-							page={currentPage}
-							isTail={currentPage === page && page < 200}
-							setPage={setPage}
-						/>
-					</Suspense>
-				</ErrorBoundary>
-			)}
+			<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+				<Suspense fallback={<DotLoader />}>
+					<InsideRender
+						params={params}
+						page={currentPage}
+						isTail={currentPage === page && page < 200}
+						setPage={setPage}
+					/>
+				</Suspense>
+			</CatchBoundary>
 		</QueryErrorResetBoundary>
 	));
 

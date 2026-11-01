@@ -5,7 +5,6 @@ import {
 	ListboxOptions,
 	Transition,
 } from "@headlessui/react";
-import clsx from "clsx";
 import { HiChevronDown } from "react-icons/hi";
 
 import styles from "./form.module.css";
@@ -31,11 +30,15 @@ export const SelectBox = <T,>({
 	className,
 	buttonClassName,
 }: ListBoxProps<T>) => (
-	<div className={clsx(styles.select_box, className)}>
+	<div className={[styles.select_box, className].filter(Boolean).join(" ")}>
 		<Listbox value={selectedValue} onChange={onChange}>
 			{({ open }) => (
 				<div className="relative w-full">
-					<ListboxButton className={clsx(styles.input, buttonClassName)}>
+					<ListboxButton
+						className={[styles.input, buttonClassName]
+							.filter(Boolean)
+							.join(" ")}
+					>
 						{options.find(({ value }) => value === selectedValue)?.label}
 						<div className="grow" />
 						<HiChevronDown className={styles.append_icon} aria-hidden="true" />
@@ -56,10 +59,12 @@ export const SelectBox = <T,>({
 								<ListboxOption
 									key={`${value}`}
 									value={value}
-									className={clsx(
+									className={[
 										styles.option,
 										value === selectedValue && styles.selected,
-									)}
+									]
+										.filter(Boolean)
+										.join(" ")}
 								>
 									{label}
 								</ListboxOption>

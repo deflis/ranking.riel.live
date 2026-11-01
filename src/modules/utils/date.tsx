@@ -1,51 +1,55 @@
-import { DateTime } from "luxon";
 import { RankingType as NarouRankingType } from "narou";
 
-export const NarouDateFormat = "yyyy-MM-dd hh:mm:ss";
+import { parseDateTime } from "./temporal";
 
-export function parseDate(date: string): DateTime;
-export function parseDate(date: string | undefined): DateTime | undefined {
-	return date
-		? DateTime.fromFormat(date, NarouDateFormat, {
-				zone: "Asia/Tokyo",
-			})
-		: undefined;
+export function parseDate(date: string): Temporal.ZonedDateTime;
+export function parseDate(
+	date: string | undefined,
+): Temporal.ZonedDateTime | undefined;
+export function parseDate(
+	date: string | undefined,
+): Temporal.ZonedDateTime | undefined {
+	if (!date) return undefined;
+	if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(date)) {
+		throw new RangeError("Invalid API date");
+	}
+	return parseDateTime(date);
 }
 
-export function formatDate(date: DateTime, type: NarouRankingType): string {
-	return convertDate(date, type).toISODate();
+export function formatDate(
+	date: Temporal.PlainDate,
+	type: NarouRankingType,
+): string {
+	return convertDate(date, type).toString();
 }
 
-export function convertDate(date: DateTime, type: NarouRankingType): DateTime {
+export function convertDate(
+	date: Temporal.PlainDate,
+	type: NarouRankingType,
+): Temporal.PlainDate {
 	switch (type) {
-		case NarouRankingType.Daily:
-			return date.startOf("day");
-		case NarouRankingType.Weekly: {
-			const newDate = date.startOf("week").plus({ day: 1 });
-			return newDate <= date ? newDate : newDate.minus({ week: 1 });
-		}
+		case NarouRankingType.Weekly:
+			return date.subtract({ days: (date.dayOfWeek + 5) % 7 });
 		case NarouRankingType.Monthly:
 		case NarouRankingType.Quarterly:
-			return date.startOf("month");
+			return date.with({ day: 1 });
 		default:
-			return date.startOf("day");
+			return date;
 	}
 }
 
 export function addDate(
-	date: DateTime,
+	date: Temporal.PlainDate,
 	type: NarouRankingType,
 	amount: number,
-): DateTime {
+): Temporal.PlainDate {
 	switch (type) {
-		case NarouRankingType.Daily:
-			return date.plus({ day: amount });
 		case NarouRankingType.Weekly:
-			return date.plus({ week: amount });
+			return date.add({ weeks: amount });
 		case NarouRankingType.Monthly:
 		case NarouRankingType.Quarterly:
-			return date.plus({ month: amount });
+			return date.add({ months: amount });
 		default:
-			return date.plus({ day: amount });
+			return date.add({ days: amount });
 	}
 }

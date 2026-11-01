@@ -1,0 +1,11 @@
+minimumReleaseAge: 1440
+# 今回のみ、管理者本人が公開した2.1.0を例外とする。将来のバージョンは対象外。
+minimumReleaseAgeExclude:
+  - narou@2.1.0
+overrides:
+  "tsx@<4.23.15": "^4.23.15"
+
+# ViteとCloudflareで必要なネイティブ実行ファイルのセットアップのみ許可。
+allowBuilds:
+  esbuild@0.28.2: true
+  workerd@1.20261023.1: true

@@ -1,18 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-	R18RankingPage,
-	type R18RankingSearch,
-} from "../../components/ui/ranking/R18RankingPage";
-import { RankingType } from "../../modules/interfaces/RankingType";
 
-import { prefetchR18Ranking } from "@/modules/data/r18ranking";
+import { prefetchR18Ranking } from "@/modules/data/prefetch";
 import {
 	MAIN_PAGE_CACHE_OPTIONS,
 	createCacheHeaders,
 } from "@/modules/utils/cacheMiddleware";
 import { parseR18RankingParams } from "@/modules/utils/parseSearch";
 
+import {
+	R18RankingPage,
+	type R18RankingSearch,
+} from "../../components/ui/ranking/R18RankingPage";
+import {
+	RankingType,
+	RankingTypeName,
+} from "../../modules/interfaces/RankingType";
+
 export const Route = createFileRoute("/r18/")({
+	ssr: false,
 	validateSearch: (search: Record<string, unknown>): R18RankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
@@ -33,9 +38,16 @@ export const Route = createFileRoute("/r18/")({
 	loaderDeps: ({ search }) => ({ search }),
 	loader: async ({ context: { queryClient }, deps: { search } }) => {
 		const params = parseR18RankingParams(undefined, search);
-		await prefetchR18Ranking(queryClient, params, 1);
+		prefetchR18Ranking(queryClient, params, 1);
 	},
 	component: R18RankingPageWrapper,
+	head: () => ({
+		meta: [
+			{
+				title: `R18${RankingTypeName[RankingType.Daily]}ランキング - なろうランキングビューワ`,
+			},
+		],
+	}),
 	headers: () => createCacheHeaders(MAIN_PAGE_CACHE_OPTIONS),
 });
 

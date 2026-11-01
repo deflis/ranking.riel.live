@@ -11,15 +11,15 @@ Use pnpm (see `packageManager` in `package.json`).
 - `pnpm build`: build the production bundle.
 - `pnpm start`: run Cloudflare Pages dev against `.output/public`.
 - `pnpm deploy`: deploy the Pages build via Wrangler.
-- `pnpm lint`: run Biome checks (lint + format).
-- `pnpm lint:fix`: apply Biome fixes.
+- `pnpm lint`: run Oxlint and Oxfmt checks (lint + format).
+- `pnpm lint:fix`: apply Oxlint fixes and Oxfmt formatting.
 - `pnpm typecheck`: run the TypeScript compiler in no-emit mode.
 
 ## Coding Style & Naming Conventions
-Formatting and linting are enforced by Biome (`biome.json`). Use tabs for indentation and double quotes in JS/TS. Typescript is strict (`tsconfig.json`), and `@/` is a path alias for `src/`. CSS Modules are used where appropriate (e.g. `*.module.css`). Route files follow TanStack Router conventions in `src/routes`.
+Formatting and linting are enforced by Oxfmt (`.oxfmtrc.json`) and Oxlint (`.oxlintrc.json`). Use tabs for indentation and double quotes in JS/TS. Typescript is strict (`tsconfig.json`), and `@/` is a path alias for `src/`. CSS Modules are used where appropriate (e.g. `*.module.css`). Route files follow TanStack Router conventions in `src/routes`.
 
 ## Testing Guidelines
-No project-level test runner is configured yet.
+Use `pnpm test` to run the Vitest test suite.
 
 ## Commit & Pull Request Guidelines
 - コミットメッセージは、日本語で生成してください。

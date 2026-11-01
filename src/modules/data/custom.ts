@@ -4,7 +4,6 @@ import {
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { DateTime } from "luxon";
 import {
 	Fields,
 	type NarouSearchResult,
@@ -19,14 +18,12 @@ import { allGenres } from "../enum/Genre";
 import type { CustomRankingParams } from "../interfaces/CustomRankingParams";
 import { RankingType } from "../interfaces/RankingType";
 import { parse } from "../utils/NarouDateFormat";
-
 import {
 	type RankingData,
 	convertOrder,
 	formatCustomRankingRaw,
 } from "./custom/utils";
 import { fetchOptions } from "./custom/utils";
-import { prefetchRankingDetail } from "./prefetch";
 
 const PAGE_ITEM_NUM = 10 as const;
 const CHUNK_ITEM_NUM = 100 as const;
@@ -41,20 +38,7 @@ export const useCustomRanking = (params: CustomRankingParams, page: number) => {
 	return { data };
 };
 
-export const prefetchCustomRanking = async (
-	queryClient: QueryClient,
-	params: CustomRankingParams,
-	page: number,
-) => {
-	await queryClient.prefetchQuery({
-		queryKey: [params, page],
-		queryFn: getCustomRankingQueryFn(queryClient),
-	});
-	const ranking = queryClient.getQueryData<RankingData[]>([params, page]);
-	await prefetchRankingDetail(queryClient, ranking?.map((x) => x.ncode) ?? []);
-};
-
-const getCustomRankingQueryFn = (
+export const getCustomRankingQueryFn = (
 	queryClient: QueryClient,
 ): QueryFunction<RankingData[], readonly [CustomRankingParams, number]> => {
 	return async ({ queryKey: [params, page] }) => {
@@ -181,7 +165,7 @@ const customRankingKey = (
 		notKeyword,
 		byTitle,
 		byStory,
-		parseDateRange(firstUpdate)?.toISO(),
+		parseDateRange(firstUpdate)?.toInstant().toString(),
 		minLength,
 		maxLength,
 		genres.length === 0 ? allGenres : genres,
@@ -258,15 +242,20 @@ const customRankingFetcher: QueryFunction<
 	}
 	if (firstUpdateDate) {
 		// firstUpdateが指定されているということは最終更新日はfirstUpdateよりも新しいので、lastUpdateにfirstUpdateを指定する
-		searchBuilder.lastUpdate(firstUpdateDate, new Date());
+		searchBuilder.lastUpdate({ from: firstUpdateDate });
 	}
-	if (Number.isFinite(minLength) || Number.isFinite(maxLength)) {
-		searchBuilder.length([
-			Number.isFinite(minLength) ? (minLength as number) : 0,
-			Number.isFinite(maxLength)
-				? (maxLength as number)
-				: Number.MAX_SAFE_INTEGER,
-		]);
+	const min =
+		minLength !== undefined && Number.isFinite(minLength)
+			? minLength
+			: undefined;
+	const max =
+		maxLength !== undefined && Number.isFinite(maxLength)
+			? maxLength
+			: undefined;
+	if (min !== undefined) {
+		searchBuilder.length({ min, max });
+	} else if (max !== undefined) {
+		searchBuilder.length({ max });
 	}
 	if (novelTypeParam) {
 		searchBuilder.type(novelTypeParam);
@@ -290,7 +279,7 @@ export class FilterBuilder<
 	private minNo?: number;
 	private maxLength?: number;
 	private minLength?: number;
-	private firstUpdate?: DateTime;
+	private firstUpdate?: Temporal.ZonedDateTime;
 	private tanpen = true;
 	private rensai = true;
 	private kanketsu = true;
@@ -310,7 +299,10 @@ export class FilterBuilder<
 		}
 		if (this.firstUpdate) {
 			const parsedDate = parse(item.general_firstup);
-			if (parsedDate && parsedDate < this.firstUpdate) {
+			if (
+				parsedDate &&
+				Temporal.ZonedDateTime.compare(parsedDate, this.firstUpdate) < 0
+			) {
 				return false;
 			}
 		}
@@ -360,7 +352,7 @@ export class FilterBuilder<
 	setMinLength(minLength: number) {
 		this.minLength = minLength;
 	}
-	setFirstUpdate(firstUpdate: DateTime) {
+	setFirstUpdate(firstUpdate: Temporal.ZonedDateTime) {
 		this.firstUpdate = firstUpdate;
 	}
 	disableTanpen() {

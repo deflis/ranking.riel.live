@@ -1,10 +1,14 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "ranking-riel-live-workers",
-	"main": "@tanstack/react-start/server-entry",
+	"main": "./src/server.ts",
 	"compatibility_date": "2026-01-07",
 	"compatibility_flags": ["nodejs_compat"],
+	// SSR結果をキャッシュし、ヒット時はWorkerの実行を省く。
+	"cache": {
+		"enabled": true,
+	},
 	"observability": {
-		"enabled": true
-	}
+		"enabled": true,
+	},
 }

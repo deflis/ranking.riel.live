@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import type { ComponentProps } from "react";
 
 import styles from "./form.module.css";
@@ -14,7 +13,7 @@ export function TextField({
 			ref={ref}
 			type={type ?? "text"}
 			{...props}
-			className={clsx(styles.input, className)}
+			className={[styles.input, className].filter(Boolean).join(" ")}
 		/>
 	);
 }

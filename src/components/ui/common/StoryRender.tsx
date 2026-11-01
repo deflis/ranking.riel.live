@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 import { Paper } from "../atoms/Paper";
 
@@ -8,14 +8,15 @@ type StoryRenderProps = {
 	children?: never;
 };
 
-const StoryRender: React.FC<StoryRenderProps> = React.memo(
-	function StoryRenderBase({ className, story }: StoryRenderProps) {
-		return (
-			<Paper className={className}>
-				<p className="whitespace-pre-wrap">{story}</p>
-			</Paper>
-		);
-	},
-);
+const StoryRender: React.FC<StoryRenderProps> = ({
+	className,
+	story,
+}: StoryRenderProps) => {
+	return (
+		<Paper className={className}>
+			<p className="whitespace-pre-wrap">{story}</p>
+		</Paper>
+	);
+};
 
 export default StoryRender;
