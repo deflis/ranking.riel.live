@@ -53,6 +53,7 @@
 		"@types/react-dom": "^19.3.0",
 		"@vitejs/plugin-react": "^6.1.2",
 		"babel-plugin-react-compiler": "^1.0.0",
+		"happy-dom": "^21.0.4",
 		"oxfmt": "^0.75.0",
 		"oxlint": "^1.90.0",
 		"tailwindcss": "^4.3.3",
