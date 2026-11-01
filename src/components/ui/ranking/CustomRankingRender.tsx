@@ -1,7 +1,7 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { CatchBoundary } from "@tanstack/react-router";
 import type React from "react";
 import { Suspense, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { useCustomRanking } from "../../../modules/data/custom";
 import type { CustomRankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -49,18 +49,16 @@ export const CustomRankingRender: React.FC<{
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (
 		<QueryErrorResetBoundary key={currentPage}>
-			{({ reset }) => (
-				<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-					<Suspense fallback={<DotLoader />}>
-						<InsideRender
-							params={params}
-							page={currentPage}
-							isTail={currentPage === page && page < 200}
-							setPage={setPage}
-						/>
-					</Suspense>
-				</ErrorBoundary>
-			)}
+			<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+				<Suspense fallback={<DotLoader />}>
+					<InsideRender
+						params={params}
+						page={currentPage}
+						isTail={currentPage === page && page < 200}
+						setPage={setPage}
+					/>
+				</Suspense>
+			</CatchBoundary>
 		</QueryErrorResetBoundary>
 	));
 

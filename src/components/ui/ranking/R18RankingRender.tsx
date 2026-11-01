@@ -1,6 +1,6 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { CatchBoundary } from "@tanstack/react-router";
 import { Suspense, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { useR18Ranking } from "../../../modules/data/r18ranking";
 import type { R18RankingParams } from "../../../modules/interfaces/CustomRankingParams";
@@ -48,18 +48,16 @@ export const R18RankingRender: React.FC<{
 	const pages = Array.from({ length: page }, (_, i) => i + 1);
 	const renderItems = pages.map((currentPage) => (
 		<QueryErrorResetBoundary key={currentPage}>
-			{({ reset }) => (
-				<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-					<Suspense fallback={<DotLoader />}>
-						<InsideRender
-							params={params}
-							page={currentPage}
-							isTail={currentPage === page && page < 200}
-							setPage={setPage}
-						/>
-					</Suspense>
-				</ErrorBoundary>
-			)}
+			<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+				<Suspense fallback={<DotLoader />}>
+					<InsideRender
+						params={params}
+						page={currentPage}
+						isTail={currentPage === page && page < 200}
+						setPage={setPage}
+					/>
+				</Suspense>
+			</CatchBoundary>
 		</QueryErrorResetBoundary>
 	));
 
