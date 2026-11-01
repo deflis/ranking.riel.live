@@ -90,7 +90,6 @@ const DetailItem: FC<{
 		: "https://ncode.syosetu.com";
 	const ncode = (item?.ncode ?? rawNcode).toLowerCase();
 	const detail = `${baseUrl}/novelview/infotop/ncode/${ncode}/`;
-	const user = `https://mypage.syosetu.com/${item?.userid ? encodeURIComponent(item.userid) : ""}/`;
 	const link = `${baseUrl}/${ncode}/`;
 	const linkFirst = `${baseUrl}/${ncode}/1/`;
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
@@ -218,7 +217,11 @@ const DetailItem: FC<{
 							isR18 ? (
 								decode(item.writer)
 							) : (
-								<a href={user} target="_blank" rel="noopener noreferrer">
+								<a
+									href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
 									{decode(item.writer)}
 								</a>
 							)
