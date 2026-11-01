@@ -1,9 +1,8 @@
 import { Transition } from "@headlessui/react";
-import { Link, createLink } from "@tanstack/react-router";
+import { CatchBoundary, Link, createLink } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
 import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { useToggle } from "@/hooks/useToggle";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
@@ -306,8 +305,9 @@ export const RankingItem: React.FC<{
 	className?: string;
 }> = ({ item: rankingItem, className }) => {
 	return (
-		<ErrorBoundary
-			fallback={
+		<CatchBoundary
+			getResetKey={() => ""}
+			errorComponent={() => (
 				<RankingItemRender
 					className={className}
 					ncode={rankingItem.ncode}
@@ -316,7 +316,7 @@ export const RankingItem: React.FC<{
 					isPending={false}
 					isError={true}
 				/>
-			}
+			)}
 		>
 			<Suspense
 				fallback={
@@ -332,7 +332,7 @@ export const RankingItem: React.FC<{
 			>
 				<RankingItemContent rankingItem={rankingItem} className={className} />
 			</Suspense>
-		</ErrorBoundary>
+		</CatchBoundary>
 	);
 };
 
@@ -359,8 +359,9 @@ export const R18RankingItem: React.FC<{
 	className?: string;
 }> = ({ item: rankingItem, className }) => {
 	return (
-		<ErrorBoundary
-			fallback={
+		<CatchBoundary
+			getResetKey={() => ""}
+			errorComponent={() => (
 				<RankingItemRender
 					className={className}
 					isR18={true}
@@ -370,7 +371,7 @@ export const R18RankingItem: React.FC<{
 					isPending={false}
 					isError={true}
 				/>
-			}
+			)}
 		>
 			<Suspense
 				fallback={
@@ -390,7 +391,7 @@ export const R18RankingItem: React.FC<{
 					className={className}
 				/>
 			</Suspense>
-		</ErrorBoundary>
+		</CatchBoundary>
 	);
 };
 

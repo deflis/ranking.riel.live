@@ -1,7 +1,6 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { ClientOnly } from "@tanstack/react-router";
+import { CatchBoundary, ClientOnly } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import {
 	useDetailForItem,
@@ -56,29 +55,28 @@ export const DetailRenderer: React.FC<{
 	return (
 		<>
 			<QueryErrorResetBoundary>
-				{({ reset }) => (
-					<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-						<Suspense fallback={<DotLoader />}>
-							{isR18 ? (
-								<R18DetailItemContent ncode={ncode} />
-							) : (
-								<DetailItemContent ncode={ncode} />
-							)}
-						</Suspense>
-					</ErrorBoundary>
-				)}
+				<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+					<Suspense fallback={<DotLoader />}>
+						{isR18 ? (
+							<R18DetailItemContent ncode={ncode} />
+						) : (
+							<DetailItemContent ncode={ncode} />
+						)}
+					</Suspense>
+				</CatchBoundary>
 			</QueryErrorResetBoundary>
 
 			{!isR18 && (
 				<ClientOnly>
 					<QueryErrorResetBoundary>
-						{({ reset }) => (
-							<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-								<Suspense fallback={<DotLoader />}>
-									<RankingHistoryContent ncode={ncode} />
-								</Suspense>
-							</ErrorBoundary>
-						)}
+						<CatchBoundary
+							getResetKey={() => ""}
+							errorComponent={ErrorFallback}
+						>
+							<Suspense fallback={<DotLoader />}>
+								<RankingHistoryContent ncode={ncode} />
+							</Suspense>
+						</CatchBoundary>
 					</QueryErrorResetBoundary>
 				</ClientOnly>
 			)}

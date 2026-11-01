@@ -2,13 +2,15 @@ import type { QueryClient } from "@tanstack/react-query";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 /// <reference types="vite/client" />
-import { createRootRouteWithContext } from "@tanstack/react-router";
+import {
+	CatchBoundary,
+	createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useAtom } from "jotai";
 import type React from "react";
 import { Suspense, useEffect } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { Layout } from "@/components/Layout";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -34,13 +36,11 @@ function RootComponent() {
 		<RootDocument>
 			<Layout>
 				<QueryErrorResetBoundary>
-					{({ reset }) => (
-						<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-							<Suspense fallback={<DotLoader />}>
-								<Outlet />
-							</Suspense>
-						</ErrorBoundary>
-					)}
+					<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+						<Suspense fallback={<DotLoader />}>
+							<Outlet />
+						</Suspense>
+					</CatchBoundary>
 				</QueryErrorResetBoundary>
 			</Layout>
 		</RootDocument>

@@ -1,8 +1,12 @@
-import { Link, createLink, useNavigate } from "@tanstack/react-router";
+import {
+	CatchBoundary,
+	Link,
+	createLink,
+	useNavigate,
+} from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Genre } from "narou";
 import { Suspense, useEffect, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
 
@@ -323,7 +327,7 @@ export const Header: React.FC = () => {
 					</Button>
 				</SidebarItem>
 			</Sidebar>
-			<ErrorBoundary fallback={null}>
+			<CatchBoundary getResetKey={() => ""} errorComponent={() => null}>
 				<Suspense>
 					<AdDialog
 						open={showAdDialog}
@@ -331,7 +335,7 @@ export const Header: React.FC = () => {
 						handleOk={removeAd}
 					/>
 				</Suspense>
-			</ErrorBoundary>
+			</CatchBoundary>
 		</header>
 	);
 };

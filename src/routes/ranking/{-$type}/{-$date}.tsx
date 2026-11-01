@@ -1,12 +1,12 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import {
+	CatchBoundary,
 	createFileRoute,
 	createLink,
 	useNavigate,
 } from "@tanstack/react-router";
 import { RankingType } from "narou";
 import { Suspense, useMemo, useRef } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 import { Button } from "@/components/ui/atoms/Button";
 import { DotLoader } from "@/components/ui/atoms/Loader";
@@ -215,13 +215,11 @@ function RankingPage() {
 				<FilterComponent />
 			</div>
 			<QueryErrorResetBoundary>
-				{({ reset }) => (
-					<ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-						<Suspense fallback={<DotLoader />}>
-							<RankingList type={type} date={date} />
-						</Suspense>
-					</ErrorBoundary>
-				)}
+				<CatchBoundary getResetKey={() => ""} errorComponent={ErrorFallback}>
+					<Suspense fallback={<DotLoader />}>
+						<RankingList type={type} date={date} />
+					</Suspense>
+				</CatchBoundary>
 			</QueryErrorResetBoundary>
 		</>
 	);
