@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import type React from "react";
 import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -26,7 +26,8 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
 	useCustomTheme();
-	const setCount = useSetAtom(countAtom);
+	// 購読による保存値の復元後に訪問回数を加算する。
+	const [, setCount] = useAtom(countAtom);
 	useEffect(() => setCount((count) => (count ?? 0) + 1), [setCount]);
 
 	return (
