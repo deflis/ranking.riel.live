@@ -2,7 +2,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { GenreNotation } from "narou";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 
@@ -28,24 +28,24 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 	const [savedConfig, setFilterConfig] = useAtom(filterConfigAtom);
 	const [config, setConfig] = useState(savedConfig);
 
-	const selectAll = useCallback(() => {
+	const selectAll = () => {
 		setConfig((current) => ({
 			...current,
 			genres: Object.fromEntries(
 				allGenres.map((id) => [`g${id}`, true]),
 			) as FilterConfig["genres"],
 		}));
-	}, []);
-	const unselectAll = useCallback(() => {
+	};
+	const unselectAll = () => {
 		setConfig((current) => ({
 			...current,
 			genres: Object.fromEntries(
 				allGenres.map((id) => [`g${id}`, false]),
 			) as FilterConfig["genres"],
 		}));
-	}, []);
+	};
 
-	const clear = useCallback(() => {
+	const clear = () => {
 		setConfig((current) => ({
 			...current,
 			genres: Object.fromEntries(
@@ -62,7 +62,7 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 			},
 			status: { kanketsu: true, rensai: true, tanpen: true },
 		}));
-	}, []);
+	};
 
 	const onSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();

@@ -1,7 +1,7 @@
 import { Link, createLink, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { Genre } from "narou";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FaHammer, FaTrophy } from "react-icons/fa";
 import { HiMenu } from "react-icons/hi";
@@ -36,69 +36,57 @@ function validate(ncode: string): boolean {
 export const Header: React.FC = () => {
 	const [ncode, setNcode] = useState("");
 	const navigate = useNavigate();
-	const detail = useCallback(
-		(e: { preventDefault: () => void }) => {
-			e.preventDefault();
-			if (!validate(ncode)) {
-				return;
-			}
-			navigate({ to: "/detail/$ncode", params: { ncode } });
-		},
-		[navigate, ncode],
-	);
+	const detail = (e: { preventDefault: () => void }) => {
+		e.preventDefault();
+		if (!validate(ncode)) {
+			return;
+		}
+		navigate({ to: "/detail/$ncode", params: { ncode } });
+	};
 
 	const handleChangeNcode = useHandleChange(setNcode);
 	const [expand, toggle] = useToggle(false);
 	const [darkmode, setDarkmode] = useAtom(darkModeAtom);
-	const toggleDarkmode = useCallback(
-		() => setDarkmode((x) => !x),
-		[setDarkmode],
-	);
+	const toggleDarkmode = () => setDarkmode((x) => !x);
 	const [adMode, setAdMode] = useAtom(adModeAtom);
 	const [showAdDialog, toggleAdDialog] = useToggle(false);
-	const handleAdMode = useCallback(() => {
+	const handleAdMode = () => {
 		if (adMode) {
 			toggleAdDialog();
 		} else {
 			setAdMode(true);
 		}
-	}, [adMode, toggleAdDialog, setAdMode]);
-	const removeAd = useCallback(() => {
+	};
+	const removeAd = () => {
 		setAdMode(false);
 		toggleAdDialog();
-	}, [setAdMode, toggleAdDialog]);
+	};
 	const [titleHeightRaw, setTitleHeightRaw] = useAtom(titleHeightAtom);
 	const [titleHeight, setTitleHeight] = useState(
 		titleHeightRaw > 0 ? titleHeightRaw : 2,
 	);
 	const titleHeightStatus = !!titleHeightRaw && titleHeightRaw > 0;
-	const toggleTitleHeightStatus = useCallback(() => {
+	const toggleTitleHeightStatus = () => {
 		if (!titleHeightStatus) {
 			setTitleHeightRaw(titleHeight);
 		} else {
 			setTitleHeightRaw(0);
 		}
-	}, [titleHeightStatus, setTitleHeightRaw, titleHeight]);
+	};
 	useEffect(() => {
 		if (titleHeightStatus) {
 			setTitleHeightRaw(titleHeight);
 		}
 	}, [titleHeightStatus, titleHeight, setTitleHeightRaw]);
 	const [showKeyword, setShowKeyword] = useAtom(showKeywordAtom);
-	const toggleShowKeyword = useCallback(
-		() => setShowKeyword((x) => !x),
-		[setShowKeyword],
-	);
+	const toggleShowKeyword = () => setShowKeyword((x) => !x);
 
-	const handleChangeHeight = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const value = Number.parseInt(e.target.value, 10);
-			if (value > 0) {
-				setTitleHeight(value);
-			}
-		},
-		[],
-	);
+	const handleChangeHeight = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = Number.parseInt(e.target.value, 10);
+		if (value > 0) {
+			setTitleHeight(value);
+		}
+	};
 
 	return (
 		<header>

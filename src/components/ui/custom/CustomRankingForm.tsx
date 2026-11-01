@@ -1,11 +1,5 @@
 import { GenreNotation } from "narou";
-import React, {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
 import { useToggle } from "@/hooks/useToggle";
@@ -224,7 +218,7 @@ function formatDateRange(raw: string | TermStrings | undefined): string {
 
 const DisableCustomRankingForm: React.FC<{
 	params: CustomRankingParams;
-}> = React.memo(function DisableCustomRankingFormBase({
+}> = ({
 	params: {
 		keyword,
 		rankingType,
@@ -243,7 +237,7 @@ const DisableCustomRankingForm: React.FC<{
 	},
 }: {
 	params: CustomRankingParams;
-}) {
+}) => {
 	return (
 		<>
 			<h1 className="text-4xl md:text-6xl my-8">
@@ -288,7 +282,7 @@ const DisableCustomRankingForm: React.FC<{
 			</div>
 		</>
 	);
-});
+};
 
 const EnableCustomRankingForm: React.FC<
 	CustomRankingFormParams & InnerParams
@@ -314,23 +308,23 @@ const EnableCustomRankingForm: React.FC<
 		);
 	};
 
-	const selectAll = useCallback(() => {
+	const selectAll = () => {
 		setConfig((current) => ({
 			...current,
 			genres: Object.fromEntries(
 				allGenres.map((id) => [`g${id}`, true]),
 			) as FilterConfig["genres"],
 		}));
-	}, []);
+	};
 
-	const unselectAll = useCallback(() => {
+	const unselectAll = () => {
 		setConfig((current) => ({
 			...current,
 			genres: Object.fromEntries(
 				allGenres.map((id) => [`g${id}`, false]),
 			) as FilterConfig["genres"],
 		}));
-	}, []);
+	};
 
 	return (
 		<form ref={formRef} onSubmit={handleSearch}>

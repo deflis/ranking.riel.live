@@ -1,6 +1,6 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import type React from "react";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Waypoint } from "react-waypoint";
 
@@ -19,9 +19,9 @@ const InsideRender: React.FC<{
 	isTail: boolean;
 	setPage: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ params, page, isTail, setPage }) => {
-	const handleMore = useCallback(() => {
+	const handleMore = () => {
 		setPage((max) => (isTail ? max + 1 : max));
-	}, [setPage, isTail]);
+	};
 	const { data } = useCustomRanking(params, page);
 	if (data?.length === 0 || !data) {
 		return page === 1 ? <div className="w-full">データがありません</div> : null;

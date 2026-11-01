@@ -5,7 +5,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { RankingType } from "narou";
-import { Suspense, useCallback, useMemo, useRef } from "react";
+import { Suspense, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { Button } from "@/components/ui/atoms/Button";
@@ -116,40 +116,31 @@ function RankingPage() {
 		dateInputRef.current.value = date.toString();
 	}
 
-	const handleDateCommit = useCallback(
-		(value: string) => {
-			try {
-				const newDate = Temporal.PlainDate.from(value);
-				navigate({
-					to: "/ranking/{-$type}/{-$date}",
-					params: (prev) => ({
-						...prev,
-						type: type ?? undefined,
-						date: newDate.toString(),
-					}),
-				});
-			} catch {
-				// 無効な日付の場合は何もしない
-			}
-		},
-		[type, navigate],
-	);
+	const handleDateCommit = (value: string) => {
+		try {
+			const newDate = Temporal.PlainDate.from(value);
+			navigate({
+				to: "/ranking/{-$type}/{-$date}",
+				params: (prev) => ({
+					...prev,
+					type: type ?? undefined,
+					date: newDate.toString(),
+				}),
+			});
+		} catch {
+			// 無効な日付の場合は何もしない
+		}
+	};
 
-	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (e.key === "Enter") {
-				handleDateCommit(e.currentTarget.value);
-			}
-		},
-		[handleDateCommit],
-	);
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter") {
+			handleDateCommit(e.currentTarget.value);
+		}
+	};
 
-	const handleBlur = useCallback(
-		(e: React.FocusEvent<HTMLInputElement>) => {
-			handleDateCommit(e.target.value);
-		},
-		[handleDateCommit],
-	);
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+		handleDateCommit(e.target.value);
+	};
 
 	return (
 		<>

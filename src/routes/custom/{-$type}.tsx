@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
 
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
@@ -81,16 +80,13 @@ function CustomRankingPage() {
 
 	const params = parseCustomRankingParams(type, search);
 
-	const handleSearch = useCallback(
-		(newParams: CustomRankingParams) => {
-			navigate({
-				to: "/custom/{-$type}",
-				params: { type: newParams.rankingType },
-				search: (_) => buildCustomRankingSearch(newParams),
-			});
-		},
-		[navigate],
-	);
+	const handleSearch = (newParams: CustomRankingParams) => {
+		navigate({
+			to: "/custom/{-$type}",
+			params: { type: newParams.rankingType },
+			search: (_) => buildCustomRankingSearch(newParams),
+		});
+	};
 
 	return (
 		<>

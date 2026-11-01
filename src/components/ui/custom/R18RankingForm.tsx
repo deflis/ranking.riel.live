@@ -1,12 +1,5 @@
 import { R18Site, R18SiteNotation } from "narou";
-import React, {
-	Fragment,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
 import { useToggle } from "@/hooks/useToggle";
@@ -68,11 +61,11 @@ export const R18RankingForm: React.FC<R18RankingFormParams> = ({
 
 const DisableCustomRankingForm: React.FC<{
 	params: R18RankingParams;
-}> = React.memo(function DisableCustomRankingFormBase({
+}> = ({
 	params: { keyword, rankingType, sites, min, max, minLength, maxLength },
 }: {
 	params: R18RankingParams;
-}) {
+}) => {
 	const genre =
 		sites.length > 0 ? (
 			<>
@@ -110,7 +103,7 @@ const DisableCustomRankingForm: React.FC<{
 			</div>
 		</>
 	);
-});
+};
 
 const rankingTypeList = [
 	RankingType.Daily,
@@ -264,7 +257,7 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 		);
 	};
 
-	const selectAll = useCallback(() => {
+	const selectAll = () => {
 		setConfig((current) => ({
 			...current,
 			sites: {
@@ -274,9 +267,9 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 				midnight: true,
 			},
 		}));
-	}, []);
+	};
 
-	const unselectAll = useCallback(() => {
+	const unselectAll = () => {
 		setConfig((current) => ({
 			...current,
 			sites: {
@@ -286,7 +279,7 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 				midnight: false,
 			},
 		}));
-	}, []);
+	};
 
 	return (
 		<form ref={formRef} onSubmit={handleSearch}>

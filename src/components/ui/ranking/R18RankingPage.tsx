@@ -1,5 +1,4 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
 
 import { R18RankingForm } from "@/components/ui/custom/R18RankingForm";
 import { R18RankingRender } from "@/components/ui/ranking/R18RankingRender";
@@ -35,16 +34,13 @@ export const R18RankingPage: React.FC<{
 
 	const params = parseR18RankingParams(rankingType, search);
 
-	const handleSearch = useCallback(
-		(newParams: R18RankingParams) => {
-			navigate({
-				to: "/r18/ranking/{-$type}",
-				params: { type: newParams.rankingType },
-				search: (_) => buildR18RankingSearch(newParams),
-			});
-		},
-		[navigate],
-	);
+	const handleSearch = (newParams: R18RankingParams) => {
+		navigate({
+			to: "/r18/ranking/{-$type}",
+			params: { type: newParams.rankingType },
+			search: (_) => buildR18RankingSearch(newParams),
+		});
+	};
 
 	return (
 		<>

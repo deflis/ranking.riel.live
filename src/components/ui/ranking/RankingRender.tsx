@@ -1,5 +1,5 @@
 import type { NarouRankingResult } from "narou";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Waypoint } from "react-waypoint";
 
 import { chunk } from "../../../modules/utils/chunk";
@@ -13,9 +13,9 @@ const ChunkRender: React.FC<{
 	isTail: boolean;
 	setMax: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ chunk, setMax, isTail }) => {
-	const handleMore = useCallback(() => {
+	const handleMore = () => {
 		setMax((max) => (isTail ? max + 10 : max));
-	}, [setMax, isTail]);
+	};
 	return (
 		<>
 			{chunk}
@@ -52,10 +52,9 @@ const InsideRender: React.FC<{
 			key={i}
 		/>
 	));
-	const rankingConstants = useMemo(
-		() => ranking.map(({ ncode, pt }) => `${ncode}${pt}`).join(),
-		[ranking],
-	);
+	const rankingConstants = ranking
+		.map(({ ncode, pt }) => `${ncode}${pt}`)
+		.join();
 	useEffect(() => {
 		setMax(10);
 		// oxlint-disable-next-line react/exhaustive-deps -- ランキングが変わったときにリセットする
