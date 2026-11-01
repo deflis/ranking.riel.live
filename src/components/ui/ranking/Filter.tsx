@@ -1,7 +1,6 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
-import { DateTime } from "luxon";
 import { GenreNotation } from "narou";
 import React, { useCallback } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -14,6 +13,7 @@ import {
 	isUseFilterAtom,
 } from "@/modules/atoms/filter";
 import { allGenres } from "@/modules/enum/Genre";
+import { nowInTokyo } from "@/modules/utils/temporal";
 
 import { Button } from "../atoms/Button";
 import { Checkbox } from "../atoms/Checkbox";
@@ -152,15 +152,8 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 					<TextField
 						type="date"
 						{...register("firstUpdate.begin")}
-						min={DateTime.fromObject(
-							{
-								year: 2013,
-								month: 5,
-								day: 1,
-							},
-							{ zone: "Asia/Tokyo" },
-						).toISODate()}
-						max={DateTime.now().setZone("Asia/Tokyo").toISODate()}
+						min={"2013-05-01"}
+						max={nowInTokyo().toPlainDate().toString()}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}

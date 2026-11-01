@@ -6,7 +6,6 @@ import { createRootRouteWithContext } from "@tanstack/react-router";
 import { HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useSetAtom } from "jotai";
-import { Settings } from "luxon";
 import type React from "react";
 import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -18,10 +17,6 @@ import { countAtom } from "@/modules/atoms/global";
 import { useCustomTheme } from "@/modules/theme/theme";
 
 import "@/index.css";
-
-Settings.defaultZone = "Asia/Tokyo";
-Settings.defaultLocale = "ja";
-Settings.throwOnInvalid = true;
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

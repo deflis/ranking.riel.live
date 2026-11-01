@@ -4,12 +4,13 @@ import {
 	useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { DateTime } from "luxon";
 import {
 	type NarouRankingResult,
 	type RankingType as NarouRankingType,
 	ranking,
 } from "narou";
+
+import { nowInTokyo } from "@/modules/utils/temporal";
 
 import { filterAtom, isUseFilterAtom } from "../atoms/filter";
 import { fetchOptions } from "./custom/utils";
@@ -22,14 +23,13 @@ export const rankingFetcher: QueryFunction<
 	NarouRankingResult[],
 	ReturnType<typeof rankingKey>
 > = async ({ queryKey: [, type, date] }) => {
-	const requestDate = DateTime.fromISO(date, { zone: "Asia/Tokyo" });
-	const now = DateTime.now().setZone("Asia/Tokyo");
-
-	const isGenerated = now >= requestDate.startOf("day").plus({ hours: 12 });
-
-	const dateValue = requestDate
-		.setZone("UTC", { keepLocalTime: true })
-		.toJSDate();
+	const requestDate = Temporal.PlainDate.from(date);
+	const noon = requestDate.toZonedDateTime({
+		timeZone: "Asia/Tokyo",
+		plainTime: "12:00",
+	});
+	const isGenerated = Temporal.ZonedDateTime.compare(nowInTokyo(), noon) >= 0;
+	const dateValue = new Date(`${requestDate}T00:00:00Z`);
 
 	return await ranking()
 		.date(dateValue)

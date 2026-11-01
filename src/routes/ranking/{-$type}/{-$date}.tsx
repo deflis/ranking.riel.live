@@ -4,7 +4,6 @@ import {
 	createLink,
 	useNavigate,
 } from "@tanstack/react-router";
-import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import { Suspense, useCallback, useMemo, useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,6 +24,7 @@ import {
 	createCacheHeaders,
 } from "@/modules/utils/cacheMiddleware";
 import { addDate, convertDate } from "@/modules/utils/date";
+import { nowInTokyo } from "@/modules/utils/temporal";
 
 const ButtonLink = createLink(Button);
 
@@ -42,11 +42,8 @@ const rankingTypeSteps = {
 	[RankingType.Quarterly]: "",
 } as const;
 
-const minDate = DateTime.fromObject(
-	{ year: 2013, month: 5, day: 1 },
-	{ zone: "Asia/Tokyo" },
-);
-const maxDate = DateTime.now().setZone("Asia/Tokyo").startOf("day");
+const minDate = Temporal.PlainDate.from("2013-05-01");
+const maxDate = nowInTokyo().toPlainDate();
 
 export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	loader: async ({
@@ -55,8 +52,8 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	}) => {
 		const type = (typeParam as RankingType) ?? RankingType.Daily;
 		const dt = !dateParam
-			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam);
+			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
+			: Temporal.PlainDate.from(dateParam);
 		const date = convertDate(dt, type);
 
 		prefetchRanking(queryClient, type, date);
@@ -65,8 +62,8 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	head: ({ params: { type: typeParam, date: dateParam } }) => {
 		const type = (typeParam as RankingType) ?? RankingType.Daily;
 		const dt = !dateParam
-			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam);
+			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
+			: Temporal.PlainDate.from(dateParam);
 		const date = convertDate(dt, type);
 		return {
 			meta: [
@@ -78,14 +75,14 @@ export const Route = createFileRoute("/ranking/{-$type}/{-$date}")({
 	},
 	headers: ({ params: { date } }) => {
 		if (!date) {
-			const now = DateTime.now().setZone("Asia/Tokyo");
-			let nextNoon = now.startOf("day").plus({ hours: 12 });
-			if (now >= nextNoon) {
-				nextNoon = nextNoon.plus({ days: 1 });
+			const now = nowInTokyo();
+			let nextNoon = now.startOfDay().add({ hours: 12 });
+			if (Temporal.ZonedDateTime.compare(now, nextNoon) >= 0) {
+				nextNoon = nextNoon.add({ days: 1 });
 			}
 			const ttl = Math.max(
 				60,
-				Math.floor(nextNoon.diff(now, "seconds").seconds),
+				Math.floor(now.until(nextNoon).total("seconds")),
 			);
 
 			return createCacheHeaders({
@@ -105,8 +102,8 @@ function RankingPage() {
 
 	const date = useMemo(() => {
 		const dt = !dateParam
-			? DateTime.now().minus({ hour: 12 }).setZone("Asia/Tokyo").startOf("day")
-			: DateTime.fromISO(dateParam, { zone: "Asia/Tokyo" });
+			? nowInTokyo().subtract({ hours: 12 }).toPlainDate()
+			: Temporal.PlainDate.from(dateParam);
 		return convertDate(dt, type);
 	}, [dateParam, type]);
 
@@ -116,19 +113,19 @@ function RankingPage() {
 	const dateInputRef = useRef<HTMLInputElement>(null);
 
 	if (dateInputRef.current) {
-		dateInputRef.current.value = date.toISODate();
+		dateInputRef.current.value = date.toString();
 	}
 
 	const handleDateCommit = useCallback(
 		(value: string) => {
 			try {
-				const newDate = DateTime.fromISO(value, { zone: "Asia/Tokyo" });
+				const newDate = Temporal.PlainDate.from(value);
 				navigate({
 					to: "/ranking/{-$type}/{-$date}",
 					params: (prev) => ({
 						...prev,
 						type: type ?? undefined,
-						date: newDate.toISODate(),
+						date: newDate.toString(),
 					}),
 				});
 			} catch {
@@ -166,7 +163,7 @@ function RankingPage() {
 								params: (prev) => ({
 									...prev,
 									type: newType,
-									date: isNow ? undefined : date.toISODate(),
+									date: isNow ? undefined : date.toString(),
 								}),
 							})
 						}
@@ -175,14 +172,14 @@ function RankingPage() {
 							label: RankingTypeName[value],
 						}))}
 					/>
-					{date > minDate && (
+					{Temporal.PlainDate.compare(date, minDate) > 0 && (
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, -1).toISODate(),
+								date: addDate(date, type, -1).toString(),
 							})}
 						>
 							前
@@ -190,22 +187,22 @@ function RankingPage() {
 					)}
 					<TextField
 						ref={dateInputRef}
-						min={minDate.toISODate()}
-						max={maxDate.toISODate()}
-						defaultValue={date.toISODate()}
+						min={minDate.toString()}
+						max={maxDate.toString()}
+						defaultValue={date.toString()}
 						type="date"
 						step={rankingTypeSteps[type]}
 						onBlur={handleBlur}
 						onKeyDown={handleKeyDown}
 					/>
-					{date < maxDate && (
+					{Temporal.PlainDate.compare(date, maxDate) < 0 && (
 						<ButtonLink
 							as="a"
 							to="/ranking/{-$type}/{-$date}"
 							params={(prev) => ({
 								...prev,
 								type,
-								date: addDate(date, type, 1).toISODate(),
+								date: addDate(date, type, 1).toString(),
 							})}
 						>
 							次
@@ -239,7 +236,13 @@ function RankingPage() {
 	);
 }
 
-function RankingList({ type, date }: { type: RankingType; date: DateTime }) {
-	const { data } = useRanking(type, date.toISODate());
+function RankingList({
+	type,
+	date,
+}: {
+	type: RankingType;
+	date: Temporal.PlainDate;
+}) {
+	const { data } = useRanking(type, date.toString());
 	return <RankingRender ranking={data} />;
 }

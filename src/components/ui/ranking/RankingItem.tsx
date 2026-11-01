@@ -3,7 +3,6 @@ import { Link, createLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { decode } from "html-entities";
 import { useAtomValue } from "jotai";
-import { DateTime } from "luxon";
 import { GenreNotation, R18SiteNotation } from "narou";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,6 +18,12 @@ import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
 } from "@/modules/utils/parseSearch";
+import {
+	nowInTokyo,
+	parseDateTime,
+	formatDateTime,
+	formatRelative,
+} from "@/modules/utils/temporal";
 
 import { Button } from "../atoms/Button";
 import { Chip } from "../atoms/Chip";
@@ -83,16 +88,17 @@ const RankingItemRender: React.FC<{
 	} as const;
 
 	const novelupdatedAt = item?.novelupdated_at
-		? DateTime.fromISO(item.novelupdated_at)
+		? parseDateTime(item.novelupdated_at)
 		: null;
 	const generalFirstup = item?.general_firstup
-		? DateTime.fromISO(item.general_firstup)
+		? parseDateTime(item.general_firstup)
 		: null;
 	const generalLastup = item?.general_lastup
-		? DateTime.fromISO(item.general_lastup)
+		? parseDateTime(item.general_lastup)
 		: null;
-	const generalFirstupDiffNow = generalFirstup
-		? generalFirstup.diffNow()
+	const generalFirstupDiffDays = generalFirstup
+		? (generalFirstup.epochMilliseconds - nowInTokyo().epochMilliseconds) /
+			86_400_000
 		: null;
 
 	return (
@@ -109,8 +115,8 @@ const RankingItemRender: React.FC<{
 				第{rankingItem.rank}位{" "}
 				<Tags>
 					<Tag>{rankingItem.pt?.toLocaleString()}pt</Tag>
-					{generalFirstupDiffNow && generalFirstupDiffNow?.as("month") <= 1 && (
-						<Tag tagColor="red" light={generalFirstupDiffNow?.as("day") <= 7}>
+					{generalFirstupDiffDays !== null && generalFirstupDiffDays <= 30 && (
+						<Tag tagColor="red" light={generalFirstupDiffDays <= 7}>
 							New!
 						</Tag>
 					)}
@@ -192,7 +198,7 @@ const RankingItemRender: React.FC<{
 			<p>
 				更新日時:{" "}
 				{novelupdatedAt ? (
-					novelupdatedAt.toFormat("yyyy/MM/dd HH:mm:ss")
+					formatDateTime(novelupdatedAt)
 				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
@@ -200,13 +206,13 @@ const RankingItemRender: React.FC<{
 			<p>
 				掲載開始:{" "}
 				{generalFirstup ? (
-					generalFirstup.toRelative()
+					formatRelative(generalFirstup)
 				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}{" "}
 				/ 最終更新:{" "}
 				{generalLastup ? (
-					generalLastup.toRelative()
+					formatRelative(generalLastup)
 				) : (
 					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
 				)}
