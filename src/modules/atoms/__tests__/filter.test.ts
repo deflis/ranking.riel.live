@@ -1,11 +1,8 @@
-import { DateTime, Settings } from "luxon";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { allGenres } from "../../enum/Genre";
+import { parseDateTime } from "../../utils/temporal";
 import { checkAllGenres, getTermFromRaw, parseDateRange } from "../filter";
-
-// タイムゾーンを日本に固定
-Settings.defaultZone = "Asia/Tokyo";
 
 describe("filter utilities", () => {
 	describe("checkAllGenres", () => {
@@ -27,13 +24,11 @@ describe("filter utilities", () => {
 	});
 
 	describe("parseDateRange", () => {
-		const mockNow = DateTime.fromISO("2024-01-01T12:00:00.000Z", {
-			zone: "Asia/Tokyo",
-		});
+		const mockNow = parseDateTime("2024-01-01T12:00:00.000Z");
 
 		beforeEach(() => {
 			vi.useFakeTimers();
-			vi.setSystemTime(mockNow.toJSDate());
+			vi.setSystemTime(mockNow.epochMilliseconds);
 		});
 
 		afterEach(() => {
@@ -42,40 +37,28 @@ describe("filter utilities", () => {
 
 		it("相対的な期間文字列 (days) を正しく解析すること", () => {
 			const result = parseDateRange("7days");
-			expect(result?.toISODate()).toBe("2023-12-25");
+			expect(result?.toPlainDate().toString()).toBe("2023-12-25");
 		});
 
 		it("相対的な期間文字列 (months) を正しく解析すること", () => {
 			const result = parseDateRange("1months");
-			expect(result?.toISODate()).toBe("2023-12-01");
+			expect(result?.toPlainDate().toString()).toBe("2023-12-01");
 		});
 
 		it("相対的な期間文字列 (years) を正しく解析すること", () => {
 			const result = parseDateRange("1years");
-			expect(result?.toISODate()).toBe("2023-01-01");
+			expect(result?.toPlainDate().toString()).toBe("2023-01-01");
 		});
 
 		it("ISO日付文字列を正しく解析すること", () => {
 			const isoString = "2023-01-01T00:00:00.000Z";
 			const result = parseDateRange(isoString);
-			expect(result?.isValid).toBe(true);
-			expect(result?.toISODate()).toBe("2023-01-01");
+			expect(result?.toPlainDate().toString()).toBe("2023-01-01");
 		});
 
 		it("無効な入力に対して undefined を返すこと", () => {
 			expect(parseDateRange(undefined)).toBeUndefined();
 			expect(parseDateRange("invalid-date")).toBeUndefined();
-		});
-
-		it("throwOnInvalid=true でも無効な入力で例外を投げないこと", () => {
-			const prevThrowOnInvalid = Settings.throwOnInvalid;
-			Settings.throwOnInvalid = true;
-			try {
-				expect(() => parseDateRange("invalid-date")).not.toThrow();
-				expect(parseDateRange("invalid-date")).toBeUndefined();
-			} finally {
-				Settings.throwOnInvalid = prevThrowOnInvalid;
-			}
 		});
 	});
 

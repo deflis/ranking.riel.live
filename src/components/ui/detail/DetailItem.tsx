@@ -1,6 +1,5 @@
 import { Link, createLink } from "@tanstack/react-router";
 import { decode } from "html-entities";
-import { DateTime } from "luxon";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
 import type { FC } from "react";
 import { FaPenNib } from "react-icons/fa";
@@ -18,6 +17,11 @@ import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
 } from "@/modules/utils/parseSearch";
+import {
+	parseDateTime,
+	formatDateTime,
+	formatRelative,
+} from "@/modules/utils/temporal";
 
 import type {
 	Detail,
@@ -39,7 +43,6 @@ import DetailItemText from "./DetailItemText";
 
 const ChipLink = createLink(Chip);
 
-const dateFormat = "yyyy年MM月dd日 hh:mm:ss";
 /**
  * JavaScript の計算誤差（0.615 が内部で 0.61499... になる等）を避け、
  * 期待通りに四捨五入を行うヘルパー。
@@ -96,10 +99,10 @@ const DetailItem: FC<{
 	const linkLast = `${baseUrl}/${ncode}/${item?.general_all_no}/`;
 
 	const generalFirstup = item?.general_firstup
-		? DateTime.fromISO(item.general_firstup)
+		? parseDateTime(item.general_firstup)
 		: undefined;
 	const generalLastup = item?.general_lastup
-		? DateTime.fromISO(item.general_lastup)
+		? parseDateTime(item.general_lastup)
 		: undefined;
 
 	return (
@@ -302,8 +305,8 @@ const DetailItem: FC<{
 					>
 						{generalFirstup ? (
 							<>
-								{generalFirstup.toFormat(dateFormat)} （
-								{generalFirstup.toRelative()}）
+								{formatDateTime(generalFirstup, true)} （
+								{formatRelative(generalFirstup)}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />
@@ -315,8 +318,8 @@ const DetailItem: FC<{
 					>
 						{generalLastup ? (
 							<>
-								{generalLastup.toFormat(dateFormat)} （
-								{generalLastup.toRelative()}）
+								{formatDateTime(generalLastup, true)} （
+								{formatRelative(generalLastup)}）
 							</>
 						) : (
 							<PulseLoader disabled={isNotFound} />

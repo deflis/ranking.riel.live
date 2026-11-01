@@ -4,7 +4,6 @@ import {
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { DateTime } from "luxon";
 import {
 	Fields,
 	type NarouSearchResult,
@@ -166,7 +165,7 @@ const customRankingKey = (
 		notKeyword,
 		byTitle,
 		byStory,
-		parseDateRange(firstUpdate)?.toISO(),
+		parseDateRange(firstUpdate)?.toInstant().toString(),
 		minLength,
 		maxLength,
 		genres.length === 0 ? allGenres : genres,
@@ -280,7 +279,7 @@ export class FilterBuilder<
 	private minNo?: number;
 	private maxLength?: number;
 	private minLength?: number;
-	private firstUpdate?: DateTime;
+	private firstUpdate?: Temporal.ZonedDateTime;
 	private tanpen = true;
 	private rensai = true;
 	private kanketsu = true;
@@ -300,7 +299,10 @@ export class FilterBuilder<
 		}
 		if (this.firstUpdate) {
 			const parsedDate = parse(item.general_firstup);
-			if (parsedDate && parsedDate < this.firstUpdate) {
+			if (
+				parsedDate &&
+				Temporal.ZonedDateTime.compare(parsedDate, this.firstUpdate) < 0
+			) {
 				return false;
 			}
 		}
@@ -350,7 +352,7 @@ export class FilterBuilder<
 	setMinLength(minLength: number) {
 		this.minLength = minLength;
 	}
-	setFirstUpdate(firstUpdate: DateTime) {
+	setFirstUpdate(firstUpdate: Temporal.ZonedDateTime) {
 		this.firstUpdate = firstUpdate;
 	}
 	disableTanpen() {

@@ -1,10 +1,10 @@
-import { DateTime } from "luxon";
 import { R18Site, R18SiteNotation } from "narou";
 import React, { Fragment, useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { FaCog, FaSearch, FaTimes } from "react-icons/fa";
 
 import { useToggle } from "@/hooks/useToggle";
+import { nowInTokyo } from "@/modules/utils/temporal";
 
 import {
 	type FilterConfig,
@@ -181,8 +181,8 @@ function getDefaultValues({
 		firstUpdate: {
 			term: getTermFromRaw(firstUpdateRaw),
 			begin:
-				firstUpdate?.toISODate() ??
-				DateTime.now().setZone("Asia/Tokyo").toISODate(),
+				firstUpdate?.toPlainDate().toString() ??
+				nowInTokyo().toPlainDate().toString(),
 			end: "",
 		},
 		status: {
@@ -407,15 +407,8 @@ const EnableCustomRankingForm: React.FC<R18RankingFormParams & InnerParams> = ({
 					<TextField
 						type="date"
 						{...register("firstUpdate.begin")}
-						min={DateTime.fromObject(
-							{
-								year: 2013,
-								month: 5,
-								day: 1,
-							},
-							{ zone: "Asia/Tokyo" },
-						).toISODate()}
-						max={DateTime.now().setZone("Asia/Tokyo").toISODate()}
+						min={"2013-05-01"}
+						max={nowInTokyo().toPlainDate().toString()}
 						disabled={
 							useWatch({ control, name: "firstUpdate.term" }) !== "custom"
 						}

@@ -1,5 +1,4 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { DateTime } from "luxon";
 import type { RankingType } from "narou";
 
 import type {
@@ -28,9 +27,9 @@ import { rankingFetcher, rankingKey } from "./ranking";
 export const prefetchRanking = async (
 	queryClient: QueryClient,
 	type: RankingType,
-	date: DateTime,
+	date: Temporal.PlainDate,
 ) => {
-	const normalizedDate = convertDate(date, type).toISODate();
+	const normalizedDate = convertDate(date, type).toString();
 	const ranking = await queryClient.ensureQueryData({
 		queryKey: rankingKey(type, normalizedDate),
 		queryFn: rankingFetcher,

@@ -6,6 +6,8 @@ import {
 import DataLoader from "dataloader";
 import { R18Fields, searchR18 } from "narou";
 
+import { toISODateTime } from "@/modules/utils/temporal";
+
 import { parseDate } from "../utils/date";
 import { fetchOptions } from "./custom/utils";
 import type { NocDetail, NocItem } from "./types";
@@ -91,9 +93,9 @@ const itemLoader = new DataLoader<string, NocItem | undefined>(
 			values.map(
 				({ general_firstup, general_lastup, novelupdated_at, ...others }) => {
 					const item: NocItem = {
-						general_firstup: parseDate(general_firstup).toISO(),
-						general_lastup: parseDate(general_lastup).toISO(),
-						novelupdated_at: parseDate(novelupdated_at).toISO(),
+						general_firstup: toISODateTime(parseDate(general_firstup)),
+						general_lastup: toISODateTime(parseDate(general_lastup)),
+						novelupdated_at: toISODateTime(parseDate(novelupdated_at)),
 						...others,
 					};
 					return [others.ncode.toLowerCase(), item];

@@ -3,7 +3,6 @@ import { Link as RouterLink } from "@tanstack/react-router";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { DateTime } from "luxon";
 import { RankingType } from "narou";
 import { FaTrophy } from "react-icons/fa";
 import {
@@ -18,6 +17,8 @@ import {
 } from "recharts";
 import colors from "tailwindcss/colors";
 
+import { formatJapaneseDate } from "@/modules/utils/temporal";
+
 import { darkModeAtom } from "../../../modules/atoms/global";
 import type {
 	RankingHistories,
@@ -28,21 +29,25 @@ import { Paper } from "../atoms/Paper";
 
 import styles from "./RankingHistoryRender.module.css";
 
-function* rangeDate(start: DateTime, end: DateTime, type: RankingType) {
+function* rangeDate(
+	start: Temporal.PlainDate,
+	end: Temporal.PlainDate,
+	type: RankingType,
+) {
 	if (!start) return;
 	let date = start;
-	while (date <= end) {
+	while (Temporal.PlainDate.compare(date, end) <= 0) {
 		yield date;
 		switch (type) {
 			case RankingType.Daily:
-				date = date.plus({ day: 1 });
+				date = date.add({ days: 1 });
 				break;
 			case RankingType.Weekly:
-				date = date.plus({ week: 1 });
+				date = date.add({ weeks: 1 });
 				break;
 			case RankingType.Monthly:
 			case RankingType.Quarterly:
-				date = date.plus({ month: 1 });
+				date = date.add({ months: 1 });
 				break;
 		}
 	}
@@ -81,7 +86,7 @@ const RankingHistoryCharts: React.FC<{
 	const graphColor = useAtomValue(graphColorAtom);
 
 	const rankingData = ranking.map(({ date, rank, pt }) => ({
-		date: DateTime.fromISO(date),
+		date: Temporal.PlainDate.from(date),
 		rank,
 		pt,
 	}));
@@ -91,7 +96,7 @@ const RankingHistoryCharts: React.FC<{
 
 	const data: DataType[] = Array.from(rangeDate(minDate, maxDate, type))
 		.map((date) => {
-			const item = rankingData.find((item) => date.hasSame(item.date, "day"));
+			const item = rankingData.find((item) => date.equals(item.date));
 			return {
 				date,
 				rank: item?.rank ?? null,
@@ -99,7 +104,7 @@ const RankingHistoryCharts: React.FC<{
 			};
 		})
 		.map(({ date, rank, pt }) => ({
-			date: date.toFormat("yyyy年MM月dd日(EEE)"),
+			date: formatJapaneseDate(date, true),
 			順位: rank,
 			ポイント: pt,
 		}));
@@ -208,7 +213,7 @@ const RankingHistoryCharts: React.FC<{
 										})}
 										className="text-blue-500 hover:underline dark:text-blue-400"
 									>
-										{DateTime.fromISO(date).toFormat("yyyy年MM月dd日(EEE)")}
+										{formatJapaneseDate(Temporal.PlainDate.from(date), true)}
 									</RouterLink>
 								</td>
 								<td className="text-right">
