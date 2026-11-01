@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
@@ -75,7 +74,7 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	}, []);
 
 	return (
-		<div className={clsx("text-center", className)}>
+		<div className={["text-center", className].filter(Boolean).join(" ")}>
 			<ins
 				className="adsbygoogle block"
 				data-ad-client={adSenseClientId}

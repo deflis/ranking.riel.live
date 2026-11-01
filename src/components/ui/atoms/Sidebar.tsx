@@ -4,7 +4,6 @@ import {
 	Transition,
 	TransitionChild,
 } from "@headlessui/react";
-import clsx from "clsx";
 import {
 	type ComponentProps,
 	type ElementType,
@@ -29,12 +28,14 @@ export function SidebarItem<T extends ElementType = "span">({
 		<li className="relative">
 			<Component
 				ref={ref}
-				className={clsx(
+				className={[
 					"link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 dark:text-gray-300 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
 					hover &&
 						"hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-700",
 					className,
-				)}
+				]
+					.filter(Boolean)
+					.join(" ")}
 				{...props}
 			/>
 		</li>
