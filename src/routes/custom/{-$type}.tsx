@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
+import { DotLoader } from "@/components/ui/atoms/Loader";
 import { CustomRankingForm } from "@/components/ui/custom/CustomRankingForm";
 import { CustomRankingRender } from "@/components/ui/ranking/CustomRankingRender";
 import type { CustomRankingParams } from "@/modules/interfaces/CustomRankingParams";
@@ -32,7 +33,9 @@ import {
 } from "@/modules/utils/parseSearch";
 
 export const Route = createFileRoute("/custom/{-$type}")({
+	// クエリによらない静的HTMLを配信し、検索とデータ取得はブラウザーで実行する。
 	ssr: false,
+	pendingComponent: DotLoader,
 	validateSearch: (search: Record<string, unknown>): CustomRankingSearch => {
 		return {
 			keyword: search.keyword as string | undefined,
