@@ -5,7 +5,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-import { RankingType } from "./src/modules/interfaces/RankingType";
+import { RankingType } from "./src/modules/interfaces/RankingType.ts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,9 +17,13 @@ export default defineConfig({
 			// 検索条件はブラウザーで処理するため、種別ごとの共通HTMLだけを生成する。
 			pages: [
 				"/custom",
-				...Object.values(RankingType).map((type) => `/custom/${type}`),
+				"/r18/ranking",
+				...Object.values(RankingType).flatMap((type) => [
+					`/custom/${type}`,
+					`/r18/ranking/${type}`,
+				]),
 			].map((path) => ({ path })),
-			// 作品詳細だけを静的なシェルから起動し、ランキングのSSRは維持する。
+			// 作品詳細は静的シェルから起動し、通常ランキングのSSRは維持する。
 			spa: {
 				enabled: true,
 				// 通常ページのプリレンダリングと区別し、詳細の書き換え規則も避ける。
