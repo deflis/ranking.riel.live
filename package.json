@@ -19,10 +19,8 @@
 	},
 	"dependencies": {
 		"@headlessui/react": "^2.2.10",
-		"@tanstack/query-sync-storage-persister": "^5.105.0",
 		"@tanstack/react-query": "^5.105.0",
 		"@tanstack/react-query-devtools": "^5.105.0",
-		"@tanstack/react-query-persist-client": "^5.105.0",
 		"@tanstack/react-router": "^1.170.46",
 		"@tanstack/react-router-devtools": "^1.167.2",
 		"@tanstack/react-router-ssr-query": "^1.167.3",
@@ -45,7 +43,6 @@
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.66.0",
 		"@tailwindcss/forms": "^0.5.11",
-		"@tailwindcss/postcss": "^4.3.3",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
@@ -53,8 +50,6 @@
 		"@vitejs/plugin-react": "^6.1.2",
 		"oxfmt": "^0.75.0",
 		"oxlint": "^1.90.0",
-		"postcss": "^8.5.32",
-		"postcss-import": "^17.0.1",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^7.0.2",
 		"vite": "^8.3.5",
