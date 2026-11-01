@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import type React from "react";
 import type { ComponentProps, ElementType } from "react";
 
@@ -25,14 +24,16 @@ export function Tag<C extends ElementType = "span">({
 	return (
 		<Component
 			ref={ref}
-			className={clsx(
+			className={[
 				"link-reset",
 				styles.tag,
 				tagColor === "cyan" && styles.cyan,
 				tagColor === "lightGreen" && styles["light-green"],
 				tagColor === "red" && styles.red,
 				className,
-			)}
+			]
+				.filter(Boolean)
+				.join(" ")}
 			{...props}
 		/>
 	);
@@ -42,5 +43,7 @@ export const Tags: React.FC<{
 	addons?: boolean;
 	children: React.ReactNode;
 }> = ({ addons, children }) => (
-	<span className={clsx("tags", addons && "addon")}>{children}</span>
+	<span className={["tags", addons && "addon"].filter(Boolean).join(" ")}>
+		{children}
+	</span>
 );

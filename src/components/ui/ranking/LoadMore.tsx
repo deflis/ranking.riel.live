@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
 import { Button } from "../atoms/Button";
@@ -36,7 +35,10 @@ export const LoadMore = ({
 	}, []);
 
 	return (
-		<div ref={ref} className={clsx("col-span-full", className)}>
+		<div
+			ref={ref}
+			className={["col-span-full", className].filter(Boolean).join(" ")}
+		>
 			<Button onClick={onLoadMore} className="w-full h-20 text-3xl">
 				もっと見る
 			</Button>

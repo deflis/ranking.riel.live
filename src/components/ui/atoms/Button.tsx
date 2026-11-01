@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import type { ComponentProps, ElementType } from "react";
 
 import styles from "./form.module.css";
@@ -20,12 +19,14 @@ export function Button<T extends ElementType = "button">({
 	return (
 		<Component
 			ref={ref}
-			className={clsx(
+			className={[
 				"link-reset",
 				styles.button,
 				color === "primary" && styles.primary,
 				className,
-			)}
+			]
+				.filter(Boolean)
+				.join(" ")}
 			type={type ?? "button"}
 			{...props}
 		/>

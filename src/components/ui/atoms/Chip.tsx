@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import type { ComponentProps, ElementType } from "react";
 
 export type ChipProps<T extends ElementType = "a"> = {
@@ -17,10 +16,12 @@ export function Chip<T extends ElementType = "a">({
 	return (
 		<Component
 			ref={ref}
-			className={clsx(
+			className={[
 				"link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center dark:bg-zinc-700",
 				className,
-			)}
+			]
+				.filter(Boolean)
+				.join(" ")}
 			{...props}
 		>
 			<span className="px-2">{children}</span>

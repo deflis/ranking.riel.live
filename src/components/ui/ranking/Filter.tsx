@@ -1,5 +1,4 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { GenreNotation } from "narou";
 import React, { useState } from "react";
@@ -294,7 +293,11 @@ export const FilterComponent: React.FC = () => {
 						<span className={styles.label}>
 							フィルター : {enable ? "有効" : "無効"}
 						</span>
-						<HiChevronDown className={clsx(styles.icon, open && styles.open)} />
+						<HiChevronDown
+							className={[styles.icon, open && styles.open]
+								.filter(Boolean)
+								.join(" ")}
+						/>
 					</Disclosure.Button>
 					<Transition
 						as="div"
