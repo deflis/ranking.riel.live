@@ -9,33 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as R18IndexRouteImport } from './routes/r18/index'
-import { Route as DetailNcodeRouteImport } from './routes/detail/$ncode'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as CustomChar123TypeChar125RouteImport } from './routes/custom/{-$type}'
-import { Route as RankingChar123TypeChar125Char123DateChar125RouteImport } from './routes/ranking/{-$type}/{-$date}'
-import { Route as R18RankingChar123TypeChar125RouteImport } from './routes/r18/ranking/{-$type}'
+import { Route as DetailNcodeRouteImport } from './routes/detail/$ncode'
+import { Route as R18IndexRouteImport } from './routes/r18/index'
 import { Route as R18DetailNcodeRouteImport } from './routes/r18/detail/$ncode'
+import { Route as R18RankingChar123TypeChar125RouteImport } from './routes/r18/ranking/{-$type}'
+import { Route as RankingChar123TypeChar125Char123DateChar125RouteImport } from './routes/ranking/{-$type}/{-$date}'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const R18IndexRoute = R18IndexRouteImport.update({
-  id: '/r18/',
-  path: '/r18/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DetailNcodeRoute = DetailNcodeRouteImport.update({
-  id: '/detail/$ncode',
-  path: '/detail/$ncode',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomChar123TypeChar125Route =
@@ -44,23 +34,33 @@ const CustomChar123TypeChar125Route =
     path: '/custom/{-$type}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const RankingChar123TypeChar125Char123DateChar125Route =
-  RankingChar123TypeChar125Char123DateChar125RouteImport.update({
-    id: '/ranking/{-$type}/{-$date}',
-    path: '/ranking/{-$type}/{-$date}',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const DetailNcodeRoute = DetailNcodeRouteImport.update({
+  id: '/detail/$ncode',
+  path: '/detail/$ncode',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R18IndexRoute = R18IndexRouteImport.update({
+  id: '/r18/',
+  path: '/r18/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R18DetailNcodeRoute = R18DetailNcodeRouteImport.update({
+  id: '/r18/detail/$ncode',
+  path: '/r18/detail/$ncode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const R18RankingChar123TypeChar125Route =
   R18RankingChar123TypeChar125RouteImport.update({
     id: '/r18/ranking/{-$type}',
     path: '/r18/ranking/{-$type}',
     getParentRoute: () => rootRouteImport,
   } as any)
-const R18DetailNcodeRoute = R18DetailNcodeRouteImport.update({
-  id: '/r18/detail/$ncode',
-  path: '/r18/detail/$ncode',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const RankingChar123TypeChar125Char123DateChar125Route =
+  RankingChar123TypeChar125Char123DateChar125RouteImport.update({
+    id: '/ranking/{-$type}/{-$date}',
+    path: '/ranking/{-$type}/{-$date}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -139,13 +139,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -153,18 +146,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/r18/': {
-      id: '/r18/'
-      path: '/r18'
-      fullPath: '/r18/'
-      preLoaderRoute: typeof R18IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/detail/$ncode': {
-      id: '/detail/$ncode'
-      path: '/detail/$ncode'
-      fullPath: '/detail/$ncode'
-      preLoaderRoute: typeof DetailNcodeRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/custom/{-$type}': {
@@ -174,11 +160,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomChar123TypeChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ranking/{-$type}/{-$date}': {
-      id: '/ranking/{-$type}/{-$date}'
-      path: '/ranking/{-$type}/{-$date}'
-      fullPath: '/ranking/{-$type}/{-$date}'
-      preLoaderRoute: typeof RankingChar123TypeChar125Char123DateChar125RouteImport
+    '/detail/$ncode': {
+      id: '/detail/$ncode'
+      path: '/detail/$ncode'
+      fullPath: '/detail/$ncode'
+      preLoaderRoute: typeof DetailNcodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r18/': {
+      id: '/r18/'
+      path: '/r18'
+      fullPath: '/r18/'
+      preLoaderRoute: typeof R18IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r18/detail/$ncode': {
+      id: '/r18/detail/$ncode'
+      path: '/r18/detail/$ncode'
+      fullPath: '/r18/detail/$ncode'
+      preLoaderRoute: typeof R18DetailNcodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/r18/ranking/{-$type}': {
@@ -188,11 +188,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R18RankingChar123TypeChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/r18/detail/$ncode': {
-      id: '/r18/detail/$ncode'
-      path: '/r18/detail/$ncode'
-      fullPath: '/r18/detail/$ncode'
-      preLoaderRoute: typeof R18DetailNcodeRouteImport
+    '/ranking/{-$type}/{-$date}': {
+      id: '/ranking/{-$type}/{-$date}'
+      path: '/ranking/{-$type}/{-$date}'
+      fullPath: '/ranking/{-$type}/{-$date}'
+      preLoaderRoute: typeof RankingChar123TypeChar125Char123DateChar125RouteImport
       parentRoute: typeof rootRouteImport
     }
   }
