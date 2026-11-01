@@ -1,5 +1,4 @@
 import { Link, createLink } from "@tanstack/react-router";
-import { decode } from "html-entities";
 import { GenreNotation, NovelType, R18SiteNotation } from "narou";
 import type { FC } from "react";
 import { FaPenNib } from "react-icons/fa";
@@ -13,6 +12,7 @@ import {
 } from "react-icons/hi";
 import { IoLanguage, IoTime } from "react-icons/io5";
 
+import { decodeNarouText } from "@/modules/utils/decodeNarouText";
 import {
 	buildCustomRankingSearch,
 	buildR18RankingSearch,
@@ -154,7 +154,7 @@ const DetailItem: FC<{
 						className="link-reset hover:underline"
 					>
 						{item ? (
-							decode(item.title)
+							decodeNarouText(item.title)
 						) : isNotFound ? (
 							"小説が見つかりません。削除された可能性があります。"
 						) : (
@@ -219,14 +219,14 @@ const DetailItem: FC<{
 					>
 						{item ? (
 							isR18 ? (
-								decode(item.writer)
+								decodeNarouText(item.writer)
 							) : (
 								<a
 									href={`https://mypage.syosetu.com/${encodeURIComponent(item.userid)}/`}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									{decode(item.writer)}
+									{decodeNarouText(item.writer)}
 								</a>
 							)
 						) : (
