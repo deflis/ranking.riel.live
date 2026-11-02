@@ -1,0 +1,43 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.panel {
+		padding: 1rem;
+		background-color: oklch(97.1% 0.013 17.38);
+		border: 1px solid oklch(88.5% 0.062 18.334);
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			background-color: oklch(39.6% 0.141 25.723 / 0.2);
+			border-color: oklch(44.4% 0.177 26.899);
+		}
+	}
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.title {
+		font-size: 1.125rem;
+		line-height: 1.75rem;
+		font-weight: 700;
+		color: oklch(50.5% 0.213 27.518);
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			color: oklch(70.4% 0.191 22.216);
+		}
+	}
+	.message {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		color: oklch(57.7% 0.245 27.325);
+		font-family:
+			ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+			"Courier New", monospace;
+		overflow: auto;
+		max-height: 10rem;
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			color: oklch(80.8% 0.114 19.571);
+		}
+	}
+	.actions {
+		margin-top: 0.5rem;
+	}
+}
