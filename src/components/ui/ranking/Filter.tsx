@@ -215,7 +215,7 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 							{ value: "1years", label: "1年より新しい" },
 							{ value: "custom", label: "選択する" },
 						]}
-						buttonClassName="w-52"
+						buttonClassName={styles.selectButton}
 					/>
 					<TextField
 						type="date"

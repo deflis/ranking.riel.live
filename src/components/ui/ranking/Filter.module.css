@@ -81,3 +81,7 @@
 	padding-right: 0.5rem;
 	display: inline;
 }
+
+.selectButton {
+	width: 13rem;
+}

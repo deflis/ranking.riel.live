@@ -1,4 +1,5 @@
 declare const styles: {
+	readonly selectButton: string;
 	readonly filter: string;
 	readonly button: string;
 	readonly label: string;
