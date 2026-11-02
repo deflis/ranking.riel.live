@@ -30,6 +30,8 @@ import { Divider, Sidebar, SidebarItem } from "../atoms/Sidebar";
 import { TextField } from "../atoms/TextField";
 import { AdDialog } from "../common/AdDialog";
 
+import styles from "./Header.module.css";
+
 const SidebarItemLink = createLink(SidebarItem);
 const validateRegexp = /[nN][0-9]{4,}[a-zA-Z]{1,2}/;
 
@@ -103,24 +105,24 @@ export const Header: React.FC = () => {
 
 	return (
 		<header>
-			<nav className="shadow-md py-2 bg-stone-100 relative flex items-center w-full justify-between dark:bg-neutral-900">
+			<nav className={styles.navigation}>
 				<button
 					type="button"
 					aria-label="メニューを開く"
 					aria-expanded={expand}
-					className="rounded-full hover:bg-stone-300 dark:hover:bg-neutral-800  w-10 h-10"
+					className={styles.menuButton}
 					onClick={toggle}
 				>
-					<HiMenu className="w-5 h-5 m-auto" />
+					<HiMenu className={styles.menuIcon} />
 				</button>
 				<h6>
-					<Link to="/" className="link-reset hover:underline">
-						<FaTrophy className="w-5 h-5 inline" />
+					<Link to="/" className={["link-reset", styles.homeLink].join(" ")}>
+						<FaTrophy className={styles.icon} />
 						なろうランキング
 					</Link>
 				</h6>
-				<div className="grow" />
-				<div className="space-x-4 mx-2 hidden sm:block">
+				<div className={styles.spacer} />
+				<div className={styles.links}>
 					<Link
 						to="/ranking/{-$type}/{-$date}"
 						params={(prev) => ({
@@ -323,7 +325,7 @@ export const Header: React.FC = () => {
 							type="number"
 							onChange={handleChangeHeight}
 							disabled={!titleHeightStatus}
-							className="w-20 ml-2"
+							className={styles.titleHeightInput}
 						/>
 					)}
 				</SidebarItem>
@@ -336,17 +338,17 @@ export const Header: React.FC = () => {
 					広告を表示しない
 				</SidebarItem>
 				<Divider />
-				<SidebarItem as="form" className="flex" onSubmit={detail}>
+				<SidebarItem as="form" onSubmit={detail}>
 					<label>
 						Nコード
 						<TextField
 							onChange={handleChangeNcode}
 							value={ncode}
-							className="w-20"
+							className={styles.ncodeInput}
 						/>
 					</label>
 					<Button disabled={!validate(ncode)} onClick={detail}>
-						<FaHammer className="w-5 h-5 inline" />
+						<FaHammer className={styles.icon} />
 						詳細を取得
 					</Button>
 				</SidebarItem>
