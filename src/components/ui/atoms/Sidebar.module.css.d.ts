@@ -1,0 +1,21 @@
+declare const styles: {
+	readonly relative: string;
+	readonly item: string;
+	readonly hoverable: string;
+	readonly divider: string;
+	readonly backdrop: string;
+	readonly panel: string;
+	readonly header: string;
+	readonly title: string;
+	readonly closeButton: string;
+	readonly closeIcon: string;
+	readonly backdropEnter: string;
+	readonly backdropLeave: string;
+	readonly panelEnter: string;
+	readonly panelLeave: string;
+	readonly transparent: string;
+	readonly opaque: string;
+	readonly offscreen: string;
+	readonly onscreen: string;
+};
+export default styles;
