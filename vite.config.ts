@@ -1,6 +1,5 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import babel from "@rolldown/plugin-babel";
-import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -11,7 +10,6 @@ import { RankingType } from "./src/modules/interfaces/RankingType.ts";
 export default defineConfig({
 	plugins: [
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
-		tailwindcss(),
 		tanstackStart({
 			srcDirectory: "src",
 			// 検索条件はブラウザーで処理するため、種別ごとの共通HTMLだけを生成する。
