@@ -1,0 +1,10 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.range {
+		display: block;
+		text-align: center;
+		font-size: 0.75rem;
+		line-height: 1rem;
+	}
+}
