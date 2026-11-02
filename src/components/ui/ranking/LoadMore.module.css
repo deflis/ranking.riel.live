@@ -1,0 +1,11 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.container {
+		grid-column: 1 / -1;
+	}
+	.button {
+		width: 100%;
+		height: 5rem;
+	}
+}
