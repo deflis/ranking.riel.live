@@ -5,10 +5,12 @@ import { useMedia } from "@/hooks/useMedia";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 
+import styles from "./AdAmazon.module.css";
+
 const AdAmazon728x90: React.FC = () => {
 	return (
 		<iframe
-			className="m-auto"
+			className={styles.banner}
 			title="Amazon広告"
 			src="https://rcm-fe.amazon-adsystem.com/e/cm?o=9&p=48&l=ez&f=ifr&linkID=50fa90484170d3f8a8218a6b11bc21ca&t=riel011-22&tracking_id=riel011-22"
 			width="728"
@@ -21,7 +23,7 @@ const AdAmazon728x90: React.FC = () => {
 const AdAmazon468x60: React.FC = () => {
 	return (
 		<iframe
-			className="m-auto max-w-lg"
+			className={styles.smallBanner}
 			title="Amazon広告"
 			src="https://rcm-fe.amazon-adsystem.com/e/cm?o=9&p=13&l=ez&f=ifr&linkID=45eedac80204e7d9ae479f497dd6013c&t=riel011-22&tracking_id=riel011-22"
 			width="468"
@@ -33,7 +35,7 @@ const AdAmazon468x60: React.FC = () => {
 const AdAmazon180x150: React.FC = () => {
 	return (
 		<iframe
-			className="m-auto max-w-lg"
+			className={styles.smallBanner}
 			title="Amazon広告"
 			src="https://rcm-fe.amazon-adsystem.com/e/cm?o=9&p=9&l=ez&f=ifr&linkID=d5d233b3cf96a106aca1f58181777280&t=riel011-22&tracking_id=riel011-22"
 			width="180"
