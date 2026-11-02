@@ -26,6 +26,8 @@ import {
 import { addDate, convertDate } from "@/modules/utils/date";
 import { nowInTokyo } from "@/modules/utils/temporal";
 
+import styles from "../RankingPage.module.css";
+
 const ButtonLink = createLink(Button);
 
 const rankingTypeList = [
@@ -130,8 +132,8 @@ function RankingPage() {
 
 	return (
 		<>
-			<div className="mx-4 mt-2">
-				<Paper className="mb-6 space-x-2 p-2 bg-white dark:bg-zinc-800 dark:border-zinc-700">
+			<div className={styles.container}>
+				<Paper className={styles.controls}>
 					<SelectBox
 						value={type}
 						onChange={(newType: RankingType) =>
