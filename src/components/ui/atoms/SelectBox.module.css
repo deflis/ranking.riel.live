@@ -1,0 +1,120 @@
+.select_box {
+	position: relative;
+	display: inline-block;
+	text-align: left;
+}
+
+.control {
+	position: relative;
+	width: 100%;
+}
+
+.spacer {
+	flex-grow: 1;
+}
+
+.select_box_transition {
+	transform-origin: top left;
+	position: absolute;
+	left: 0;
+	margin-top: 0.5rem;
+	border-radius: 0.375rem;
+	box-shadow:
+		0 0 0 1px rgb(0 0 0 / 0.05),
+		0 10px 15px -3px rgb(0 0 0 / 0.1),
+		0 4px 6px -4px rgb(0 0 0 / 0.1);
+	background-color: white;
+
+	&:focus {
+		outline: none;
+	}
+
+	&:where([data-mode="dark"], [data-mode="dark"] *) {
+		background-color: oklch(21% 0.006 285.885);
+		color: white;
+	}
+
+	&.enter {
+		transition:
+			opacity 100ms cubic-bezier(0, 0, 0.2, 1),
+			scale 100ms cubic-bezier(0, 0, 0.2, 1);
+	}
+
+	&.leave {
+		transition:
+			opacity 75ms cubic-bezier(0.4, 0, 1, 1),
+			scale 75ms cubic-bezier(0.4, 0, 1, 1);
+	}
+
+	&.enter_from,
+	&.leave_to {
+		opacity: 0;
+		scale: 95%;
+	}
+
+	&.enter_to,
+	&.leave_from {
+		opacity: 1;
+		scale: 100%;
+	}
+}
+
+.select_box_options {
+	z-index: 50;
+	padding-block: 0.25rem;
+
+	& .option {
+		display: block;
+		padding: 0.5rem 1rem;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+
+		&:not(.selected) {
+			color: oklch(37.3% 0.034 259.733);
+
+			&[data-focus] {
+				background-color: oklch(98.5% 0.002 247.839);
+			}
+
+			@media (hover: hover) {
+				&:hover {
+					background-color: oklch(98.5% 0.002 247.839);
+				}
+			}
+		}
+
+		&.selected {
+			background-color: oklch(96.7% 0.003 264.542);
+			color: oklch(21% 0.034 264.665);
+
+			&[data-focus] {
+				background-color: oklch(92.8% 0.006 264.531);
+			}
+		}
+
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			&:not(.selected) {
+				color: oklch(96.7% 0.001 286.375);
+
+				&[data-focus] {
+					background-color: oklch(27.4% 0.006 286.033);
+				}
+
+				@media (hover: hover) {
+					&:hover {
+						background-color: oklch(27.4% 0.006 286.033);
+					}
+				}
+			}
+
+			&.selected {
+				background-color: oklch(37% 0.013 285.805);
+				color: white;
+
+				&[data-focus] {
+					background-color: oklch(44.2% 0.017 285.786);
+				}
+			}
+		}
+	}
+}
