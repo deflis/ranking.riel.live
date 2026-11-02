@@ -1,0 +1,22 @@
+declare const styles: {
+	readonly codeTag: string;
+	readonly small: string;
+	readonly quarterLoader: string;
+	readonly halfLoader: string;
+	readonly title: string;
+	readonly titleLink: string;
+	readonly titleLoader: string;
+	readonly link: string;
+	readonly columns: string;
+	readonly storyColumn: string;
+	readonly heading: string;
+	readonly story: string;
+	readonly metadata: string;
+	readonly icon: string;
+	readonly keywords: string;
+	readonly points: string;
+	readonly pointsTable: string;
+	readonly center: string;
+	readonly note: string;
+};
+export default styles;
