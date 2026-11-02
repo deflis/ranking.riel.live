@@ -1,0 +1,27 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.row {
+		display: flex;
+	}
+	.label {
+		flex-basis: 0;
+		flex-grow: 1;
+		flex-shrink: 0;
+		text-align: right;
+		font-weight: 700;
+		vertical-align: middle;
+	}
+	.icon {
+		width: 1.5rem;
+		padding-right: 0.125rem;
+		text-align: right;
+		vertical-align: middle;
+		color: oklch(70.8% 0 none);
+	}
+	.value {
+		flex-basis: 0;
+		flex-grow: 3;
+		flex-shrink: 1;
+	}
+}
