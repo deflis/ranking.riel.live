@@ -1,14 +1,26 @@
-@reference "../index.css";
-
 .body {
-	@apply bg-neutral-50 text-gray-900;
-	@apply dark:bg-zinc-900 dark:text-white;
-	@apply min-h-screen;
+	background-color: oklch(98.5% 0 none);
+	color: oklch(21% 0.034 264.665);
+	min-height: 100vh;
+	&:where([data-mode="dark"], [data-mode="dark"] *) {
+		background-color: oklch(21% 0.006 285.885);
+		color: white;
+	}
 	& a:not(:global(.link-reset)) {
-		@apply text-blue-500 hover:underline dark:text-blue-400;
+		color: oklch(62.3% 0.214 259.815);
+		@media (hover: hover) {
+			&:hover {
+				text-decoration-line: underline;
+			}
+		}
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			color: oklch(70.7% 0.165 254.624);
+		}
 	}
 }
-
 .layout {
-	@apply container mx-auto max-w-screen-2xl mt-4;
+	width: 100%;
+	max-width: 96rem;
+	margin-inline: auto;
+	margin-top: 1rem;
 }
