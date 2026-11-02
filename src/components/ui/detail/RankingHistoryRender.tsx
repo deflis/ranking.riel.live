@@ -4,7 +4,6 @@ import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { RankingType } from "narou";
 import { FaTrophy } from "react-icons/fa";
-import colors from "tailwindcss/colors";
 
 import { formatJapaneseDate } from "@/modules/utils/temporal";
 
@@ -53,17 +52,17 @@ const graphColorAtom = atom((get) =>
 	!get(darkModeAtom)
 		? {
 				// light mode
-				rank: colors.blue[600],
-				pt: colors.rose[600],
-				text: colors.gray[800],
-				bg: colors.white,
+				rank: "oklch(54.6% 0.245 262.881)",
+				pt: "oklch(58.6% 0.253 17.585)",
+				text: "oklch(27.8% 0.033 256.848)",
+				bg: "#fff",
 			}
 		: {
 				// dark mode
-				rank: colors.blue[400],
-				pt: colors.rose[400],
-				text: colors.neutral[300],
-				bg: colors.neutral[800],
+				rank: "oklch(70.7% 0.165 254.624)",
+				pt: "oklch(71.2% 0.194 13.428)",
+				text: "oklch(87% 0 none)",
+				bg: "oklch(26.9% 0 none)",
 			},
 );
 
@@ -97,13 +96,13 @@ const RankingHistoryCharts: React.FC<{
 			ポイント: pt,
 		}));
 	return (
-		<div className="flex flex-col	lg:flex-row">
-			<div className="w-full min-w-0 lg:w-2/3 h-96">
+		<div className={styles.columns}>
+			<div className={styles.chartColumn}>
 				<RankingHistoryChart data={data} colors={graphColor} />
 			</div>
 
-			<div className="w-full lg:w-1/3 lg:h-96 lg:overflow-auto">
-				<table className="w-full table-auto">
+			<div className={styles.tableColumn}>
+				<table className={styles.table}>
 					<thead>
 						<tr className={styles.tableRow}>
 							<th>日付</th>
@@ -114,7 +113,7 @@ const RankingHistoryCharts: React.FC<{
 					<tbody>
 						{ranking.map(({ date, rank, pt }) => (
 							<tr key={date} className={styles.tableRow}>
-								<td className="text-center">
+								<td className={styles.center}>
 									<RouterLink
 										to="/ranking/{-$type}/{-$date}"
 										params={(prev) => ({
@@ -122,24 +121,18 @@ const RankingHistoryCharts: React.FC<{
 											type: type,
 											date: date,
 										})}
-										className="text-blue-500 hover:underline dark:text-blue-400"
+										className={styles.link}
 									>
 										{formatJapaneseDate(Temporal.PlainDate.from(date), true)}
 									</RouterLink>
 								</td>
-								<td className="text-right">
-									{rank === 1 && (
-										<FaTrophy className="h-5 w-5 inline text-yellow-500" />
-									)}
-									{rank === 2 && (
-										<FaTrophy className="h-5 w-5 inline text-gray-500 mr-a" />
-									)}
-									{rank === 3 && (
-										<FaTrophy className="h-5 w-5 inline text-yellow-700 mr-a" />
-									)}
+								<td className={styles.right}>
+									{rank === 1 && <FaTrophy className={styles.gold} />}
+									{rank === 2 && <FaTrophy className={styles.silver} />}
+									{rank === 3 && <FaTrophy className={styles.bronze} />}
 									{rank}位
 								</td>
-								<td className="text-right">{pt.toLocaleString()}pt</td>
+								<td className={styles.right}>{pt.toLocaleString()}pt</td>
 							</tr>
 						))}
 					</tbody>
@@ -181,23 +174,23 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 		return null;
 	}
 	return (
-		<Paper className="p-2 space-y-2 bg-white dark:bg-zinc-800">
-			<h2 className="text-xl font-medium">ランキング履歴</h2>
+		<Paper className={styles.panel}>
+			<h2 className={styles.title}>ランキング履歴</h2>
 			<div>
 				<TabGroup selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-					<TabList className="w-full inline-block relative whitespace-nowrap">
-						<div className="flex space-x-1 justify-center items-center">
+					<TabList className={styles.tabs}>
+						<div className={styles.tabStrip}>
 							{RankingTabs.map((type) => (
 								<Tab
 									key={type}
 									className={({ selected }) =>
 										[
-											"w-48 py-2.5 text-md leading-5",
+											styles.tab,
 											selected
-												? "text-blue-500 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400"
+												? styles.selected
 												: ranking[type].length !== 0
-													? "text-gray-700  dark:text-neutral-400 hover:bg-blue-300/12 hover:text-blue-700 dark:hover:text-blue-300 "
-													: "text-gray-300 dark:text-neutral-700",
+													? styles.available
+													: styles.unavailable,
 										]
 											.filter(Boolean)
 											.join(" ")
@@ -209,7 +202,7 @@ export const RankingHistoryRender: React.FC<{ ranking: RankingHistories }> = ({
 							))}
 						</div>
 					</TabList>
-					<TabPanels className="mt-2">
+					<TabPanels className={styles.panels}>
 						{RankingTabs.map((type) => (
 							<Tab.Panel key={type}>
 								<RankingHistoryCharts ranking={ranking[type]} type={type} />
