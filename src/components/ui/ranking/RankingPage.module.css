@@ -1,4 +1,4 @@
-@import "../../styles/layers.css";
+@import "../../../styles/layers.css";
 
 @layer components {
 	.container {

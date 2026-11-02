@@ -26,7 +26,7 @@ import {
 import { addDate, convertDate } from "@/modules/utils/date";
 import { nowInTokyo } from "@/modules/utils/temporal";
 
-import styles from "../RankingPage.module.css";
+import styles from "@/components/ui/ranking/RankingPage.module.css";
 
 const ButtonLink = createLink(Button);
 

@@ -6,7 +6,7 @@ import { SelfAd } from "@/components/ui/common/SelfAd";
 import { RankingType } from "@/modules/interfaces/RankingType";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 
-import styles from "./about.module.css";
+import styles from "@/components/ui/about/AboutPage.module.css";
 
 export const Route = createFileRoute("/about")({
 	component: AboutPage,
