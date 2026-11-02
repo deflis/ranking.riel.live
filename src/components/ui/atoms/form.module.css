@@ -14,17 +14,6 @@
 	@apply dark:bg-zinc-900 dark:border-zinc-500 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:indeterminate:bg-blue-500 dark:indeterminate:border-blue-500 dark:focus:ring-blue-400 dark:focus:ring-offset-zinc-900;
 }
 
-.button {
-	@apply focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm px-3 py-2 text-center;
-	&.primary {
-		@apply border-none bg-blue-700 text-white  hover:bg-blue-800;
-		@apply dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400;
-	}
-	&:not(.primary) {
-		@apply bg-white text-black border-gray-300 border focus:ring-blue-300;
-		@apply dark:bg-zinc-800 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-700 dark:focus:ring-blue-400;
-	}
-}
 .select_box {
 	@apply relative inline-block text-left;
 }

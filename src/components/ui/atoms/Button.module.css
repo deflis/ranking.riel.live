@@ -1,0 +1,59 @@
+.button {
+	font-weight: 500;
+	border-radius: 0.5rem;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	padding: 0.5rem 0.75rem;
+	text-align: center;
+
+	&:focus {
+		outline: none;
+		box-shadow: 0 0 0 4px var(--button-focus-color, currentcolor);
+	}
+
+	&.primary {
+		border-style: none;
+		background-color: oklch(48.8% 0.243 264.376);
+		color: white;
+
+		@media (hover: hover) {
+			&:hover {
+				background-color: oklch(42.4% 0.199 265.638);
+			}
+		}
+	}
+
+	&:not(.primary) {
+		--button-focus-color: oklch(80.9% 0.105 251.813);
+		background-color: white;
+		color: black;
+		border: 1px solid oklch(87.2% 0.01 258.338);
+	}
+
+	&:where([data-mode="dark"], [data-mode="dark"] *) {
+		--button-focus-color: oklch(70.7% 0.165 254.624);
+
+		&.primary {
+			background-color: oklch(54.6% 0.245 262.881);
+
+			@media (hover: hover) {
+				&:hover {
+					background-color: oklch(48.8% 0.243 264.376);
+				}
+			}
+		}
+
+		&:not(.primary) {
+			--button-focus-color: oklch(70.7% 0.165 254.624);
+			background-color: oklch(27.4% 0.006 286.033);
+			border-color: oklch(44.2% 0.017 285.786);
+			color: white;
+
+			@media (hover: hover) {
+				&:hover {
+					background-color: oklch(37% 0.013 285.805);
+				}
+			}
+		}
+	}
+}

@@ -3,15 +3,6 @@ declare const styles: Readonly<{ input: string }> &
 	Readonly<{ input: string }> &
 	Readonly<{ append_icon: string }> &
 	Readonly<{ checkbox: string }> &
-	Readonly<{ button: string }> &
-	Readonly<{ button: string }> &
-	Readonly<{ button: string }> &
-	Readonly<{ button: string }> &
-	Readonly<{ button: string }> &
-	Readonly<{ primary: string }> &
-	Readonly<{ primary: string }> &
-	Readonly<{ primary: string }> &
-	Readonly<{ primary: string }> &
 	Readonly<{ select_box: string }> &
 	Readonly<{ select_box_transition: string }> &
 	Readonly<{ select_box_transition: string }> &
