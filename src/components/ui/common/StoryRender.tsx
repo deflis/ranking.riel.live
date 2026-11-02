@@ -2,6 +2,8 @@ import type React from "react";
 
 import { Paper } from "../atoms/Paper";
 
+import styles from "./StoryRender.module.css";
+
 type StoryRenderProps = {
 	story: string;
 	className?: string;
@@ -14,7 +16,7 @@ const StoryRender: React.FC<StoryRenderProps> = ({
 }: StoryRenderProps) => {
 	return (
 		<Paper className={className}>
-			<p className="whitespace-pre-wrap">{story}</p>
+			<p className={styles.story}>{story}</p>
 		</Paper>
 	);
 };
