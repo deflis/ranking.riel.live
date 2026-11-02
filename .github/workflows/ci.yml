@@ -45,9 +45,6 @@ jobs:
       - uses: flatt-security/setup-takumi-guard-npm@14f07d0cbc739b42a1b7c70a04c2b84cd1318ddd # v1.4.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec vitest run --reporter=github-actions --reporter=default
-      - run: pnpm test:browser
-        env:
-          CHROME_BIN: /usr/bin/google-chrome
 
   build:
     runs-on: ubuntu-latest

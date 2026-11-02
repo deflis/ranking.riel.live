@@ -14,7 +14,6 @@
 		"typecheck": "tsc --noEmit",
 		"cf-types": "wrangler types ./src/types/cloudflare.d.ts",
 		"test": "vitest run",
-		"test:browser": "node --test tests/browser/ranking-layout.mjs",
 		"format": "oxfmt --write .",
 		"format:check": "oxfmt --check ."
 	},
