@@ -1,5 +1,7 @@
 import type { ComponentProps } from "react";
 
+import styles from "./Loader.module.css";
+
 type PulseLoaderProps = ComponentProps<"span"> & { disabled?: boolean };
 
 export const PulseLoader: React.FC<PulseLoaderProps> = ({
@@ -8,11 +10,7 @@ export const PulseLoader: React.FC<PulseLoaderProps> = ({
 	...props
 }: PulseLoaderProps) => (
 	<span
-		className={[
-			!disabled && "animate-pulse",
-			"w-full bg-slate-300 dark:bg-slate-700 rounded h-4 inline-block",
-			className,
-		]
+		className={[styles.pulse, !disabled && styles.animated, className]
 			.filter(Boolean)
 			.join(" ")}
 		{...props}
@@ -20,9 +18,9 @@ export const PulseLoader: React.FC<PulseLoaderProps> = ({
 );
 
 export const DotLoader: React.FC<ComponentProps<"span">> = ({ ...props }) => (
-	<span className="flex justify-center w-full" {...props}>
-		<span className="animate-ping h-2 w-2 bg-blue-600 rounded-full" />
-		<span className="animate-ping h-2 w-2 bg-blue-600 rounded-full mx-4" />
-		<span className="animate-ping h-2 w-2 bg-blue-600 rounded-full" />
+	<span className={styles.dots} {...props}>
+		<span className={styles.dot} />
+		<span className={styles.dot} />
+		<span className={styles.dot} />
 	</span>
 );
