@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import styles from "./form.module.css";
+import styles from "./Checkbox.module.css";
 
 export function Checkbox({
 	className,
