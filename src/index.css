@@ -1,3 +1,4 @@
+@import "./styles/layers.css";
 @import "tailwindcss";
 
 @plugin "@tailwindcss/forms";

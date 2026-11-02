@@ -1,3 +1,5 @@
+@import "../../../styles/layers.css";
+
 @layer components {
 	.chip {
 		display: inline-flex;
@@ -8,7 +10,7 @@
 		border-radius: calc(infinity * 1px);
 		background-color: oklch(92.8% 0.006 264.531);
 		font-size: 0.875rem;
-		line-height: calc(1.25 / 0.875);
+		line-height: 1.25rem;
 		vertical-align: middle;
 	}
 
