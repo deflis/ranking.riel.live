@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 import { CatchBoundary, Link, createLink } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { GenreNotation, R18SiteNotation } from "narou";
-import { memo, Suspense, useMemo } from "react";
+import { type CSSProperties, memo, Suspense, useMemo } from "react";
 
 import { useToggle } from "@/hooks/useToggle";
 import { showKeywordAtom, titleHeightAtom } from "@/modules/atoms/global";
@@ -30,21 +30,9 @@ import { Paper } from "../atoms/Paper";
 import ItemBadge from "../common/badges/ItemBadge";
 import { Tag, Tags } from "../common/bulma/Tag";
 
-const ChipLink = createLink(Chip);
+import styles from "./RankingItem.module.css";
 
-const lineClamp = [
-	"",
-	"line-clamp-1",
-	"line-clamp-2",
-	"line-clamp-3",
-	"line-clamp-4",
-	"line-clamp-5",
-	"line-clamp-6",
-	"line-clamp-7",
-	"line-clamp-8",
-	"line-clamp-9",
-	"line-clamp-10",
-];
+const ChipLink = createLink(Chip);
 
 function checkR18(
 	isR18: boolean,
@@ -71,14 +59,16 @@ const RankingItemTitle = memo(function RankingItemTitle({
 	const detail = isR18 ? "/r18/detail/$ncode" : "/detail/$ncode";
 	const detailParams = { ncode: item?.ncode ?? ncode } as const;
 	return (
-		<h2 className="mb-2 text-2xl">
+		<h2 className={styles.title}>
 			<Link
 				to={detail}
 				params={detailParams}
 				title={title}
+				style={{ "--title-lines": titleHeight } as CSSProperties}
 				className={[
-					"link-reset text-gray-800 dark:text-white hover:underline",
-					titleHeight > 0 && `${lineClamp[titleHeight]} overflow-ellipsis`,
+					"link-reset",
+					styles.titleLink,
+					titleHeight > 0 && styles.clamped,
 				]
 					.filter(Boolean)
 					.join(" ")}
@@ -88,7 +78,7 @@ const RankingItemTitle = memo(function RankingItemTitle({
 				) : isNotfound ? (
 					"この小説は見つかりません"
 				) : (
-					<PulseLoader className="h-6" disabled={isNotfound} />
+					<PulseLoader className={styles.titleLoader} disabled={isNotfound} />
 				)}
 			</Link>
 		</h2>
@@ -130,14 +120,7 @@ const RankingItemKeywords = memo(function RankingItemKeywords({
 }: ItemFieldsProps) {
 	const showKeyword = useAtomValue(showKeywordAtom);
 	return (
-		<Paper
-			className={[
-				"p-2 space-2 bg-gray-50 dark:bg-zinc-900",
-				!showKeyword && "hidden",
-			]
-				.filter(Boolean)
-				.join(" ")}
-		>
+		<Paper className={styles.keywords} hidden={!showKeyword}>
 			<RankingItemKeywordLinks
 				keyword={item?.keyword}
 				isR18={isR18}
@@ -169,7 +152,7 @@ const RankingItemDates = memo(function RankingItemDates({
 				{novelupdatedAt ? (
 					novelupdatedAt
 				) : (
-					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+					<PulseLoader className={styles.dateLoader} disabled={isNotfound} />
 				)}
 			</p>
 			<p>
@@ -177,13 +160,13 @@ const RankingItemDates = memo(function RankingItemDates({
 				{generalFirstup ? (
 					formatRelative(generalFirstup)
 				) : (
-					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+					<PulseLoader className={styles.dateLoader} disabled={isNotfound} />
 				)}{" "}
 				/ 最終更新:{" "}
 				{generalLastup ? (
 					formatRelative(generalLastup)
 				) : (
-					<PulseLoader className="w-1/4 m-0" disabled={isNotfound} />
+					<PulseLoader className={styles.dateLoader} disabled={isNotfound} />
 				)}
 			</p>
 		</>
@@ -202,29 +185,29 @@ const RankingItemActions = memo(function RankingItemActions({
 	const detail = isR18 ? "/r18/detail/$ncode" : "/detail/$ncode";
 	const detailParams = { ncode: item?.ncode ?? ncode } as const;
 	return (
-		<div className="space-y-2">
+		<div className={styles.actions}>
 			{item && (
 				<Transition
 					show={openStory}
-					enter="transition duration-100 origin-top ease-out"
-					enterFrom="transform scale-75 scale-y-0 opacity-0 "
-					enterTo="transform scale-100 opacity-100"
-					leave="transition duration-75 origin-top ease-out"
-					leaveFrom="transform scale-100 opacity-100"
-					leaveTo="transform scale-75 opacity-0"
+					enter={styles.storyEnter}
+					enterFrom={styles.storyCollapsed}
+					enterTo={styles.storyVisible}
+					leave={styles.storyLeave}
+					leaveFrom={styles.storyVisible}
+					leaveTo={styles.storyHidden}
 					as={Paper}
-					className="bg-gray-100 p-2 whitespace-pre-wrap text-sm dark:bg-zinc-900 box-content"
+					className={styles.story}
 				>
 					{item.story}
 				</Transition>
 			)}
-			<div className="flex space-x-2 items-center">
+			<div className={styles.actionBar}>
 				{item && (
 					<Button aria-expanded={openStory} onClick={toggleStory}>
 						あらすじを{openStory ? "隠す" : "表示"}
 					</Button>
 				)}
-				<div className="grow" />
+				<div className={styles.spacer} />
 				<Link to={detail} params={detailParams}>
 					小説情報
 				</Link>
@@ -264,7 +247,7 @@ const RankingItemAuthor = memo(function RankingItemAuthor({
 					</a>
 				)
 			) : (
-				<PulseLoader className="w-1/4" disabled={isNotfound} />
+				<PulseLoader className={styles.authorLoader} disabled={isNotfound} />
 			)}
 		</p>
 	);
@@ -375,14 +358,7 @@ const RankingItemRender: React.FC<{
 	const fields = { item, ncode, isR18, isNotfound, generalFirstup };
 	return (
 		<div
-			className={[
-				className,
-				"box-border grid grid-rows-subgrid gap-2",
-				"row-span-8",
-				"p-6 w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-zinc-800 dark:border-zinc-700",
-			]
-				.filter(Boolean)
-				.join(" ")}
+			className={[className, styles.card].filter(Boolean).join(" ")}
 			suppressHydrationWarning
 		>
 			<RankingItemRank
