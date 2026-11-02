@@ -4,6 +4,7 @@
 	.list {
 		width: 100%;
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		padding: 1rem;
 		gap: 1rem;
 		@media (min-width: 48rem) {

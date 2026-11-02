@@ -3,6 +3,9 @@
 @layer components {
 	.container {
 		text-align: center;
+		min-width: 0;
+		max-width: 100%;
+		overflow: hidden;
 	}
 	.ad {
 		display: block;
