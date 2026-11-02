@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import styles from "./form.module.css";
+import styles from "./Input.module.css";
 
 export function TextField({
 	className,

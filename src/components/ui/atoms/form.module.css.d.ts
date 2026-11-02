@@ -1,8 +1,4 @@
-declare const styles: Readonly<{ input: string }> &
-	Readonly<{ input: string }> &
-	Readonly<{ input: string }> &
-	Readonly<{ append_icon: string }> &
-	Readonly<{ select_box: string }> &
+declare const styles: Readonly<{ select_box: string }> &
 	Readonly<{ select_box_transition: string }> &
 	Readonly<{ select_box_transition: string }> &
 	Readonly<{ select_box_transition: string }> &

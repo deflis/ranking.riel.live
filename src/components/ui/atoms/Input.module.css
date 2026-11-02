@@ -1,0 +1,73 @@
+.input {
+	--input-focus-color: oklch(58.5% 0.233 277.117);
+	--input-focus-offset: oklch(96.7% 0.003 264.542);
+	--input-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+	display: inline-flex;
+	justify-content: center;
+	border: 1px solid oklch(87.2% 0.01 258.338);
+	border-radius: 0.375rem;
+	box-shadow: var(--input-shadow);
+	padding: 0.5rem 0.75rem;
+	background-color: white;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	font-weight: 500;
+	color: oklch(37.3% 0.034 259.733);
+
+	&:is(input) {
+		appearance: none;
+	}
+
+	&::placeholder {
+		color: oklch(55.1% 0.027 264.364);
+		opacity: 1;
+	}
+
+	@media (hover: hover) {
+		&:hover {
+			background-color: oklch(98.5% 0.002 247.839);
+		}
+	}
+
+	&:focus {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--input-focus-offset),
+			0 0 0 4px var(--input-focus-color),
+			var(--input-shadow);
+	}
+
+	&:disabled {
+		background-color: oklch(98.5% 0.002 247.839);
+	}
+
+	&:where([data-mode="dark"], [data-mode="dark"] *) {
+		--input-focus-color: oklch(67.3% 0.182 276.935);
+		--input-focus-offset: oklch(21% 0.006 285.885);
+		background-color: oklch(21% 0.006 285.885);
+		border-color: oklch(44.2% 0.017 285.786);
+		color: white;
+
+		&::placeholder {
+			color: oklch(70.5% 0.015 286.067);
+		}
+
+		@media (hover: hover) {
+			&:hover {
+				background-color: oklch(27.4% 0.006 286.033);
+			}
+		}
+
+		&:disabled {
+			background-color: oklch(37% 0.013 285.805);
+			color: oklch(70.5% 0.015 286.067);
+		}
+	}
+
+	& .append_icon {
+		margin-right: -0.25rem;
+		margin-left: 0.5rem;
+		height: 1.25rem;
+		width: 1.25rem;
+	}
+}

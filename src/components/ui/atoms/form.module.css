@@ -1,14 +1,5 @@
 @reference "../../../index.css";
 
-.input {
-	@apply inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500 disabled:bg-gray-50;
-	@apply dark:bg-zinc-900 dark:border-zinc-600 dark:text-white dark:placeholder:text-zinc-400 dark:hover:bg-zinc-800 dark:focus:ring-offset-zinc-900 dark:focus:ring-indigo-400 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-400;
-
-	& .append_icon {
-		@apply -mr-1 ml-2 h-5 w-5;
-	}
-}
-
 .select_box {
 	@apply relative inline-block text-left;
 }
