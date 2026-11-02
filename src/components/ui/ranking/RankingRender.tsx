@@ -8,6 +8,8 @@ import { LoadMore } from "./LoadMore";
 import RankingItem from "./RankingItem";
 import { RankingRows } from "./RankingRows";
 
+import styles from "./RankingList.module.css";
+
 const ChunkRender: React.FC<{
 	chunk: React.ReactElement[];
 	isTail: boolean;
@@ -19,9 +21,9 @@ const ChunkRender: React.FC<{
 	return (
 		<>
 			<RankingRows items={chunk} />
-			<AdSense className="col-span-full" />
+			<AdSense className={styles.fullRow} />
 			{isTail && (
-				<LoadMore onLoadMore={handleMore} className="px-20 pt-10 pb-20" />
+				<LoadMore onLoadMore={handleMore} className={styles.loadMore} />
 			)}
 		</>
 	);
@@ -55,16 +57,13 @@ const InsideRender: React.FC<{
 	}, [rankingConstants]);
 
 	return (
-		<div
-			className="w-full grid md:grid-cols-2 p-4 gap-4"
-			suppressHydrationWarning
-		>
-			<AdSense className="col-span-full" />
+		<div className={styles.list} suppressHydrationWarning>
+			<AdSense className={styles.fullRow} />
 			{renderItems}
-			<div className="col-span-full">
+			<div className={styles.fullRow}>
 				<SelfAd />
 			</div>
-			<AdSense className="col-span-full" />
+			<AdSense className={styles.fullRow} />
 		</div>
 	);
 };
