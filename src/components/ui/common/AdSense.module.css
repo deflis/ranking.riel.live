@@ -1,0 +1,10 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.container {
+		text-align: center;
+	}
+	.ad {
+		display: block;
+	}
+}

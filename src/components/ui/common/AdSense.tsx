@@ -3,6 +3,8 @@ import { useEffect } from "react";
 
 import { adModeAtom } from "../../../modules/atoms/global";
 
+import styles from "./AdSense.module.css";
+
 declare global {
 	interface Window {
 		adsbygoogle: Array<unknown>;
@@ -74,9 +76,9 @@ const InnerAdSense: React.FC<AdsenseProps> = ({
 	}, []);
 
 	return (
-		<div className={["text-center", className].filter(Boolean).join(" ")}>
+		<div className={[styles.container, className].filter(Boolean).join(" ")}>
 			<ins
-				className="adsbygoogle block"
+				className={["adsbygoogle", styles.ad].join(" ")}
 				data-ad-client={adSenseClientId}
 				data-ad-slot={slot}
 				data-ad-format={format}
