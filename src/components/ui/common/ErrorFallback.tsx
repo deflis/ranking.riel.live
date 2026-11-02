@@ -5,6 +5,8 @@ import type React from "react";
 import { Button } from "../atoms/Button";
 import { Paper } from "../atoms/Paper";
 
+import styles from "./ErrorFallback.module.css";
+
 export const ErrorFallback: React.FC<ErrorComponentProps> = ({
 	error,
 	reset,
@@ -16,15 +18,11 @@ export const ErrorFallback: React.FC<ErrorComponentProps> = ({
 	};
 
 	return (
-		<Paper className="p-4 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800 border">
-			<div className="flex flex-col gap-2">
-				<h2 className="text-lg font-bold text-red-700 dark:text-red-400">
-					エラーが発生しました
-				</h2>
-				<p className="text-sm text-red-600 dark:text-red-300 font-mono overflow-auto max-h-40">
-					{(error as Error)?.message}
-				</p>
-				<div className="mt-2">
+		<Paper className={styles.panel}>
+			<div className={styles.content}>
+				<h2 className={styles.title}>エラーが発生しました</h2>
+				<p className={styles.message}>{(error as Error)?.message}</p>
+				<div className={styles.actions}>
 					<Button onClick={handleRetry} color="primary">
 						再試行
 					</Button>

@@ -1,0 +1,11 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.banner,
+	.smallBanner {
+		margin: auto;
+	}
+	.smallBanner {
+		max-width: 32rem;
+	}
+}

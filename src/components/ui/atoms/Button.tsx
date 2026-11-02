@@ -1,6 +1,6 @@
 import type { ComponentProps, ElementType } from "react";
 
-import styles from "./form.module.css";
+import styles from "./Button.module.css";
 
 export type ButtonProps<T extends ElementType = "button"> = {
 	as?: T;

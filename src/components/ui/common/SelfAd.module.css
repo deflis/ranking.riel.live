@@ -1,0 +1,11 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.container {
+		display: flex;
+		justify-content: center;
+	}
+	.image {
+		max-width: 100%;
+	}
+}

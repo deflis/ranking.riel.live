@@ -10,6 +10,8 @@ import { scaleLog } from "d3-scale";
 import { curveMonotoneX } from "d3-shape";
 import { useMemo, useState, type CSSProperties } from "react";
 
+import styles from "./RankingHistoryChart.module.css";
+
 type HistoryDatum = {
 	date: string;
 	順位: number | null;
@@ -152,7 +154,7 @@ export function RankingHistoryChart({
 				height={48}
 				ariaLabel="ランキング履歴の期間選択"
 			/>
-			<output className="block text-center text-xs">
+			<output className={styles.range}>
 				{dates[startIndex]} ～ {dates[endIndex]}
 			</output>
 		</div>

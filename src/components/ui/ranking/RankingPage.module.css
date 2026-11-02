@@ -1,0 +1,20 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.container {
+		margin-inline: 1rem;
+		margin-top: 0.5rem;
+	}
+	.controls {
+		margin-bottom: 1.5rem;
+		padding: 0.5rem;
+		background-color: white;
+		> :where(:not(:last-child)) {
+			margin-inline-end: 0.5rem;
+		}
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			background-color: oklch(27.4% 0.006 286.033);
+			border-color: oklch(37% 0.013 285.805);
+		}
+	}
+}

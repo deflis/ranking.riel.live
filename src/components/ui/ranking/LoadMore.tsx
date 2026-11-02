@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 
 import { Button } from "../atoms/Button";
 
+import styles from "./LoadMore.module.css";
+
 export const LoadMore = ({
 	onLoadMore,
 	className,
@@ -37,9 +39,9 @@ export const LoadMore = ({
 	return (
 		<div
 			ref={ref}
-			className={["col-span-full", className].filter(Boolean).join(" ")}
+			className={[styles.container, className].filter(Boolean).join(" ")}
 		>
-			<Button onClick={onLoadMore} className="w-full h-20 text-3xl">
+			<Button onClick={onLoadMore} className={styles.button}>
 				もっと見る
 			</Button>
 		</div>

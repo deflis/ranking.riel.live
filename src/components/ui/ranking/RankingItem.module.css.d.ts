@@ -1,0 +1,20 @@
+declare const styles: {
+	readonly card: string;
+	readonly title: string;
+	readonly titleLink: string;
+	readonly clamped: string;
+	readonly titleLoader: string;
+	readonly dateLoader: string;
+	readonly authorLoader: string;
+	readonly keywords: string;
+	readonly actions: string;
+	readonly actionBar: string;
+	readonly spacer: string;
+	readonly story: string;
+	readonly storyEnter: string;
+	readonly storyLeave: string;
+	readonly storyCollapsed: string;
+	readonly storyVisible: string;
+	readonly storyHidden: string;
+};
+export default styles;

@@ -1,5 +1,7 @@
 import type { ComponentProps, ElementType } from "react";
 
+import styles from "./Chip.module.css";
+
 export type ChipProps<T extends ElementType = "a"> = {
 	as?: T;
 	color?: "primary";
@@ -16,15 +18,12 @@ export function Chip<T extends ElementType = "a">({
 	return (
 		<Component
 			ref={ref}
-			className={[
-				"link-reset box-border rounded-full bg-gray-200 inline-flex text-sm h-8 justify-center align-middle items-center dark:bg-zinc-700",
-				className,
-			]
+			className={["link-reset", styles.chip, className]
 				.filter(Boolean)
 				.join(" ")}
 			{...props}
 		>
-			<span className="px-2">{children}</span>
+			<span className={styles.content}>{children}</span>
 		</Component>
 	);
 }

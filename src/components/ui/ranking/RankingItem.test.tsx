@@ -122,11 +122,13 @@ describe("RankingItemの部分更新", () => {
 			store.set(titleHeightAtom, 2);
 		});
 		expect(
-			container.querySelector('a[href*="keyword="]')?.closest(".hidden"),
+			container.querySelector('a[href*="keyword="]')?.closest("[hidden]"),
 		).not.toBeNull();
 		expect(
-			container.querySelector("h2 a")?.classList.contains("line-clamp-2"),
-		).toBe(true);
+			(
+				container.querySelector("h2 a") as HTMLAnchorElement
+			)?.style.getPropertyValue("--title-lines"),
+		).toBe("2");
 		expect(button.getAttribute("aria-expanded")).toBe("true");
 		expect(container.textContent).toContain(item.story);
 		expect(parse).toHaveBeenCalledTimes(parsed);

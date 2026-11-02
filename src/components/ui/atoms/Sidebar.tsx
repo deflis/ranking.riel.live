@@ -13,6 +13,8 @@ import {
 } from "react";
 import { HiX } from "react-icons/hi";
 
+import styles from "./Sidebar.module.css";
+
 export type SidebarItemProps<T extends ElementType = "span"> = {
 	as?: T;
 	hover?: boolean;
@@ -27,13 +29,13 @@ export function SidebarItem<T extends ElementType = "span">({
 }: SidebarItemProps<T>) {
 	const Component = as ?? "span";
 	return (
-		<li className="relative">
+		<li className={styles.relative}>
 			<Component
 				ref={ref}
 				className={[
-					"link-reset flex items-center text-md py-4 px-2 h-12 overflow-hidden text-gray-700 dark:text-gray-300 text-ellipsis whitespace-nowrap rounded transition duration-300 ease-in-out",
-					hover &&
-						"hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-700",
+					"link-reset",
+					styles.item,
+					hover && styles.hoverable,
 					className,
 				]
 					.filter(Boolean)
@@ -44,9 +46,7 @@ export function SidebarItem<T extends ElementType = "span">({
 	);
 }
 
-export const Divider = () => (
-	<hr className="my-2 border-stone-200 dark:border-stone-700" />
-);
+export const Divider = () => <hr className={styles.divider} />;
 
 type SidebarProps = PropsWithChildren<{
 	open: boolean;
@@ -62,37 +62,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
 		<Dialog onClose={onClose}>
 			<TransitionChild
 				as={Fragment}
-				enter="transition-opacity ease-out duration-300 motion-reduce:duration-0"
-				enterFrom="opacity-0"
-				enterTo="opacity-100"
-				leave="transition-opacity ease-in duration-200 motion-reduce:duration-0"
-				leaveFrom="opacity-100"
-				leaveTo="opacity-0"
+				enter={styles.backdropEnter}
+				enterFrom={styles.transparent}
+				enterTo={styles.opaque}
+				leave={styles.backdropLeave}
+				leaveFrom={styles.opaque}
+				leaveTo={styles.transparent}
 			>
-				<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+				<div className={styles.backdrop} aria-hidden="true" />
 			</TransitionChild>
 			<TransitionChild
 				as={Fragment}
-				enter="transition-transform ease-out duration-300 motion-reduce:duration-0"
-				enterFrom="-translate-x-full"
-				enterTo="translate-x-0"
-				leave="transition-transform ease-in duration-200 motion-reduce:duration-0"
-				leaveFrom="translate-x-0"
-				leaveTo="-translate-x-full"
+				enter={styles.panelEnter}
+				enterFrom={styles.offscreen}
+				enterTo={styles.onscreen}
+				leave={styles.panelLeave}
+				leaveFrom={styles.onscreen}
+				leaveTo={styles.offscreen}
 			>
-				<DialogPanel className="w-120 max-w-[calc(100%-2rem)] h-full shadow-md bg-white dark:bg-neutral-900 px-1 fixed inset-y-0 left-0 overflow-y-auto">
-					<div className="flex items-center justify-between px-2 py-1">
-						<DialogTitle className="font-semibold">メニュー</DialogTitle>
+				<DialogPanel className={styles.panel}>
+					<div className={styles.header}>
+						<DialogTitle className={styles.title}>メニュー</DialogTitle>
 						<button
 							type="button"
 							aria-label="メニューを閉じる"
-							className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+							className={styles.closeButton}
 							onClick={() => onClose(false)}
 						>
-							<HiX className="h-5 w-5" aria-hidden="true" />
+							<HiX className={styles.closeIcon} aria-hidden="true" />
 						</button>
 					</div>
-					<ul className="relative">{children}</ul>
+					<ul className={styles.relative}>{children}</ul>
 				</DialogPanel>
 			</TransitionChild>
 		</Dialog>

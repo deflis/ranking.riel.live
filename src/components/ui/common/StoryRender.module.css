@@ -1,0 +1,7 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.story {
+		white-space: pre-wrap;
+	}
+}

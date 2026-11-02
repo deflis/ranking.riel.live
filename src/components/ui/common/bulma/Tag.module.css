@@ -1,41 +1,55 @@
-@reference "../../../../index.css";
-
 .tags {
-	@apply items-center inline-flex flex-wrap justify-start;
-
+	align-items: center;
+	display: inline-flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
 	.tag {
-		@apply mb-0.5;
+		margin-bottom: 0.125rem;
 		&:not(:last-child) {
-			@apply mr-0.5;
+			margin-right: 0.125rem;
 		}
 	}
-
 	&.addon .tag {
-		@apply mr-0;
-
+		margin-right: 0;
 		&:not(:first-child) {
-			@apply ml-0 rounded-l-none;
+			margin-left: 0;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
 		}
-
 		&:not(:last-child) {
-			@apply ml-0 rounded-r-none;
+			margin-left: 0;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
 		}
 	}
 }
-
 .tag {
-	@apply rounded inline-flex justify-center px-1 whitespace-nowrap;
+	border-radius: 0.25rem;
+	display: inline-flex;
+	justify-content: center;
+	padding-inline: 0.25rem;
+	white-space: nowrap;
 	font-size: 80%;
-	@apply text-gray-700 bg-gray-200;
-	@apply dark:text-gray-200 dark:bg-zinc-600;
+	color: oklch(37.3% 0.034 259.733);
+	background-color: oklch(92.8% 0.006 264.531);
+	&:where([data-mode="dark"], [data-mode="dark"] *) {
+		color: oklch(92.8% 0.006 264.531);
+		background-color: oklch(44.2% 0.017 285.786);
+	}
 	&.cyan {
-		@apply bg-sky-500 text-white;
+		background-color: oklch(68.5% 0.169 237.323);
+		color: white;
 	}
 	&.light-green {
-		@apply bg-lime-500 text-lime-100;
+		background-color: oklch(76.8% 0.233 130.85);
+		color: oklch(96.7% 0.067 122.328);
 	}
 	&.red {
-		@apply bg-rose-500 text-rose-100;
-		@apply dark:bg-rose-700 text-rose-100;
+		background-color: oklch(64.5% 0.246 16.439);
+		color: oklch(94.1% 0.03 12.58);
+		&:where([data-mode="dark"], [data-mode="dark"] *) {
+			background-color: oklch(51.4% 0.222 16.935);
+			color: oklch(94.1% 0.03 12.58);
+		}
 	}
 }

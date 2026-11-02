@@ -42,6 +42,8 @@ import { FirstAd } from "../common/FirstAd";
 import StoryRender from "../common/StoryRender";
 import DetailItemText from "./DetailItemText";
 
+import styles from "./DetailItem.module.css";
+
 const ChipLink = createLink(Chip);
 
 /**
@@ -111,7 +113,7 @@ const DetailItem: FC<{
 			<div>
 				<p>
 					<Tag
-						className="text-sm"
+						className={styles.codeTag}
 						as="a"
 						href={link}
 						target="_blank"
@@ -144,26 +146,29 @@ const DetailItem: FC<{
 							</Link>
 						)
 					) : (
-						<PulseLoader className="w-1/4" disabled={isNotFound} />
+						<PulseLoader
+							className={styles.quarterLoader}
+							disabled={isNotFound}
+						/>
 					)}
 				</p>
-				<h1 className="text-4xl">
+				<h1 className={styles.title}>
 					<a
 						href={link}
 						target="_blank"
 						rel="noopener noreferrer"
-						className="link-reset hover:underline"
+						className={["link-reset", styles.titleLink].join(" ")}
 					>
 						{item ? (
 							decodeNarouText(item.title)
 						) : isNotFound ? (
 							"小説が見つかりません。削除された可能性があります。"
 						) : (
-							<PulseLoader className="h-8" />
+							<PulseLoader className={styles.titleLoader} />
 						)}
 					</a>
 				</h1>
-				<p className="text-sm">
+				<p className={styles.small}>
 					{item && <ItemBadge item={item} />}{" "}
 					{!item || item.noveltype === NovelType.Tanpen ? (
 						<a href={link} target="_blank" rel="noopener noreferrer">
@@ -175,7 +180,7 @@ const DetailItem: FC<{
 								href={linkFirst}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-blue-500 hover:underline dark:text-blue-400"
+								className={styles.link}
 							>
 								第1話を読む
 							</a>{" "}
@@ -184,7 +189,7 @@ const DetailItem: FC<{
 								href={linkLast}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-blue-500 hover:underline dark:text-blue-400"
+								className={styles.link}
 							>
 								最新話を読む
 							</a>
@@ -199,24 +204,21 @@ const DetailItem: FC<{
 				</p>
 			</div>
 			<FirstAd />
-			<div className="flex space-x-2 flex-col md:flex-row">
-				<div className="w-full md:w-1/2 xl:w-7/12">
-					<h2 className="text-xl">あらすじ</h2>
+			<div className={styles.columns}>
+				<div className={styles.storyColumn}>
+					<h2 className={styles.heading}>あらすじ</h2>
 					{item ? (
-						<StoryRender
-							story={item.story}
-							className="bg-white p-2 md:max-h-screen overflow-auto dark:bg-zinc-800"
-						/>
+						<StoryRender story={item.story} className={styles.story} />
 					) : (
-						<div className="bg-white p-2 md:max-h-screen overflow-auto dark:bg-zinc-800">
+						<div className={styles.story}>
 							<PulseLoader disabled={isNotFound} />
 						</div>
 					)}
 				</div>
-				<div className="w-full md:w-1/2 xl:w-5/12 shrink-0 m-0 p-2 text-sm space-y-2">
+				<div className={styles.metadata}>
 					<DetailItemText
 						label="作者"
-						icon={<FaPenNib className="w-3 h-3 inline" />}
+						icon={<FaPenNib className={styles.icon} />}
 					>
 						{item ? (
 							isR18 ? (
@@ -231,13 +233,16 @@ const DetailItem: FC<{
 								</a>
 							)
 						) : (
-							<PulseLoader className="w-1/2" disabled={isNotFound} />
+							<PulseLoader
+								className={styles.halfLoader}
+								disabled={isNotFound}
+							/>
 						)}
 					</DetailItemText>
 					{!isR18 && (
 						<DetailItemText
 							label="ジャンル"
-							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
+							icon={<HiGlobeAlt className={styles.icon} />}
 						>
 							{item ? (
 								<Link
@@ -250,14 +255,17 @@ const DetailItem: FC<{
 									{GenreNotation[item.genre]}
 								</Link>
 							) : (
-								<PulseLoader className="w-1/2" disabled={isNotFound} />
+								<PulseLoader
+									className={styles.halfLoader}
+									disabled={isNotFound}
+								/>
 							)}
 						</DetailItemText>
 					)}
 					{isR18 && (
 						<DetailItemText
 							label="サイト"
-							icon={<HiGlobeAlt className="w-3 h-3 inline" />}
+							icon={<HiGlobeAlt className={styles.icon} />}
 						>
 							{item ? (
 								<Link
@@ -270,13 +278,16 @@ const DetailItem: FC<{
 									{R18SiteNotation[item.nocgenre]}
 								</Link>
 							) : (
-								<PulseLoader className="w-1/2" disabled={isNotFound} />
+								<PulseLoader
+									className={styles.halfLoader}
+									disabled={isNotFound}
+								/>
 							)}
 						</DetailItemText>
 					)}
 					<DetailItemText label="キーワード">
 						{item ? (
-							<div className="inline-flex flex-wrap items-center justify-start ">
+							<div className={styles.keywords}>
 								{item.keyword
 									.split(/\s/g)
 									.filter((keyword) => keyword)
@@ -302,7 +313,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="掲載日"
-						icon={<HiCalendar className="w-3 h-3 inline" />}
+						icon={<HiCalendar className={styles.icon} />}
 					>
 						{generalFirstup ? (
 							<>
@@ -315,7 +326,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="最新部分掲載日"
-						icon={<IoTime className="w-3 h-3 inline" />}
+						icon={<IoTime className={styles.icon} />}
 					>
 						{generalLastup ? (
 							<>
@@ -328,7 +339,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="感想"
-						icon={<HiChatAlt className="w-3 h-3 inline" />}
+						icon={<HiChatAlt className={styles.icon} />}
 					>
 						{detailItem ? (
 							<>{detailItem.impression_cnt.toLocaleString()}件</>
@@ -338,7 +349,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="レビュー"
-						icon={<HiPencilAlt className="w-3 h-3 inline" />}
+						icon={<HiPencilAlt className={styles.icon} />}
 					>
 						{detailItem ? (
 							<>{detailItem.review_cnt.toLocaleString()}件</>
@@ -348,7 +359,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="ブックマーク登録"
-						icon={<HiBookmark className="w-3 h-3 inline" />}
+						icon={<HiBookmark className={styles.icon} />}
 					>
 						{detailItem ? (
 							<>{detailItem.fav_novel_cnt.toLocaleString()}件</>
@@ -358,7 +369,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="総合評価"
-						icon={<HiThumbUp className="w-3 h-3 inline" />}
+						icon={<HiThumbUp className={styles.icon} />}
 					>
 						{detailItem ? (
 							<>
@@ -376,7 +387,7 @@ const DetailItem: FC<{
 					</DetailItemText>
 					<DetailItemText
 						label="文字数"
-						icon={<IoLanguage className="w-3 h-3 inline" />}
+						icon={<IoLanguage className={styles.icon} />}
 					>
 						{item ? (
 							<>
@@ -393,9 +404,9 @@ const DetailItem: FC<{
 				</div>
 			</div>
 			<AdRandomWidth />
-			<Paper className="p-2 bg-white dark:bg-zinc-800">
-				<h2 className="text-xl">獲得ポイント</h2>
-				<table className="w-full table-auto text-left whitespace-nowrap">
+			<Paper className={styles.points}>
+				<h2 className={styles.heading}>獲得ポイント</h2>
+				<table className={styles.pointsTable}>
 					<thead>
 						<tr>
 							<th>総合評価ポイント</th>
@@ -409,37 +420,37 @@ const DetailItem: FC<{
 					</thead>
 					<tbody>
 						<tr>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.global_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.daily_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.weekly_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.monthly_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.quarter_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.yearly_point.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
 							</td>
-							<td className="text-center">
+							<td className={styles.center}>
 								{detailItem?.weekly_unique.toLocaleString() ?? (
 									<PulseLoader disabled={isNotFound} />
 								)}
@@ -448,7 +459,7 @@ const DetailItem: FC<{
 					</tbody>
 				</table>
 			</Paper>
-			<p className="box-border my-4">
+			<p className={styles.note}>
 				<Button as="a" href={detail} target="_blank" rel="noopener noreferrer">
 					小説情報
 				</Button>{" "}

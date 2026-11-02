@@ -5,6 +5,8 @@ import { Fragment } from "react";
 import { Button } from "../atoms/Button";
 import AdSense from "./AdSense";
 
+import styles from "./ConfirmationDialog.module.css";
+
 export const AdDialog: React.FC<{
 	open: boolean;
 	handleOk: () => void;
@@ -12,45 +14,42 @@ export const AdDialog: React.FC<{
 }> = ({ open, handleOk, handleCancel }) => {
 	return (
 		<Transition appear show={open} as={Fragment}>
-			<Dialog as="div" className="relative z-10" onClose={handleCancel}>
+			<Dialog as="div" className={styles.dialog} onClose={handleCancel}>
 				<Transition.Child
 					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
+					enter={styles.enter}
+					enterFrom={styles.transparent}
+					enterTo={styles.opaque}
+					leave={styles.leave}
+					leaveFrom={styles.opaque}
+					leaveTo={styles.transparent}
 				>
-					<div className="fixed inset-0 bg-black bg-opacity-25" />
+					<div className={styles.backdrop} />
 				</Transition.Child>
 
-				<div className="fixed inset-0 overflow-y-auto">
-					<div className="flex min-h-full items-center justify-center p-4 text-center">
+				<div className={styles.viewport}>
+					<div className={styles.alignment}>
 						<Transition.Child
 							as={Fragment}
-							enter="ease-out duration-300"
-							enterFrom="opacity-0 scale-95"
-							enterTo="opacity-100 scale-100"
-							leave="ease-in duration-200"
-							leaveFrom="opacity-100 scale-100"
-							leaveTo="opacity-0 scale-95"
+							enter={styles.enter}
+							enterFrom={styles.panelHidden}
+							enterTo={styles.panelVisible}
+							leave={styles.leave}
+							leaveFrom={styles.panelVisible}
+							leaveTo={styles.panelHidden}
 						>
-							<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-								<Dialog.Title
-									as="h3"
-									className="text-lg font-medium leading-6 text-gray-900"
-								>
+							<Dialog.Panel className={styles.panel}>
+								<Dialog.Title as="h3" className={styles.title}>
 									広告を本当に消去してもよろしいですか？
 								</Dialog.Title>
-								<div className="mt-2">
-									<p className="text-sm text-gray-500">
+								<div className={styles.body}>
+									<p className={styles.description}>
 										昨今のインターネットは広告で成り立っています。このサービスの運営には数円程度と僅かながらも運営資金が必要となっております。ご協力をお願いしたいです。
 									</p>
 									<AdSense />
 								</div>
 
-								<div className="mt-4">
+								<div className={styles.actions}>
 									<Button data-autofocus onClick={handleCancel} color="primary">
 										広告を消去しない
 									</Button>

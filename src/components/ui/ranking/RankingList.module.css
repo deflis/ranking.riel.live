@@ -1,0 +1,23 @@
+@import "../../../styles/layers.css";
+
+@layer components {
+	.list {
+		width: 100%;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		padding: 1rem;
+		gap: 1rem;
+		@media (min-width: 48rem) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.fullRow {
+		grid-column: 1 / -1;
+	}
+	.empty {
+		width: 100%;
+	}
+	.loadMore {
+		padding: 2.5rem 5rem 5rem;
+	}
+}

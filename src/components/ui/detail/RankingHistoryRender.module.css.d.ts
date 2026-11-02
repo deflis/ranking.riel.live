@@ -1,3 +1,23 @@
-declare const styles: Readonly<{ tableRow: string }>;
+declare const styles: {
+	readonly tableRow: string;
+	readonly columns: string;
+	readonly chartColumn: string;
+	readonly tableColumn: string;
+	readonly table: string;
+	readonly center: string;
+	readonly right: string;
+	readonly link: string;
+	readonly gold: string;
+	readonly silver: string;
+	readonly bronze: string;
+	readonly panel: string;
+	readonly title: string;
+	readonly tabs: string;
+	readonly tabStrip: string;
+	readonly tab: string;
+	readonly selected: string;
+	readonly available: string;
+	readonly unavailable: string;
+	readonly panels: string;
+};
 export default styles;
-//# sourceMappingURL=./RankingHistoryRender.module.css.d.ts.map

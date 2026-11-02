@@ -7,7 +7,8 @@ import {
 } from "@headlessui/react";
 import { HiChevronDown } from "react-icons/hi";
 
-import styles from "./form.module.css";
+import inputStyles from "./Input.module.css";
+import styles from "./SelectBox.module.css";
 
 export type ListBoxOption<T> = {
 	value: T;
@@ -33,15 +34,18 @@ export const SelectBox = <T,>({
 	<div className={[styles.select_box, className].filter(Boolean).join(" ")}>
 		<Listbox value={selectedValue} onChange={onChange}>
 			{({ open }) => (
-				<div className="relative w-full">
+				<div className={styles.control}>
 					<ListboxButton
-						className={[styles.input, buttonClassName]
+						className={[inputStyles.input, buttonClassName]
 							.filter(Boolean)
 							.join(" ")}
 					>
 						{options.find(({ value }) => value === selectedValue)?.label}
-						<div className="grow" />
-						<HiChevronDown className={styles.append_icon} aria-hidden="true" />
+						<div className={styles.spacer} />
+						<HiChevronDown
+							className={inputStyles.append_icon}
+							aria-hidden="true"
+						/>
 					</ListboxButton>
 					<Transition
 						as="div"

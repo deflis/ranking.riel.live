@@ -12,6 +12,8 @@ import { LoadMore } from "./LoadMore";
 import { R18RankingItem } from "./RankingItem";
 import { RankingRows } from "./RankingRows";
 
+import styles from "./RankingList.module.css";
+
 const InsideRender: React.FC<{
 	params: R18RankingParams;
 	page: number;
@@ -23,7 +25,9 @@ const InsideRender: React.FC<{
 	};
 	const { data } = useR18Ranking(params, page);
 	if (data?.length === 0 || !data) {
-		return page === 1 ? <div className="w-full">データがありません</div> : null;
+		return page === 1 ? (
+			<div className={styles.empty}>データがありません</div>
+		) : null;
 	}
 	return (
 		<>
@@ -32,7 +36,7 @@ const InsideRender: React.FC<{
 					<R18RankingItem key={`${item.rank}-${item.ncode}`} item={item} />
 				))}
 			/>
-			<AdSense className="col-span-full" />
+			<AdSense className={styles.fullRow} />
 			{isTail && <LoadMore onLoadMore={handleMore} />}
 		</>
 	);
@@ -66,12 +70,12 @@ export const R18RankingRender: React.FC<{
 
 	return (
 		<>
-			<div className="w-full grid md:grid-cols-2 p-4 gap-4">
+			<div className={styles.list}>
 				{renderItems}
-				<div className="col-span-full">
+				<div className={styles.fullRow}>
 					<SelfAd />
 				</div>
-				<div className="col-span-full">
+				<div className={styles.fullRow}>
 					<AdSense />
 				</div>
 			</div>

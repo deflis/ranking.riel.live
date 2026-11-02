@@ -6,6 +6,8 @@ import { SelfAd } from "@/components/ui/common/SelfAd";
 import { RankingType } from "@/modules/interfaces/RankingType";
 import { buildCustomRankingSearch } from "@/modules/utils/parseSearch";
 
+import styles from "@/components/ui/about/AboutPage.module.css";
+
 export const Route = createFileRoute("/about")({
 	component: AboutPage,
 	head: () => ({
@@ -15,10 +17,10 @@ export const Route = createFileRoute("/about")({
 
 function AboutPage() {
 	return (
-		<div className="space-y-4">
-			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
-				<h2 className="text-2xl font-bold">このサイトについて</h2>
-				<section className="space-y-2">
+		<div className={styles.sections}>
+			<Paper className={styles.panel}>
+				<h2 className={styles.title}>このサイトについて</h2>
+				<section className={styles.paragraphs}>
 					<p>
 						本サービス「なろうランキングビューワ」は
 						<a href="https://twitter.com/narou_riel">なろう系VTuberリイエル</a>
@@ -31,9 +33,9 @@ function AboutPage() {
 					</p>
 				</section>
 			</Paper>
-			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
-				<h2 className="text-2xl font-bold">おすすめの使い方</h2>
-				<section className="space-y-2">
+			<Paper className={styles.panel}>
+				<h2 className={styles.title}>おすすめの使い方</h2>
+				<section className={styles.paragraphs}>
 					<p>
 						<Link to="/">ランキング</Link>
 						ではフィルターをクリックし、最大話数を指定することができます。
@@ -49,7 +51,7 @@ function AboutPage() {
 							カスタムランキング
 						</Link>
 						では、右上の「
-						<FaCog className="inline" />
+						<FaCog className={styles.icon} />
 						編集」ボタンをクリックすることによりランキングをカスタマイズすることができます。
 						例えば、
 						<Link
@@ -76,8 +78,8 @@ function AboutPage() {
 					</p>
 				</section>
 			</Paper>
-			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
-				<section className="space-y-2">
+			<Paper className={styles.panel}>
+				<section className={styles.paragraphs}>
 					<p>
 						データの取得には
 						<a href="https://dev.syosetu.com/">なろうデベロッパーAPI</a>
@@ -92,7 +94,7 @@ function AboutPage() {
 					</p>
 				</section>
 			</Paper>
-			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800">
+			<Paper className={styles.panel}>
 				<SelfAd />
 			</Paper>
 		</div>

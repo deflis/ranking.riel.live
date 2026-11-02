@@ -29,6 +29,8 @@ import { SelectBox } from "../atoms/SelectBox";
 import { TextField } from "../atoms/TextField";
 import { Tag } from "../common/bulma/Tag";
 
+import styles from "./SearchForm.module.css";
+
 export interface CustomRankingFormParams {
 	params: CustomRankingParams;
 	onSearch: (e: CustomRankingParams) => void;
@@ -45,11 +47,11 @@ export const CustomRankingForm: React.FC<CustomRankingFormParams> = ({
 	const [show, toggleShow] = useToggle(false);
 
 	return (
-		<div className="p-4 space-y-4">
-			<div className="flex flex-row space-y-4">
-				<div className="grow" />
+		<div className={styles.container}>
+			<div className={styles.toolbar}>
+				<div className={styles.spacer} />
 				<Button onClick={toggleShow}>
-					<FaCog className="w-5 h-5 pr-2 inline" />
+					<FaCog className={styles.icon} />
 					編集
 				</Button>
 			</div>
@@ -240,40 +242,40 @@ const DisableCustomRankingForm: React.FC<{
 }) => {
 	return (
 		<>
-			<h1 className="text-4xl md:text-6xl my-8">
+			<h1 className={styles.title}>
 				{keyword ? `${keyword}の` : "カスタム"}
 				{RankingTypeName[rankingType]}ランキング
 			</h1>
-			<div className="flex flex-wrap gap-1">
-				{keyword && <Tag className="px-2 py-1">キーワード: {keyword}</Tag>}
-				{notKeyword && <Tag className="px-2 py-1">除外: {notKeyword}</Tag>}
+			<div className={styles.summary}>
+				{keyword && <Tag className={styles.tag}>キーワード: {keyword}</Tag>}
+				{notKeyword && <Tag className={styles.tag}>除外: {notKeyword}</Tag>}
 				{genres.length > 0 &&
 					genres.map((id) => (
-						<Tag key={id} className="px-2 py-1">
+						<Tag key={id} className={styles.tag}>
 							ジャンル: {GenreNotation[id]}
 						</Tag>
 					))}
-				{byTitle && <Tag className="px-2 py-1">タイトルを含める</Tag>}
-				{byStory && <Tag className="px-2 py-1">あらすじを含める</Tag>}
+				{byTitle && <Tag className={styles.tag}>タイトルを含める</Tag>}
+				{byStory && <Tag className={styles.tag}>あらすじを含める</Tag>}
 				{(min || max) && (
-					<Tag className="px-2 py-1">
+					<Tag className={styles.tag}>
 						話数: {min ? `最小${min}` : ""}
 						{max ? `最大${max}` : ""}
 					</Tag>
 				)}
 				{(minLength || maxLength) && (
-					<Tag className="px-2 py-1">
+					<Tag className={styles.tag}>
 						文字数: {minLength ? `最小${minLength}` : ""}
 						{maxLength ? `最大${maxLength}` : ""}
 					</Tag>
 				)}
 				{firstUpdate && (
-					<Tag className="px-2 py-1">
+					<Tag className={styles.tag}>
 						更新開始日: {formatDateRange(firstUpdate)}
 					</Tag>
 				)}
 				{(rensai || kanketsu || tanpen) && (
-					<Tag className="px-2 py-1 space-x-1">
+					<Tag className={styles.spacedTag}>
 						{rensai && <span>連載中</span>}
 						{kanketsu && <span>完結</span>}
 						{tanpen && <span>短編</span>}
@@ -328,10 +330,10 @@ const EnableCustomRankingForm: React.FC<
 
 	return (
 		<form ref={formRef} onSubmit={handleSearch}>
-			<Paper className="bg-white p-4 space-y-4 dark:bg-gray-800 dark:border-gray-700">
+			<Paper className={styles.panel}>
 				<fieldset>
-					<label className="inline-flex flex-col">
-						<span className="font-bold text-sm text-slate-500">種類</span>
+					<label className={styles.field}>
+						<span className={styles.label}>種類</span>
 						<SelectBox
 							value={config.rankingType}
 							onChange={(value) =>
@@ -341,27 +343,25 @@ const EnableCustomRankingForm: React.FC<
 								value,
 								label: RankingTypeName[value],
 							}))}
-							buttonClassName="w-52"
+							buttonClassName={styles.selectButton}
 						/>
 					</label>
 				</fieldset>
-				<fieldset className="space-x-2 flex items-end">
-					<label className="inline-flex flex-col">
-						<span className="font-bold text-sm text-slate-500">キーワード</span>
+				<fieldset className={styles.keywordFields}>
+					<label className={styles.field}>
+						<span className={styles.label}>キーワード</span>
 						<TextField
 							name="keyword"
 							defaultValue={defaultValues.keyword}
-							className="align-middle"
+							className={styles.aligned}
 						/>
 					</label>
-					<label className="inline-flex flex-col">
-						<span className="font-bold text-sm  text-slate-500">
-							除外キーワード
-						</span>
+					<label className={styles.field}>
+						<span className={styles.label}>除外キーワード</span>
 						<TextField
 							name="notKeyword"
 							defaultValue={defaultValues.notKeyword}
-							className="align-middle"
+							className={styles.aligned}
 						/>
 					</label>
 
@@ -372,9 +372,9 @@ const EnableCustomRankingForm: React.FC<
 								const value = event.currentTarget.checked;
 								setConfig((current) => ({ ...current, byTitle: value }));
 							}}
-							className="align-middle"
+							className={styles.aligned}
 						/>
-						<span className="align-middle">タイトルを含める</span>
+						<span className={styles.aligned}>タイトルを含める</span>
 					</label>
 					<label>
 						<Checkbox
@@ -383,13 +383,13 @@ const EnableCustomRankingForm: React.FC<
 								const value = event.currentTarget.checked;
 								setConfig((current) => ({ ...current, byStory: value }));
 							}}
-							className="align-middle"
+							className={styles.aligned}
 						/>
-						<span className="align-middle">あらすじを含める</span>
+						<span className={styles.aligned}>あらすじを含める</span>
 					</label>
 				</fieldset>
 				<fieldset>
-					<legend className="font-bold text-sm text-slate-500">ジャンル</legend>
+					<legend className={styles.label}>ジャンル</legend>
 					{allGenres.map((id) => (
 						<label key={id}>
 							<Checkbox
@@ -409,7 +409,7 @@ const EnableCustomRankingForm: React.FC<
 					<Button onClick={unselectAll}>全解除</Button>
 				</fieldset>
 				<fieldset>
-					<legend className="font-bold text-sm text-slate-500">話数</legend>
+					<legend className={styles.label}>話数</legend>
 					<label>
 						<Checkbox
 							checked={config.story.min.enable}
@@ -459,7 +459,7 @@ const EnableCustomRankingForm: React.FC<
 					</label>
 				</fieldset>
 				<fieldset>
-					<legend className="font-bold text-sm text-slate-500">文字数</legend>
+					<legend className={styles.label}>文字数</legend>
 					<label>
 						<Checkbox
 							checked={config.length.min.enable}
@@ -509,9 +509,7 @@ const EnableCustomRankingForm: React.FC<
 					</label>
 				</fieldset>
 				<fieldset>
-					<legend className="font-bold text-sm text-slate-500">
-						更新開始日
-					</legend>
+					<legend className={styles.label}>更新開始日</legend>
 					<SelectBox<FilterConfig["firstUpdate"]["term"]>
 						value={config.firstUpdate.term}
 						onChange={(value) =>
@@ -529,7 +527,7 @@ const EnableCustomRankingForm: React.FC<
 							{ value: "1years", label: "1年より新しい" },
 							{ value: "custom", label: "選択する" },
 						]}
-						buttonClassName="w-52"
+						buttonClassName={styles.selectButton}
 					/>
 					<TextField
 						type="date"
@@ -541,7 +539,7 @@ const EnableCustomRankingForm: React.FC<
 					/>
 				</fieldset>
 				<fieldset>
-					<legend className="font-bold text-sm text-slate-500">更新状態</legend>
+					<legend className={styles.label}>更新状態</legend>
 					<label>
 						<Checkbox
 							checked={config.status.rensai}
@@ -582,13 +580,13 @@ const EnableCustomRankingForm: React.FC<
 						短編
 					</label>
 				</fieldset>
-				<fieldset className="space-x-4">
-					<Button type="submit" color="primary" className="font-bold">
-						<FaSearch className="w-5 h-5 pr-2 inline" />
+				<fieldset className={styles.actions}>
+					<Button type="submit" color="primary">
+						<FaSearch className={styles.icon} />
 						検索
 					</Button>
-					<Button onClick={onClose} className="font-bold">
-						<FaTimes className="w-5 h-5 pr-2 inline" />
+					<Button onClick={onClose}>
+						<FaTimes className={styles.icon} />
 						閉じる
 					</Button>
 				</fieldset>

@@ -1,7 +1,5 @@
-declare const styles: Readonly<{ body: string }> &
-	Readonly<{ body: string }> &
-	Readonly<{ body: string }> &
-	Readonly<{ body: string }> &
-	Readonly<{ layout: string }>;
+declare const styles: {
+	readonly body: string;
+	readonly layout: string;
+};
 export default styles;
-//# sourceMappingURL=./Layout.module.css.d.ts.map

@@ -215,7 +215,7 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 							{ value: "1years", label: "1年より新しい" },
 							{ value: "custom", label: "選択する" },
 						]}
-						buttonClassName="w-52"
+						buttonClassName={styles.selectButton}
 					/>
 					<TextField
 						type="date"
@@ -268,13 +268,13 @@ const InnerFilterComponent: React.FC<{ onClose: () => void }> = ({
 						短編
 					</label>
 				</fieldset>
-				<fieldset className="space-x-4">
-					<Button type="submit" color="primary" className="font-bold">
-						<FaSearch className="w-5 h-5 pr-2 inline" />
+				<fieldset className={styles.actions}>
+					<Button type="submit" color="primary">
+						<FaSearch className={styles.actionIcon} />
 						適用
 					</Button>
-					<Button onClick={clear} className="font-bold">
-						<FaTimes className="w-5 h-5 pr-2 inline" />
+					<Button onClick={clear}>
+						<FaTimes className={styles.actionIcon} />
 						クリア
 					</Button>
 				</fieldset>
